@@ -1,0 +1,605 @@
+# Geometry Lab —— 项目约定（新窗口必读）
+
+交互式高中数学演示站：把定理做成可拖动、可实时读数的 SVG 实验台，配 KaTeX 推导，数形结合、由浅入深。技术栈：Vue 3（SFC `<script setup>`）+ Vite 5 + vue-router 4（hash 模式，`base:'./'`）+ KaTeX 0.16。画板为手写引擎（`src/lib/board.js`），不用图表库。
+
+## 环境与命令
+
+- 本机**无系统 node、无 sudo**：每次 Bash 先 `export PATH="$HOME/apps/node/bin:$PATH"`（已装 v22）。registry 用 npmmirror。
+- dev 服务器通常已在后台运行（localhost:5173）；改完代码 HMR 生效，**不要重启**。唯一例外：页面报 `does not provide an export named 'createBoard'` 而磁盘文件与 `npm run build` 均完好 —— watcher 在批量写入（先截断后落盘）的空档取到文件，把空模块缓存在 dev 内存且不自愈；curl 该模块只回一行 sourcemap 即确诊，先 TaskStop 再重启即愈（2026-11-06 踩过）。校验用 `npm run build`（约 8 s；当前 ~2938 kB / gzip ~1168 kB，按 vite 打印口径）。产物纯静态（hash 路由），可 file:// 打开。
+- **桌面端打包（Tauri 2，2026-11-16 立项）**：`src-tauri/` 是桌面壳——界面就是 Vite 产物（`frontendDist: '../dist'`，dev 时走 `devUrl: :5173`），壳里只挂 dialog / fs 两个插件（给后续统一保存入口 `src/lib/save.js` 桥系统文件对话框，浏览器端仍走 fsdir.js 的 FSA，两轨并存）。`productName` 用 ASCII「GeometryLab」（NSIS 对中文包名挑剔），窗口标题仍是中文；identifier `design.gao123.geometrylab`。命令：`npm run icon`（一次性生成 `src-tauri/icons/`，零依赖脚本 `scripts/gen-icon.mjs`，SDF 抗锯齿照 favicon 构图；**不跑这步 icons 目录是空的，`tauri build` 会因找不到图标失败**）、`npm run tauri dev` / `npm run tauri build`（本机需 Rust 工具链，当前未装）。**发版走 CI**：`.github/workflows/release.yml`，推 `v*` 标签（或 Actions 页手动触发）→ windows / macos(arm+x64 双 target) / ubuntu 矩阵各出安装包挂到 draft Release——Windows NSIS `-setup.exe`（每用户安装、WebView2 `embedBootstrapper` 引导）、macOS 按芯片 `.dmg`、Linux `.deb` + `.AppImage`。已知边界：macOS WKWebView 里 MediaRecorder 不可靠、无 FSA（录像与存目录以浏览器端为准）；Linux WebKitGTK 偶发 WebGL 黑屏，`WEBKIT_DISABLE_DMABUF_RENDERER=1` 可解；未签名，macOS 首开右键→打开、Windows SmartScreen 选仍要运行。capabilities 目前只放 `core:default + dialog:default + fs:default`，fs 的写范围等 save.js 落地再补。
+
+## 目录结构（模块 → 子专题 两级，views 与 boards 同构）
+
+```
+src/
+├── lib/board.js     画板引擎（re-export math.js；COLOR 表：语义色号 → [暗, 亮]）
+├── lib/math.js      矢量/射影/角度工具（V add sub mul dist norm lerp fmt interLL crOn harmFourth conicPt onConic lineConic polarLine plEval arcPts angDiff acuteAng marchSegs segsToPath TAU…；marchSegs=隐函数零等值线 marching squares）
+├── lib/progress.js  阅读进度仓库（localStorage 'gl-read' + 响应式 Set；导出 READ / isRead / toggleRead，key 为 route.path）
+├── lib/modnav.js    模块大纲仓库：由各子专题的 xxxnav.js 现算「模块 → 子专题分组 → 全部章节」，
+│                    讲解页左栏与 ←/→ 翻章都读它（新增子专题只加一行 SPEC，别在别处抄章名）
+├── lib/higherplan.js  高等数学九个模块的章节规划（模块 → 子专题 → 章目 + 一句提要）；
+│                    九个模块 2026-11-13 全部上线后，它只剩两份用处：各模块主页用 `higherOf(slug)` 现算章数、
+│                    首页「高等数学」栏用 `HIGHER` 生成本该出的规划卡（现在为空）；章名一律以各 nav 文件为准。
+│                    共用大纲页 views/higher/HigherHome.vue 已无路由引用（九条模块路由都换成模块主页），保留文件别再加回
+├── lib/settings.js  界面偏好仓库（localStorage 'gl-prefs'）：DEFAULTS + CHOICES 白名单，setPref 非法键/非法值直接忽略
+├── lib/models.js    模型清单（'gl-models'）：OpenAI 兼容接口地址 / 模型名 / 密钥 / 温度，四个预设，activeModel() 给请求用
+├── lib/chat.js      对话仓库（'gl-chats'，最多 40 段）+ streamReply（SSE 流式读取，不认 stream 时退回 JSON）
+├── lib/notes.js     笔记仓库（'gl-notes'）：文件夹 + 随页笔记，md / tex 两格式，防抖持久化，SAVE / FILESAVE 存档状态，自动写文件夹（flushFile / flushFiles），整份备份导出导入（exportAll / importAll），fileName() 消毒文件名
+├── lib/fsdir.js     文件系统访问：目录句柄存 IndexedDB（'gl-fs'），ensurePerm / writeInto / removeFrom / downloadText
+├── lib/mdmini.js    Markdown + KaTeX 渲染（聊天与笔记共用，先转义不透传 HTML）＋ plain() 摘要
+├── lib/pagetransition.js  切页过渡：给 main 重放 .page-in，动画种类由 main[data-anim] 决定
+├── components/      Katex(tex,display) / BoardMount(factory) / ChPage(cur,title,sub,toc,no,chapters,base)
+│                    ChPage = 讲解页三栏骨架：左侧章节导航（chapnav，sticky，整模块的章按子专题折叠、一章不省）｜中间正文
+│                    （当前子专题的几章横排成 chaptabs 小号胶囊压在标题上方）｜右侧本讲结构（toc，sticky）
+│                    自带「标记已读」按钮与 ←/→ 键盘翻章（整模块顺序）；子专题一默认章节表在 nav-defaults.js（ChPage 兜底用）；
+│                    旧 ChapterNav.vue 已于 2026-11-11 删除（并入 ChPage 左栏，勿再引用）
+│                    ChatDock（助手半屏/整屏小窗，v-model:open）/ FloatRail（左侧六枚圆钮：返回上一页、回首页、回顶部、数字游戏、随页笔记、助手）/ CalcDock（右侧可拖圆钮 + 小计算器，默认与画板圆钮同一竖线）/ GameTabs（游戏三页的页签）
+├── boards/<模块>/<子专题>/<图>.js      每图一个模块：export function createBoard(root) → Board
+└── views/<模块>/<子专题>/<章>.vue      章节页 + xxxnav.js（子专题的章节名/路由前缀元数据）
+```
+
+仓库根上另有三处（2026-11-16 桌面端轮新增）：
+
+```
+src-tauri/            桌面壳（Tauri 2）：tauri.conf.json（窗口/打包/图标配置）、Cargo.toml + build.rs + src/{main,lib}.rs
+                      （壳本体，只挂插件不写业务）、capabilities/default.json（权限清单）、icons/（npm run icon 生成，勿手改、
+                      不进 git 前必须先跑一次生成脚本）
+scripts/gen-icon.mjs  图标生成器（零依赖：SDF 抗锯齿 + 手写 PNG/ICO/ICNS 编码器，构图照 public/favicon.svg；改设计改 DESIGN 常量重跑）
+.github/workflows/release.yml  发版 CI：推 v* 标签触发，三平台矩阵出安装包挂 draft Release
+```
+
+现有模块：**sets**（集合与常用逻辑；四个子专题 12 章全部上线（2026-11-06 完结）—— 详见下方「sets 模块」节）；**trig**（三角函数与三角形；十一大子专题 23 章全部上线（2026-11-06 完结）—— 详见下方「trig 模块」节）；**conics**（6 个子专题，32 章 · 42 台；直线与圆已独立成模块（见 linecircle 模块））；**functions**（显示名「函数与微积分初步」，原「函数与导数」，用户 2026-11-05 更名、路由 `/functions` 不变；六大子专题 35 章全部上线 —— 详见下方「functions 模块」节；导数按用户要求融入不单列，泰勒与积分为拓展）；**inequalities**（不等式；五个子专题 15 章全部上线 —— 详见下方「inequalities 模块」节）；**sequences**（数列；七个子专题 20 章全部上线 · 23 台（2026-11-09 完结）—— 详见下方「sequences 模块」节）；**vectors**（向量与复数；六个子专题 17 章全部上线（2026-11-10，含向量积 积4）—— 详见下方「vectors 模块」节）；**linecircle**（直线与圆；四个子专题 13 章全部上线（2026-11-10，同日增补直4 直线系与同解变形）—— 详见下方「linecircle 模块」节）；**polar**（极坐标与参数方程；四个子专题 9 章全部上线（2026-11-10）—— 详见下方「polar 模块」节）；**solid**（立体几何；四个子专题 10 章全部上线 · 14 台（2026-11-10）—— 详见下方「solid 模块」节）；**combinatorics**（组合学与二项式定理；四个子专题 9 章全部上线 · 9 台（2026-11-10）—— 详见下方「combinatorics 模块」节）；**probability**（概率与统计；六个子专题 18 章全部上线 · 22 台（2026-11-10）—— 详见下方「probability 模块」节）；**numeric**（数值计算；四个子专题 10 章全部上线 · 10 台（2026-11-10）—— 详见下方「numeric 模块」节）；**linalg**（线性代数初步；五个子专题 14 章全部上线 · 14 台（2026-11-10）—— 详见下方「linalg 模块」节）；**定理速查总览** `/cheatsheet`（顶栏「速查」：二十三个模块 376 条核心结论，卡片即章节内链）；**calc1**（一元函数微积分，高等数学第一门；六个子专题 33 章 · 36 台全部上线（极限 5 / 导数 8 / 不定积分 4 / 定积分 5 / 常微分方程 6 / 无穷级数 5，2026-11-12）—— 详见下方「calc1 模块」节）。专题目录按用户 2026-11-05 拍板、2026-11-10 微调的大类顺序排列（Home.vue 与本列表一致）：sets 集合与常用逻辑（含谓词逻辑：量词、否定与推理）→ functions 函数与微积分初步（已上线）→ inequalities 不等式（基本不等式与其他常用不等式）→ trig 三角函数与三角形 → vectors 向量与复数（平面向量、空间向量、复数、欧拉公式 e^{iθ}，已上线）→ sequences 数列（已上线）→ linecircle 直线与圆（已上线）→ polar 极坐标与参数方程（已上线）→ conics 圆锥曲线（已上线）→ solid 立体几何（空间直角坐标系、空间中点线面的方程与度量公式、空间向量证明）→ combinatorics 组合学与二项式定理（已上线）→ probability 概率与统计（已上线，概率论与数理统计）→ numeric 数值计算（已上线）→ linalg 线性代数初步（已上线）。**首页分两栏（用户 2026-11-12 要求）**：「一 · 初等数学」= 上面这 14 个已上线模块；「二 · 高等数学」= 九个模块，2026-11-13 起全部上线（实线蓝标签 +「已读 n / N」），标题右侧写「9 个模块 · 全部上线」；`Home.vue` 里 `planned` 的排除表已列全九个 slug，这一栏不再产出规划卡（`plan-card` 那套虚线橙样式留着，将来加新模块时还要用），章表见下方「高等数学」节。新模块 = `views/<m>/<M>Home.vue` + `boards/<m>/` + 路由 `/<m>` + Home.vue 卡片点亮。**spacegeom**（空间解析几何；三个子专题 12 章 · 12 台全部上线（2026-11-12），全部三维画板 —— 详见下方「spacegeom 模块」节）；**calc2**（多元函数微积分；三个子专题 18 章 · 20 台全部上线（2026-11-12）—— 详见下方「calc2 模块」节）；**complexvar**（复变函数；三个子专题 12 章 · 12 台全部上线（2026-11-13）—— 详见下方「复变函数 模块」节）；**numtheory**（初等数论；三个子专题 13 章 · 13 台全部上线（2026-11-13）—— 详见下方「numtheory 模块」节）；**topology**（拓扑学基础；三个子专题 12 章 · 12 台全部上线（2026-11-13）—— 详见下方「拓扑学基础 模块」节）；**fractal**（分形几何；三个子专题 11 章 · 11 台全部上线（2026-11-13）—— 详见下方「fractal 模块」节）；**projgeom**（高等几何（射影几何）；三个子专题 11 章 · 11 台全部上线（2026-11-13）—— 详见下方「projgeom 模块」节）；**algebra**（抽象代数；三个子专题 17 章 · 17 台全部上线（2026-11-13）—— 详见下方「algebra 模块」节）；**数字游戏** `/games`、`/games/2048`、`/games/sudoku`（工具页，不进模块目录：三页共用一套页签，数字游戏页放 24 点 / 数字华容道 / 60 秒速算 / 猜数字，2048 与数独各占一页，入口是左侧紫色骰子圆钮 —— 详见下方「站点外壳」节）。
+
+## 路由约定
+
+- `/<模块>` 模块主页；`/<模块>/<子段><n>` 章节，如 `/conics/def4`、`/conics/opt2`。
+- 子专题的 nav 文件（`defnav.js` 等）导出 `XXX_CHAPTERS`（章节名数组）与 `XXX_BASE`（路由前缀），放在 views 的分组目录里；`ChPage` 传 `:cur :no :base :chapters :toc`，`no` 用子专题字母（如 `no="D4"`）覆盖默认的 '§'+cur 标签。
+- 章节页内锚点不能走 href（hash 被路由占用）：toc 的 id 由 ChPage 程序化滚动。
+- **讲解页三栏版式（用户 2026-11-12 拍板，三轮定型）**：`ChPage` 输出 `.chap3` 网格（**顶边距两档**：窗口 ≥1820px 时 `margin-top:18px`——此时 `main` 居中、正文左缘退到 70px 开外，左上角面包屑圆钮落在留白里压不到正文，正文与左右栏顶边齐在顶栏之下 18px 处；窄屏 `margin-top:64px`、≤980px 再改 52px，为的是让开 `left:16px; top:58px` 的 44px 圆钮。模块主页这类整页开头的 `.chapter-head:first-child` 同理：宽屏 10px、其余 56px。助手/画板让出半屏时 `main` 恢复满宽（`max-width:none; padding:0 20px`），正文又贴回左边，故宽屏那档用 `main:not(.chat-split):not(.dock-split)` 排除）—— 左 `.chapnav` 章节导航（280px，sticky）｜中 `.chapmain` 正文｜右 `.toc` 本讲结构（224px，sticky，滚动高亮）。左栏**列整模块的章，按子专题折叠、一章不省**（`lib/modnav.js` 的 `moduleOf(route.path)`）：组头是按钮（`.cn-g` + ▸/▾ + 右端「已读/章数」，整组读完转绿），当前子专题在组头留一道左侧色条，可同时展开多组；组内 `.cn-list` 用一道竖线收拢层级，章条目带两位序号与已读 ✓；栏底上一章/下一章按整模块顺序。**子专题内部的几章横排成 `.chaptabs` 小号胶囊（13px、`padding:2px 10px`，高度与文字相当）压在 h1 上方**，只有一个章的子专题不铺。`main` 最大宽度 1720px、左右内边距 20px，正文在 1920 屏宽 1132px。断点：≤1340px 收右栏、左栏 262px；≤980px 左栏变静态块（`max-height:none;overflow:visible`，不做栏内滚动，免得工具条被内部滚动挤到视口外）、`.chaptabs` 与标题单列。**左栏顶部的折叠控制（用户 2026-11-12 追加）**：`.chapnav` 是 flex 竖列——`.chapnav-hd`（模块名 + 控制）与 `.cn-pg`（翻章）固定，只有中间 `.cn-body` 滚动，所以工具条不会被内部滚动挤走；`.cn-tools` 里「展开全部 / 合并全部」两枚互斥按钮，高亮由 `allOpen`/`allShut` 两个 computed 现算（所有组全开 / 全合才亮，手动点组头即离开两态）。三种**进页默认**「当前子专题 / 全展开 / 全收起」不放在栏里，**在设置页「章节导航默认折叠」里选**（用户 2026-11-12 要求：设置统一进设置页，栏里不要再单独加按钮），值走 `PREFS.navOpen`（`gl-prefs`，取值 `cur|all|none`，默认 `cur`），`ChPage` 进页时直接读它。翻到别的子专题时只把新组打开、不动用户手动开合的其它组；换模块（`watch(mod)`）按默认模式重建折叠表。进页滚动用最小位移（只把当前章带进视野、留 10px 余量），不要居中——居中会把组头切掉半行。栏底的「← 上一章 / 下一章 →」是两枚等宽描边按钮（`.cn-pg a`，flex:1、10px 圆角、悬停转蓝）；左栏与右栏的滚动条走自定义样式（`::-webkit-scrollbar` 8px 宽、透明轨道、圆角拇指 `background-clip:content-box`，平时 22% 透明度、悬停 45%，Firefox 用 `scrollbar-color` 同步）。打印时三栏与胶囊条都隐藏、正文单列（`@media print` 里 `.chap3{display:block}`）。
+
+## 站点外壳：设置 / 助手 / 笔记 / 浮钮 / 切页（2026-11-12 用户拍板）
+
+- **设置统一进 `/settings`**（用户原话「导航栏的设置放在设置页面，不要单独增加设置按钮」）：章节导航的进页默认折叠不再是栏里的齿轮，改在设置页选。偏好全走 `lib/settings.js` 的 `PREFS`（`gl-prefs`）——`drawerSide`、`dockSide`、`chatSide`、`chatSize`（half/full）、`navOpen`（cur/all/none）、`pageAnim`（fade/up/zoom/slide/blur/none）、`noteFormat`、`visitCap`（面包屑缓存条数，字符串 '5'/'8'/'12'/'20'）、`bgMotionOn` / `bgScene`（背景动画）、`bgSolidOn` / `bgSolidPos`（旋转多面体的开关与位置）、`lblPin`（板内拖过的文字位置记在本机，默认开）、`lblPath`（默认文字位置文件，public/ 下的相对路径）、`dlPos`（画板操作条位置：left 默认，板上靠左；right 板上靠右；in 板内悬浮）、`cardInk`（卡片悬停亮线颜色：theme 默认跟主题，或 `#rrggbb` 自定义）、`bgInk`（背景混沌线条颜色：auto 默认冷蓝，或 `#rrggbb`）、`bgAlpha`（背景线条浓度倍数，默认 0.3 = 30%）、`noteAuto`（笔记停手后自动写进所选文件夹，on 默认 / off），见本节末两条。`setPref` 用 `CHOICES` 白名单挡非法值，新增偏好要同时补 `DEFAULTS` 与（可选的）`CHOICES`；放行 `#rrggbb` 这类值的项写进 `FREE` 校验表（`ok(k,v)` 统一走三道）。
+- **首页章节卡版式（2026-11-16）**：`Home.vue` 两个 `.topic-grid` 加 `home-grid` 类，`global.css` 里 `.home-grid .topic-card` 改 grid 两列（`minmax(0,1fr) auto`）—— 标题占左列、「已上线 / 规划中」状态框排到同一行的右端（`grid-column:2; justify-self:end; margin:0`），提要 `p` 跨两列占第二行；「已读 n / N」小框仍绝对定位在右下角不动。**标签统一写「已上线」（用户 2026-11-16：「已上线就行，不需要些多少章」），不再拼「N 章」**——章数由右下角「已读 n / N」和模块主页交代。悬停除了整卡 `translateY(-3px)` 与投影，标题转蓝、状态框描边提亮，圆角边框上再跑一段亮线：`.topic-card::after` 用 `conic-gradient` + `padding:2px` + `mask-composite:exclude` 只在 2px 边框环里显影，`@property --gl-sweep` 让角度（`0deg → 360deg`，1.9s 一轮）可动画，亮段就沿圆角矩形走一圈；**亮段取近白收尾 + `drop-shadow` 辉光**（第一版 1px 纯蓝，压在悬停后转蓝的边框上几乎看不见，用户当天就回「跑亮线好像不明显」）；`prefers-reduced-motion` 下不转、也不上移。**颜色可换（同日用户「线条颜色可以跟随主题，或者自定义，放在设置中」）**：亮线读 `--gl-sweep-ink`，`:root` 里默认 `var(--blue)` 随主题换；设置页「界面布局 · 卡片悬停亮线」选「自定义」后，`lib/settings.js` 的 `applyCardInk()` 往 `documentElement` 写一条同名内联变量盖掉它（`PREFS.cardInk`：`'theme'` 或 `#rrggbb`，白名单表达不了，由 `FREE` 校验器单独放行），选回跟随主题即 `removeProperty`。**子页面也用同一套色（同日用户「子页面的框也可以做类似的修改……增加框内颜色渐变填充，从左到右，颜色也渐变，淡一点」）**：`global.css` 给所有 `.topic-card` 加 `::before` —— `inset:0` 的 `linear-gradient(90deg, ink 15%, ink 5% 55%, transparent 88%)`，hover 时 opacity 0→1（0.3s），扫边只在 `home-grid` 下有；卡片加 `isolation:isolate`，正文 / 标签 / 进度框 `z-index:1` 压在填充之上（`.prog-box` 原本就是 absolute，只补 z-index，别改成 relative）。
+- **左侧浮钮 `FloatRail`**：返回上一页（2026-11-16 新增：排在栏顶；只有 `history.state.back` 是站内路径时才渲染，读的就是 vue-router 每次导航写进去的上一页完整路径，直接打开链接或从站外进来时为 null，按下去不会跳出本站；`watch(route.fullPath)` 同步，点击 `router.back()`）、回首页（`route.path === '/'` 时整枚不渲染）、回顶部（`scrollY > 320` 才 `v-show`，平滑滚动）、数字游戏（紫色骰子，`route.path.startsWith('/games')` 时不渲染）、随页笔记开关（绿色，`/` 与 `/notes` 上不渲染）、助手开关（蓝色，`v-model:chat-open` 与顶栏「💬 助手」共用）。`position:fixed; left:16px; bottom:96px`，打印时藏；六枚 44px 圆钮加 10px 间隙通高最多 314px，仍在面包屑圆钮（`top:58px`）之下。
+- **数字游戏 `/games`（2026-11-13，入口是左侧紫色骰子圆钮）**：`views/Games.vue` 单页四台小游戏，全部在本机跑、不联网、无第三方库。① 24 点——四张牌各自只用一次、中间结果按分数精确算：`step24` 递归两两配对（加减乘除都试，减与除连减、连除两个方向），`mk` 约分并统一分母，命中 `n === 24*d` 才算解；`eval24` 是手写递归下降解析（数字/括号/一元负号/四则），只接受 `[0-9+\-*/()]`，中文全角括号先归一成半角；校验时把写法里出现的整数排序与四张牌排序比对，确保四张全用且各一次；换一组时随机试最多 80 手，解不出就退回 `[3,3,8,8]`（`8 ÷ (3 − 8 ÷ 3)`），不会出现无解牌面。② 数字华容道——3×3 / 4×4 两档，`pzShuffle` 只走合法相邻交换并在最后一步防回退，保证一定可解；`.pz-board` 用 `--n` 变量铺格子，空格 `disabled`，计步与计时（首次滑动才起表），拼齐即停表。③ 60 秒速算——加减乘除四类题（两位数加减、2..12 乘 4..19、整除），倒计时归零收卷，最佳成绩存 `localStorage 'gl-rush-best'`。④ 猜数字——四位数、数字互不相同、首位不为 0，A 为位对、B 为数字对位不对，历史逐条列出。`onBeforeUnmount` 里停掉两个定时器；输入框焦点用 `nextTick` 收回，连答不用重新点。样式全在组件 scoped CSS 里，浅色主题靠 `var(--card)/var(--line)/var(--ink)` 自适应。**2048 与数独各占一页（2026-11-13 用户先要求「另起一页」，随后又要求「俩个挤在一块太小了，分开」）**：`views/Games2048.vue` 与 `views/GamesSudoku.vue` 各一张占满宽度的卡片，三页共用 `components/GameTabs.vue` 页签（数字游戏 / 2048 / 数独，按 `route.path` 精确匹配高亮）；旧地址 `/games/classic` 直接 `redirect` 到 `/games/2048`。页面卡片沿用 flex 竖列 + `.gm-tip` 44px 最小高 + `.gm-note` `margin-top:auto` 的写法，四张卡并排时内容与底注对齐。**2048 棋盘边长可选 4 / 5 / 6**：合并算法全部按 `g2.n` 参数化——`lineIndexes(dir, line)` 按边长算一条线的下标（左右上下四个方向只在这里分叉），`move2048` 一趟跑完 `n` 条线（取行 → 去零 → 相邻合并 → 补零到 `n` → 写回），`canMove` 用 `i±1 / i±n` 判邻，撤销只留 8 步；棋盘宽度与字号走计算属性写进 CSS 变量（`--n` 铺列、`--fs` 定字号，4/5/6 依次 288/320/352px 与 24/19/16px），三位数以上再按倍率缩字号。**最高分按边长分开存**（`gl-2048-best` 留给 4×4 老档，其余 `gl-2048-best-5`、`-6`），换尺寸会重开一局。键盘挂在棋盘 `div` 上（`tabindex=0`，点击时显式 `focus()`，方向键 / WASD），手机上用 touchstart/touchend 判 24px 位移滑屏。数独先 `fillGrid` 回溯填满一张完整解，再随机挖洞、每挖一格用 `countSol(..., 2)` 验唯一解（数到 2 就停；700ms 上限，慢机器上宁可多留几个数），难度只改目标已填格数（简单 46 / 普通 36 / 较难 30）；红字冲突由 `conflicts` computed 现算（行、列、宫三组），「检查」把与解不符的格子标红底，「提示」补一格；键盘同样挂在棋盘上，数字键填、方向键移、退格擦。两页的摸屏/键盘按键都 `preventDefault`，计算器的全局按键会先看 `e.defaultPrevented` 再决定要不要接管。
+- **计算器 `CalcDock`（2026-11-13，用户要「跟呼出画板一样可拖动的入口、不需要整页、功能全一点」）**：右侧紫色圆钮（`position:fixed`，默认 `right:20px; bottom:152px`，在 GeoGebra 画板钮正上方 10px；**没拖过计算器时默认位置从画板的 `gl-fab` 现算**——`alignWithBoardFab()` 读画板圆钮存下的 `{r,b}`，把计算器摆到同一竖线、正中上方 10px，用户拖过画板钮也仍然对齐），圆钮自身可拖（位置存 `gl-calc-fab`，位移不足 5px 仍算点击）。点开是 328px 的小窗，压在正文上、不占版面（**不参与 `main.dock-split` 那套让位，也不与助手/画板/笔记互斥**）；窗口标题栏可拖，位置存 `gl-calc-pos`，`resize` 时夹回视口，`max-height: calc(100vh - 100px)` 内部滚动。求值在 `lib/calc.js`：手写 tokenize + 递归下降（expr/term/unary/power/postfix/primary），**不用 eval**；认 `+ − × ÷ ^ ! % ( ) π e Ans` 与 `sin cos tan asin acos atan ln log sqrt abs exp`，`√` 当 sqrt，隐式乘法支持 `2π`、`3(4+5)`；DEG/RAD 由标题栏那枚开关切换（默认 DEG），`Ans` 取上一次结果，结果统一 `toPrecision(12)` 去浮点尾巴，`|v|<1e-13` 归零。按键 7 行 × 5 列：括号、退格、C、e；sin cos tan ln log；√ x² xʸ 1/x !；7 8 9 ÷ %；4 5 6 × ±；1 2 3 − Ans；0 . π + =。另有记忆行（MC / MR / M+ / M−）、历史（最多 24 条，点一条取回结果）、键盘接管（数字、四则、括号、回车算、退格删、Esc 收；焦点在 input/textarea 时不抢键，页面已 `preventDefault` 的按键也不抢——数独棋盘就是这样避开计算器的）。`onBeforeUnmount` 里摘掉 keydown / resize / 两个 pointermove。
+- **AI 助手 `ChatDock`**：`v-model:open`，`chatSize` 半屏（`width:50vw`）/ 整屏，`chatSide` 定左右；与 `GeoGebraDock`、`NotesDock` **三者互斥**（App.vue 里三个 watch 互相收起），否则同时让位会把正文挤没。半屏时 `main.chat-split` 让出 `calc(50vw + 22px)`——同时必须在 `global.css` 里 `main.chat-split .toc{display:none}` 并把 `.chap3` 收成 `220px minmax(0,1fr)`，否则正文只剩百来像素（实测 1440 屏正文从 196px 回到 440px）。排版照各家聊天界面：用户消息右对齐浅蓝气泡，助手消息左对齐带 AI 头像、`v-html="renderRich(...)"` 渲染 Markdown + KaTeX；发送中可停止（`AbortController`），每条回复可复制 / 存为笔记。**整屏时标题行 `.cd-head-in` 限宽 812px 居中**，与 `.cd-row`/`.cd-box` 的 760px 正文列对齐——不然「助手」两字贴视口最左缘，看着像出了框。
+- **接口协议**：`lib/chat.js` 的 `streamReply(cfg, messages, onDelta, signal)` 打 `{baseUrl}/chat/completions`，`stream:true` 读 SSE，`data: [DONE]` 收尾；服务端不认 stream（`content-type` 是 json 或没有 body）时退回一次性 JSON。系统提示带上当前页 h1 标题与路由，并要求公式用 `$…$` / `$$…$$`。
+- **模型与 API**（设置页「模型与 API」）：`lib/models.js` 存 `gl-models`（最多不限），字段 `name/baseUrl/model/key/temp`，`activeModel()` 供聊天用。四个预设：OpenAI `https://api.openai.com/v1`、DeepSeek `https://api.deepseek.com/v1`、通义千问 `…/compatible-mode/v1`、本地 Ollama `http://localhost:11434/v1`。密钥明文存 localStorage，设置页已写明提醒；浏览器直连要求对方开 CORS。
+- **笔记 `/notes`（wiki 式）**：`lib/notes.js` 存 `gl-notes`，`format` 为 `md` / `tex`；结构是 `{ v:2, folders, list, cur }`，笔记多挂 `folder` / `path` / `page` 三个字段（旧档只有 `list`/`cur`，`loadNotes` 会补空字段迁移）。左栏是文件夹树：`随页笔记`（带 `path` 且未归档的）、用户建的文件夹、`未分类`，计数实时；`＋ 文件夹` 回来内联输入，`✎` 改名，`×` 删除（里面笔记退回未分类，不连带删）。右栏写入区默认 **写作（整宽）**，可切 `分栏` / `预览`，另有 `专注写` 覆满整屏（Esc 退出）；`nt-ta` 高度 `calc(100vh - 300px)`，别再退回两栏 1fr 1fr 的窄条（用户原话「记录笔记的部分太小了」）。md 走 `lib/mdmini.js` 的 `renderRich`（转义优先、公式抽成占位槽再交给 KaTeX、不透传 HTML）；tex 只把 `$…$` / `$$…$$` 交给 KaTeX、其余按 `<pre class="tex-plain">` 排（不假装能编译整份 .tex）。导出 PDF 走打印视图：`Teleport to body` 的 `.note-print` + `body.printing-note`，`@media print` 里只留 `.note-print`（其余 body 子元素 `display:none`），并把 body 背景刷白；打印前再把 `document.title` 临时换成笔记标题（打印对话框默认拿它当文件名），`afterprint` 还原。正文首行若是与标题同名的 `# 标题`，打印视图会去掉，避免标题排两遍。
+- **笔记别丢（2026-11-16，用户问「保存在 local 中是不是比较容易丢失」）**：localStorage 的三种丢法都补上了。
+  ① `notes.js` 的 `persistNotes` 不再把 `setItem` 抛错吞掉，而是写进 `SAVE`（`{ok, at, err, other}`，响应式），笔记页工具条右侧一条 `nt-save`：本机没存上标红（`!SAVE.ok` 时显示 `SAVE.err`，配额满与禁写分别有一句话）、文件夹那份落后时只报本机时刻（`FILESAVE.at >= SAVE.at` 才算「已存到」）、写文件失败标黄并走 `title` 显示原因。
+  ② `window` 的 `storage` 事件把 `SAVE.other` 打开，笔记页顶部出一条 `.nt-warn`「另一个标签页也开着笔记」，旁边「按存档重读」调 `reloadNotes()`——**不自动刷新**，否则会把手上没写进去的编辑冲掉。
+  ③ 自动落文件：`updateNote` / `createNote` 调 `queueFileWrite(id)` 把 id 攒进 `pending`，停手 1.6 秒 `flushFiles()` 逐篇 `flushFile(id)`（写 `writeInto('note', fileName(n), n.content)`）；标题改过时先写新名字、再按笔记上的 `file` 字段 `removeFrom` 收走旧文件（`file` 随存档一起存，导入时一律清空——那是别的机器上的名字）。开关是 `PREFS.noteAuto`（设置 →「保存位置 → 笔记自动存到文件夹」），关掉或浏览器没有 FSA 时 `queueFileWrite` 直接返回，浏览器内存档不受影响。**`ensurePerm` 只在用户点过的回调里问得下权限**：自动保存撞上权限过期会把 `FILESAVE.err` 写成「点一下『存到文件夹』续上」，点那一下（`saveToDir` → `flushFile`）就补上了。`visibilitychange` 到 hidden 与笔记页 `onBeforeUnmount` 各补一次 `persistNotes(true)` + `flushFiles()`。
+  ④ 备份：侧栏「⇪ 备份」= `exportAll()` 下载 `笔记备份-YYYYMMDD-HHmm.json`（`{app, v:2, at, folders, list, cur}`），「⇩ 导入」= `importAll(text)` 按 id 合并（同 id 以文件为准，文件夹先补），返回 `{added, updated}` 报数。导入不会删本机多出来的笔记。
+- **随页笔记 `NotesDock`**：右侧 460px 窄窗（`v-model:open`），章节页边看边记。默认落在 `notesOfPage(route.path)` 的某一条上；新建的笔记带 `path` + `page`（页面 h1），所以在 `/notes` 里归到「随页笔记」组，也能被搜索/导出。正文与全局共用 `gl-notes`，自动保存同一套 300ms 防抖。
+- **切页即收窗**：`App.vue` 的 `route.path` watcher 里同时关掉 `chatOpen` / `notesOpen`——整屏助手盖着整页时点站名，路由其实已经切了，但不收窗就像「跳不过去」（用户报的就是这条）。
+- **面包屑 `Breadcrumb`（2026-11-12）**：**顶栏之下、与浮钮同一竖列的圆钮**（`position:fixed; left:16px; top:58px`，44px —— 用户原话「不用放在顶部栏，放在顶部栏下面，跟图跳转首页那些圆形按钮在竖直对齐就行」：x 与宽度同左下 `FloatRail` 的 `.fr-btn`，顶栏不再让内边距，`.topnav .in` 保持 `0 26px`；组件在 `App.vue` 里排在 `<FloatRail>` 之后、不在 `.topnav` 内；≤900px 收到 `left:10px; top:54px`、40px；外观与 `.fr-btn` 同一套：圆形、`color-mix(--card 82%)` 底、描边、模糊与投影）。点开是「当前位置」和最近打开过的页面。缓存存 `lib/visits.js`（`gl-visits`，只存 `{path,ts}`，标题一律回 `modnav` 的 `MODULES` 里查，章名改了不用迁档）；条数取 `PREFS.visitCap`，硬上限 `MAX_VISITS = 20`，默认 8。面包屑分四段「首页 › 模块 › 子专题 › 本章」——模块段可点回 `/polar` 这类模块首页，子专题没有页就只是文字（不能写成 `cur`：模板早年把无链接段一律挂 `cur`，会显示成当前页并被允许压缩）；组名要剥掉「一　」这样的汉字序号。**每一级都包成圆角胶囊**（`padding:2px 9px; border-radius:99px`，描边 + `--bg2` 底），整条 `flex-wrap:nowrap` 一行排开、`overflow-x:auto` 且藏滚动条；祖先胶囊 `flex:0 0 auto; max-width:150px`，只有当前页那枚 `flex:0 1 auto; min-width:84px` 先缩，超长一律 `text-overflow:ellipsis` 省略、不换行；窄屏排不下时开面板后把 trail 滚到右端，保证当前页先露面。面板挂在 body（`position:fixed`，开面板时按按钮 `getBoundingClientRect` 现算坐标，和主题选单同一个坑：`.topnav .in` 的 overflow 会裁掉面板），`z-index:121`，宽 440、贴按钮正下方 8px（`top = max(52, r.bottom + 8)`）；高度按左下角 `.float-rail` 的顶边现算（`maxH = railTop − 12 − top`），面板底边不压浮钮，列表在内部滚动。**固定**：`gl-crumb-pin='1'` 时切页、点外面都不收；不固定时点外面 / Esc / 切页都收。设置页「页面缓存」改条数后 `trimVisits()` 立即裁掉多的。**宽屏不占正文**：窗口 ≥1820px 时 `main` 居中、圆钮整个落在左侧留白里，`global.css` 末尾的 `@media (min-width:1820px)` 把为它让开的 56 / 64px 收回到 10 / 18px（2026-11-13 用户「正文部分离顶部栏有点远」）；助手或画板让出半屏时正文贴回左边，该档用 `main:not(.chat-split):not(.dock-split)` 排除。
+- **保存位置**：`lib/fsdir.js` 用 File System Access API（`showDirectoryPicker`），目录句柄存 IndexedDB `gl-fs`；没有句柄或权限时回落到 `downloadText`。无头浏览器选不了目录，这条路径只能人工在真浏览器里验。
+- **切页动画**：`main` 上绑 `:data-anim="PREFS.pageAnim"`，`playPageAnim()` 在切路由时摘掉 `.page-in`、强制回流再挂回去；动画本体在 `global.css` 的 `main.page-in[data-anim=…]` 六个分支（fade/up/zoom/slide/blur/none），`prefers-reduced-motion` 下全部关掉。设置页里点某个动画会顺手 `playPageAnim()` 预览一次。
+- **打印相关**：`.note-print` 平时 `display:none`，只有 `body.printing-note` 时才出现；别把笔记打印规则写成全局 `body > *`，会把整站讲义打印一起吞掉。
+- **背景动画（2026-11-13，用户参考 myphysics-lab 提的「页面空白处的动态图形 + 混沌方程演示」）**：两套实现共用一个开关位。① `glow`（默认）是原来的三团主题色柔光，纯 CSS，在 `App.vue` 里 `v-if="PREFS.bgMotionOn === 'on' && PREFS.bgScene === 'glow'"`；② 其余六档是混沌吸引子与二维流动，走 `lib/chaos.js`（场景表 `SCENE_LIST` / `CHAOS_IDS` / `SCENES`）+ `components/BgMotion.vue`（整屏 `<canvas class="bg-motion">`，`position:fixed; inset:0; z-index:-1; pointer-events:none`，垫在 `body` 内容之下——`body` 的底色是传播到画布的，所以负 z-index 才看得见，和 `.bg-fx` 同一套前提）。场景：`lorenz` 洛伦兹（σ=10、ρ=28、β=8/3）、`rossler` 罗斯勒（a=b=0.2、c=5.7，按 x≈13 的峰值归一）、`aizawa` 艾泽瓦（0.95/0.7/0.6/3.5/0.25/0.1）、`thomas` 托马斯（b=0.19）、`clifford` 克利福德（二维映射 a=−1.4、b=1.6、c=1.0、d=0.7，`flat:true` 跳过环绕相机、`wide:true` 铺满整幅宽度、`glide:true` 滑行档、`autofit:true` 自动取景，`steps` 1、`weight` 1.4；**2026-11-16 三轮**：① 用户「只有一小块、速度太快」+ ②「看不出来变化」→ 根因有二：离散映射相邻两步在屏上隔着大半个画面，全被「位移过大断笔」丢掉、只剩映射几乎停住处的短跳；且吸引子的**实际包络比公式理论范围窄**，固定除数怎么调都只铺中间一块。故加 `autofit`：`seed()` 末尾 `fitOf()` 量种子粒子的 u/v 包络（`cu/cv/hu/hv`），`project()` 把它拉到视口四边（`W*0.52 / H*0.52`，x/y 各吃各比例，与 `wide` 档同口径），`norm` 的除数只剩跑飞判定的量纲用处。③ 用户「粒子不能按光线那种移动吗，只能随机出现吗」→ 改走 `glide` 滑行档：每到一个落点走一步映射、抽下一弦（`aim()` 记下起点 `x0/y0`、目标 `tx/ty`、单位方向 `ux/uy`、全长 `len`、已走 `td`、定速 `spd = 70–140 px/s`），`draw()` 里按 `td += spd*dt` 前进、只连相邻两帧（约 1–2px），到站即换下一弦；速度按像素走而不是「一弦多久走完」，长弦才不会被拉成一道闪电）、`ns` 纳维–斯托克斯（2026-11-13 第三轮用户要「NS 方程的雾气演示」：三条随时间游走的环流 + 弱剪切平流拼出二维不可压速度场，示踪粒子随流漂成雾丝，出框绕到对边（周期边界，2026-11-13 用户反馈「很多直线」后改）；`flat/wide/fog/weight/life` 五个标记让它铺满整幅宽度、线描得更粗、粒子加密、定期换一批位置）。每个场景只暴露 `{steps, spawn, step, norm, flat?, wide?, fog?, weight?, life?, glide?, autofit?}`：`step(s, t)` 的第二个参数是帧时间（时间无关的场景直接忽略，但组件一律传，`warm` 里传 0）；`norm` 把状态写进 `{u,v,w}` 且三者大致落在 [−1,1]，组件用 `R = min(W,H)*0.46`（`wide` 场景改成 `W*0.56 / H*0.56`）、俯角 0.34、每秒 0.05 的偏航投到屏幕。渲染要点（2026-11-13 第二轮「慢一点、淡一点、要像气体流动、别把光粒子都画出来、别那么高的对比」，第三轮又嫌**太淡发黑**而调亮过，第四轮再按「颜色还是太淡、线条挤在一起发黑、NS 很多空白」定稿；**2026-11-16 用户又说「混沌方程那些线条还是太淡，看不太清楚」，两层 alpha 再各提一档（细线 .07→.13、烟 .045→.075，浅色主题同步提），浅色主题的画布不透明度 .85→.95，静态星尘 .34→.5**）：**拖尾用 `destination-out` 每帧轻擦，普通场景 0.055/0.058、雾场景 0.034**（雾要更长的丝缕），不要用 `clearRect`（会一闪一闪）；**时间流速靠 `SPEED = 0.3` 乘在 `scene.steps` 上、累计取整走整数步**（`stepAcc` 在 `start()` 里清零），偏航 0.05 rad/s；色相只取 `HUE_SPAN = 44` 宽的一条带，中心在 205° 附近按 `26·sin(0.06t)` 漂移；粒子数 `n = clamp(W·H/1400 · (scene.weight||1), 520, 3600)`（NS 的 `weight = 2.6`，约 2400 颗）；线条按色相分 12 桶、每桶一条 `beginPath` **描两遍**——粗的烟一遍用 `source-over`（深色 `hsla(h,76%,66%,.075)`、浅色 `hsla(h,62%,56%,.040)`，宽 4.5px / 雾 10px，雾场景把烟再提亮到 72% 亮度、alpha 降到 .052），细的流向一遍深色主题改用 **`lighter` 加色**（`hsla(h,88%,70%,.13)`，宽 1.1px / 雾 1.6px，重叠处自己提亮，密处不再糊成暗块），浅色主题仍走 `source-over`（`hsla(h,68%,44%,.095)`，浅底上用加色会漂白）；**不画粒子头部**（`lighter` 只用在细线上，别拿它画点头的光晕，那就是用户要去的「光粒感」）。粒子初值先空转 240 步踩到吸引子上（艾泽瓦的 z³ 项对显式欧拉最敏感）；每帧检查 `norm` 有限且在 ±3 内，跑飞就重播种；**场景可声明 `life: [lo, hi]`（秒）——粒子活到头就 `scene.spawn` 换个位置重新出生、当帧断笔**，NS 用 `[2.5, 6]`：示踪粒子在数值流里跑久了会自己聚成条条堆、边上留下空洞，定期换一批才能把雾摊满整屏（用户「NS 很多空白」的根因）；位移不足 0.2px 的帧不落笔（慢速时免得叠出点），**位移超过 `0.06·min(W,H)` 的一帧一律断笔**（出框回绕、离散映射的跳变会把上一帧与这一帧连成横贯画面的长直线——用户 2026-11-13 报的就是这个）。**滑行场景（`scene.glide`，目前只有 clifford）不走这条判定**：离散映射的每一步本来就跨半个画面，「相邻两帧」之间更是如此，直接连线不是长直线就是被筛空。这类场景改成「落点 + 滑行」：`aim()` 每到一个落点才走一步映射、抽下一弦并定速（70–140 px/s），`draw()` 里按 `td += spd*dt` 沿弦前进、每帧只连相邻两帧的一两像素，到站换弦——画面上看到的是光点沿直线流过去，而不是凭空闪一下。**自动取景（`scene.autofit`）**：`seed()` 末尾 `fitOf()` 量出种子粒子的 u/v 包络（中心 `cu/cv`、半宽高 `hu/hv`），`project()` 直接把它拉到视口四边（`W*0.52 / H*0.52`，x/y 各吃各的比例）——离散映射的吸引子实际包络常比公式理论范围窄，按固定除数归一只能铺中间一块，量一遍再映射才稳（2026-11-16 三轮）。`prefers-reduced-motion` 只铺一帧静态星尘；`document.hidden` 停 loop；`/playground` 不渲染（画板整页不透明，白烧 CPU）；`html.no-anim` 与打印一律 `display:none`。偏好四项：`bgMotionOn`（on/off）、`bgScene`（glow/lorenz/rossler/aizawa/thomas/clifford/ns）、`bgInk`（线条颜色：`auto` 默认冷蓝色带，或 `#rrggbb`）、`bgAlpha`（线条浓度倍数 0.3–2.5，默认 0.3 = 30%，用户 2026-11-16 拍板），都在设置页「背景动画」段改，选类型会顺手把开关打开。**颜色与浓度（2026-11-16 用户「建议在设置中增加颜色和透明度的设置」）**：`BgMotion.vue` 里 `parseInk()` 把自定义色换成色相 / 饱和度，`draw()` 用 `satSmoke` / `satFine` 两个合成饱和度、`base = inkH ± 12°`（默认仍是 205° ± 26°），每笔 alpha 乘 `gain()`（`bgAlpha` 夹在 0.3–2.5）；**只影响描线参数，不重播种**——单独一个 `watch([bgInk, bgAlpha])` 只调 `parseInk()`（减动效档重画静态星尘），拖滑块时画面不重播。呼吸光影与旋转多面体不吃这两项。**注意 🎨 选单底部那行「✨ 背景光影」是另一道闸**（`gl-anim` / `html.no-anim`），关掉后本页选的背景也一并停下，两处别写成同一个状态。
+- **旋转多面体（2026-11-13，用户参考 myphysics-lab 背景里的几何体提的；位置改过三轮，最终做成可选）**：`components/BgPoly.vue`，单独一块 `<canvas class="bg-poly bg-poly-{pos}">`（`position:fixed; z-index:-1; pointer-events:none`），与 `BgMotion` 互不影响——这边每帧 `clearRect` 重画，那边是 `destination-out` 累积拖尾，两者共用页面但不共用画布。**位置由 `PREFS.bgSolidPos` 经 `pos` 属性传入**，三档：`br`（默认，右下角一块 `clamp(200px,24vw,380px)` 的正方形，`right/bottom:20px`，尺寸交给 CSS）；`left` / `right`（贴左右留白的一条 `100vh` 高画布）。**留白档的尺寸跟着「真正空出来的宽度」走**：`measure()` 用 `document.querySelector('main').getBoundingClientRect()` 量出居中 `main`（`max-width:1720px`）的左边距（`left` 档）或右边距 `innerWidth − right`（`right` 档）作 `band`，把画布内联宽设成 `band`、半径按 `R = min(W·0.36, H·0.30)` 现算（投影最外缘是 `1.31R`，0.36 的系数刚好让整颗图形留在带内、不被目录卡或正文压住一块）；`band < 200` 时直接 `display:none`（1920 屏侧边只有 100px，硬塞就会压在正文上）。角上档改走 `R = min(W,H)·0.30`、`cy = 0.5H`。`W/H` 归零、`paint()` 开头有 `if (!W || !H) return` 兜底。`measure()` 在挂载、`resize`、`watch(props.pos)` 与每 90 帧各跑一次（主题、抽屉、助手让位都会改版面）；线宽与点半径再乘 `sw = clamp(R/150, 0.7, 1.7)`。首帧宽度由 CSS `clamp(160px,12vw,700px)` 兜底。几何：二十面体 12 顶点、按邻接距离 1.051 筛出 30 条棱，内嵌一颗正八面体（12 条棱）占 `0.46R`、反向自转 1.5 倍速；外层先绕 y 轴 0.26 rad/s 自转，再叠 `0.42+0.20sin(0.05t+ph)` 的俯仰，最后在屏幕平面里翻滚 `roll0 + t·rollV + 0.12sin(0.037t+ph)`——`yaw0 / roll0 / rollV / ph` 都在 `seedAngles()` 里随机生成（`rollV ∈ ±0.08`），所以每次刷新朝向与翻滚方向都不重样；透视因子 `f = D/(D−z)`（`D = 4.2`，`z∈[−1,1]`）；棱按深度从远到近排序、近的亮而粗，外晕用 `lighter` 加色（浅色主题改 `source-over` 深蓝，否则白底漂白），背后一团 radial-gradient 冷光。挂载条件 `!isPlayground && PREFS.bgMotionOn === 'on' && PREFS.bgSolidOn === 'on'`；`@media (max-width:900px)`、`html.no-anim`、打印一律 `display:none`；`prefers-reduced-motion` 只画一帧。设置页「背景动画」段第三、四行分别管开关（`bgSolidOn`）与位置（`bgSolidPos`：`br/left/right`）。
+
+## 画板引擎 API 速查
+
+```js
+import { Board, mk, V, ... } from '<相对>/lib/board.js';   // 从 board.js 导入（含 math.js 全部工具）
+const B = new Board(root, W, H);          // viewBox 尺寸；自动 viewBox 级 clipPath 裁剪
+B.renderFn = () => { B.seg(p1,p2,attrs) / B.inf(p,q)（两端无限延长）/ B.dot(p,r,attrs) / B.text(p,s,attrs) / mk('polyline'|'path'|'circle'|'polygon', {...}, B.dyn) };
+B.render();                                // 清空 dyn 重画 + 同步把手
+B.handle({ get, set, color, r, label, lo })  // 拖动把手；set 里通常写 st 参数（角度/参数 t）
+B.btn(label, fn, {pri,on}) / B.toggleBtn(label, init, fn) / B.hint(text)   // hint 顶层不随 clear 消失
+B.slider(label, min, max, step, val, fn)   // 返回 s；用户拖动触发 fn(+s.value)；第 7 参可选 key 显式指定 URL 键
+                                            // URL 键默认取标签首个拉丁/希腊字母（'离心率 e'→e、'k = b/a'→k、'极角 θ°'→th），无字母退化 p1/p2…（板内序号）
+                                            // 程序化同步分两种：一次性改值可 s.value=v; s.dispatchEvent(new Event('input'))；
+                                            // 动画循环每帧刷滑块必须用 s.sync(v)（只刷滑块 UI 与标签，不回调、不经 DOM 读回）——
+                                            // range 的 value 会被浏览器按 step 整化，每帧「写回再读回」会把动画状态打回原点（扫弦卡死）
+                                            // 实验参数进 URL：任何滑块 input（拖动或 dispatch）防抖 300ms 用 replaceState 写回 hash query
+                                            // （如 #/conics/def4?b1.e=1.4，不触发路由不重放过渡）；BoardMount 挂载时 B.applyQuery() 从 query 还原，
+                                            // 越界值夹回 [min,max]、坏值忽略；画板命名空间默认 b1/b2…（挂载顺序），<BoardMount id="ell"/> 可读化
+B.chip(label) → update(text, cls)          // cls: '' | 'ok' | 'warn' —— 实时验证读数的习惯：
+                                            // measured 与 theory 差值 < tol 时给 'ok'（如 |PF|/d − e < 0.02）
+texMix(s) / B.tex(p, s, o) / B.btnM / B.chipM  公式渲染管线（用户拍板：板内公式一律 LaTeX）：
+                                            texMix 把 '$…$' 段交 KaTeX 排版（根号带上横线、上标真上标、符号间距正确），其余段按纯文本转义；**裸反斜杠在数学段外会被渲染成可见字符**——坐标标签（`(1.00,\ 1.00)`、`(t, a^t)` 等）必须整体包进单个 `$…$` 数学段，勿在 `$` 外裸写 `\`（G2/quadmin/hookproof 同根因，2026-11-06）；
+                                            B.tex(p, s, o) 在 foreignObject 里画混排文本，o = { size=15, color（语义色号）, anchor: 'start'|'mid'|'end', w=340 }，p 为垂直中心；
+                                            btnM/chipM = 按钮/徽章的公式版（预设名、含根号上标分式的读数一律用它）；**tex 段内不能出现中文**（中文放 $ 外面）；
+                                            exportPNG 异步内联 KaTeX css + woff2 字体（file:// 降级 serif），Node 无头测试不触碰
+B.raf(fn)                                  // 动画循环（离开页面自动 cancel）；模式：st 状态 + 单循环步进
+B.grid(m)                                  // 函数图象板标配：淡实线网格 + 箭头坐标轴 + x/y 字母 + 刻度数字
+                                           // m = {px,py,X0,X1,Y0,Y1, sx,sy（网格步长）, lx,ly（刻度步长）, xt,yt（显式刻度数组）, axLab,ayLab（轴字母）,
+                                           //        grid,labs（开关：false 藏网格线 / 藏轴字母+刻度）}
+                                           // px/py 通常由 B.isoFit 生成；先画 grid 再画曲线/色带，色带压在坐标轴上
+B.plot(fn, m, o)                            // 显函数曲线采样绘制（⑨「网格 + 锚点」规范的引擎化，2026-11-09 收编 11 板手写 plot 闭包）：
+                                           // fn: x→y；m: isoFit/mapFit 的映射对象；o 保留键 anchors（必采锚点，域外与 NaN 自动丢弃）、
+                                           // dom（x=>bool 保留判据，false 处抬笔：定义域断开或单调段过滤）、x0/x1（采样区间覆写：log 左端截断、两支各画各的）、
+                                           // step 或 n（步长或段数，默认 n=240）、pad（y 视野外扩，出视野或 NaN 抬笔）；其余键原样作为 path 属性
+B.probe(p, m, o)                           // 探针三件套（⑪ 规范：向 x 轴、y 轴各作一条投影垂线直读坐标，不画斜切线）：p 数学坐标点、m 映射对象；
+                                           // o = { color 垂线色（默认金）、dotColor 点色（默认橙）、r 半径（默认 5.5）、halo 点描边（默认深底色）}，其余键透传给垂线
+B.arrow(p, q, o)                           // 带箭头的有向线段（向量/方向标注的统一画法，2026-11-09 收编 cauchy/triangleineq 手写箭头）：
+                                           // 按 p→q 方向在终点 q 落一枚实心三角；o = { head=13 箭头长、wide=6 半宽、line=true 连带画线段
+                                           // （端点自动缩进箭头身内）、…其余键作线段属性 }，箭头填色 fill ?? stroke，返回箭头 polygon；
+                                           // 箭头须压在别的线段上时（共线向量、和向量折线）传 line:false —— 各板先画线段后补箭头，z 序自排
+B.graphToggles(st, keys)                    // 图象开关工厂（⑦ 规范）：网格/标注/渐近线三连 toggleBtn 一行收编（2026-11-09 收编 57 板 122 行）；
+                                           // keys 即 st 的键名、按序生成（默认 ['grid','labs','asym']；tangap/reciplab 的 asy 也认），初值读 st[k] ?? true
+B.isoFit(xa,xb,ya,yb, rect,pad)             // 等单位取景：x/y 同像素/单位（真实比例，45°=斜率 1），s=min(横纵容纳)，
+                                           // 非约束方向留白、原点不必居中；rect=[x0,y0,w,h]（双面板各传各的，缺省整框）；返回 {px,py,X0..Y1,s} 喂 grid/asym
+B.mapFit(xa,xb,ya,yb, rect,pad=24)          // 非等单位取景：签名返回与 isoFit 全同，唯一区别是不取 s=min（x/y 各用各的比例尺，各自吃满）——
+                                           // 量纲不同的数据图（邮资/个税、指数 y 走 10 个单位、对勾 y 方向量级大）用它（2026-11-09 收编 4 份板内拷贝）
+B.asym(m, list)                            // 渐近线：[{v:x}|{h:y}] 画满视野的紫色虚线并自动标注 x=…/y=…（可传 t 改标签）；由各板「渐近线」开关统一隐藏
+B.exportPNG(scale=2)                        // 每块画板右上角自动挂 ⤓ PNG 按钮（hover 现身）；导出克隆 SVG 并注入
+                                            // 底色 + svg text 样式表（页面 CSS 优先级高于呈现属性，注入须原样复刻 global.css 的 svg text 规则，否则导出色与页面不一致）
+                                            // 克隆与 KaTeX 样式（css + 7 个 woff2 转 base64）由私有方法 _svgXML() 统一现做，样式只在首次取、之后缓存
+B.exportVideo({scale=2, maxSeconds=60})     // 右上角第二枚按钮 ● 视频（U+25CF 文字圆点；原 ⏺ U+23FA 在部分系统按彩色 emoji 字形渲染，
+                                            // 比其他钮高一块，故换掉）：录板上动画（点一次开始、按钮转成计时，再点结束并下载）。
+                                            // 零依赖：逐帧 _svgXML() → 离屏 canvas（默认 2× 画板逻辑尺寸）→ canvas.captureStream(0) +
+                                            // track.requestFrame() → MediaRecorder，mime 依次试 mp4(avc1)/webm(vp9/vp8)，5 Mbps、每秒切片；
+                                            // 帧时间戳取墙钟，所以机器慢只会少几帧、时长与真实播放一致；单段上限 60 秒自动停；
+                                            // destroy()（离开页面）时停录并保存。逻辑在 lib/record.js（videoMime / recordBoard），不引第三方库
+B.zoom(f=1.25, cx, cy) / B.zoomTo(z, cx, cy) // 缩放（2026-11-16 用户要求）：把 viewBox 当相机，只改 viewBox、不动任何图形，
+                                            // 线段 / 文字 / KaTeX 公式随框整体放大缩小，各板绘制代码零改动；z 夹在 [0.4, 6]，
+                                            // 1 倍以下视图比画框大（画面缩到四成、四周留白，x/y 取负值把画面留在中间）；
+                                            // cx/cy 为保持不动的画板坐标锚点（缺省视图中心）；px() 已按当前 viewBox 映射，缩放后拖把手仍跟手。
+                                            // 交互写在引擎里（每块板自动有）：操作条最左「＋」「－」（步长 1.4，到 0.4 倍 / 6 倍时该颗禁用），
+                                            // Ctrl/⌘+滚轮在指针处缩放（不带修饰键的滚轮照旧滚页面），缩放后按住画面拖动平移，双击复原。
+                                            // 三维板：orbit() 里置 B.orbitCam，拖拽仍归转视角，缩放只留滚轮与双击；导出 PNG / 视频取当前视野
+B.setFloat('half' | 'full' | '')            // 半屏 / 全屏（2026-11-16 用户要求）：把整块板的 root 变成 fixed 浮层——
+                                            // global.css 的 .board.bd-float / .bd-half（右半屏，top:58 bottom:16）/ .bd-full（居中 94vw×90vh），
+                                            // 投影 0 0 0 100vmax 顺带压暗页面；svg 在浮层里撑满剩余高度、等比居中（preserveAspectRatio meet），
+                                            // px() 因此在浮层里按内容矩形（去掉留边）映射，拖把手仍跟手；同一时刻只浮一块（另开自动收回上一块），
+                                            // Esc 或再点同一颗钮复原；全屏时 html.bd-lock 锁页面滚动；destroy() 里自动收回。
+                                            // 操作条两枚按钮「◧ 半屏」「⛶ 全屏」（.dl.fs，当前那档带 .on）
+B 操作条位置（设置页）                     // 2026-11-16 用户要求（右上角那排按钮要能放到画板外面，板上方靠左 / 靠右，设置里选）：
+                                            // 偏好 PREFS.dlPos（'left' 默认：板上方靠左 / 'right' 板上方靠右 / 'in' 悬浮板内右上），画板构造时读一次；
+                                            // _placeBar() 按它把 this.dlBar 搬到 root.parentElement（板的上方、排在板前）或搬回板内，
+                                            // 同时挂 .out / .out-l / .out-r 类；板外档由 global.css 的 .dlbar.out 排成常显的一条，
+                                            // 不进板的圆角框、不压图形。半屏 / 全屏时板是 fixed 浮层，_applyFloat() 末尾再调一次 _placeBar()，
+                                            // 条收回板内、CSS 用 order:-1 提到浮层顶部当工具条；destroy() 会单独把条摘掉（它可能不在 root 里）。
+                                            // 线头：条挂在 Vue 管的父容器里，Vue 只管 root，重渲染不会动它；_placeBar() 用
+                                            // getComputedStyle 查父容器，flex/grid 时不占用它的格子，退回板内顶部一条（样式仍是 .out）
+B 底色（引擎内置，无公开方法名）           // 每块板自选底色（2026-11-16 用户要求）：操作条「▤ 底色」展开一排色卡（TINTS：纯净 / 蓝调 / 绿调 /
+                                            // 紫调 / 暖调，各给暗、亮两版；「沿用主题」= 清除），另有一行原生取色器「自定义」（调色板，任意颜色）；
+                                            // 选择写在板根的内联 --bd-bg 上，global.css 的 .board 背景与 svg text 的底色光晕同读 var(--bd-bg,var(--bg2))，
+                                            // 所以只影响这一块板；预设档只提供同一亮/暗家族里的档位，墨色与 COLOR 表仍按家族走；
+                                            // 调色板自选色会按相对亮度再写 --bd-ink（深底配浅字、浅底配深字；svg text 与 .bd-tex-ink 公式默认色同读它），
+                                            // 切主题时预设档自动换成另一家族的同名档，自选色保持不变；导出 PNG/视频的底色取 _bgCol、墨色取 _inkCol；
+                                            // 面板开合状态记在 _tintOpen，点面板以外的任何地方或再点一次「▤ 底色」即收起
+B 板内文字可拖动（引擎内置，无公开方法名） // 2026-11-16 用户要求（注释偶尔叠在一起，手动挪开比改版面快）：整块 svg 里的 <text> 与 <foreignObject>
+                                            // 一律可按住在板内拖动，dyn 层标签与顶层 B.hint / B.hintM 提示行都算；hd 层的把手标签不参与；
+                                            // 监听器挂在 svg 的捕获阶段，先于拖动平移与三维转视角拿到按下，空白处照旧放过；
+                                            // 双击一枚已挪过的标签回原位（没挪过的双击仍交给画板复原缩放）
+                                            // 偏移记在 _lblOff，键按「层 + 同类标签序号」认（dyn 内 `d:text#i` / `d:foreignObject#i` 按文档序计数，
+                                            // 顶层 `t:text#i` 按 svg 直接子元素计数），记的是**相对自然位置的位移**——文字随滑块换位置、换内容，
+                                            // 重绘后偏移照样带着走；每次 render() 末尾 _applyLblOffsets() 重新落到新元素上（顶层提示行不重绘，
+                                            // __lbx/__lby 只记一次自然位置，不会叠成双倍偏移）。代价：标签数量随控件增减时序号会错位（条件增减标签的板尤甚）
+B 记住文字（设置页，默认开）               // 2026-11-16 用户要求（挪好的位置刷新后要还在、「把移动后的位置设为默认」，随后要求搬进设置并默认打开，
+                                            // 再要求默认档随项目走：每次加载先读 public/ 下的 JSON，设置里可改路径、可把当前位置写回去）：
+                                            // 分两层。① 默认档：public/lbl-default.json（路径存 PREFS.lblPath，默认 'lbl-default.json'），
+                                            // main.js 挂载前 loadDefaultLabels(defaultUrl(...)) 先读，画板构造时 defaultBoard(page,qid) 取；读不到按空档走。
+                                            // ② 本机档：localStorage 'gl-lbl'（结构 {页面路径:{板号:{键:[dx,dy]}}}），同键覆盖默认档。
+                                            // 设置页「画板」：开关写 PREFS.lblPin（on/off，默认 on，只关本机档读写，默认档始终生效）；
+                                            // 「默认位置文件」一行填路径并在 dev 下点「更新位置」——POST /__lbl-write（vite.config.js 的插件）
+                                            // 把 effectiveLabels() 写进 public/<路径>，只写这一个文件、只许 public/ 下的 .json；构建产物没有写接口时退成下载。
+                                            // 存档读写集中在 lib/labelstore.js；「文字位置存档」一行另有本机档的导出 / 导入 / 清除。
+                                            // 偏移记的是相对自然位置的位移；双击标签恢复默认档（无默认档则回自然位置）。
+                                            // <BoardMount id="…"> 在构造后才改板号，故 BoardMount 改完 qid 调 B.refreshLabels()（= _lblLoad() + render()）
+                                            // 按新板号重读一次；render() / 指针按下时还有 _lblSyncId() 兜底。
+B 底注开关（引擎内置，无公开方法名）       // 2026-11-16 用户要求：操作条「Aa 底注」只隐藏 / 显示画板**内部**的底部说明文字（B.hint / B.hintM 提示行），
+                                            // 板框外的图注 .cap 不动；hint/hintM 之后再被调用也不会把隐藏状态顶回来（方法里读 this._foot）；默认显示
+```
+
+- **颜色必须写语义色号且在 COLOR 表里**（board.js 顶部的 hex 或 rgba 条目），亮色主题才会映射；新色要同时给暗/亮两版。
+- **函数图象画法规范（用户两批拍板，2026-11-05）**：① 图象板一律先画 `B.grid` 网格与坐标轴；网格用**实线但颜色淡**（低透明度）。② 曲线 `stroke-width` 与轴线同量级（≈2.2，不要 3+）。③ **x/y 单位长度尽量相同**（`B.isoFit`，真实比例；量纲不同的数据图如 C4 邮资/个税可各用比例尺）。④ 取景吃满画框、原点不必居中。⑤ 定义域/值域等集合信息用色带压在对应坐标轴上（值域投影压 y 轴）。⑥ **有渐近线的函数要把渐近线画出来**（`B.asym`）。⑦ 网格 / 轴标注（字母+刻度）/ 渐近线都做成**可隐藏开关**（toggleBtn）。⑧ 必要时标注**特殊点**（顶点、临界点、端点、分段点，实心=闭、空心=开）。⑨ **曲线采样用「网格 + 锚点」**：marks/端点/临界点/定义域边沿/分段点必须并进采样数组再排序（曲线精确踩过 (0,0)、顶点、空心/实心端点与接榫点，不与色带错位——用户报过 √x 不从 (0,0) 起笔的坑）；一律用引擎 `B.plot`（2026-11-09 起手写 plot 闭包全部收编）。⑩ **板内公式文本一律 LaTeX**（B.tex / btnM / chipM，根号带上横线、符号间距由 KaTeX 负责）；纯文字说明才用 B.text，set 记号与区间记号纯文本可接受。⑪ **版式（用户 2026-11-05 三批拍板）**：函数与其斜率的对应展示可用上下排布双栏、x 严格对齐（两栏共用 px，探针/扫描线贯通）；**但基本初等函数系列（E1..E8）不画导函数图像** —— 用户反馈「太挤」，f′ 走文字徽章呈现（S2 的 f/f′ 双面板是性质专题专属）；探针点用向两轴作的投影垂线直读坐标，不画斜切线（E4 用户指定，2026-11-06）。局部细节可用「全景缩小 + 放大镜」双面板（R3 显微镜先例；E3 曾用、后按用户要求撤回）。多曲线家族按参数**分色**：每条曲线一个身份色（E3 幂函数按 α 分色），色号须在 COLOR 表内。
+- **主题引擎（2026-11-06 扩到八主题 + 圆角选单 + 背景光影）**：`THEMES` 八套 —— dark 暗夜 / dusk 暮夜（暗色家族，dusk 为深夜蓝→暗紫渐变），light 纸面 / sky 青蓝 / sand 暖沙 / mint 薄荷 / sakura 樱粉 / lav 云紫（六套浅色，除纸面外均为浅色渐变底）；右上角 🎨 按钮点开**圆角面板任选**（grid 一行四枚、圆形色卡下写名字、当前项描边打勾、点外/Esc/滚动收起，不再循环盲切）。**面板必须挂 `document.body` + `position:fixed`、展开时按按钮 getBoundingClientRect 现算坐标**——导航条 `.topnav .in` 有 `overflow-x:auto`（按规范 overflow-y 被连带置为 auto），挂在其内的绝对定位面板会被裁成贴边一条；**无头测试 mock 因此没有 body，面板退化挂 documentElement，且 `getBoundingClientRect`/`offsetWidth` 需守卫**。`html.light` 类是**浅色家族共用开关**（`paint()`/`COLOR` 表只认它，六套浅色共享画板元素配色、零改动），`data-theme` 区分各主题的页面配色（global.css 每主题一块：渐变 `--bg` + 组件覆盖，写在 `html.light` 块之后靠后者胜出）；`applyTheme(id, persist=true)` —— persist=false 供打印等临时切换，不覆盖 localStorage 偏好；exportPNG 按 `currentTheme()` 取底色/字色。**背景光影**：`initAnim()/setAnim(on)/animEnabled()`（main.js 挂载前调 initAnim）——偏好存 localStorage 'gl-anim'（默认开）、关时给 html 挂 `no-anim` 类；App.vue 根部 `<div class="bg-fx">` 三团主题色柔光（--blue/--purple/--cyan 的 radial-gradient）fixed 在 z-index:-1：漂移 keyframes 11–17s alternate + 明暗呼吸 fxP 5–7s（calc(var(--o)*var(--dim)*)，--dim 家族折扣 1/.5、浅色减半），负 animation-delay 开场即在途中；`@media print` 与 `prefers-reduced-motion` 下自动隐藏。
+- **打印讲义**：App.vue 的 beforeprint 记下当前主题后 `applyTheme('light', false)` 临时切纸面（applyTheme → 全部画板同步重渲染）、afterprint 用 `persist=false` 还原；`@media print`（global.css 末尾）藏导航/滑块/按钮/目录，保留 chip 实时读数（`.ctrl.chips`）与图版，长公式放开横向滚动。顶栏 🖨 按钮与 Ctrl+P 同路径。
+- 画板尺寸：单面板 800–860 宽；双面板并排（PW≈260 或 415）时注意 k 极值下图形是否出画布（通径/长轴半径等要按极值预算，viewBox 只裁剪不缩放）。
+- **三维画板的 WebGL 层（`src/lib/gl3d.js`，2026-11-16 起，试点 quadrics）**：three 只画「面」，坐标轴、截痕、标签、读数仍走 solid3d 的 SVG。`attachGL(B, {cam, onReady})` 把一块 `<foreignObject><canvas></foreignObject>` 插在 `B.dyn` 之前——SVG 的轴与标签天然压在曲面上；相机与 `view()` 同一套正交取景（按 yaw/pitch 反解右/上/前向量，画布中心反推投影中心），viewBox 只裁切、不改投影，所以缩放不用同步相机、只按屏幕倍数重设画布分辨率。`gl.build(key, add => add(fn, o))` 铺参数网格：`fn(u,v)→{x,y,z}`（u、v ∈ [0,1]），`o = {nu,nv,opacity,wu,wv,wireOpacity,wireColor,wireColor2,wireBack}`；**key 用来挡住 orbit 每帧的重建**（转视角只改相机朝向，几何不动），只有曲面类型或半轴变了才重建顶点。每个曲面画两层：背面 `BackSide` 不写深度、正面 `FrontSide` 写深度并开 `polygonOffset`，背面的网格线才会被正面挡住，且面上压着的线不闪。网格线按 u 向 / v 向两族分别成趟，`wireColor2` 给了就换色（双曲抛物面的两族直母线靠这个分色）；`wireBack` 再垫一趟不吃深度、垫在壳子底下的背面网格，透过半透明的面隐约可见，球面才有经纬纹理。`gl.draw()` 放在 renderFn 末尾。导出 PNG / 录视频：`board.js` 的 `_svgXML()` 用 `B._glSnapshot()` 把 foreignObject 换成 `<image>`（画布像素不进 SVG 串，不换就丢曲面）；打印前后由本层自己往实时 DOM 贴图；`B._glDispose()` 挂在 `Board.destroy()` 里释放显存（WebGL 上下文有数量上限，切几页不归还就没了）。拿不到 three 或环境不给 WebGL 时 `ready()` 恒为 false，板子自动退回原来的 SVG 线网。three 走动态 `import('three')`，只在用到的那块板加载时拉取、构建时单独成 chunk；**新装环境要先 `npm install three`**。浅色主题在 `_surface` 里把颜色压深 0.72，否则半透明的面在纸面上几乎看不见。整层是 `pointer-events:none`（foreignObject 的属性和画布样式都写死）：画布只是底图，按下、拖动照旧落在 svg 上，手指压在曲面上也能转视角——曲面本身拖不走，转的是相机。**`board.js` 的可拖动文字按「所有 foreignObject」认标签，这类满板铺开的层必须在 `_bindLabelDrag` 的 `isLbl` 里排除（`.gl-fo`），否则表面会被当成标签拖走、还把 orbit 的按下吃掉**；`_lblSyncId` 的序号计数与 `_applyLblOffsets` 同样要跳过它。材质用 `MeshPhongMaterial`（`specular` 高光才看得出「面在转」，匀色的半透明面像贴图），环境光 0.95 + 主光 1.9（−3,−4,9）+ 背面补光 0.55；默认面透明度 0.52、网格线 0.42。渲染抛错或 `webglcontextlost` 一律走 `fail()`：拆掉本层、下一帧重画退回 SVG 线网——画布冻在最后一帧比没有更糟（看着像静态贴图，拖视角纹丝不动）；`B._glDispose` 由 api 的 `dispose()` 接管，`ready()` 才会跟着变 false。`snapshot()` 不开 `preserveDrawingBuffer`，先重画再 `toDataURL`（同一个任务里读才拿得到像素）。
+- **三维画板（`src/lib/solid3d.js`，2026-11-10 起）**：正交投影 + 画家算法 + 拖拽旋转。`makeCam({yaw,pitch,s,cx,cy,cz})` 定相机（默认 yaw=π/4、pitch=0.36 即课本视角：x 指向左下、y 指向右下、z 向上）；`view(p,cam)` 世界点 → 屏幕点，附带沿视线深度 d；`circle3(c, e1, e2, r, n)` 给三维圆（**首点补在末尾，整圈首尾相接**——只取 n 个点会让折线在起点留一道缝，球面经纬线看着没闭合）；`arc3(cs, O, p1, p2, rad, o)` 画以 O 为顶点、沿两条射线张开的圆弧（返回张角），`rightMark3(cs, O, p1, p2, u, o)` 在两条射线张成的平面里画直角折线，`arrow3(cs, a, b, o)` 画三维箭头（箭身是线段、箭尖在屏幕空间补三角形）；`new Scene(B, cam)` 收集 `poly(pts,{fill,op,stroke,w,lineOp})` / `path(pts,o)` / `line(a,b,o)` / `dot(p,r,{fill,op})` / `label(p,s,{dx,dy})`，`flush()` 按深度从远到近落到 `B.dyn`，半透明面自然叠压、透过前面看穿后面；`edgesOf(faces)` 由面清单去重出棱；`FACE_COLORS` 六色循环给面分色。**拖动旋转**：`orbit(B, cam, () => B.render())` 接管 `B.svg` 的 pointerdown/move/up（自动跳过 `.hnd`/`.hndlbl`，不与把手抢事件），yaw 跟横移、pitch 跟纵移并夹在 ±1.35 rad。曲面（圆柱侧面、球面）用一圈窄条铺成：每片 `op≈0.05`，叠出体积感又不遮住内部；球面轮廓用 `dot(O, R*cam.s, {op:0.07})` 画一个半透明圆盘。三维板里**任何世界坐标都要经 cam 投影**，直接写屏幕坐标的东西（箭头三角、屏幕圆）须在 `flush()` 之前用 `push(d, fn)` 排进去，否则会被后续面盖住或乱序。
+- 数学公式引用画板内局部坐标（u,v）时在文件头注释里写清约定。
+
+## 内容风格（每章的结构模板）
+
+1. `<div class="note good">` 定理陈述开篇；章节小节顺序：实验台 → 推导（KaTeX display + 两行内风格）→ 推论/应用 → 与其他章的**回收式内链**（"D1 焦半径公式在这里复发"）。
+2. 实验台 caption 写「图 XN · **名字**：一句话玩法 + 一句话看点」；hint 条写在板内，指出值得盯住的现象，但**一行必须放得下**（估宽：CJK≈字号 px/字、ASCII≈0.55×字号，总宽 ≤ 画板宽−14；hint 字号 14）——补充说明一律写进图注 cap，不要堆进 hint。
+3. 推导要**先动手验算再落笔**；`warn` note 用来装易错点（判别式漏竖直切线、点差法只给必要条件、双曲线全圆采样画伪弦等）。**易错点一律写成圆角提示框，不写「坑」字**（用户 2026-11-11 拍板：AI 味太重）：外层 `<div class="note warn tip">`，首行 `<div class="tip-t"><span class="tip-ic">💡</span>提示</div>`，正文用 `<ul class="tip-list">`，每条一个 `<li>` 并以 `<strong>提示一：…</strong>` 起头 —— 一条一行，不写成整段文字；小节标题不再挂「提示：」前缀（框内已标），直接把内容写成标题（如「半径、距离与相似比」）。
+4. 图编号前缀按子专题：sets 一 J、二 X、三 Y；trig 一 B、二 U、三 I、四 W、五 F、六 M、七 N、八 Q、九 H、十 Z、十一 K（全部已上线）；conics 一（无前缀 1..10）、二 D、三 T、四 A、五 P、六 L；functions 一 C、二 S、三 R、四 E、五 G、六 V（互不冲突）；**inequalities 起拉丁大写已全部占用（26 个字母用尽），改用汉字单字前缀**：inequalities 一 性、二 次、三 基、四 放、五 线，sequences 一 数、二 等、三 比、四 和、五 递、六 归、七 用（全部已上线，与子专题名直连）；vectors 一 向、二 基、三 积、四 应、五 复、六 欧（全部已上线）；polar 一 极、二 曲、三 参、四 轨（全部已上线）；solid 一 体、二 积、三 位、四 标（前缀与子专题名直连，10 章全部已上线）；combinatorics 一 计、二 排、三 项、四 恒（全部已上线）；**高等数学九模块沿用汉字单字**：calc1 极/微/积/定/方/级、spacegeom 向/面/曲、calc2 微/重/线、complexvar 复/解/级、numtheory 整/定/剩、topology 拓/连/不、fractal 维/形/生、projgeom 射/曲/换、algebra 结/群/网（跨模块重字不算冲突：polar 的 曲、calc2 的 微 都各在本模块内编号；新子专题自选新前缀并在 README 与模块主页标注）。
+5. 中文书面语，表述规范按第 6 条执行；结论互相回收，不写孤岛章节。
+6. **表述去味规范（用户 2026-11-06 拍板）**：正文、图注、卡片简介一律书面学术表述，禁止 AI 腔与拟人化比喻。**禁用词**：对账/账本/在册/签字/封顶/追平/报数/凑出来/老戏码/换基石、红牌/除名/失灵/爆缸/真身、审判/过堂/沙盘/闸机/天平/三兄弟/全家福、裁决机/侦探/破案/幽灵/验籍/国籍/入册/挂号/守门/踩/盖、分家/会师/变奏。**禁用句式**：「先看 X，再看 Y」式导览腔（解法步骤的「先…再…」不在此列）、营销形容（巧妙/优雅/完美）、排比堆砌。**替换惯例**：对账→核验/验证；出身→来源/求法；在场/接管→落在区间内/取得/定一头；名单→清单/候选点集；失灵→失效；砍/刀→步；跳档/临界档→个数改变/临界情形；象限裁决→由象限选定；爆缸→无定义；真身→真值。**保留**（功能性板名与教材术语，须能对应到具体机制）：换名（奇变偶不变）、母波、收口、围栏/护栏/界墙、现场排除/核验、殊途同归、显微镜、考古机、诊疗机、变波机、折叠机、铰链机、切线下山机（数值分析术语）、斜率巡逻机、「管」（A 管值域）类短谓语。
+
+## SFC 坑（本仓库已踩过多次）
+
+- **属性值内绝不能出现 ASCII 双引号 `"`**（提前终止属性 → `Attribute name cannot contain U+0022` / `Unterminated string constant`）。中文引号一律用「」；正文文本节点里的 ASCII 引号不碍事。**自闭合标签勿漏 `/>`**：`<Katex tex="…"` 若忘了收尾 `>`（顺手写成 `</Katex>`），后续整段会被吞进属性值、直到下一个 `"` 才闭合，同一报错 U+0022（g2.vue 两次踩中，报错行号在吞咽处之后、不指向真凶）。
+- `<template>` 必须有单一根元素（ChPage 作根 OK，但要包在 `<template>` 里）。但 ChPage/Home 本身是**多根组件**，不能用 `<Transition>` 包 `<component>`（Vue 要求单根）——切页过渡用「切路由时给 `main` 重放 CSS 动画」（见 App.vue）。
+- **画板 JS 里解构切勿遮蔽画板实例 `B`**（`const { A, B } = chord(...)` 会让整个 renderFn 从第一行起 TDZ 报错 `Cannot access 'B' before initialization`，画板空白且页面挂载中断）：字段重命名 `const { P, Q } = …` 或 `const { B: bp } = …`（先例：quad.js/apollonius.js）。
+- KaTeX 的反斜杠在属性字符串里直接写（`tex="\\frac{a}{b}"` → 写成 `tex="\frac{a}{b}"`）。
+
+## 现有 conics 子专题索引（32 章 · 42 台）
+
+| 子专题 | 分组 | 章节前缀 | 主题 |
+|---|---|---|---|
+| 一 极点极线与配极理论 | projective | 无（1..10） | 消点、交叉比、调和点列、极线、La Hire、Pascal、Brianchon |
+| 二 定义与标准方程 | definitions | D1..D6（含 D4b/D4c） | 五种定义、统一定义与离心率、第三定义、焦点三角形 |
+| 三 光学性质与切线 | optics | T1..T4 | 切线四种求法（判别式/导数/偏导梯度/极线）、聚光、平行光、虚焦点 |
+| 四 仿射变换 | affine | A1..A6 | 伸缩不变量、垂径定理→点差法、面积 πab、双曲线=反比例母本、对勾函数=剪切像（e=sec(ψ/2)）、一般二次方程=移轴转轴（特征值 λ±） |
+| 五 参数方程与轨迹 | locus | P1..P5（P1 三台） | 三曲线参数（离心角/割线切线词源/时间·伽利略落点）、交轨法与包络、焦点弦、极坐标方程（ρ=ed/(1−e cosθ)）、蒙日圆（垂直切线交点轨迹） |
+| 六 直线与圆锥曲线 | lines | L1..L5 | 判别式讨论与第四态（平行渐近线/对称轴）、韦达与弦长公式、点位内外与极线三身份、曲线系（f+λg=0 与共焦点/共渐近线族）、定点·定值·最值（大题三宝） |
+
+## sets 模块 · 集合与常用逻辑（四个子专题 12 章 · 全部上线 2026-11-06）
+
+| 子专题 | 分组 | 章节前缀 | 主题 |
+|---|---|---|---|
+| 一 集合的语言 | lang | J1..J2 | 元素与集合（三性立规范、数系四圈检验、0∈ℕ 与 22/7≈π 坑）、集合的表示（列举/描述/图示三语言互译、描述法三部件、三种记法别认错）（**已上线 J1..J2**） |
+| 二 集合间的关系 | rel | X1..X2 | 子集与真子集（元素观点蕴含式、外延性双向验证、含参先查空集）、子集个数（2ⁿ 乘法原理、杨辉三角分行、真子集/非空/非空真子集四口径）（**已上线 X1..X2**） |
+| 三 集合的运算 | ops | Y1..Y4 | 交并（九元素演示台、包含链、差集不交换）、补集（全集扩张、A∖B=A∩∁U B、双重否定）、运算律（德摩根与分配、八元素逐一验证、集合⟷逻辑同构）、数轴运算（区间交并补、断口判据、端点开闭）（**已上线 Y1..Y4**） |
+| 四 常用逻辑 | logic | O1..O4 | 全称与存在量词（量词把开句变命题；真假判据不对称：全称真须证明、假只须一个反例，存在真只须一个见证、假须证无解；前置集合 M 之外不作断言）、量词命题的否定（量词翻转+结论取反、与原命题一真一假、与 A 和 ∁U A 同一结构；量词不换的误写同真同假）、四种命题（原 ⇔ 逆否、逆 ⇔ 否共享唯一假组合 p 真而 q 假、难证改证逆否 x² 奇→x 奇）、充分必要条件（真值集 A⊆B ⟺ p⇒q、四类条件对号、探针进 A∖B 读反例元素）（**已上线 O1..O4，模块完结**） |
+
+- 图编号前缀：一 J、二 X、三 Y、四 O（O 为唯一空缺大写 —— 其余 25 个字母已被既有子专题占用，旧规划的 L 与 conics 子专题六 L1..L5 冲突）。
+- 板件目录：`src/boards/sets/{lang,rel,ops,logic}/` —— numsets 数集检验台 / replab 表示互译机 / subslab 子集演示台 / subfamily 子集家族机 / vennops 交并演示台 / complab 补集演示台 / demorgan 德摩根验证机 / axisops 数轴运算机 / quants 量词判定机 / negdual 量词对偶机 / contra 逆否等价机 / condi 充要判定机。
+- 无头测试：`/tmp/stest.mjs` 135 项（12 台全量：构造/NaN 坐标审计/按钮与徽章断言，测试点按预设索引点击，改按钮顺序须同步）。
+
+## trig 模块 · 三角函数与三角形（十一大子专题 23 章 · 全部上线 2026-11-06）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+|---|---|---|---|---|
+| 一 任意角与弧度制 | angle | B1..B2 | 任意角与终边（旋转成角、正负、终边相同角 α₀+2kπ）、弧度制（α=s/r、s=αr、S=½αr²） | **已上线 B1..B2** |
+| 二 任意角的三角函数 | unit | U1..U2 | 单位圆定义与三角函数线（横 cos 纵 sin、MP/OM/AT 三线）、同角关系（平方+商数+倒数、由象限选定符号、齐次式；sec/csc/cot 倒数三函数与图象机 reciplab） | **已上线 U1..U2（阶段一完结）** |
+| 三 诱导公式 | induce | I1..I2 | 镜像五组（旋转整圈、−α/π±α/2π−α 三面镜子：名不变）、互配两组（π/2±α 坐标对调换名，k·π/2±α 总机；章内九组六函数完整总表） | **已上线 I1..I2（阶段二完结）** |
+| 四 图象与性质 | graph | W1..W3 | 正弦五点法（单位圆滚动展开、升峰降谷升）、余弦平移等价 sin(x+π/2) 与偶函数、正切断口与周期 π（奇函数、每支单调升） | **已上线 W1..W3（阶段三）** |
+| 五 图象变换 | trans | F1..F2 | 三旋钮 y=Asin(ωx+φ)（A 值域/ω 周期/φ 起点）、变换顺序两路与由图反演 | **已上线 F1..F2（阶段三完结）** |
+| 六 和差公式 | sumdiff | M1 | 两角和与差（cos 几何推导）、sin/tan 展开 | **已上线 M1（阶段四）** |
+| 七 倍角与升降幂 | double | N1..N2 | 倍角三形态、半角与升降幂 | **已上线 N1..N2（阶段四）** |
+| 八 积化和差与辅助角 | prodsum | Q1..Q2 | 积化和差、和差化积、辅助角 asinx+bcosx | **已上线 Q1..Q2（阶段四）** |
+| 九 反三角函数 | inverse | H1..H2 | 反函数与主值区间（水平线 y=t 撞出同高多角即多值、裁单调主值窗关于 y=x 翻折；arcsin [−π/2,π/2] / arccos [0,π] / arctan (−π/2,π/2)、定义域值域互换、|t|>1 域外排除）、折叠运算与恒等式（sin(arcsin x)=x 域内恒真、arcsin(sin θ) 窗外镜像/下半岸/整圈改判、对偶式 arcsin x+arccos x=π/2、设角不设值） | **已上线 H1..H2（2026-11-06）** |
+| 十 解三角形 | solve | Z1..Z3 | 正弦定理与 SSA 解的个数（a 与 h=c·sinα 比大小、两解互补 γ₁+γ₂=π）、余弦定理（投影分解、修正项符号由 cosγ 决定、arccos 反演）、面积与范围（S=½ab·sinγ 在 γ=90° 取最大、同弦同角对比 S 与 b+c 同在等腰时最大） | **已上线 Z1..Z3（2026-11-06）** |
+| 十一 综合应用 | synth | K1..K2 | 已知值求角与三角方程（三步法：参考角·象限·写族；sin 两支/cos ±α/tan 一支周期 π、|t|>1 域外排除、|t|=1 切线重根、换元 t=sinx 收口 [−1,1]）、建模与最值（y=k+A·sin(ω(x−x₀)) 四步读参、辅助角最值 a sinx+bcosx+k∈[k−R,k+R]、有界换元收口 [−1,1]） | **已上线 K1..K2（2026-11-06，模块完结）** |
+
+- 图编号前缀：一 B、二 U、三 I、四 W、五 F、六 M、七 N、八 Q、九 H、十 Z、十一 K（全部已上线）。三角形五心归入 vectors 模块。
+- 板件目录：`src/boards/trig/{angle,unit,induce,graph,trans,sumdiff,double,prodsum,inverse,solve,synth}/` —— rotator 终边转针机 / sector 弧长展开机 / unitline 单位圆坐标机 / identlab 同角恒等验证机（含切线三角形 OAT 直译 1+tan²=sec²）/ reciplab 倒数三函数图像机 / mirror 对称镜像机 / mutual 诱导总机 / sineroll 正弦滚动展开机 / coswave 余弦平移等价机 / tangap 正切断口机 / sinlab 三旋钮变波机 / ordwave 变序分波机 / cosdiff 弦长两式机 / doublelab 倍角面积机 / powlab 升降幂验证机 / prodsum 加减消元机 / auxilab 辅助角机 / arcgate 主值区间机（同高多角、裁窗翻折、三模式、|t|>1 现场排除）/ arcfold 周期折叠机（arcsin∘sin 四态改判、三角波）/ ssalab SSA 铰链机（紫圆交射线数点定解数、四条等高条即正弦定理、两解互补）/ coslaw 投影分解机（c² 水平与竖直分量、修正项符号由 cosγ 决定：锐负直零钝正、arccos 反演）/ arealab 面积范围机（夹角扫掠 γ=90° 达到最大 + 同弦同角对比 S 与 b+c 同在等腰时最大，双模式）/ solvelab 方程解机（三模式 sin/cos/tan、金线 y=t 撞波交点即特解、特解列表 π/12 约分、通解两支解族、|t|>1 超出范围无解、|t|=1 切线重根）/ tidemodel 建模与最值机（双模式：散点残差染色 + 建模四步实时核验；辅助角直读 R φ、max/min 数值实测）。
+- 建设约定：`bnav.js`/`unav.js` 等元数据只收录已建成章（避免导航链到 404），随阶段推进扩充；TrigHome 蓝图表同步更新状态；每阶段完结后速查页补该组卡片并更新总数。
+
+## functions 模块 · 函数与微积分初步（六大子专题 35 章 · 全部上线）
+
+| 子专题 | 分组 | 章节前缀 | 主题 |
+|---|---|---|---|
+| 一 从映射到函数 | concept | C1..C5 | 映射三要求、同一函数、定义域与值域、分段函数、机器观与位移（**已上线 C1..C5**） |
+| 二 函数的基本性质 | properties | S1..S7 | 单调性（定义+导数判据双视角）、奇偶镜像折叠、有界性与最值（界墙机）、对称性专题（抽象式→对称、由一半写另一半）、周期性专题（同理）、综合阅读（**已上线 S1..S7，子专题二完结**） |
+| 三 零点与存在性定理 | zeros | R1..R4 | 零点三语言、存在性定理及拓展（唯一性/非连续反例）、二分法动画、牛顿法与弦截（导数第二次入场）（**已上线 R1..R4，子专题三完结**） |
+| 四 基本初等函数 | elementary | E1..E8 | 一次（斜率巡逻）、二次（区间最值、根分布：Δ/对称轴/a·f(k) 三项判据，图 E2b）、幂函数 α 曲线族、指数、对数、指对反演镜、对勾 ax+b/x（导数×均值双证）、绝对值嵌套（三种折叠）（**已上线 E1..E8，子专题四完结**） |
+| 五 图象变换 | transforms | G1..G3 | 平移（左加右减）、伸缩与翻折、顺序与由图反演（**已上线 G1..G3，子专题五完结**） |
+| 六 变化率与导数 | calculus | V1..V8 | 割线→切线（定义+常见函数定义推导）、运算法则（面积板）、极值最值、凹凸性与切线放缩（f″ 判据、区间版不等式、e^x≥x+1）、参数综合工作流、泰勒展开（拟合、逐阶对齐导数、麦克劳林速查）、从求和到积分（Σk² ÷n³ → ∫x²）、积分初步（黎曼+基本定理，拓展）（**已上线 V1..V8，模块完结**） |
+
+- 导数融合点：S2、R4（牛顿法）、E7（对勾极值导数×均值双证）、V1..V5；**不单列模块**。
+- 建设约定：`cnav.js` 等元数据**只收录已建成章**（避免导航链到 404），随阶段推进扩充；FunctionsHome 蓝图表同步更新状态。
+
+## inequalities 模块 · 不等式（五个子专题 15 章 · 全部上线）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+|---|---|---|---|---|
+| 一 性质与比较 | prop | 性1..性2 | 不等式的性质（作差定义推四条性质、传递与运算规则、性质的逆用、乘负/倒数/同向相乘三坑）、比较大小（作差三步定号、作商同号才可用、分解配方有理化） | **已上线 性1..性2（2026-11-06）** |
+| 二 一元二次不等式 | quad | 次1..次3 | 三个二次（Δ 三态、根外根内、含参三层面、恒成立图象条件）、穿根法（符号表、奇穿偶不穿、分式移项通分、平方因子约去）、绝对值不等式（距离带读法、换元与统一式、双绝对值零点分段、图象与平方） | **已上线 次1..次3（2026-11-06）** |
+| 三 基本不等式 | basic | 基1..基3 | √(ab)≤(a+b)/2 的圆图证明（基1 一页三台：圆图、拼方图、凹凸性）、「一正二定三相等」、和定积最值/积定和最值、均值链 H≤G≤A≤Q | **已上线 基1..基3（2026-11-06；2026-11-12 基1 增补 图 基1b / 基1c）** |
+| 四 放缩与常用不等式 | scale | 放1..放3 | 三角不等式（折返与直达、双向取等判读：同号取上界、反向 ✓ 换 b→−b 得下界）、柯西不等式（向量内积模长、面积缺口 (ad−bc)²、u∥v 取等）、常用放缩（裂项错位相消、逐项夹逼、二项舍项取下界；等号检验） | **已上线 放1..放3（2026-11-06）** |
+| 五 简单线性规划与非线性规划初步 | plan | 线1..线4 | 二元一次不等式（组）表示平面区域、代点定号、凸多边形可行域、目标函数等值线平移、顶点取最值、最优解不唯一、整数解；曲线围成的可行域（圆/椭圆/抛物带）与等值线相切取最值；非线性目标（斜率型分式、距离平方型）与边的内部垂足 | **已上线 线1..线4（2026-11-09，模块完结）** |
+
+- 图编号前缀：**汉字单字** 性/次/基/放/线（26 个拉丁大写已被既有子专题占用，路由仍用拉丁字母：`/inequalities/p1..p2`、`/inequalities/q1..q3`、`/inequalities/g1..g3`、`/inequalities/f1..f3`、`/inequalities/l1..l4`，视图组件 IP1/IP2/IQ1..IQ3/IG1..IG3/IF1..IF3/IL1..IL4）。
+- 板件目录：`src/boards/inequalities/{prop,quad,basic,scale,plan}/` —— keeporder 保序变形机（四种变形 + c 扫过零 + c=0 退化）/ compare 大小比较机（作差比零 / 作商比一、同负反转、异号无结论）/ quadsolve 二次解集机（Δ 三态、a=0 退化、四种不等号方向、金色解集带）/ pierce 穿根机（符号表逐因子、积行穿根曲线奇穿偶不穿、分式渐近线与分母零点除外）/ absdist 绝对值距离机（上轴换元 t=ax+b、下轴 x、中心 −b/a 半宽 c/|a|、c 三态与 a=0 常数退化）/ meancirc 圆图均值机（直径 AB=a+b 由 C 分 a/b、泰勒斯+射影定理给 DC²=ab、竖弦 √(ab) 与半径 (a+b)/2 同台、b⟶a 滑动竖弦升到顶点、辅助线虚线夹缝=差距 A−G；**图内不再重复写公式**（只留一行安置说明，v=32），**直角边 AD、DB 一并画出**——D 处的直角记号张在两条弦之间，不画弦时它会贴着绿竖弦与金半径、被误读成 ∠CDO 是直角；`a=b` 时两线重合（夹角 0），D 处记号省去；**半圆用 SVG `A` 弧命令画（不是折线），半径两向同值必是正圆**；高度标签 `TOP−26`、`Dy−26` 避开虚线，两线差 <26px 时合并成一句；差距花括号钉在 x=800 的弧右外侧）/ sqdecomp 拼方图（图 基1b：边长 a+b 的正方形拆成蓝橙四块 ab + 中间绿块 (a−b)²，`(a+b)²=4ab+(a−b)²` 与实时账目在右栏；正方形左下 (70,380)、边长 300 像素，单位→像素 `u=S/(m+M)`，m/M 取 min/max 后四块按 m×M 拼一圈，缺口边长 (M−m)u，窄于 10px 不画块、52px 才标字）/ logconcave 凹凸性证明机（图 基1c：① `y=ln x` 凹——弦 PQ 在曲线下方、中点处 N 高于 M，`ln((a+b)/2)≥(ln a+ln b)/2` 取指数即 √(ab)≤(a+b)/2；② `y=eˣ` 凸——取 x=ln a、y=ln b，弦在曲线上方，同一式子的镜像；ln 用 isoFit 等单位取景、eˣ 竖直量级大用 mapFit，两图共用 P/Q/M/N 四点与绿色高差段）/ pairopt 配对最值机（和定蓝抛物线上界 (s/2)²、积定紫对勾下界 2√p、金绿横虚线=上界下界、一正二定三相等三前置核验、越界夹回警示）/ meanchain 均值链机（H/G/A/Q 四色点同排一轴成链、放大镜聚焦窄窗、Q²−A²=(a−b)²/4 与倒数换元、取等四点收缩合一）/ triangleineq 三角不等式机（数轴/向量双模式、折返 |a|+|b| 对直达 |a+b|、同号取上界、异号后缀 −2min、θ=0 上界取等 θ=180 下界取等、a 或 b=0 平凡取等、下界 ||a|−|b|| 反向换 b→−b 得）/ cauchy 柯西不等式机（粉平行四边形面积 = 缺口 (ad−bc)²、青投影 + u/v 两向量、判读 u∥v 取等、零向量平凡取等、坐标读数与内积读数双侧核对）/ squeeze 常用放缩机（三模式：裂项金柱 1/k² 蓝柱 1/(k−1)k 红虚线上界 2−1/n 紫虚线极限 2；夹逼金根 Sₙ 绿 ½ 线红 ½+1/(2n) 线；舍项橙柱首两项蓝柱余项、绿下界线 2、紫线 (1+1/n)ⁿ 完整和）/ regionlab 半平面与可行域机（单半平面拖探针 P 实时读 Ax+By+C 符号、换边翻转区域；不等式组四条约束逐条开关、Sutherland–Hodgman 单直线裁剪求交集、顶点坐标与鞋带面积实时读数）/ lpopt 线性规划机（可行域 x≥0,y≥0,x+y≤4,x+2y≤7 四顶点、目标 z=ax+by 等值线随 z 滑块平移、右栏顶点值表、等值线与边平行时整条边最优、整数模式枚举可行整点并高亮最优整点）/ coniclp 曲线可行域机（三预设：圆域 x²+y²≤4、椭圆域 x²/4+y²≤1、抛物带 x²≤y≤4，每个区域各取各的 isoFit 视野；线性目标等值线与边界相切，圆用圆心距、椭圆用参数式、抛物带取角点与曲边顶点候选比较；最优点与切点坐标实时标注）/ nltarget 非线性目标函数机（可行域沿用线2 四边形，可拖定点 P 与探针 Q；斜率型 z=(y−b)/(x−a) 画过 P 的两条极值切线、按视角区间判斜率上下界与竖直方向无界；距离平方型 z=(x−a)²+(y−b)² 画同心圆，最近点按「投影—截断」求边内垂足、最远点取顶点）。
+- 无头测试：`/tmp/ineqtest.mjs` 286 项（17 台全量：构造 / NaN 坐标审计 / 按钮与徽章断言，测试点按预设索引点击，改按钮顺序须同步）。
+- 建设约定：`pnav.js`/`qnav.js`/`lnav.js` 等元数据只收录已建成章；IneqHome 蓝图表同步更新状态；速查页计数随模块推进统一更新（2026-11-09 补线1..线4 四条、不等式 15 条）。
+
+## vectors 模块 · 向量与复数（六个子专题 17 章 · 全部上线 2026-11-10）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 平面向量的概念与线性运算 | `linear` | 向1..向3 | 向量表示、加法与减法、数乘与共线 | 已上线 3/3 |
+| 二 平面向量基本定理与坐标运算 | `basis` | 基1..基3 | 基向量表示、坐标线性运算、共线与定比分点 | 已上线 3/3 |
+| 三 数量积与度量 | `inner` | 积1..积4 | 数量积与投影、坐标点积与夹角、极化恒等式、向量积与它的几何意义（2026-11-10 增补） | 已上线 4/4 |
+| 四 向量的应用 | `apply` | 应1..应2 | 平面几何向量方法、物理中的向量 | 已上线 2/2 |
+| 五 复数 | `complex` | 复1..复3 | 概念与几何意义、四则运算、模与共轭 | 已上线 3/3 |
+| 六 三角形式与欧拉公式 | `euler` | 欧1..欧2 | 三角形式与乘除、欧拉公式与单位根 | 已上线 2/2 |
+
+- 图编号前缀：**汉字单字** 向/基/积/应/复/欧（拉丁大写已用尽），路由仍用拉丁字母：`/vectors/x1..x3`、`/vectors/b1..b3`、`/vectors/i1..i4`、`/vectors/y1..y2`、`/vectors/c1..c3`、`/vectors/e1..e2`，视图组件 VX1..VX3、VB1..VB3、VI1..VI4、VY1..VY2、VC1..VC3、VE1..VE2，nav `vxnav.js`、`vbnav.js`、`vinav.js`、`vynav.js`、`vcnav.js`、`venav.js`。
+- 板件目录：`src/boards/vectors/linear/` —— vecbasic 向量表示机（拖动终点读坐标与模、终点向两轴作投影垂线、绿色一支为平移后的相等向量、零向量缩成一点，4 预设）；addrule 加法法则机（三角形/平行四边形/差向量三档、同一条结果三种画法、共线与垂直判读、两枚手柄）；scalelab 数乘与共线机（λ 滑块 −2..3 跨越 0 翻向、交叉差 x₁y₂−x₂y₁ 判共线并读倍率、两枚手柄）。`src/boards/vectors/basis/` —— basisvec 平面向量基本定理机（蓝橙两支基向量 + 绿色目标向量，金色折线 O→x e₁→p 给出分解路径、系数徽章读 x y、行列式为零即共线基、分解失效，三枚手柄）；coordvec 向量坐标机（拖动 A、B，终点减起点得坐标与模，橙色虚线一支把 AB 平移到原点、灰色虚线连两端，5 预设含 A 在原点与零向量）；ratiopoint 定比分点机（λ 滑块 −2..3、P=(A+λB)/(1+λ)，金色 AP 段与青色 PB 段、延长虚线、λ=−1 时 P 缺席）。`src/boards/vectors/inner/` —— dotproj 数量积与投影机（金色投影线段与紫色垂线，投影长度带符号、钝角时显负，4 预设）；codot 坐标数量积机（逐分量乘积相加、点积为零补直角标记、余弦与夹角反算，4 预设）；polarid 极化恒等式机（平行四边形两条邻边、金紫两条对角线 a+b 与 a−b、平方差与平方和两式同台，共线与垂直各自改判）；**cross2d 二维向量积机**（图 积4a：平行四边形按 sign(x₁y₂−x₂y₁) 换色 op .14、对边画虚线、短弧加屏幕空间箭尖标转向、有向面积与 |a||b|sinθ 两式并列，共线时面积归零，两枚手柄夹 ±4）；**cross3d 三维向量积机**（图 积4b：`makeCam({cx:400,cy:250,s:98,cz:.6,yaw:.85,pitch:.42})`，z 分量即横纵叉积、两处 `rightMark3` 直角标记证明 c⊥a、c⊥b，`arc3` 标角，c 的标签必须在 `cs.flush()` 之后用 `B.tex` 画——`cs.label` 是纯 SVG text 不认 LaTeX；平面内拖动按屏幕基向量 ex/ey 解 2×2 反推 Δx、Δy，长度夹 0.55..1.4，拖拽旋转 + 重置视角）。`src/boards/vectors/apply/` —— geometrylab 三角形中线与重心机（以 A 为公共起点，三条中线分金、紫、青，红色重心把每条中线按 2:1 分开，中线徽章读 AM=(a+b)/2、重心徽章读 AG=(a+b)/3，4 预设含等腰直角与三点共线，共线时重心不画，两枚手柄）；physvec 力的正交分解机（金色合力与蓝、绿两支分力围成虚线矩形，|F| 与 θ 两滑块，Fx=|F|cosθ、Fy=|F|sinθ 逐项读，θ=90° 水平分力归零，4 预设）。`src/boards/vectors/complex/` —— complexplane 复平面与共轭机（金向量 OZ、紫共轭点关于实轴镜像、横纵虚线拆实虚部、模由勾股读出，实轴/虚轴/原点各成判读，4 预设，一枚手柄）；complexops 复数的运算机（加法/乘法/除法三档共用 z₁、z₂：加法补平行四边形、乘法读模相乘与辐角相加、除法读模相除，除数为零时给出中止判读；4 预设，两枚手柄）；complexident 模与共轭的性质机（金色积向量、紫色共轭箭头、绿色圆环标出 z̄₁z̄₂，三点重合演示共轭保持乘法，模乘积徽章逐项对照；3 预设，两枚手柄）。`src/boards/vectors/euler/` —— polarform 三角形式与辐角机（金向量 OZ、虚线圆标出模、橙色弧标出辐角、横纵虚线拆出 r cosθ 与 r sinθ，四个象限与四条半轴各有判读，4 预设，一枚手柄）；euler 欧拉公式与单位根机（单位圆上蓝点 P 读 e^{iθ} 的坐标、n 个金点均匀排在圆周上并以紫边连成正 n 边形、辐角弧与投影虚线，n 滑块 2..8、相邻夹角与根号实时读出，P 落在某个根上时判读点名是第几个，3 预设，一枚手柄）。
+- 画板测试：`/tmp/vectest.mjs` 388 项（18 台全量：预设、滑块、手柄拖动标定、徽章与审计）；全量回归 25 套全绿。
+
+## linecircle 模块 · 直线与圆（四个子专题 13 章 · 全部上线 2026-11-10）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 直线的方程 | `line` | 直1..直4 | 倾斜角与斜率、五种形式、位置关系与距离、直线系与同解变形 | 已上线 4/4 |
+| 二 圆的方程 | `circle` | 圆1..圆3 | 标准方程与一般方程、直线与圆、圆与圆 | 已上线 3/3 |
+| 三 圆的性质与定理 | `theorem` | 弦1..弦4 | 垂径与圆周角、切线与弦切角、切线长与圆幂、四点共圆 | 已上线 4/4 |
+| 四 综合应用 | `apply` | 综1..综2 | 对称与最值、轨迹与综合问题 | 已上线 2/2 |
+
+- 图编号前缀：**汉字单字** 直/圆/弦/综（拉丁大写已用尽），路由仍用拉丁字母：`/linecircle/l1..l4`、`/linecircle/c1..c3`、`/linecircle/t1..t4`、`/linecircle/z1..z2`，视图组件 LCL1..LCL4、LCC1..LCC3、LCT1..LCT4、LCA1..LCA2，nav `lnav.js`、`cnav.js`、`tnav.js`、`znav.js`。
+- 板件目录：`src/boards/linecircle/line/` —— inclineslope 倾斜角与斜率机（过原点直线随方向点转动、橙色倾斜角弧、蓝绿斜率三角形横走 1 竖走 k、α 滑块 0..179、5 预设，一枚手柄）；lineforms 直线方程的五种形式机（两点 A、B 定线，5 个形式按钮切换点斜/斜截/两点/截距/一般式，竖直、水平、过原点时相应形式退化并给出提示，截距式画出两个截距点，两枚手柄）；linerel 两条直线的位置关系机（k₁、b₁、k₂、b₂ 四滑块，平行读两线距离、相交标交点与垂直标记、重合与平行分别判读，4 预设）；linefamily 直线束机（三档 —— ① 过定点的束：橙色手柄 P 为束心，k 滑块 −3..3 转动金色当前直线，同束其他直线以暗蓝细线作底色，竖直的 x=x₀ 另画灰虚线并注明不在 k 参数内；② 平行系：k 固定、b 滑块 −3..3 平移，判读说明平行线族没有公共点；③ 过交点：l₁: x+y−3=0 与 l₂: x−y−1=0 交于 P(2,1)，λ 滑块 −4..4 转动 f₁+λf₂=0，λ=1 得 x=2、λ=−1 得 y=1，判读注明 l₂ 本身取不到；滑块按档显隐走 `parentNode||parent`，P 手柄只在第一档显示）；eqequiv 同解变形机（三档 —— ① 平方：蓝实线 y=√(4−x²) 上半圆平方后成金色整圆 x²+y²=4，红虚线下半圆是增根；② 同乘含零因式：x=1 两边乘 (y−2)，红虚线 y=2 是增根；③ 同除含零因式：x(x−1)=0 除以 x，红虚线 x=0 是失根；紫色手柄 Q 在视野内自由拖动，切档时落到该档的示例点，三枚徽章逐式判成立与否，判读给出同解、增根或失根）。`src/boards/linecircle/circle/` —— circleeq 圆的标准方程与一般方程机（圆心手柄可拖、半径滑块 0.5..3，标准方程与一般方程同步改写，`sq()` 在坐标为零时写成 `x^2`/`y^2` 避免出现 `(x)^2`，配方徽章恒读 D²+E²−4F=4r²，3 预设）；linecircle 直线与圆的位置关系机（圆 x²+y²=r² 与 y=kx+b，k、b、r 三滑块，蓝色虚线是圆心到直线的距离、垂足标 H，相交时橙色段是整条弦并读弦长 2√(r²−d²)，相切时垂足落在圆周上，3 预设）；circlerel 圆与圆的位置关系机（圆 C₁ 固定于原点、C₂ 圆心手柄可拖并吸附 0.5、r₁、r₂ 两滑块，圆心距与 r₁+r₂、|r₁−r₂| 实时比较，相交时标出两交点与公共弦、外切内切标唯一公共点、半径相等且同心判重合，4 预设）。`src/boards/linecircle/theorem/` —— chordangle 垂径定理与圆周角机（R=3，弦高滑块 0..2.6 让水平弦上下移动，过圆心的竖直直径与 M 处直角、AM/MB 等长刻度；P 手柄被夹在大弧 `[π−f+0.14, 2π+f−0.14]`（f=atan2(h,√(R²−h²))）上——夹小弧一侧会得到补角，比值翻成 2，务必按大弧区间夹；橙色圆心角弧与绿色圆周角弧，h=0 时判读转为直径特例，3 预设）；tangentchord 切线的判定与弦切角机（T、C、D 三枚贴圆周的手柄，切线射线由 `ccwCovers(T,C,D)` 取在「不含 D 的那段弧」一侧，弦切角与圆周角逐位相同，端点重合时两角徽章改为「角无定义」防 NaN，3 预设）；powertheory 切线长与圆幂定理机（三档 ① 相交弦 ② 切割线 ③ 两切线，P 手柄在圆内夹 |P|≤2.2、圆外夹 3.5..4.3，方向滑块 φ 0..350 转割线；第三档只画两条切线段与半径、切点直角标记与等长刻度，割线与圆无公共点时给出提示，3 预设）；concyclic 四点共圆与圆内接四边形机（A、B、C 三枚贴圆周的手柄 + 自由点 D 夹 |D|≤4.1，四个顶角各画同色小弧，两组对角和、D 处外角与内对角实时读数，D 距圆周 <0.06 时判读给 'ok'，顶点重合时角徽章改判读防 NaN，3 预设）。`src/boards/linecircle/apply/` —— symreflect 对称与折线最短机（x 轴为定直线，A、B、P 三枚手柄；A、B 同侧时画 A 关于 x 轴的对称点 A′ 与紫色虚线 A′B、异侧时直接连 AB，两种走法按 `A.y*B.y>0` 自动切换；空心橙圈标出最优点，判读给出 P 离交点还差多少，3 预设）；circlex 与圆有关的最值机（圆心 C(1,0)、r 滑块 0.9..2、P 沿圆周的手柄；① 定点档拖 Q，蓝圈紫圈是最近点与最远点，距离范围用 `||QC|−r|` 与 `|QC|+r`；② 定直线档 h 滑块上下移动水平线、紫虚线是垂线段，线穿圆时最小值取 0；Q 手柄与 h 滑块按模式显隐——滑块用 `parentNode||parent` 取宿主，无头 mock 只有 parent）；chordlocus 过定点的弦中点轨迹机（d、r、θ 三滑块 + A 沿 x 轴的手柄；弦中点即可见垂足，绿色虚弧为以 OA 为直径的圆落在原圆内的那段，`t0=acos(2r²/d²−1)` 起弧、P 处画直角标记，中部坐标逐项读出；θ 超出 asin(r/d) 时判读改口，3 预设）；chordopt 过定点的弦长最值机（r、θ 两滑块 + P 在圆内拖动的手柄；弦心距 OH 蓝色虚线、H 处直角标记，|AB|=2√(r²−d²) 与最短 2√(r²−|OP|²)、最长 2r 并列，预设 ②③ 直接把 θ 转到最短与最长位置，3 预设）。
+- 画板测试：`/tmp/lctest.mjs` 347 项（16 台全量：构造、预设、滑块、手柄拖动标定、徽章与审计）。
+- 建设约定：`lnav.js`、`cnav.js`、`tnav.js`、`znav.js` 等元数据只收录已建成章；LineCircleHome 按子专题分节，未建子专题用 dim 卡；速查页计数随模块推进统一更新。
+
+## polar 模块 · 极坐标与参数方程（四个子专题 9 章 · 全部上线 2026-11-10）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 极坐标系与互化 | `coords` | 极1..极2 | 极坐标系、极径与极角；极坐标与直角坐标互化 | 已上线 2/2 |
+| 二 曲线的极坐标方程 | `curves` | 曲1..曲2 | 圆的极坐标方程、直线与射线的极坐标方程 | 已上线 2/2 |
+| 三 参数方程 | `param` | 参1..参3 | 参数方程与消参、直线与圆、圆锥曲线 | 已上线 3/3 |
+| 四 参数方程的应用 | `apply` | 轨1..轨2 | 参数求最值、参数方程与轨迹 | 已上线 2/2 |
+
+- 图编号前缀：**汉字单字** 极/曲/参/轨（拉丁大写已用尽），路由仍用拉丁字母：`/polar/j1..j2`、`/polar/q1..q2`、`/polar/s1..s3`、`/polar/g1..g2`（均已上线），视图组件 PJ1..PJ2 / PQ1..PQ2 / PS1..PS3 / PG1..PG2，nav `pjnav.js` / `pqnav.js` / `psnav.js` / `pgnav.js`。
+- 板件目录：`src/boards/polar/coords/` —— polargrid 极坐标系与点的极坐标机（极轴、同心圆与等分射线作参照、橙色弧是极角、拖动 P 同时读极径与极角、等价表示徽章列出 θ+360° 与负径一式，4 预设，一枚手柄）；polartrans 极坐标与直角坐标互化机（同一张平面上两套坐标同台、横纵投影虚线即余弦与正弦、互化徽章逐项代入 x=ρcosθ、y=ρsinθ、判读按象限给出反求极角写法，4 预设，一枚手柄；负零一律折成 0 显示）。`src/boards/polar/curves/` —— polarcircle 圆的极坐标方程机（三种圆心位置切换：圆心在极点 ρ=a、在极轴上 ρ=2a cosθ、在垂直线上 ρ=2a sinθ；金色圆周与蓝色直径 OA 同台，拖动 P 时圆周角 ∠OPA 保持直角，负径补齐另半个圆，a 滑块 0.5..1.8，3 位置，一枚手柄）；polarline 直线与射线的极坐标方程机（过极点 θ=α / 垂直极轴 ρcosθ=a / 平行极轴 ρsinθ=b 三位置，α、a、b 三滑块，蓝色垂线段给出极点到直线的距离，拖动 P 沿直线滑动，3 位置，一枚手柄）。`src/boards/polar/param/` —— paramtrace 参数方程与消参机（直线、圆、抛物线三档，浅色整条曲线与金色已走轨迹同看，参数范围裁剪可见段，3 模式，一枚手柄）；paramline 直线的参数方程机（定点 P₀ 与倾斜角 α，t 为有向距离，α 弧与 P 的位置读数，3 预设，一枚手柄）；paramcircle 圆的参数方程机（圆心 C 与半径 r，θ 为圆心角，半径滑块 0.5..2.5，3 预设，一枚手柄）；paramconic 圆锥曲线的参数方程机（椭圆离心角、双曲线 sec/tan、抛物线 t，双曲线 θ=90° 时点不存在，a/b/p/θ/t 五滑块，3 曲线，一枚手柄）。`src/boards/polar/apply/` —— paramopt 参数方程求最值机（椭圆 x=2cosθ、y=sinθ 上的点到 Q(3,0) 的距离平方化为 3u²−12u+10，u=cosθ∈[−1,1]；右栏画 f(u) 图象与当前 u，θ 滑块与 3 预设，一枚手柄）；paramlocus 参数方程与轨迹机（P 绕 x²+y²=4 运动，M 为 AP 中点，M=(2+cosθ, sinθ)，绿色虚线画出轨迹圆 (x−2)²+y²=1，θ 滑块与 3 预设，一枚手柄）。
+- 画板测试：`/tmp/polartest.mjs` 213 项（8 台全量：构造、预设、手柄拖动标定、徽章与审计）。
+- 建设约定：`pjnav.js` 等元数据只收录已建成章；PolarHome 按子专题分节，四节均为实卡；速查页计数随模块推进统一更新。
+
+## solid 模块 · 立体几何（四个子专题 10 章全部上线 · 14 台 · 2026-11-10）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 认识空间几何体 | `recog` | 体1..体2 | 多面体（面/棱/顶点、棱柱棱锥棱台、欧拉公式）、旋转体（轴/底面/母线、圆柱圆锥圆台、球与球面） | 已上线 2/2 |
+| 二 体积与表面积 | `measure` | 积1..积3 | 柱锥台的体积与表面积（展开图、台体一式覆盖柱锥）、球的体积表面积与截面（r²=R²−d²）、组合体与外接球内切球 | 已上线 3/3 |
+| 三 空间中的位置关系 | `relation` | 位1..位2 | 平行与垂直（判定定理与性质定理、二面角）、异面直线与角（平移法、线面角、最小角定理、点面距） | 已上线 2/2 |
+| 四 空间直角坐标系与向量 | `coords` | 标1..标3 | 空间直角坐标系与坐标平面、平面的方程与法向量、距离与夹角的坐标算法 | 已上线 3/3 |
+
+- 图编号前缀：**汉字单字** 体/积/位/标（拉丁大写已用尽），路由仍用拉丁字母：`/solid/r1..r2`、`/solid/m1..m3`、`/solid/w1..w2`、`/solid/c1..c3`，视图组件 SR1..SR2、SM1..SM3、SW1..SW2、SC1..SC3，nav `rnav.js`、`mnav.js`、`wnav.js`、`cnav.js`。**位2 一章挂两块板（图 位2 skewlab、图 位2b minangle）**。**注意 views/solid/coords/cnav.js 与 views/linecircle/circle/cnav.js 同名但不同目录**，导入时按相对路径区分。
+- 板件目录：`src/boards/solid/recog/` —— polyhedronlab 多面体机（三棱柱/长方体/三棱锥/四棱锥/四棱台五档，一色一面、`op=0.16` 半透明，棱由 `edgesOf(faces)` 去重，顶点标签沿「投影点 − 投影中心」方向外推 15px，徽章读 V/E/F 并代进 V−E+F=2，`orbit` 拖拽旋转 + 重置视角）；revsellab 旋转体机（圆柱/圆锥/圆台/球四档，r、h、r₂ 三滑块按档显隐——滑块宿主取 `parentNode||parent` 兼容无头 mock，曲面用 40 段窄条 `op=0.055` 铺成，轴为灰虚线，母线橙色加粗并标 l，球档改用经纬线 + 半透明轮廓圆盘，经纬线可切虚线）。`src/boards/solid/measure/` —— measurelab 柱锥台体积与表面积机（正棱柱/正棱锥/正棱台三档，n 3..8、a、h、a₂ 四滑块，底面金色、上底绿色、侧面按 `FACE_COLORS` 分色，四枚徽章读底面积/侧面积/表面积/体积；`a₂` 一律夹到 `a−0.05` 以下保证上底更小）；spherecutlab 球的体积表面积与截面机（R、d 两滑块，紫色截面平面 `op=0.12`、金色截面圆 `op=0.22`，O–P₀–A 直角三角形 + P₀ 处直角折线，`|d|≥R` 时截面徽章改读「—」，经纬线按钮可切成 `dash:'5 4'` 虚线）；mixlab 组合体与外接球内切球机（三档：正方体挖去内切球 `V=a³(1−π/6)`、`S=6a²+πa²`，长方体外接球 `R=½√(a²+b²+c²)` 连体对角线，正四面体两球 `R=√6a/4`、`r=√6a/12`；长方体顶点按 `(x,y,z)` 三位二进制排索引，bit2 管 x，面清单 `[0,4,6,2]` 等别按旧序写错；长/宽/高三滑块只在第二档显隐；球用 `dot(O, R*cam.s, {op})` 加三条大圆）。`src/boards/solid/relation/` —— parperplab 平行与垂直机（单位正方体 `A..D₁` 四档：线面平行 `A₁B∥DCC₁D₁`、线面垂直 `AA₁⊥ABCD` 两处直角标记、面面平行、面面垂直 `ADD₁A₁⊥ABCD` 画平面角弧；骨架面 `#5c6a80 op=0.06`、棱 `#8fa3bd op=0.55`，高亮线金 `w=2.4`、高亮面 `op=0.18..0.26`）；skewlab 异面直线与角机（三档：`A₁B` 与 `B₁C` 平移 `A₁D` 后读 60°、`A₁B` 与 `ABCD` 投影读 45°、`A₁` 到平面 `BDC₁` 距离 `2√3/3` 垂足恰为重心 `(2/3,2/3,1/3)`；垂足变量勿命名 `H`，与画板尺寸 `const W=800,H=470` 撞名会报重复声明）；**minangle 最小角定理机（图 位2b，2026-11-10 增补）**——`makeCam({cx:470,cy:210,s:105,cz:.75,yaw:.9,pitch:.36})`，`OA=2.0`、`L=1.4`，`O=(0,0,0)`、`A=(2,0,0)`、`P=(0,0,h)`、`B` 在平面内按 φ 由 `AO` 方向转向 `y` 轴；φ 滑块 0..90°、h 滑块 0.8..2.2，`PO` 虚线、`AO` 蓝、`PA` 金、`AB` 绿、`PB` 紫虚线，`rightMark3` 标 `PO⊥α`，三处 `arc3`（radii .44/.62/.82）分别标 θ₁、θ₂、θ，徽章读线面角/两夹角/`cosθ=cosθ₁cosθ₂` 的乘积与判读（φ=0 取等、φ=90° 取最大）；**judgepara / judgeperp / judgeface 三块判定图示（2026-11-10 用户反馈「正方体不够直观」后新增，一块平面 + 几条直线，与正方体并排挂在位1正文里）**——judgepara 线面平行的判定（平面 `α` 内绿线 `a`、平面外金线 `b` 且 `b∥a`，两端灰虚线连起，徽章分列 `b∥a`、`a⊂α`、`b⊄α`、`b∥α`）、judgeperp 线面垂直的判定（平面内 `m`、`n` 交于 `P`，`l` 过 `P` 且两处 `rightMark3` 直角标记分画在 xz、yz 两个平面里，判读「两条直线必须相交」）、judgeface 面面平行与垂直的判定（两档共用 `alphaPlane()`：① 两块平行平面各画两条相交直线 `a,b` 与 `a′,b′` 两两平行，② 竖直平面 `β` 含 `α` 的垂线 `a`，交线 `l` 上画直角；`cam.cz` 按档取 0.9 / 0.85）。三块板都是 `yaw=0.85,pitch=0.55` 的斜俯视，拖动旋转 + 重置视角，正文论断与图一一对应。`src/boards/solid/coords/` —— spacelab 空间直角坐标系与坐标平面机（三轴 3.0 长带屏幕空间箭头三角，三张坐标平面 xOy 蓝 / yOz 绿 / zOx 紫各 `op=0.07` 并铺 ±3 的整数网格 `op=0.16`；P 手柄在水平面内拖动——用 `view()` 推出的 ex/ey 两个屏幕基向量解 2×2 线性方程反算 Δx、Δy，`|det|` 太小时跳过；z 走滑块；虚线拆出 P→P′→两轴的三段读数，徽章读 P 坐标、|OP|、卦限或所在坐标平面）；planeeqlab 平面方程与法向量机（截距 a、b、c 三滑块 + 三预设「等截距/一般截面/陡斜面」，平面 `x/a+y/b+z/c=1` 取三角形 ABC 并铺三向 1/4 网格线，法向量 `(bc,ac,ab)` 从重心 G 用 `arrow3` 画出，徽章读截距式、法向量、原点到平面距离 `abc/|n|`；预设按钮用 `slider.sync()` 同步滑块 UI）；vecanglelab 距离与夹角的坐标算法机（坐标轴用 `arrow3` 从顶点 A 出发画 1.45 长，三档：点面距 `d=|AP·n|/|n|`、线线角 `cos=|u·v|/(|u||v|)`、线面角 `sin=|u·n|/(|u||n|)`；`cam.cz` 固定 0.5 居中正方体，`s=148`）。**卦限编号的符号表**：Ⅰ(+,+,+) Ⅱ(−,+,+) Ⅲ(−,−,+) Ⅳ(+,−,+) Ⅴ..Ⅷ 同序但第三坐标为负；x=0 落在 yOz 平面、y=0 落在 zOx 平面、z=0 落在 xOy 平面（**别按轴序号直接对号，这里错过一次**）。
+- 画板测试：`/tmp/solidtest.mjs` 238 项（14 台全量：构造、预设与滑块读数按公式核对、手柄拖动、经纬线虚线开关、旋转事件派发后审计）。
+- 建设约定：`rnav.js` 等元数据只收录已建成章；SolidHome 未建子专题用 dim 卡；速查页按子专题分节，未建小节先不列卡片。
+
+## sequences 模块 · 数列（七个子专题 20 章 · 全部上线 2026-11-09）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+|---|---|---|---|---|
+| 一 数列的概念与表示 | concept | 数1..数3 | 定义在正整数集上的函数（有序、通项、单调与界、孤立点图象）、递推公式（初始项 + 一阶/二阶关系、逐项生成、递推与通项）、前 n 项和与通项（S₀=0 约定、n≥2 作差、a₁=S₁、合式与分段两例、三坑） | **已上线 数1..数3（2026-11-09）** |
+| 二 等差数列 | diff | 等1..等3 | 定义与通项（一次函数、直线斜率即公差、等差中项）、性质与判定（下标和、中心对称、判定三法）、前 n 项和（倒序相加 + 台阶削平两块画板、Sₙ 为缺常数项的二次式） | **已上线 等1..等3（2026-11-09）** |
+| 三 等比数列 | geo | 比1..比3 | 定义与通项（指数式、单调由 a₁ 与 q 共同决定、等比中项两候选、判定三法）、性质（下标和、aₙ₋ₖaₙ₊ₖ=aₙ²、等比数列之积成等比）、前 n 项和（错位相减 + 线段填充两块画板、q=1 单列） | **已上线 比1..比3（2026-11-09）** |
+| 四 数列求和的方法 | sum | 和1..和3 | 分组求和（拆成等差与等比）与裂项相消（1/(k(k+1)) 逐项相消、余 [0,1/(n+1)]）、错位相减（等差乘等比、qSₙ 错位、末项另计）、倒序相加与并项（正负交替两两并成 −1、奇偶分论） | **已上线 和1..和3（2026-11-09）** |
+| 五 递推与构造 | recur | 递1..递4 | 累加法与累乘法（逐式相加/相乘、中间相消）、构造法（不动点平移成等比、\|p\| 判收敛）、分式递推与不动点（蛛网图）、特征根法与二阶线性递推（特征方程、叠加、重根与共轭复根、比内公式） | **已上线 递1..递4（2026-11-09）** |
+| 六 数学归纳法 | induct | 归1..归2 | 归纳原理两步（起点 + 递推、缺一不可、最小数原理）、书写四段、归纳证明与归纳—猜想（前几项求和/递推算值猜通项再证） | **已上线 归1..归2（2026-11-09）** |
+| 七 数列的应用 | apply | 用1..用2 | 增长、折损与分期付款（复利/单利/折损、等额分期 Bₖ=Bₖ₋₁(1+r)−x 用构造法解）、数列与函数/不等式综合（作差作比判单调、比值穿越给最大项、Sₙ 最值看各项符号） | **已上线 用1..用2（2026-11-09，模块完结）** |
+
+- 图编号前缀：**汉字单字** 数、等、比、和、递、归、用（拉丁大写已用尽），路由仍用拉丁字母：`/sequences/s1..s3`、`/sequences/d1..d3`、`/sequences/g1..g3`、`/sequences/h1..h3`、`/sequences/r1..r4`、`/sequences/i1..i2`、`/sequences/u1..u2`，视图组件 SQ1..SQ3 / DQ1..DQ3 / GQ1..GQ3 / HQ1..HQ3 / RQ1..RQ4 / **IN1..IN2**（induction 用 IN，避 inequalities 的 IQ1..IQ3）/ UQ1..UQ2，nav 文件 `sqnav.js` / `dnav.js` / `gnav.js` / `hnav.js` / `rnav.js` / `inav.js` / `unav.js`。
+- 板件目录：`src/boards/sequences/{concept,diff,geo,sum,recur,induct,apply}/` —— seqfunc 数列散点机 / recurgen 递推生成机 / snsplit 前 n 项和机（concept，见上）；diffseq 等差序列机（项落在斜率 d 的直线上、下栏差分全落在同一水平线、探针读第 n 项）/ indexsum 下标和机（两对项以中心项为轴等高对称、右侧引线读数、d=0 只标一处）/ reverseadd 倒序相加机（正序蓝段与倒序橙段按列拼成等高条、右栏推导五步、n 变时 k 的 max 与 UI 同步夹回）/ steplevel 台阶削平机（金矩形高取平均高度、高出部分绿与不足部分红等面积、削平后面积即 Sₙ，无图象开关）；geoseq 等比序列机（项落在 a₁q^{n−1} 上，q>0 用 B.plot 连实曲线、q<0 与 q=1 各自单列，公比条贴 y=q，四预设 ①q=2 ②q=0.5 ③q=−1.5 ④q=1）/ indexprod 下标积机（上栏成对项 c±1 蓝、c±2 橙、中心项金，下栏三根等高的项积条与金色等高虚线，读 aₙ₋ₖaₙ₊ₖ=aₙ²）/ shiftmul 错位相减机（上行 Sₙ 各列基线 yT=250、下行 qSₙ 右移一列基线 yB=430，绿列标相消、金柱标余项，右栏五步推导）/ segfill 线段填充机（总长 L=a₁/(1−q) 的线段由逐项缩短的条填满、余量 Lqⁿ 红虚线，三预设，滑块通项/剩余/极限和三徽章）；groupbar 分组求和机（通项拆成 k 与 2^{k−1} 两截堆叠成柱，右栏两个和分别列出再相加）/ crackline 裂项相消机（数轴 [0,1] 上 1/k 刻度，段长 1/(k(k+1)) 首尾相接，余下 [0,1/(n+1)]）/ shiftarith 等差乘等比机（aₖ=kq^{k−1}，左右两排条共用基线分别画 Sₙ 与 qSₙ 的项，绿竖段 q^{k−1} 逐列相消，末列红虚线 −nqⁿ，右栏给出 Sₙ=1/(1−q)[(qⁿ−1)/(q−1)−nqⁿ]）/ pairparity 并项奇偶机（正项向上蓝、负项向下橙，绿括号两两并成 −1，滑块 n 到 10，奇偶两式与统一式并给）；induct 组：domino 递推链机（P(1)..P(9) 一排卡片、绿 ≤k 已证 / 金 k+1 正在推 / 灰其余，B.arrow 只画当前一步，滑块 k 与「推进一步」按钮）/ guessprove 归纳证明机（左栏 n=1..6 递推算值对猜出的 1/(3n−2)，右栏把 P(k) 代入递推式化简到 P(k+1)，滑块 k）；apply 组：growth 增长折损机（复利/单利/折损三模式、逐年的条与另一种模式的对照虚线，本金/年利率/年数三滑块）/ seqineq 数列最值机（n²/cⁿ 的条与金顶，比值栏以 y=1 金线上下分绿红，三预设 c=2,3,4）。
+- 无头测试：`/tmp/seqtest.mjs` 330 项（23 台全量：构造 / NaN 坐标审计 / 按钮与徽章断言，预设按钮按索引点击，改按钮顺序须同步；reverseadd 与 steplevel 没有 graphToggles，按钮数分别为 3 与 3）。
+- 建设约定：`sqnav.js` 等元数据只收录已建成章；SequencesHome 按子专题分七节列全 20 章（已完结，不再有 dim 卡）；**同一知识点多开画板，一页可挂多板** —— 等3 挂倒序相加 + 台阶削平，比3 挂错位相减 + 线段填充，和1 挂分组求和 + 裂项相消。
+
+## combinatorics 模块 · 组合学与二项式定理（四个子专题 9 章 · 9 台 · 全部上线 2026-11-10）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 计数原理 | `counting` | 计1..计2 | 分类加法与分步乘法、排列数与排列 | 已上线 2/2 |
+| 二 排列与组合 | `permcomb` | 排1..排2 | 组合数与组合数公式、捆绑插空与分组模型 | 已上线 2/2 |
+| 三 二项式定理 | `binomial` | 项1..项3 | 二项式定理与通项、杨辉三角与系数性质、赋值法与系数和 | 已上线 3/3 |
+| 四 组合恒等式与应用 | `identity` | 恒1..恒2 | 帕斯卡恒等式与网格路径、近似计算与整除性 | 已上线 2/2 |
+
+- 图编号前缀：**汉字单字** 计/排/项/恒（拉丁大写已用尽），路由仍用拉丁字母：`/combinatorics/c1..c2`、`/combinatorics/p1..p2`、`/combinatorics/b1..b3`、`/combinatorics/i1..i2`，视图组件 CC1..CC2、CP1..CP2、CB1..CB3、CI1..CI2，nav `ccnav.js`、`cpnav.js`、`cbnav.js`、`cinav.js`。
+- 板件目录：`src/boards/combinatorics/counting/` —— addmul 分类加法与分步乘法机（两档：① 甲地到乙地上下两排弧线分「火车 m 种」「飞机 n 种」互不重叠，读 N=m+n；② 经中转站两段弧族、首尾成对的一种走法标金，读 N=m×n；m、n 两滑块各 1..4）；permlab 排列数机（上方 m 个金格写 n、n−1…、格下小字「x 种」并以 × 相连，下方 n 个元素圆片、前 m 个金色并以金虚线连到格子，徽章读 A(n,m) 与 n!/(n−m)!，滑块 m 1..6、n 3..6 相互夹紧）。`src/boards/combinatorics/permcomb/` —— comblab 组合数机（元素圆片一排，下方 C(n,m) 列 × m! 行的格子阵、首列金色，读出「C 列 × m! = A」，滑块 m 1..3、n 4..6 以格子数不超 120 为限）；modellab 捆绑/插空/分组机（三档：① 甲乙被金色圆角块捆住、块内 2! 种；② n−2 人排开留 n−1 个虚线空位、甲乙插在两端空位；③ 两组框、等量分组除以组数去重，人数滑块 4..6）。`src/boards/combinatorics/binomial/` —— binomiallab 展开式与通项机（n 个括号各列出 a、b 两层，被选中的字母标金，徽章 T_{k+1}=C(n,k)a^{n−k}b^k 逐项代入，滑块 k、n 相互夹紧）；pascaltri 杨辉三角机（第 0..6 行按 x=410+(c−row/2)·56 排开，选中项标金、对称项标蓝，徽章读本行项数与 2ⁿ 之和、对称项与最大项，两滑块）；coefsumlab 赋值法与系数和机（各系数成柱、偶次蓝奇次金，令 x=1 读系数和、令 x=−1 给出偶次项和与奇次项和，滑块 n 2..8）。`src/boards/combinatorics/identity/` —— pascalid 网格路径机（(m+1)×(n+1) 格点各标 C(i+j,i)，金色折线由「右、上」交替走出一种走法，终点金圈、前驱两点蓝，徽章读 C(m+n,m) 与其两前驱之和，两滑块 1..5）；binomapp 近似与整除机（两档：① x=a/100，柱高按 √ 压缩、除数取「各项最大值」而非首项（否则 a 大时柱子冲出画框），保留的几根为金，余项贴着轴线、右上方另开一格「余项放大」单独定高（首尾两项与最大项标读数，其余只比柱高）并读科学记数法，读截断式与 (1+x)ⁿ 的数值差，判读按相对误差 rel 分三档改口（<1e-3 够用 / <2e-2 前两位小数可靠 / 否则近似失效）；② x=a 取整数，柱高上限抬到 230 把画框吃满、n≥9 时隔一根标一次读数免得挤成串，读 (1+a)ⁿ=1+na+a²q 的余项形式，说明 (1+a)ⁿ−na−1 是 a² 的倍数；指数滑块 2..12）。
+- 画板测试：`/tmp/cbtest.mjs` 119 项（9 台全量：构造、预设与滑块读数按公式核对、夹紧逻辑、徽章与审计）。
+- 建设约定：`ccnav.js` 等元数据只收录已建成章；CombinatoricsHome 四个子专题均为实卡并列出 9 台；速查页按子专题分四节列 9 张卡片（总 237 条 / 76 组）。
+
+## probability 模块 · 概率与统计（六个子专题 18 章 · 22 台 · 全部上线 2026-11-10）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 随机事件与概率 | `sample` | 概1..概2 | 事件的关系与运算、频率与几何概型 | 已上线 2/2 |
+| 二 条件概率与独立性 | `cond` | 独1..独3 | 条件概率与乘法公式、全概率与贝叶斯、相互独立与独立重复试验 | 已上线 3/3 |
+| 三 随机变量与分布 | `rv` | 分1..分4 | 分布列、二项与超几何、连续型与正态、卡方分布 | 已上线 4/4 |
+| 四 数字特征 | `num` | 数1..数3 | 数学期望、方差与标准差、协方差与相关系数 | 已上线 3/3 |
+| 五 统计 | `stat` | 统1..统3 | 抽样与频率分布直方图、样本的数字特征、一元线性回归 | 已上线 3/3 |
+| 六 统计推断与检验 | `test` | 检1..检3 | 假设检验与两类错误、独立性检验、正态分布下的均值检验 | 已上线 3/3 |
+
+- 图编号前缀：**汉字单字** 概/独/分/数/统/检，路由仍用拉丁字母：`/probability/g1..g2`、`/probability/c1..c3`、`/probability/r1..r4`、`/probability/n1..n3`、`/probability/t1..t3`、`/probability/j1..j3`；视图组件 PB1..PB2、PC1..PC3、PR1..PR4、PN1..PN3、PT1..PT3，**检验三章用 PTJ1..PTJ3** —— 检验的 `j1..j3` 与 polar 的 `PJ1/PJ2` 撞名（2026-11-10 踩过：构建报 Identifier "PJ1" has already been declared），别改回 PJ；nav 文件 `samnav.js`、`condnav.js`、`rvnav.js`、`numnav.js`、`statnav.js`、`testnav.js`。
+- 板件目录：`src/boards/probability/sample/` —— eventops 事件运算机（等可能样本点点阵、A 与 B 两圆取并/交/对立、容斥读数）/ freqstab 频率折线机（固定种子模拟投掷，频率随次数向 p 靠拢）/ geoprob 几何概型机（长度比与面积比两档、撒点频率趋于比值）；`cond/` —— condprob 条件概率机（样本空间缩到 A 内，两根横条比较 P(B) 与 P(B|A)，滑块让两圆分离）/ bayes 全概率与贝叶斯机（树状图逐枝相乘、后验柱与先验柱并排）/ repeatlab 独立与重复试验机（正方形切四格读乘积、曲线读至少一次）；`rv/` —— rvlist 分布列构成机（袋中三色球、柱高即概率、柱高之和恒为 1）/ binomdist 二项分布机（柱形随 n、p 改写，峰值与分布列和实时读出，「成功次数 k」标签放右上角避开 k=n 柱）/ hypergeom 超几何分布机（N、M、n、k 四滑块，可能取值的上下界随 M 变化，公式写到右上角、柱高压到 160 免得撞球点）/ uniformdens 密度与面积机（矩形密度、区间概率即面积，m 用 mapFit 非等单位）/ normaldist 正态分布机（±σ、±2σ、±3σ 三档阴影）/ chisqdist 卡方分布机（Lanczos lgamma + 正则化 γ 函数算上侧面积）；`num/` —— expectlab 期望与重心机（概率是压在横梁上的重量、支点落在 E(X)）/ varlab 方差与 σ 带机（金色 μ±σ 带随集中程度收窄，**μ±σ 标签须画在带右端外面**）/ covlab 协方差机（140 组固定样本、同号点金异号点蓝、右侧两条刻度带圆点）；`stat/` —— samplinglab 分层抽样机（100 人分三层、简单随机与按比例分层两档、可重抽，**层名写在点阵右侧 x=390** 否则压住点阵与表头）/ histlab 频率分布直方图机（100 个固定成绩、组数 5..12、面积恒为 1、平均数与中位数竖线 + 金色频率折线）/ statnum 样本数字特征机（10 个数堆在数轴上、金色点可拖、下方逐行画偏差条；**数据取 [1,2,2,3,3,4,4,5,9]**，让平均数 3.9 与中位数 3.5 分开）/ regress 一元线性回归机（9 个散点、金色点可拖、回归直线过样本中心、红色竖直残差；**默认点取 (2.5,4.2) 不落在直线上**，才看得见青色均值点）；`test/` —— errtest 两类错误机（H₀ 与 H₁ 两条正态曲线、临界值 c 与偏移 δ 两滑块、α 红 β 青）/ chisqtest 独立性检验机（2×2 列联表四格可改、右侧自由度 1 的 χ² 密度与 3.841、6.635 两临界值，**曲线从 x=0.34 起画**，从 0 起画会冲出画框）/ ztest 均值检验机（上下两幅共用 z 轴：上图拒绝域、下图 p 值，双侧/右侧/左侧三档）。
+- 画板测试：`/tmp/ptest.mjs` 209 项（22 台全量：构造、NaN 坐标审计、按钮与滑块计数、徽章数值核对）。
+- 建设约定：`samnav.js` 等元数据只收录已建成章；ProbabilityHome 六个子专题均为实卡；速查页按子专题分六节列 18 张卡片（总 237 条 / 76 组）。
+
+## numeric 模块 · 数值计算（四个子专题 10 章 · 10 台 · 全部上线 2026-11-10）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 误差 | `error` | 误1..误2 | 绝对误差与相对误差、有效数字；误差的传播与条件数 | 已上线 2/2 |
+| 二 方程求根 | `root` | 迭1..迭3 | 二分法；牛顿迭代与弦截法；不动点迭代与压缩映射 | 已上线 3/3 |
+| 三 数据拟合 | `fit` | 拟1..拟2 | 最小二乘与线性拟合；非线性拟合与线性化 | 已上线 2/2 |
+| 四 函数逼近 | `approx` | 逼1..逼3 | 泰勒多项式与余项界；插值多项式与龙格现象；数值积分 | 已上线 3/3 |
+
+- 图编号前缀：**汉字单字** 误/迭/拟/逼（拉丁大写已用尽），路由仍用拉丁字母：`/numeric/e1..e2`、`/numeric/i1..i3`、`/numeric/f1..f2`、`/numeric/a1..a3`，视图组件 NE1/NE2、NI1..NI3、NF1/NF2、NA1..NA3，nav `enav.js`、`inav.js`、`nfnav.js`、`nanav.js`。
+- 板件目录：`src/boards/numeric/error/` —— errlab 误差与有效数字机（真值取 π/√2/√7，数轴放大到「末位的 1 个单位」即视野 xe±1.6u，金色带 ±0.5u 是允许限、橙线是真值、红段是实际误差；下方两条横条以末位单位满格对照，右栏读末位单位/允许误差/实际误差；**真值竖线只画到 AY+10，x\* 标签放 AY+50**，否则穿过刻度数字）/ errprop 误差传播机（四预设 x²、√x、1/x、x−1 各带自己的视野与条件数；蓝色竖带是输入误差范围、橙虚线是切线、右侧红条是输出误差，**切线用 #ff9e4a 宽 2 才压得住蓝曲线**；手柄按映射反解回 x₀）；`root/` —— bisectlab 二分机（f=x³−x−1，保留区间画成蓝竖带、右栏记下每步的 a/b/中点，**视野取 x 0.7..2.3 / y −2.4..5.6**，端点竖线画在轴上方 py(0)−26..−2、a/b 标签放轴上 −36，避免压住刻度数字）/ newtonlab 牛顿机（金色切线从与 x 轴的交点出发穿过 P、紫虚线标当前函数值、右上角迭代表按 10 的幂排版；**端点用 `xn + (5.1−yn)/k` 夹住，别让切线冲出画框**；xₙ₊₁ 标签放交点右上）+ fixpointlab 不动点机（φ(x)=ax+(1−a)·2 恒以 2 为不动点，蛛网 8 步、右栏列 x₀..x₆ 与 |φ′|=|a|；a 的四个预设按钮**创建顺序是 [.5,−.5,−1,1.5]，mark() 数组必须同序**；「不动点」说明放右栏，别压在图上）；`fit/` —— lsfit 最小二乘机（七个固定 x 的样本点、起伏幅度与三组数据按钮，最小二乘解每次现算；金直线过青色样本中心、红虚线是残差、每个残差另画一个面积正比的红色小方块；手柄上下拖最近的那一点）/ curvefit 线性化机（指数型 y=Ae^{bx} 与幂函数型 y=Ax^b 两档，左图原坐标、右图变换后坐标各自 mapFit；**左图视野按档取 y 0..17 / 0..4.8**，一边一改别忘改 grid 步长）；`approx/` —— taylapprox 泰勒逼近机（上板 cos x 与 Pₙ 共图、下板画差的绝对值与紫虚线余项界 |x|^{n+1}/(n+1)!，x=2 处一条竖线贯通两板；**n 为奇数时图形不变**，因 cos 的奇次项系数为零）/ runge 插值机（f=1/(1+25x²)，等距/切比雪夫节点由 toggleBtn 切换，拉格朗日插值直接评估、采样 600 点找最大偏离并标注；**视野 y 到 3.0，高次插值冲出画框即龙格现象本身**）/ quadnum 数值积分机（[0,1] 上积分 1/(1+x²)=π/4，左端点/中点/梯形/辛普森四档、段数 1..12；辛普森把奇数段折成偶数、每两段画一条抛物线围成的绿色区域；右栏按 n 与 n/2 两档误差比估出阶数）。
+- 画板测试：`/tmp/numtest.mjs`（10 台全量：构造、NaN 坐标审计、滑块与徽章数值核对）。
+- 建设约定：`enav.js` 等元数据只收录已建成章；NumericHome 四个子专题均为实卡；速查页与 README 随模块收尾统一更新。
+
+## linalg 模块 · 线性代数初步（五个子专题 14 章 · 14 台 · 全部上线 2026-11-10）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 行列式 | `det` | 行1..行2 | 二阶行列式与面积；三阶行列式与体积、行列式的性质 | 已上线 2/2 |
+| 二 矩阵的运算 | `matrix` | 矩1..矩3 | 矩阵的概念与线性运算；乘法与转置；逆矩阵、初等变换与秩 | 已上线 3/3 |
+| 三 矩阵与空间 | `space` | 空1..空3 | 二维线性变换；三维线性变换与体积比；秩与方程组解的结构 | 已上线 3/3 |
+| 四 特征值与特征向量 | `eigen` | 特1..特3 | 特征方程与特征值、二维几何意义；对角化与矩阵的幂；反复作用与主特征方向 | 已上线 3/3 |
+| 五 二次型 | `quad` | 型1..型3 | 二次型与它的曲线；转轴化标准形；用特征值给曲线分类 | 已上线 3/3 |
+
+- 图编号前缀：**汉字单字** 行/矩/空/特/型（拉丁大写已用尽），路由仍用拉丁字母：`/linalg/d1..d2`、`/linalg/m1..m3`、`/linalg/s1..s3`、`/linalg/e1..e3`、`/linalg/q1..q3`，视图组件 LD1/LD2、LM1..LM3、LS1..LS3、LE1..LE3、LQ1..LQ3，nav `ldnav.js`、`mlnav.js`、`slnav.js`、`elnav.js`、`qlnav.js`。
+- 板件目录：`src/boards/linalg/det/` —— det2d 二阶行列式与面积机（a、b 两列张成平行四边形，金色单位正方形映过去正好重合，有向面积 a₁b₂−a₂b₁ 随 a 转到 b 的转向换号，两枚手柄）；det3d 三阶行列式与体积机（`solid3d.js` 投影，a 固定、b 的方位角与 c 的仰角/方位角三滑块，平行六面体按 |D| 标体积，c 转到 z 轴下方体积不变而符号先变，拖拽旋转 + 重置视角）。`matrix/` —— matadd 矩阵的线性运算机（四种运算按钮 A±B、λA、Aᵀ，逐格对位虚线连起两格、转置当格换成行列交换的连线，三个滑块改 a₁₁、b₂₁、λ）；matmul 矩阵乘法与转置机（扫 k 滑块走 0..3，A 的行与 B 的列各染一色、C 的落点框出，下方同时算出 BA 并判可交换，三档 ①一般 ②可交换 ③单位阵）；gauss 初等变换与高斯消元机（增广矩阵 (A|b) 三种行变换，按「下一步」逐步化成行阶梯形，主元金、当前被改的行蓝，秩 (A) 与秩 (A|b) 的比较读出唯一解/无穷多解/无解，三组数据）。`space/` —— gridmap 矩阵与二维线性变换机（a、b、c、d 四滑块，e₁、e₂ 的像即两列，整数格网整张拉成平行四边形格网，金色原单位正方形对蓝色像，行列式即面积倍数）；map3d 矩阵与三维线性变换机（三滑块改列向量，单位立方体映成平行六面体，体积由 1 变为 |det A|，拖拽旋转）；ranklab 三个平面与解的结构机（三张半透明平面各由法向量与常数定出，**`planePoly` 必须先单位化 n 并把 d 同除 |n|**——Gram–Schmidt 与 `cross3(n,e1)` 都假定 |n|=1，否则角序错乱、多边形自交呈蝴蝶结；公共集为一个点（唯一解）、一条金色线段（无穷多解）或空（无解）；三预设 ①交于一点 ②交于直线 ③无公共点，滑块改第三平面常数 d₃）。`eigen/` —— eigen2d 特征方向机（a、b、c、d 四滑块，单位圆映成椭圆，金紫两条虚线即特征方向、细箭头为单位向量、粗箭头为 λ 倍的像；Δ=tr²−4det<0 时判「没有实特征值」、二重根只画一条；四预设 ①对角伸缩 ②一般矩阵 ③剪切 ④旋转 90°）；eigendiag 对角化机（λ₁、λ₂、特征基方向三滑块，A=λ₁v₁v₁ᵀ+λ₂v₂v₂ᵀ，金紫两段折线给出 x 沿两条特征方向的分解、右栏列出 P、D、PDPᵀ 与换基前后的坐标，λ 相等或有一个为零时判读改口；四预设，**预设同步滑块时 `特征基方向` 走的角度要 ×180/π**）；pow2d 反复作用与主特征方向机（归一化迭代 x_k 画在单位圆上，相邻方向之间连弧段、k=0/末端各染色，右栏列出 |x_k| 序列与相邻方向夹角，比值趋近 |λ₁|；三预设 ①拉向主方向 ②两个都在收缩 ③主特征值为负；手柄夹 |x|≥0.12）。`quad/` —— quadform 二次型曲线机（a、b、c 三滑块，`marchSegs(form,-3.1,-2.6,3.1,2.6,132,110)` 抽 ax²+bxy+cy²=1 的零等值线，特征轴按半长 1/√λ 画出，`kindOf` 由 det 与 tr 判椭圆/双曲线/两条平行线/空集；五预设）；stdform 转轴化标准形机（金 x′ 轴沿 v₁、青 y′ 轴沿 v₂，橙色 θ 弧，右栏读 tan2θ=b/(a−c)、两个特征值与标准形半轴；四预设）；conictype 用特征值给曲线分类机（左栏 (λ₁,λ₂) 平面四色分区 + 手柄夹 |λ|≥0.18，右栏按 `λ₁(x·v₁)²+λ₂(x·v₂)²=1` 画曲线、v₁ 定在 25°；**`B.text` 参数序是 (点, 字符串, 属性)——先写点**、轴字母与区域名用纯文本 `axLab:'λ₁'`，LaTeX 标签改用 `B.tex`）。
+- 画板测试：`/tmp/linalgtest.mjs` 14 台全量（构造、NaN 坐标审计、预设与徽章断言）。
+- 建设约定：`ldnav.js` 等元数据只收录已建成章；LinalgHome 五个子专题均为实卡并列出 14 台；速查页按子专题分五节列 14 张卡片（总 237 条 / 76 组）；Home 卡片「已上线 14 章」。
+- **用户点名的两处重点**：特征值在二维平面上画出「方向不变、长度缩放 λ 倍」（特1 特征方向机、特2 对角化机里都有金紫两条不动线与伸缩箭头）；二次型接到圆锥曲线（型1–型3 由特征值定轴长与类型，与 conics 模块「一般二次方程=移轴转轴」、`B²−4AC` 判别式直接对接——`det A` 与 `B²−4AC` 同号）。
+
+## calc1 模块 · 一元函数微积分（六个子专题 33 章 · 36 台 · 全部上线，2026-11-12）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 极限与连续 | `limit` | 极1..极5 | 数列极限（ε-N）、函数极限与左右极限、无穷小与无穷大、连续与间断、两个重要极限 | 已上线 5/5 |
+| 二 导数与微分 | `deriv` | 微1..微8 | 导数与切线、求导法则、高阶导数与微分、罗尔/拉格朗日/柯西中值定理、洛必达与未定式、泰勒公式、单调极值凹凸、渐近线与作图 | 已上线 8/8 |
+| 三 不定积分 | `anti` | 积1..积4 | 原函数与不定积分、换元积分、分部积分、有理函数的积分 | 已上线 4/4 |
+| 四 定积分 | `definite` | 定1..定5 | 定积分的定义、微积分基本定理（变上限积分）、定积分的计算（对称区间奇偶性）、反常积分、定积分的应用（面积与旋转体） | 已上线 5/5 |
+| 五 常微分方程 | `ode` | 方1..方6 | 概念与方向场、可分离变量、一阶线性、可降阶的高阶方程、二阶常系数线性方程、建模 | 已上线 6/6 |
+| 六 无穷级数 | `series` | 级1..级5 | 级数的概念与部分和、正项级数审敛法（比值判别）、交错级数、幂级数与泰勒级数、傅里叶级数初步 | 已上线 5/5 |
+
+- 图编号前缀：**汉字单字** 极/微/积/定/方/级（与子专题名直连，拉丁大写已用尽），路由仍用拉丁字母：`/calc1/l1..l5`、`/calc1/d1..d8`、`/calc1/i1..i4`、`/calc1/f1..f5`、`/calc1/o1..o6`、`/calc1/s1..s5`，视图组件 CL1..CL5、CD1..CD8、CU1..CU4、CF1..CF5、CZ1..CZ6、CS1..CS5（定积分 CF、常微分 CZ、级数 CS，避开 C 系列已占用的字母）；nav `views/calc1/{limit,deriv,integral,definite,ode,series}/xxxnav.js`（`CL_CHAPTERS`/`CL_BASE`、`DV_CHAPTERS`/`DV_BASE`、`IN_CHAPTERS`/`IN_BASE`、`DF_CHAPTERS`/`DF_BASE`、`ON_CHAPTERS`/`ON_BASE`、`SN_CHAPTERS`/`SN_BASE`）。
+- 章名与路由前缀以各 nav 文件为唯一来源，`modnav.js` 的 SPEC 为 `calc1: { groups: [['limit','极限与连续'],['deriv','导数与微分'],['integral','不定积分'],['definite','定积分'],['ode','常微分方程'],['series','无穷级数']] }`（六组全登记）。
+- 板件目录：`src/boards/calc1/limit/` —— seqlab 数列极限机（金色 ε 带 + L 虚线、蓝点入带 / 橙点出带、紫色 N 竖线标「最后一个带外项」，ε 滑块 0.05..0.6，四预设含 (−1)ⁿ 发散档；**L 标签放右端 anchor 'end'，L±ε 放左端**，否则左端三个标签在 ε 小时叠成一团）；twoside 左右极限机（绿点从左侧、紫点从右侧逼近 x₀，δ 滑块夹 0.03..0.85，空心圈标曲线端点、金点是 f(x₀)，三预设连续 / 可去 / 跳跃）；ordlab 无穷小的阶机（y=x、y=sin x、y=1−cos x 与细虚线 y=x²/2 同图，竖线随 x 滑块扫过三条曲线，右栏列当前值与三个目标极限；**四条曲线的说明用左上角图例行画，别在曲线上贴标签**——x 小时的曲线全挤在原点附近）；contlab 连续与间断分类机（五个预设各给 x₀=1 处一种接缝，绿紫逼近点 + δ 滑块，右栏逐项读左极限 / 右极限 / f(1) / 类型；**判读写成两行短句 `why: [line1, line2]` 并逐行 B.tex 画**，B.tex 是 nowrap 不换行，写成一句会横出画板；④ 无穷档要 `B.asym` 画 x=1、⑤ 振荡档按几何比 0.94 采样才画得出被压扁的那一截）；twolim 两个重要极限机（两档共用一枚 `B.btnM` 切换：① 单位圆里 △OAP ⊂ 扇形 ⊂ △OAT 三块面积，**用 evenodd 三段 path 切成互不重叠的金/蓝/绿三块**（叠着画半透明填充会糊成一片）、`arcPts` 在屏幕坐标里 y 向下，**角度要取负才向上扫**；② aₙ=(1+1/n)ⁿ 沿 n 升到 e 虚线，n 滑块 1..40，差额 <0.05 转 ok）。
+- `src/boards/calc1/deriv/` —— tanline 切线斜率机（图 微1：割线 PQ 随 h 绕 P 转、金色虚线是切线，橙色直角三角标 h 与 Δy，右栏逐行读 f(x₀+h)、f(x₀)、差商、f′(x₀) 与两者之差；**h 滑块下界取 0.01**，否则 |k−f′(x₀)| 降不到 0.02、判读的 ok 档永远打不开，三个预设 x²/x³/1/x）；prodlab 乘积法则机（图 微2a：边长 a、b 各伸长 t，面积拆成蓝 ab、金 bt、绿 at、紫 t² 四块，t 滑块 0.05..0.6，t<0.12 时角块先退、差商读 a+b+t→a+b）；chainlab 链式法则机（图 微2b：左画 u=x²+1 对 x、右画 y=f(u) 对 u，两处切线各读一段斜率，底部写成两段相乘，右栏用中心差分复核乘积（差恒 0.000000）；右图 y 方向量级差大，用 mapFit）；difflab 微分机（图 微3：蓝段沿切线量 dy、橙虚线沿曲线量 Δy、绿段是两者之差，右栏列出 dy、Δy、误差与 f″(x₀)，dx 滑块 0.05..1.4、dx<0.12 转 ok）；meanvalue 中值定理机（图 微4：金虚线弦 PQ + 橙色平行切线，`rootsOf` 按步长变号定位再二分求 f′(x)−k 的全部零点，切线按视野上下边截断；**罗尔档取 f=x²−2x+2**——若用 x²−2x，弦正好压在 x 轴上看不见；区间标签放视野下边 +18、ξ 标签放 y=0 +34，否则与 ξ 标签、刻度数字相撞；② 拉格朗日档 f=x³−3x+2 有两条平行切线，判读要点明位置不必唯一）；cauchylab 柯西机（图 微4b：把 x=g(t)=t²、y=f(t)=t³ 看成参数曲线，t∈[1,3]，弦斜率 26/8=3.25，切线斜率 3t/2 在 t*=13/6 处与之相等，曲线用 mk('path') 折线画、切线与弦都按视野截断；两轴量纲不同，用 mapFit + 各自刻度步长）；hopital 洛必达机（图 微5：左图 f（蓝）与 g（绿）都趋于 0，右图改画 f/g（橙）与 f′/g′（紫）两条比值曲线一起贴着金色 L 线；三预设 sin x/x、(1−cos x)/x²、(eˣ−1−x)/x²，x 滑块 0.06..1.4、x<0.16 转 ok；**f 与 g 在 x→0 时几乎重合，f 标签放左端 anchor 'end'、g 放右端**）；taylorlab 泰勒公式机（图 微6：蓝线 f、金线 Pₙ，绿段是余项 Rₙ=f−Pₙ，n 滑块 1..9；**x 滑块 的 min/max 必须在切预设时按该预设的 xr 重设并 `slp.sync`**，否则探针跑到视野外；ln(1+x) 档视野收到 x≤1.12 才不越过展开点 0、eˣ 档用 mapFit 吃满 y 方向）；shapelab 单调与极值机（图 微7：f=x³/3−a x 在上栏、f′=x²−a 在下栏，两栏共用 px 严格对齐，f′ 的符号用绿/红粗色带压在自身横轴上，a 滑块 0..3；a=0 时 f′=x² 非负、判读改口「整段递增」，极值徽章写 `fmt(f(−√a),2) / fmt(f(√a),2)` 两项并列，不要写成 ± 号——两端异号）；asymlab 渐近线与作图机（图 微8：① (x²+a)/(x−c)=x+c+(c²+a)/(x−c) 给斜渐近线，② (ax+b)/(x−c)=a+(ac+b)/(x−c) 给水平渐近线，竖直渐近线都是 x=c；曲线在 c±0.07 处断开分两支画（`B.plot` 的 dom/pad 之外再手动避开极点），右栏列出除法恒等式与四个读数；**标签里的正负号必须按 c 的符号现算**（写成 `x-${fmt(c,2)}` 在 c<0 时会得到 `x--0.60`），滑块 a/b/c 按档显隐走 `parentNode||parent`）。
+- `src/boards/calc1/integral/` —— antideriv 原函数族机（图 积1：蓝线 f、橙色一族 F+C 上下平移，x₀ 处各画一条切线读同一斜率，C 滑块改一族中最亮的那条）；substlab 换元机（图 积2：① 凑微分把 2x·cos(x²) 在 [a,b] 上的面积一对一派到 cos u 在 [a²,b²] 上的面积，② 三角代换在半径 a 的圆上取角 θ，两条直角边正是 a sinθ 与 a cosθ；两模式共用一枚按钮，模式二改单幅大图）；partslab 分部积分机（图 积3：① 参数曲线 (t²,t) 竖切得 ∫v du、横切得 ∫u dv，两块相加 = u(b)v(b) − u(a)v(a)，② ∫xeˣdx=(x−1)eˣ+C 的蓝线是橙线的导数）；ratlab 有理函数积分机（图 积4：① 1/(x²−1)=½[1/(x−1)−1/(x+1)]、② 1/(x(x+1))=1/x−1/(x+1)、③ (x²+1)/(x−1)=x+1+2/(x−1) 假分式先除法，拆出来的每一项分色叠回原式）。
+- `src/boards/calc1/definite/` —— riemannsum 分割求和机（图 定1：金色矩形随 n 加密，三预设 ∫x²/∫sin/∫1/(1+x²)，另三个按钮切换左端点 / 右端点 / 中点，右栏同屏读 Sₙ、精确值与误差；**取中点与取右端点靠按钮索引区分**，改按钮顺序测试要同步）；accumlab 变上限积分机（图 定2：金色面积块随 x 滑块伸缩、右栏逐行读 Φ(x)、Φ′(x) 与 f(x)，三预设里 1/t 档 `a=1`，**切档时要把 x 滑块 min 抬到 a 以上并 sync**，否则 Φ 在 a 左侧无意义）；symmetry 对称区间机（图 定3：蓝块 [−a,0] 与橙块 [0,a] 并排，奇函数两块一正一负相消、偶函数只算一半再乘二；**areaSimp 返回的已经是带符号积分，左半不要再取负**——早先多取一次负号让奇函数读数变成正的 1.66）；pintegral 反常积分机（图 定4：① ∫₁^B x^{−p} 截断值随 B 滑块上升并给出极限，p≤1 发散，② ∫_ε^1 x^{−p} 瑕积分 p<1 收敛；**LaTeX 上下限含花括号时先拼成变量再插进模板串**，直接内联 `${cond ? '_{1}^{B}' : …}` 会让模板表达式的花括号提前闭合、vite 报 Missing }）；areaapp 定积分应用机（图 定5：① 曲线与 x 轴之间的面积 ② 绕 x 轴旋转的圆盘切片体积，b 滑块改上端）。
+- `src/boards/calc1/ode/` —— difffield 方向场机（图 方1：满屏短线段给斜率、过探针点画一条积分曲线，三预设 y'=y / −x/y / x+y，两滑块给初值）；seplab 可分离变量机（图 方2：三预设 y'=y / y² / −xy，解族与所选那条分色，C 与 x₀ 两滑块，右栏读 y(x₀)）；linearlab 一阶线性机（图 方3：紫线是齐次通解、蓝线是加特解后的通解，二者形状相同、上下平移同一量，C 与 x₀ 两滑块）；reduceorder 可降阶机（图 方4：① 缺 y 令 p=y′ ② 缺 x 令 p(y)，C₁、C₂、x₀ 三滑块，右栏同读 y(x₀) 与 y′(x₀)）；charroots 特征根机（图 方5：y″+py′+qy=0、y(0)=1、y′(0)=0，p、q 两滑块扫过判别式 Δ 的三种情形，右栏列特征方程、λ、Δ 与类型名，解按两实根 / 重根 / 共轭复根三式现算）；odemodel 建模机（图 方6：三档 N=e^{kt} 增长衰减 / cos ωt 简谐振动 / 3(1−e^{−at}) RL 电路，参数滑块跨到负值才能看到衰减，t 滑块配金色探针与垂线）。**判读与徽章的 tex 段内不能出现中文**。
+- `src/boards/calc1/series/` —— serieslab 部分和机（图 级1：折线与圆点给出部分和 Sₙ 的轨迹、绿色横线是和的极限，四预设 1/n²、1/n、1/2ⁿ、1/(n(n+1))，n 滑块 1..40；轨迹用 `mk('polyline')`/`mk('circle')` 配映射对象画，不要手算像素坐标）；ratiotest 比值判别机（图 级2：逐点画 aₙ₊₁/aₙ、红虚线圈出 ρ=1 的分界、绿线标极限，四预设 1/n²、2ⁿ/n!、n!/10ⁿ、n/2ⁿ；**极限为 ∞ 时写成 `$=\\infty$`**，徽章文本里就是这段 tex 源串）；altseries 交错级数机（图 级3：橙点走奇数项部分和、紫点走偶数项部分和，两支从两侧互相靠拢，n 滑块 1..40；右栏的莱布尼茨余项界 `|S−Sₙ|≤aₙ₊₁` **只在收敛档显示**，发散档改读 aₙ→1≠0）；powerlab 幂级数机（图 级4a：上部数轴画出绿色收敛带与金色 x 标记，下部画部分和随 n 的走势，四预设 Σxⁿ/n、Σxⁿ/n!、Σn!xⁿ、Σxⁿ，右栏读 R 与收敛域；**R=0 时收敛域写 `x=0`，不要写成 `|x|<0`**）；taylorseries 泰勒逼近机（图 级4b：蓝线 f、橙线 Pₙ、紫色探针，项数 n 与 x 两滑块，右栏读阶数与截断误差；1/(1−x) 档用 `dom` 避开 x=1 的极点）；fourier 傅里叶机（图 级5：方波由 (4/π)Σ_{k 奇} sin kx/k 叠加，K 滑块 1..31 步长 2，金色峰值点与超调段标出吉布斯现象，峰值始终在 1.18 附近）。
+- 画板测试：`/tmp/calctest.mjs` 99 项（极限 5 台）、`/tmp/derivtest.mjs` 146 项（导数 10 台）、`/tmp/inttest.mjs` 45 项（不定积分 4 台）、`/tmp/deftest.mjs` 33 项（定积分 5 台）、`/tmp/odetest.mjs` 36 项（常微分 6 台）、`/tmp/sertest.mjs` 43 项（级数 6 台），均为构造 / NaN 坐标审计 / 按钮 / 滑块 / 徽章断言；共用 `/tmp/boardmock.mjs` 的 mock DOM 与 `chk/chipVal/btnsOf/inputsOf/audit` 工具，预设按索引点击、改按钮顺序须同步。**chipVal 读到的是 tex 源串**（`\\infty` 而非 ∞），断言极限、∞ 一类的读数要比对源串。
+- 建设约定：`Calc1Home.vue` 六个子专题全为实卡（5 + 8 + 4 + 5 + 6 + 5 张，共 36 台），底部清单列全 36 台；速查页「一元函数微积分」六节共 33 卡；README 路由表同步。
+
+## spacegeom 模块 · 空间解析几何（三个子专题 12 章 · 12 台 · 全部上线，2026-11-12）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 空间向量 | `vector` | 向1..向4 | 空间直角坐标与向量（模与方向余弦）、数量积、向量积（右手法则与平行四边形面积）、混合积（平行六面体体积与共面判据） | 已上线 4/4 |
+| 二 平面与直线 | `plane` | 面1..面4 | 平面方程与法向量（点法式/三点定平面/一般式）、空间直线的方程（点向式/参数式/两平面交线）、位置关系（两平面/线面/两直线）、空间距离（点面距/点线距/异面直线） | 已上线 4/4 |
+| 三 曲面与曲线 | `surface` | 曲1..曲4 | 柱面与锥面（缺变量与齐次）、旋转曲面（x²→x²+y²）、二次曲面（五档标准形 + 截痕法）、空间曲线（参数式、投影、两曲面交线、螺旋线） | 已上线 4/4 |
+
+- 图编号前缀：**汉字单字** 向/面/曲（与子专题名直连，拉丁大写已用尽），路由仍用拉丁字母：`/spacegeom/v1..v4`、`/spacegeom/p1..p4`、`/spacegeom/s1..s4`，视图组件 SV1..SV4 / SP1..SP4 / SS1..SS4，nav `svnav.js` / `spnav.js` / `ssnav.js`。
+- 章名与路由前缀以各 nav 文件为唯一来源，`modnav.js` 的 SPEC 为 `spacegeom: { groups: [['vector','空间向量'],['plane','平面与直线'],['surface','曲面与曲线']] }`；模块主页 `SpacegeomHome.vue` 接管 `/spacegeom`，三节均为实卡，底部一段总括 12 台。
+- 板件目录（**全部是三维画板**，一律走 `src/lib/solid3d.js` 的 `makeCam/view/Scene/orbit`，每台都有「重置视角」按钮）：`src/boards/spacegeom/vector/` —— spacecoords 空间直角坐标与向量机（图 向1：三轴 + 两个坐标平面、P 向三轴各作投影虚线，徽章读坐标 / 模 / 方向余弦，三预设含 xOy 面上与 z 轴上）；spacedot 数量积机（图 向2：夹角弧形与投影线段同台，三预设锐角 / 直角 / 钝角，点积为零时判读改口）；spacecross 向量积机（图 向3：右手法则给出 c ⊥ a、c ⊥ b，两处直角标记，三预设含共线时 c 归零）；spacemix 混合积机（图 向4：平行六面体按深度排序叠面，体积等于混合积的绝对值，共面档体积归零）。`src/boards/spacegeom/plane/` —— planeforms 平面方程与法向量机（图 面1：点法式 / 三点定平面 / 一般式三档，紫色法向量钉在垂足上，滑块按档显隐走 `parentNode||parent`）；line3d 空间直线机（图 面2：点向式 / 参数式 / 两平面交线，对称式里点坐标为负时用 `dd()` 拼 `−`/`+`，交线方向 s = n₁×n₂ 再取一点）；rel3d 位置关系机（图 面3：两平面 / 直线与平面 / 两直线三档，两平面档两法向量的 z 分量都取 0.35 才能落到平行与重合，重合靠「平面二的偏移 c₂」滑块凑到 c₂=1.0）；dist3d 空间距离机（图 面4：点面距 / 点线距 / 异面直线，共用一枚动点 P 的三滑块，垂足与公垂线段实时标出）。`src/boards/spacegeom/surface/` —— cylsurf 柱面与锥面机（图 曲1：准线 + 母线扫出曲面，锥面档准线抬到高度 h、另一半以低透明度画出）；revsurf 旋转曲面机（图 曲2：母线在 xOz 平面、九圈纬圆铺面，绿色纬圆随滑块上下移动并读半径）；quadrics 二次曲面机（图 曲3：五档标准形共用「截痕高度」滑块，绿色高亮那一层，双叶档 |z|<c 时判读直接说明截到了空隙；**2026-11-16 起曲面走 `lib/gl3d.js` 的 WebGL 网格**，背面线被正面挡住、能转着看实体，坐标轴与金色截痕仍是 SVG（轴先垫一道深色粗线再压彩线，半透明亮面上细线才不糊；hint 里点明「按住画板拖动是换视角」）；「曲面实体」开关可切回原来的截痕线网，环境不支持 WebGL 时自动走线网；**椭球档网格加密到 24 经 × 12 纬并垫一层背面网格看经纬纹理，双曲抛物面的矩形片按半轴取 ±1.55a × ±1.55b（四角高度恒为 ±2.4，正好顶到坐标框的上下沿）、两族直母线分蓝/青两色、网格 16×16（0.42），**这一档不画金色截痕、截痕高度滑块跟着收起（`setMode` 里按档显隐 `sZ.parentNode`），改画竖直面 y = ±(b/a)x 截出的两条过原点、开口相反的绿色抛物线（从片的一角穿到对角，跨度为整片）****；**坐标框按 MATLAB 三维图的画法**（`frame(cs, bx, by, bz)`）：十二条棱（`inkCol`、0.17）+ 背向相机的三面铺单位网格（0.09，按相机前向量三个分量的正负挑墙，转视角会换面）+ 三根穿过原点通到框边的轴（暗底衬 + 彩线 + 箭尖，刻度用屏幕空间小横线、配整数数字，离箭尖不到 15px 的刻度省略、0 处不标数字只留 O 点）；框的半边长由 `ext` 数组按档给出（各分支的取景写死在下面，改一处要同步另一处），单叶/双叶的 z 向另按截痕滑块量程兜底；相机 `s` 从 64 降到 60 给框留边；单叶、双叶的截痕高度各自夹到曲面画到的范围（±1.5c、±2.2c），滑过头时截痕停在边缘而不是悬空，双叶两叶同时从 2.6c 收到 2.2c）；spacecurve 空间曲线机（图 曲4：螺旋线 + xOy 圆投影 + yOz 正弦投影，球面与柱面的两张线网与金色交线）。
+- 画板测试：`/tmp/spacetest.mjs` 164 项（12 台全量：构造、各档切换、徽章断言、滑块极值与 NaN 坐标审计）；全量回归 36 套全绿。
+- 建设约定：速查页「空间解析几何」三节共 12 卡（总 17 模块 300 条 / 88 小节）；README 路由表与目录树同步；Home 卡片「已上线 12 章」。
+
+## calc2 模块 · 多元函数微积分（三个子专题 18 章 · 20 台 · 全部上线，2026-11-12）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 多元函数微分学 | `mul` | 微1..微6 | 二重极限与连续（四条路径同时收拢）、偏导数与全微分（两张竖直截面 + 切平面）、复合函数与隐函数求导（梯度与切向内积）、方向导数与梯度（等值线地形图）、极值（AC−B² 判别）、拉格朗日乘数法（等值线与约束相切） | 已上线 6/6 |
+| 二 重积分 | `riemann` | 重1..重6 | 定义与性质（网格加密收敛）、计算（竖条/横条两扫法）、极坐标（面积元多出的 r）、三重积分（穿线与切片）、柱面与球面坐标（两个雅可比因子）、应用（质量/质心/转动惯量） | 已上线 6/6 |
+| 三 曲线与曲面积分 | `curve` | 线1..线6 | 第一类曲线积分（对弧长加权）、第二类曲线积分（做功与路径）、格林公式（边界环流 = 区域内 Q_x−P_y）、第一类曲面积分（投影乘放大因子）、第二类曲面积分（通量与定向）、高斯与斯托克斯（散度、旋度） | 已上线 6/6 |
+
+- 图编号前缀：**汉字单字** 微/重/线（与子专题名直连，拉丁大写已用尽），路由仍用拉丁字母：`/calc2/m1..m6`、`/calc2/r1..r6`、`/calc2/c1..c6`，视图组件 CM1..CM6 / CR1..CR6 / MC1..MC6（CC1/CC2 已被 combinatorics 占用，曲线组改用 MC 前缀），nav `views/calc2/mul/mnav.js`（`MM_CHAPTERS`/`MM_BASE`）与 `riemann/rnav.js`（`MR_CHAPTERS`）、`curve/cnav.js`（`MC_CHAPTERS`）。
+- 章名与路由前缀以各 nav 文件为唯一来源，`modnav.js` 的 SPEC 为 `calc2: { groups: [['mul','多元函数微分学'],['riemann','重积分'],['curve','曲线与曲面积分']] }`；模块主页 `Calc2Home.vue` 接管 `/calc2`，三节均为实卡，底部一段总括 20 台。
+- 板件目录：`src/boards/calc2/mul/` —— doublelim 二重极限机（图 微1：左平面域四条路径收向原点、右图画沿各路径的 f 随 r，三条路径高度不同即极限不存在）、partderiv 偏导数与全微分机（图 微2，三维曲面 + 两张竖直截面 + 切平面，Δx/Δy 滑块读切平面点与曲面点之差）、chaincomp 复合函数机（图 微3，单场景无预设：梯度与路径切向同图、右栏读内积）、implicit 隐函数机（图 微4，P 沿隐函数曲线走，F_y=0 处切线竖直）、gradfield 方向导数机（图 微5，等值线地形图 + 方向角滑块，沿等值线方向导数为零）、extrema2 极值机（图 微6，梯度小箭头簇 + A/B/C/AC−B² 徽章）、lagrange 拉格朗日机（图 微7，约束曲线与目标等值线相切、两支梯度共线）。`src/boards/calc2/riemann/` —— dblint 定义机（图 重1：网格随 n 加密、右图 Sₙ 逼近精确值；**被积函数取 1+x²y² 而不是 1+xy**，中点法对双线性函数恰好精确，误差恒为零就看不出收敛）、dblcalc 计算机（图 重2：竖条与横条两扫法算同一区域）、polardbl 极坐标机（图 重3：扇形小格随 r、θ 移动，小格面积读 rΔrΔθ）、triplint 三重积分机（图 重4：穿线与切片两档，**模块常量勿用 H，createBoard 的画板高度 H 会遮蔽它**）、coord3d 坐标变换机（图 重5：柱面与球面两档各读体积元）、massapp 应用机（图 重6：半圆密度片拖 R，M / ȳ / I_O 按不同次数增长）。`src/boards/calc2/curve/` —— lineint1 第一类曲线积分机（图 线1：弧上密度点 + 金色 ds 段，换走向读数不变）、lineint2 第二类曲线积分机（图 线2：同一场的三条路径给出三个不同的功，反向按钮让功变号；累计功的数值积分项要乘步长 u/N）、green 格林公式机（图 线3：三档预设，环流与二重积分并成两根等高柱）、surfint1 第一类曲面积分机（图 线4：抛物面分片 + 投影小片，放大因子随 r 变大）、surfint2 第二类曲面积分机（图 线5：半球面外法向，三个场读三种通量）、gauss 高斯公式机（图 线6a）、stokes 斯托克斯公式机（图 线6b）。
+- 画板测试：`/tmp/calc2test.mjs` 163 项（20 台全量：构造、预设按钮逐档、滑块上下界、徽章数值断言、NaN 坐标审计）；全量回归 37 套全绿；构建 3,417.98 kB / gzip 1,355.48 kB（CSS 101.18）。
+- 建设约定：速查页「多元函数微积分」三节共 18 卡；README 路由表与目录树同步；Home 卡片「已上线 18 章」。
+
+## 复变函数 模块 · 复变函数（三个子专题 12 章 · 12 台 · 全部上线 2026-11-13）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 复数与复变函数 | `cplx` | 复1..复3 | 几何表示（模、辐角主值 (−π,π]、共轭、乘 i 是转 90°）、复变函数与映射（左右两平面共用一条比例尺，w=iz+1 保形状、w=z² 辐角加倍、w=1/z 内翻成外）、初等复变函数（e^z 的周期 2πi、Log z 的分支、幂函数值的个数由指数定） | 已上线 3/3 |
+| 二 解析函数 | `analytic` | 解1..解4 | 导数与解析（差商随方向转一圈、轨迹缩成一点才算可导）、柯西-黎曼方程（u_x=v_y、u_y=−v_x，两族等值线与两支梯度）、复积分与柯西定理（分段参数化、单连通区域绕圈为零、路径变形）、柯西积分公式（缩到小圆推导、高阶导数、均值与最大模、Liouville 定理） | 已上线 4/4 |
+| 三 级数与留数 | `series` | 级1..级5 | 复级数与泰勒级数（收敛半径等于到最近奇点的距离、部分和向 f(z) 收拢）、洛朗级数与孤立奇点（主部有几种项就分几类）、留数定理（闭路积分 = 2πi 乘圈内留数之和）、保角映射（导数非零保持夹角、分式线性变换把圆映成圆）、用留数计算实积分（上半平面补大圆弧凑闭路，弧上积分退零） | 已上线 5/5 |
+
+- 图编号前缀：**汉字单字** 复/解/级（拉丁大写已用尽；「复」与 vectors 子专题五的 复1..复3 字面相同，但各自在本模块内编号，看图号时按所在模块认），路由仍用拉丁字母：`/complexvar/c1..c3`、`/complexvar/a1..a4`、`/complexvar/s1..s5`，视图组件 CV1..CV3 / CW1..CW4 / CY1..CY5，nav `views/complexvar/cplx/cvnav.js`、`analytic/cwnav.js`、`series/cynav.js`。
+- 章名与路由前缀以各 nav 文件为唯一来源，`modnav.js` 的 SPEC 为 `complexvar: { groups: [['cplx','复数与复变函数'],['analytic','解析函数'],['series','级数与留数']] }`；模块主页 `ComplexvarHome.vue` 接管 `/complexvar`，三节均为实卡，底部一段总括 11 台。
+- 板件目录：`src/boards/complexvar/cplx/` —— cplane 复平面机（图 复1：拖点读模、辐角主值、共轭镜像与乘 i 的旋转，两轴投影虚线拆实虚部）、mapw 映射机（图 复2：左右两平面共用一条比例尺，方格网在 w=f(z) 下的像随预设换族）、elemcplx 初等函数机（图 复3：e^z 的横带与 Log z 的主值分支并排，竖线映成圆、横线映成射线）。`analytic/` —— derivc 导数机（图 解1：差商随方向角转一整圈，轨迹缩成一点即导数存在）、crlab 柯西-黎曼机（图 解2：u、v 两族等值线与两支梯度叠在同一张平面，偏导读数与 CR 两式并列）、intpath 复积分机（图 解3：闭路每走一步的贡献累成一条曲线，回不回起点一眼可见）、cauchyint 柯西积分公式机（图 解4：左边界绕一圈、右内部一点的值并排读出，高阶导数同台）。`series/` —— taylor 泰勒级数机（图 级1：部分和折线向 f(z) 收拢，金色虚线圆是收敛圆，红点标奇点）、laurent 洛朗级数机（图 级2：环域 + 系数条形图，金条是主部，负幂项的根数分出三类奇点；环域用 evenodd 路径挖孔）、residue 留数机（图 级3：拖圆路圈住奇点，圈内留数之和与沿圆路的数值积分同栏对照）、mobius 保角映射机（图 级4：圆族与射线搬到另一张平面，原像夹角与像夹角同为 90°）、resint 留数算实积分机（图 级5：左图上半平面的大圆路随半径 R 扩张、圈内的极点染橙，右图画实被积函数的截断段与阴影面积，三预设 1/(1+x²)、1/(1+x²)²、cos x/(1+x²)）。
+- **围道积分的数值口径**：一律取每段的**中点**求 f、用该段两端点之差作 dz（中点法误差 O(h²)）。取左端点配同一段弦只到 O(h)，cauchyint 的「差」会读到 0.020 而不是 0.000（2026-11-13 实测，N 加倍误差只减半）。
+- 画板测试：`/tmp/cvtest.mjs`（11 台全量：构造、预设逐档、滑块上下界、手柄拖动标定、徽章数值断言、NaN 坐标审计），已并入 `/tmp/runreg.sh` 的全量回归。
+- 建设约定：速查页「复变函数」三节共 12 卡（复1..复3 / 解1..解4 / 级1..级5）；README 路由表与目录树同步；Home 卡片「已上线 12 章」；`higherplan.js` 里该模块的 12 条只作规划来源，章名已抄进三个 nav 文件。
+
+## numtheory 模块 · 初等数论（三个子专题 13 章 · 13 台 · 全部上线，2026-11-13）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 整除与同余 | `basic` | 整1..整4 | 整除与带余除法（a=qm+r、0≤r<m）、最大公约数与欧几里得算法（辗转相除、裴蜀等式 ax+by=gcd）、同余（a≡b 当且仅当 m 整除 a−b）、一次同余方程（d=gcd(a,m) 整除 b 才有解，恰有 d 个模 m/d 的解类） | 已上线 4/4 |
+| 二 数论定理 | `theorem` | 定1..定5 | 素数与算术基本定理（筛法、唯一分解、约数个数 τ 与约数和 σ 的乘积公式）、欧拉函数（乘积公式、Σφ(d)=n）、费马小定理与欧拉定理（阶整除 φ(m)）、中国剩余定理（互素则组合唯一，构造解；不互素须相容）、数论函数与莫比乌斯反演（μ 的取值与整除和的反演） | 已上线 5/5 |
+| 三 二次剩余与应用 | `residue` | 剩1..剩4 | 二次剩余与欧拉判别式（模 p 恰有 (p−1)/2 个剩余、a^{(p−1)/2}≡±1、勒让德符号与互反律）、原根与指数（原根共 φ(p−1) 个、指数即离散对数）、不定方程（ax+by=c 有解当且仅当 gcd 整除 c，通解步长 (b/d,−a/d)）、模运算与密码（RSA 的 n=pq、φ、e 与 φ 互素、ed≡1 mod φ，加解密往返） | 已上线 4/4 |
+
+- 图编号前缀：**汉字单字** 整/定/剩（拉丁大写已用尽），路由仍用拉丁字母：`/numtheory/z1..z4`、`/numtheory/d1..d5`、`/numtheory/s1..s4`，视图组件 NZ1..NZ4 / ND1..ND5 / NS1..NS4，nav `views/numtheory/{basic/theorem/residue}/` 下的 `znav.js`（`Z_CHAPTERS`/`Z_BASE`）、`dnav.js`（`D_CHAPTERS`/`D_BASE`）、`snav.js`（`S_CHAPTERS`/`S_BASE`）。
+- 章名与路由前缀以各 nav 文件为唯一来源，`modnav.js` 的 SPEC 为 `numtheory: { groups: [['basic','整除与同余'],['theorem','数论定理'],['residue','二次剩余与应用']] }`；模块主页 `views/numtheory/NumtheoryHome.vue` 接管 `/numtheory`，三节均为实卡，底部一段总括 12 台。
+- 板件目录：`src/boards/numtheory/basic/` —— divmodlab 带余除法机（图 整1：a 个点每 m 个一组排开，满组染蓝、末组余数染橙，下方数轴标出 m 的倍数，商与余数实时读，r=0 时判读转整除）；gcdlab 欧几里得算法机（图 整2：长 a 宽 b 的矩形反复用正方形铺满——先沿长边排边长为 b 的正方形，余下窄条再沿其短边排，最后一块正方形的边长即 gcd，右栏同步列出每步带余除法与裴蜀系数）；conglab 同余机（图 整3：模 m 表盘上 m 个刻度，a、b 各落一格，两针重合即 a≡b，另读 a mod m、b mod m 与差 a−b）；linearcong 一次同余方程机（图 整4：盘上让 ax 落到 b 那一格的 x 即解，d=gcd(a,m) 整除 b 时恰 d 个解（同一剩余类模 m/d 的 d 个代表），否则空集）。`theorem/` —— primelab 素数与算术基本定理机（图 定1：1..n 排成十列格阵，素数金、合数暗、1 标灰，即筛法效果；右栏读 π(n) 与 n 的质因数连乘）；philab 欧拉函数机（图 定2：1..n 格阵里与 n 互素的染绿，绿格个数即 φ(n)，右侧按质因数分解套 n∏(1−1/p) 算同一个数）；fermatlab 费马小定理与欧拉定理机（图 定3：模 m 表盘上从 1 出发反复乘 a，回到 1 的步数即阶，a^{φ(m)} mod m 恒读 1）；crtlab 中国剩余定理机（图 定4：x 同时投影到两条模数刻度线上，互素时 (m₁m₂) 个余数组合与 x 一一对应、交错表填满，不互素时空格，解回到一条模 lcm 的类）、mobius 莫比乌斯反演机（图 定5：左图把约数对 (d,n/d) 铺成双曲线上的一组点、按 μ 取色，右图画 μ(d) 的条形与部分和，四档互异约束纹、含平方因子、τ、σ、φ 之和的读数切换）。`residue/` —— quadres 二次剩余与欧拉判别式机（图 剩1：1..p−1 逐个列开，能写成 x² 的标金、非剩余标灰，格底写两根 x 与 p−x，另读 x²≡a 的解与欧拉判别式 a^{(p−1)/2}）；primroot 原根与指数机（图 剩2：模 p 表盘上 g 的幂走遍 1..p−1 即原根，非原根轨道提前闭合成真子群，阶与原根个数 φ(p−1) 同读）；diophant 不定方程机（图 剩3：ax+by=c 的整数解落在一条直线上，d=gcd(a,b) 整除 c 时格点沿步长 (b/d,−a/d) 等距排开，否则一个格点也没有）；rsalab 模运算与密码机（图 剩4：p、q 两素数 + 公钥指数 e + 报文 m 四滑块，私钥 d 由 ed≡1 (mod φ(n)) 现算，加密与解密在一张图上走完往返）。
+- 画板测试：`scripts/numthentest.mjs`（12 台全量：构造、徽章读数按公式核对、滑块改参后的读数、NaN 坐标审计）。**无头 mock 已从 `/tmp` 迁进仓库**：`scripts/boardmock.mjs` 提供 `install / rootEl / chips / chipVal / inputs / btns / btn / setSlider / click / dragHandle / audit / chk / done`，`innerHTML` 与 `textContent` 分两处存，所以 `chipM` 的「源串镜像」得以保留，徽章一律按 tex 源串比对（`\\varphi` 而不是 φ）。跑法：`export PATH="$HOME/apps/node/bin:$PATH" && node scripts/numthentest.mjs`。
+- 建设约定：速查页「初等数论」三节共 13 卡（整1..整4 / 定1..定5 / 剩1..剩4）；README 路由表与目录树同步；Home 卡片「已上线 13 章」；`higherplan.js` 里该模块的 13 条只作规划来源，章名已抄进三个 nav 文件。
+
+## 拓扑学基础 模块 · 拓扑学基础（三个子专题 12 章 · 12 台 · 全部上线，2026-11-13）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 拓扑空间 | `space` | 拓1..拓5 | 开集与拓扑（三条公理、拓扑的比较、离散与平凡拓扑）、基与子空间（基的两条判别、子空间拓扑、相对开集）、闭集、内部与闭包（取补对偶、极限点与孤立点、边界、稠密子集）、连续映射（开集的原像开、同胚、与 ε-δ 的对接）、度量空间与序列收敛（p-范数球、ε-N 与柯西列） | 已上线 5/5 |
+| 二 连通与紧致 | `compact` | 连1..连4 | 连通性（不能拆成两个不交非空开集、连通子集的像、实数中连通即区间）、道路连通（道路与折线道路、连通但非道路连通的反例）、紧致性（开覆盖有有限子覆盖、Heine–Borel、闭子集与连续像）、商空间与常见曲面（认点粘边、环面 / 克莱因瓶 / 莫比乌斯带） | 已上线 4/4 |
+| 三 不变量初步 | `invariant` | 不1..不3 | 欧拉示性数（剖分与 V−E+F、环面与双环面、曲面分类）、基本群（回路的同伦类、$\pi_1(S^1)\cong\mathbb{Z}$、绕数与覆叠次数）、覆叠空间（覆叠映射、道路提升、直线覆叠圆与 $z\mapsto z^2$） | 已上线 3/3 |
+
+- 图编号前缀：**汉字单字** 拓/连/不（拉丁大写已用尽），路由仍用拉丁字母：`/topology/s1..s5`、`/topology/c1..c4`、`/topology/v1..v3`，视图组件 TS1..TS5 / TC1..TC4 / TV1..TV3，nav `views/topology/{space,compact,invariant}/` 下的 `snav.js`（`TSP_CHAPTERS` / `TSP_BASE`）、`cnav.js`（`TCN_CHAPTERS` / `TCN_BASE`）、`vnav.js`（`TIN_CHAPTERS` / `TIN_BASE`）。**`/topology` 已从 `HigherHome` 大纲页改由 `TopologyHome.vue` 接管**，旧单段路由拆成 `s/c/v` 三条子专题段。
+- 章名与路由前缀以各 nav 文件为唯一来源，`modnav.js` 的 SPEC 为 `topology: { groups: [['space','拓扑空间'],['compact','连通与紧致'],['invariant','不变量初步']] }`；模块主页 `views/topology/TopologyHome.vue` 三节均为实卡，底部一段总括 11 台。
+- 板件目录：`src/boards/topology/space/` —— openset 开集判定机（图 拓1：蓝色开圆盘与可拖点 P，球半径滑块，整颗球落在盘内即内点；粉色边界点另画一颗虚线球，跨过圆周判读随即改口）、basis 基与子空间机（图 拓2：L 形区域上按网格铺小球，逐颗检验「每点有基元落在任一邻域内」，子空间档把整条直线在 L 形里切出一段弦）、closure 内部与闭包机（图 拓3：开圆盘加一枚孤立点 Q，拖 P 读内点 / 边界点 / 外点，内部涂蓝、闭包描绿，拖到 Q 上仍是边界点）、contmap 连续映射机（图 拓4：函数图象与目标带 (a,b) 并排，反解原像区间并标开闭端点；跳断函数档让原像的开闭与目标带不一致，与 ε-δ 版连续对照）、metric 度量空间与序列收敛机（图 拓5：左图 p = 1 / 2 / ∞ 三档的单位球随 p 变形，右图把 zₙ = (1+1/n, sin 2.2n/n) 的前若干项画出来，ε 球染绿表示入球、染橙表示仍在球外，两项读数给出 n₀ 与尾项最大距离）。`compact/` —— connected 连通性机（图 连1：两块圆盘，间隙滑块拉开即染成两块并读 X=U∪V 的分割，合拢后整块一色）、pathconn 道路连通机（图 连2：两端点各在圆盘内拖动，三次贝塞尔道路随之弯曲；正弦曲线档画 sin(1/x)，演示连通而非道路连通）、compactness 紧致性机（图 连3：闭区间上的开覆盖按 n 加密，抽出有限子覆盖；开区间档留出一段覆盖不到的缺口）、quotient 商空间机（图 连4：正方形四边按箭头粘合，环面 / 克莱因瓶 / 莫比乌斯带三枚按钮切换粘法）。`invariant/` —— eulerchi 欧拉示性数机（图 不1：四面体与立方体画成平面图，V、E、F 逐项读出并算 V−E+F；环面按 V=1、E=2、F=1 的剖分读 χ=0，双环面读 −2）、fundgroup 基本群机（图 不2：定点出发绕圆 n 圈的道路，缝合段与方向箭头标出回路方向，n 滑块 −3..3 读 $\pi_1(S^1)$ 的元素，n=0 退化成常值回路）、covering 覆叠空间机（图 不3：直线覆叠圆，底空间一点在直线上的原像等距排开，绿色邻域的原像是一叠互不相交的开区间；$z\mapsto z^2$ 档把一对辐角 φ/2 与 φ/2+π 同时标出）。
+- 建设约定：速查页「拓扑学基础」三节共 12 卡（拓1..拓5 / 连1..连4 / 不1..不3）；README 路由表与目录树同步；Home 卡片「已上线 12 章」、`planned` 排除表加入 `topology`；`higherplan.js` 里该模块的 12 条只作规划来源，章名已抄进三个 nav 文件。
+- 待办：本模块尚无无头测试脚本（其余模块的 `scripts/*test.mjs` 模式可直接套用）；`views/topology/space/space_nav.js` 是写 nav 时的重复文件（导出与 `snav.js` 相同，glob 命中任一份都不影响运行），应删除。
+
+## fractal 模块 · 分形几何（三个子专题 11 章 · 11 台 · 全部上线 2026-11-13）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 自相似与维数 | `dim` | 维1..维4 | 自相似集（比例与份数两个参数）、相似维数（N r^D = 1，康托 0.631、科赫 1.262）、盒维数（ε 方格网数相交格，取 log 比值的极限）、豪斯多夫维数（H^s 覆盖测度与临界指数） | 已上线 4/4 |
+| 二 典型分形 | `shape` | 形1..形4 | 康托集（逐层挖中间三分之一，长度为零）、科赫曲线（每段折成四段，周长发散而面积收敛）、谢尔宾斯基三角形与地毯（维数 1.585 与 1.893）、朱利亚集与曼德博集（z↦z²+c 的逃逸边界） | 已上线 4/4 |
+| 三 生成与应用 | `gen` | 生1..生3 | 迭代函数系统（压缩映射的唯一吸引子、混沌游戏）、L 系统与分枝（字符串并行重写 + 龟行解释）、分形与自然（海岸线长度随尺长变化，幂律指数读维数） | 已上线 3/3 |
+
+- 图编号前缀：**汉字单字** 维/形/生（拉丁大写已用尽），路由仍用拉丁字母：`/fractal/d1..d4`、`/fractal/s1..s4`、`/fractal/g1..g3`，视图组件 FRD1..FRD4 / FRS1..FRS4 / FRG1..FRG3，nav 文件在 `views/fractal/{dim,shape,gen}/` 下（`dim` 那组是 `fsnav.js`；文件名不参与机制，`modnav.js` 的 glob 按目录命中、再按值类型取字符串与数组）。
+- 章名与路由前缀以各 nav 文件为唯一来源，`modnav.js` 的 SPEC 为 `fractal: { groups: [['dim','自相似与维数'],['shape','典型分形'],['gen','生成与应用']] }`；模块主页 `views/fractal/FractalHome.vue` 三节均为实卡，底部一段总括 10 台。
+- 板件目录：`src/boards/fractal/{dim,shape,gen}/` —— dim 组：自相似机（逐层替换线段与正方形，副本按顶层分色）、相似维数机（滑块拖 N 与 m，徽章恒读 ln N / ln m，取等时校验为 1）、盒维数机（方格网逐层变细，康托 / 科赫 / 谢尔宾斯基的相交格数按 2、4、3 倍增长）、豪斯多夫测度机（图 维4：左图把康托集的各层排成阶梯，右图画 lg F_k = k(lg2 − s·lg3) 随 s 的斜线，s 越过 D 时斜线翻号，竖线与金点标出临界指数）；shape 组：逐层挖空机（康托集每层平铺一行，红虚线标新挖的中段）、科赫折线机（层数滑块看折角细化，可切闭合雪花）、谢尔宾斯基挖空机（三角与地毯两档）、复迭代机（拖参数 c，朱利亚图与曼德博图互为切片）；gen 组：混沌游戏（固定种子随机落点，三种吸引子与手画一致）、L 系统龟行机（字符串读成枝条）、海岸线量尺机（不同尺长量同一条科赫海岸，双对数图拟合维数）。
+- 建设约定：速查页「分形几何」三节共 11 卡（维1..维4 / 形1..形4 / 生1..生3）；README 路由表与目录树同步；Home 卡片「已上线 11 章」。
+
+## projgeom 模块 · 高等几何（射影几何）（三个子专题 11 章 · 11 台 · 全部上线 2026-11-13）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 射影平面 | `plane` | 射1..射5 | 齐次坐标（(x,y,z) 与 (λx,λy,λz) 同点，z=0 是无穷远线）、射影变换（保持共线的可逆线性变换，平行线在灭点会合）、交比（射影不变量）、对偶原理（点线互换，共线↔共点）、德萨格定理与帕普斯定理（对应顶点连线共点 ↔ 对应边交点共线；六点分落两线） | 已上线 5/5 |
+| 二 二次曲线 | `conic` | 曲1..曲3 | 配极与极点极线（点线关联对称，P 进圆内极线出圆外）、二次曲线的射影分类（矩阵的秩 + 与无穷远线的实交点数）、帕斯卡定理与布里安雄定理（内接六边形三组对边交点共线，对偶版三线共点） | 已上线 3/3 |
+| 三 变换群与几何 | `group` | 换1..换3 | 变换群（复合封闭、有幺元与逆元；研究不变量与轨道）、爱尔兰根纲领（射影 ⊃ 仿射 ⊃ 相似 ⊃ 欧氏，群越大结论越少）、从射影到欧氏（指定的无穷远线决定仿射层级与圆锥曲线的仿射类型） | 已上线 3/3 |
+
+- 图编号前缀：**汉字单字** 射/曲/换（`曲` 与 polar 的曲1..曲2 字面相同，各在本模块内编号），路由仍用拉丁字母：`/projgeom/p1..p5`、`/projgeom/c1..c3`、`/projgeom/g1..g3`，视图组件 PJP1..PJP5 / PJC1..PJC3 / PJG1..PJG3，nav 文件在 `views/projgeom/{plane,conic,group}/` 下（`plane` 那组是 `prjnav.js`）。**射影几何不能用 `/projective`**——那条路径早被重定向到 `/conics/*`，slug 定为 `/projgeom`。
+- 章名与路由前缀以各 nav 文件为唯一来源，`modnav.js` 的 SPEC 为 `projgeom: { groups: [['plane','射影平面'],['conic','二次曲线'],['group','变换群与几何']] }`；模块主页 `views/projgeom/ProjgeomHome.vue` 三节均为实卡，底部一段总括 10 台。
+- 板件目录：`src/boards/projgeom/{plane,conic,group}/` —— plane 组：齐次坐标机（拖仿射点、滑块缩 λ，切无穷远档后平行线在箭头处会合）、射影变换机（方格网与单位正方形一起拉成梯形，灭点随参数滑动）、交比机（上下两排各四点，平移 / 倒数 / 分式三种变换下两块徽章始终同一个数）、对偶机（四点六线图与四线六点图并排，按组对照）、德萨格与帕普斯机（图 射5：左图两三角形由中心 O 与比例 t 生成，三条对应边的交点落在一条金轴上；右图六点分落两条直线，三组对边交点的帕普斯线同样实时算出）；conic 组：配极机（拖 P，黄色极线与两条紫色切线同步，P 进圆内极线出圆外）、分类机（椭圆 / 抛物线 / 双曲线切换，右读与无穷远线的交点数）、帕斯卡机（六个角滑块，黄线始终过三个交点；切对偶版即外切六边形三线共点）；group 组：变换群机（拿字母 F 做被试，八个按钮读元素、阶与逆元）、分层机（同一正方形在四级变换下依次变形）、无穷远线位置机（拖红线，同一条圆锥曲线在椭圆与双曲线之间连续改口）。
+- 建设约定：速查页「高等几何（射影几何）」三节共 11 卡（射1..射5 / 曲1..曲3 / 换1..换3）；README 路由表与目录树同步；Home 卡片「已上线 11 章」。
+
+## algebra 模块 · 抽象代数（三个子专题 17 章 · 17 台 · 全部上线 2026-11-13）
+
+| 子专题 | 分组 | 章节前缀 | 主题 | 状态 |
+| --- | --- | --- | --- | --- |
+| 一 代数结构 | `struct` | 结1..结4 | 二元运算与半群（封闭、结合、幺元、逆元逐级加码）、群环域（一种运算可逆 / 两种运算相容 / 非零元可除，ℤₙ 成域当且仅当 n 为素数）、同态与同构（保运算映射，核与像）、多项式环（带余除法按次数、余式 p(a) 与根一一对应） | 已上线 4/4 |
+| 二 群论 | `groupt` | 群1..群7 | 群的定义与例子（ℤ₄、V₄、S₃ 三样本）、子群与陪集（拉格朗日定理）、正规子群与商群（左右陪集重合才可商）、群同态基本定理（核正规、商群同构于像）、置换群与凯莱定理、群与对称（二面体群 Dₙ 的阶为 2n）、群作用与轨道-稳定子（轨道大小乘稳定子大小等于群的阶，伯恩赛德引理数轨道） | 已上线 7/7 |
+| 三 图论 | `graph` | 网1..网6 | 图的基本概念（度、握手定理）、路径与连通性（连通分量、BFS 最短路）、树（n 顶点 n−1 边、路径唯一）、欧拉回路与哈密顿回路（奇点个数定一笔画）、平面图与欧拉公式（V−E+F=2、E≤3V−6、K₅ 与 K₃,₃）、图的着色与匹配（色数与团数、二分图两色判据、霍尔定理） | 已上线 6/6 |
+
+- 图编号前缀：**汉字单字** 结/群/网（拉丁大写已用尽），路由仍用拉丁字母：`/algebra/s1..s4`、`/algebra/g1..g7`、`/algebra/n1..n6`，视图组件 ALS1..ALS4 / ALG1..ALG7 / ALN1..ALN6（避开已经用掉的 AS / AG / AN 前缀），nav 文件 `views/algebra/{struct,groupt,graph}/xxxnav.js` 分别导出 `AS_CHAPTERS`/`AS_BASE`、`AG_CHAPTERS`/`AG_BASE`、`AN_CHAPTERS`/`AN_BASE`。
+- 章名与路由前缀以各 nav 文件为唯一来源，`modnav.js` 的 SPEC 为 `algebra: { groups: [['struct','代数结构'],['groupt','群论'],['graph','图论']] }`；模块主页 `views/algebra/AlgebraHome.vue` 三节均为实卡，底部一段总括 16 台。
+- 板件目录：`src/boards/algebra/{struct,groupt,graph}/` —— struct 组：运算表机（模 n 加法 / 乘法 / 减法三档，结合律由表中两行两列对照读出）、环与域机（ℤₙ 乘法表，零因子染红、可逆元染绿，n 为素数时整表只剩绿色）、同态机（φ: ℤ₁₂ → ℤₘ 的核与像同屏，m 整除 12 时像才完整）、多项式环机（拖除数 x−a，余式 p(a) 与商同步改写，落到根上余式归零）；groupt 组：例子机（ℤ₄、V₄、S₃ 乘法表并排，四条公理逐条勾选）、陪集机（生成元在 ℤ₁₂ 表盘上反复转，子群与各条陪集分色）、正规子群机（S₃ 的左右陪集对照，H=⟨(12)⟩ 不一致、A₃ 一致且商群阶为 2）、同态基本定理机（按模 n 余数分组，核 nℤ 与商群 ℤ/nℤ 同台）、置换机（三枚箭头画出复合，走到阶时回到原位）、对称机（正 n 边形旋转与翻转，群阶 2n 随边数变化）、群作用机（图 群7：正方形八种对称变换轮番作用在四顶点着色的 16 张卡片上，右图金框圈出同一轨道，轨道 × 稳定子恒读 8）；graph 组：度数与握手机（边数逐条增加，度数和恒为边数两倍）、广度优先搜索机（从起点逐层铺开，换到孤立一片距离读 ∞）、**tree** 树的判定机（边数拨到 n−1 才转绿，少一条断开、多一条成圈）、**euler** 一笔画判定机（柯尼斯堡七桥四个奇点、五边形零个）、**planar** 面数核验机（正 n 边形剖成扇形三角块，V−E+F 恒为 2）、**color** 染色与匹配机（三类图贪心染色，绿粗边给完美匹配）。
+- 建设约定：速查页「抽象代数」三节共 17 卡（结1..结4 / 群1..群7 / 网1..网6）；README 路由表与目录树同步；Home 卡片「已上线 17 章」。
+
+## 高等数学 · 九个模块（2026-11-12 立项，2026-11-13 全部完结）
+
+
+
+用户 2026-11-12 要求：首页分「初等数学」「高等数学」两大类，高等部分**先把章节排出来**，讲义与画板随后逐章补。calc1 六个子专题 33 章 · 36 台、spacegeom 三个子专题 12 章 · 12 台、calc2 三个子专题 18 章 · 20 台、complexvar 三个子专题 12 章 · 12 台、numtheory 三个子专题 13 章 · 13 台、topology 三个子专题 12 章 · 12 台、fractal 三个子专题 11 章 · 11 台、projgeom 三个子专题 11 章 · 11 台、algebra 三个子专题 17 章 · 17 台已全部上线（模块主页 `Calc1Home.vue` / `SpacegeomHome.vue` / `Calc2Home.vue` / `ComplexvarHome.vue` / `NumtheoryHome.vue` / `TopologyHome.vue` / `FractalHome.vue` / `ProjgeomHome.vue` / `AlgebraHome.vue` 各自接管 `/calc1` / `/spacegeom` / `/calc2` / `/complexvar` / `/numtheory` / `/topology` / `/fractal` / `/projgeom` / `/algebra`），九条单段模块路由都拆成了子专题段，大纲页退出使用。
+
+- **章表唯一来源** `src/lib/higherplan.js`：`HIGHER` 数组，每个模块 `{ slug, t, card, sub, groups: [{ name, pre, items: [{ t, d }] }] }`。`pre` 是章号汉字前缀（极 / 微 / 积 / 定 / 方 / 级 …），`d` 是一句提要（可含 `$…$`，页面上走 texMix）。加章、改章只动这一个文件，页面不用改。
+- **共用大纲页** `src/views/higher/HigherHome.vue`：九个模块一个组件，按 `route.path` 首段取数据。章卡片是 `div` 而不是 `router-link`（章页还不存在），标签虚线橙底、悬停不抬升；页头写「规划中 · 共 N 章」。**2026-11-13 起九条路由都归模块主页，这个文件已无引用**，留着作将来加新模块的模板，别重新挂进 router。
+- **路由**：`/calc1`（一元函数微积分）、`/spacegeom`（空间解析几何）、`/calc2`（多元函数微积分）、`/complexvar`（复变函数）、`/numtheory`（初等数论）、`/topology`（拓扑学基础）、`/fractal`（分形几何）、`/projgeom`（高等几何（射影几何））、`/algebra`（抽象代数）。**射影几何不能用 `/projective`** —— 那条路径早就是重定向到 `/conics/*` 的 catch-all（见 router.js 末尾），新模块必须换 slug。
+- **面包屑**：`lib/visits.js` 的 `infoOf` 对模块页回落到 `HIGHER_TITLE`，缓存副行显示「高等数学」；`modnav.js` 与 `ChapterDrawer.vue` 已登记九个模块（fractal / projgeom / algebra 于 2026-11-13 补上），左栏、←/→ 翻章与抽屉进度条都按各自的 nav 文件现算。
+- **开写某模块时**：按现有模块的写法建 `views/<模块>/<M>Home.vue` 与 `views/<模块>/<分组>/`（章页 + `xxxnav.js`），把 `router.js` 里那一条模块路由拆成 `/slug/xx1…`，`modnav.js` 的 SPEC 登记子专题（左栏与 ←/→ 翻章要用），Home 那张卡从「规划中」改成「已上线 n 章」，并把 `higherplan.js` 里该模块的 `items` 作为章名来源抄成 nav 文件（写完即删掉大纲里的重复条目，避免两份）。
+
+| 模块 | 路由 | 子专题（章数） | 合计 |
+| --- | --- | --- | --- |
+| 一元函数微积分 | `/calc1` | 极限与连续 5 / 导数与微分 8 / 不定积分 4 / 定积分 5 / 常微分方程 6 / 无穷级数 5 | 33（全部上线 · 36 台） |
+| 空间解析几何 | `/spacegeom` | 空间向量 4 / 平面与直线 4 / 曲面与曲线 4 | 12（全部上线 · 12 台） |
+| 多元函数微积分 | `/calc2` | 多元函数微分学 6 / 重积分 6 / 曲线与曲面积分 6 | 18（全部上线 · 20 台） |
+| 复变函数 | `/complexvar` | 复数与复变函数 3 / 解析函数 4 / 级数与留数 5 | 12（全部上线 · 12 台） |
+| 初等数论 | `/numtheory` | 整除与同余 4 / 数论定理 5 / 二次剩余与应用 4 | 13（全部上线 · 13 台） |
+| 拓扑学基础 | `/topology` | 拓扑空间 5 / 连通与紧致 4 / 不变量初步 3 | 12（全部上线 · 12 台） |
+| 分形几何 | `/fractal` | 自相似与维数 4 / 典型分形 4 / 生成与应用 3 | 11（全部上线 · 11 台） |
+| 高等几何（射影几何） | `/projgeom` | 射影平面 5 / 二次曲线 3 / 变换群与几何 3 | 11（全部上线 · 11 台） |
+| 抽象代数 | `/algebra` | 代数结构 4 / 群论 7 / 图论 6 | 17（全部上线 · 17 台） |
+
+合计 139 章，章名与提要逐条见 `src/lib/higherplan.js`；九个模块的章名已全部抄进各自的 nav 文件，站点上从首页「二 · 高等数学」进模块主页。表上九个模块全部上线，`higherplan.js` 现在只剩「章名来源 + 章数」两份用处。
+
+## 自由画板 · 自托管 GeoGebra（`/playground`）
+
+- **定位**：讲义画板负责讲解，GeoGebra 只管自由作图与验证。不替换、不嵌入章节正文，避免把教材叙事拆散。
+- **资源**：`public/ggb/`（约 69 MB，来自 `geogebra-math-apps-bundle-5-4-934-0.zip`，只取了 `deployggb.js`、`HTML5/5.0/GeoGebra.html`、`css/`、`webSimple/`、`web3d/`）。**离线自托管**，页面不连 geogebra.org；换版本时解压覆盖同一目录即可，路径不用改。`GeoGebra.html` 内部固定加载 `web3d/web3d.nocache.js`，所以 `web3d/` 必须留。
+- **授权**：GeoGebra 非商业用途可自由分发；本站按此自托管，源码未改。页脚与 `/playground/about` 页各有一句说明。
+- **组件**：`src/components/GeoGebraApp.vue` —— 懒加载 `deployggb.js`，`new GGBApplet({...}, true)` + `setHTML5Codebase(codebase, true)` + `inject(hostId)`；`commands` 数组在 `appletOnLoad` 里按序 `evalCommand`；容器用 ResizeObserver 调 `api.setSize`；文件缺失时显示提示而不是空白。父组件通过 `ref` 拿 `api`（暴露 `eval/reset/clear`）。`fill` 为真时忽略 `height`、铺满父容器（整页画板与小窗用），此时父容器必须有确定高度。**路径一律由 `import.meta.env.BASE_URL` 拼**（dev 是 `/`，构建是 `./`），别写死 `/ggb/…`，否则 dist 放进子目录或本地打开就断。
+- **三个尺寸坑（2026-11-11 修）**：① `disableAutoScale:true` 必须传——不传时 GeoGebra 按容器算一个缩放比把整块界面缩小，`applet_scaler` 拿到 `transform:scale(0.9687)`，宿主被写成 `681px`（容器 703px），右侧空出一条 22px 的缝，看着就是不居中。关掉后尺寸完全由 `sync()` 的 `api.setSize` 决定。② `paneRatio` 收窄左侧代数栏：GeoGebra 5 没有改分栏的 API，只能在 `appletOnLoad` 后对 `.splitPaneDragger` 派发一次 `mousedown → document.mousemove → mouseup`（坐标取分隔条中心与目标比例），等价于用户拖一下；默认占比约 1/3，整页与小窗都传 `0.2`（用户 2026-11-11「左侧太宽，再窄一些」后由 0.24 收窄）。分栏是排在 `appletOnLoad` 之后才建出来的，所以要**轮询等 `.splitPaneDragger` 与 `.gwt-SplitLayoutPanel` 都有宽度再拖**（每 150ms 一次、最多约 6 秒），固定 `setTimeout(60/600ms)` 在同时挂两块板的页面上会全部落空；代数栏另设 **192px** 下限（试过 168/176 都会把 `a = 1.00` 截成 `a = 1.(`，192 是能读全对象定义的最小值），算式为 `Math.max(ratio, Math.min(192 / 宽, 0.4))`。③ **分栏方向会被容器横竖带跑**：GeoGebra 的判断是「容器高于宽 → 上下分栏」（`.splitPaneDragger` 的类名从 `gwt-SplitLayoutPanel-HDragger` 变成 `-VDragger`），右侧半屏小窗天生是窄高比例，代数栏就被挪到图形区下方、图形区压成顶上一条横带，看着像画板没在框里。修法：`layoutFix()` 发现 `VDragger` 就重放一次 `api.setPerspective('AG')`（已画的对象与坐标都不受影响），布局是异步重排的，扳完隔 150ms 再量一次；**每次 `setSize` 都会重新判定方向**，所以 `applySize` 之后要再摆一遍，连续 resize 用 110ms 防抖合并成一次。反过来，竖排时绝不能拖分隔条——那会把代数栏压成 0 高。
+- **deployggb.js 只能载一次**：同一页挂两块板时，两个实例会各插一个 `<script>`，控制台报 `deployggb.js was loaded twice`。去重不能靠模块变量——`<script setup>` 里的顶层变量是每个实例一份（编译进 `setup()`），得先查页面里已有的同 src `<script>`，有就等它 `load`，没有才插。已按此改。
+- **codebase 必须指到 `…/5.0/web3d/`**：deployggb 按 codebase 路径的倒数第二段决定加载哪个 nocache 脚本，指到 `5.0/` 会去取根本不存在的 `web.nocache.js`，表现是页面一直停在「正在加载画板…」。踩过一次。
+- **appName 与指令集**：平面档用 `appName:'classic'` + `perspective:'AG'`（只开代数与图象两栏）。**别用 `graphing`**——绘图计算器的指令集是裁过的，`Polygon`、`ApplyMatrix` 都报「未知的指令」，章节出口带过来的命令直接跑不通。三维档 `appName:'3d'` + `perspective:'T'`。`Eigenvectors` / `Eigenvalues` 只有 CAS 视图能用，图形档里会弹错误框，出口命令里不要写。`showKeyboard:false`、`showKeyboardOnFocus:false`、`preventFocus:true` 三件套用来压掉软键盘与自动抢焦点。
+- **出口**：`src/lib/ggb.js` 的 `ggbUrl(cmds, mode)` / `openGGB(cmds, mode)`，命令数组以 JSON 塞进 hash 查询串（`#/playground?mode=…&cmds=…`）。画板侧调用 `B.ggbOutlet(getCmds, mode)`（`board.js`）——按钮复用 `.dl` 样式，挂进右上角操作条 `.dlbar`（`global.css`：flex 排布，`order:-1` 排在 ＋/－ 缩放与 ◧/⛶ 半屏全屏之后，紧挨 ● 视频、▤ 底色、Aa 底注与 ⤓ PNG），hover 才现身（设置页可把整条搬到板上方，见「B 操作条位置」）；`getCmds` 每次点击现算，拖动过参数也带得过去。
+- **已接出口的板**：quadform（二次型隐式方程 + 矩阵）、gridmap（矩阵 + `ApplyMatrix` 变换单位正方形）、sinlab（A、ω、φ 与 `f(x)=A sin(w x+p)`）、circleeq（圆心、半径、标准式与一般式）。新增板照这个写法加一行即可，命令用 GeoGebra 语法（`f(x)=sin(x)`、`Circle((1,2),3)`、`u=(1,2,3)`）。
+- **顶栏**：模块链接收进一枚「章节目录」按钮（`.navdir`），点开抽屉 `ChapterDrawer.vue`：十四个模块各一张圆角卡（标题 + 一句概述 + 已读/总数 + 浅色进度条，颜色按模块分，当前模块描边高亮），卡片即 `<router-link>`，点击跳转并收起；Esc / 点遮罩关闭。章节总数由 `router.js` 的路由表现算（只数 `/<模块>/<章节>` 两段式叶子路由），已读取 `progress.js` 的 `READ`。**弹出方向**由 `:side` 决定：左档面板贴左、右侧圆角 `0 16px 16px 0`、投影朝右；右档贴右、圆角 `16px 0 0 16px`、投影朝左。进出场用 `<Transition>`——遮罩 `cdm` 淡入淡出，面板 `cdl`/`cdr` 从各自一侧 `translateX(±102%)` 滑进（0.26s，`prefers-reduced-motion` 下关掉）。顶栏布局：logo + 「章节目录」靠左，右侧「速查」「画板」「⚙ 设置」与打印、主题按钮靠右，`.topnav .in` 左右各留 26px 不贴边（原 `max-width:1440px` 居中已撤，全局铺开）。Home 目录底部另有两张「工具」卡（自由画板、定理速查），**不是章节卡**——单独放在 `.tool-row` 里用虚线边的 `.tool-link`，不再混进 `.chapter-grid`。
+- **设置页**：`/settings`（`Settings.vue`）——「章节目录方向」「画板小窗方向」两行分段控件（靠左/靠右），外加边界说明与恢复默认。偏好存 `src/lib/settings.js`（`PREFS` 响应式对象 + `localStorage 'gl-prefs'`，`setPref(k,v)` / `resetPrefs()`），`App.vue` 直接读 `PREFS` 渲染，改完即刻生效、无需刷新。后续新设置项按同样一行加进去。
+- **章节页版式**：`ChPage.vue` 的「本讲结构」不再压在正文里，而是**贴正文左侧的粘性导航条**——`.layout` 用 `grid-template-columns:184px minmax(0,1fr)`，`.toc` 圆角卡片、`position:sticky; top:64px`、淡蓝渐变底，每条目录前带两位序号（`01`、`02`…），当前小节由 `IntersectionObserver`（`rootMargin:'-64px 0px -62% 0px'`）高亮：左边一条蓝色竖线 + 淡蓝底。正文因此拿到剩余全部宽度；`toc` 为空时 `.layout.full` 退回单栏。
+- **入口（三处）**：顶栏「画板」→ `/playground`；任意讲解页右下角的圆形按钮 → 右侧半屏小窗；章节画板右上角的「↗ GeoGebra」→ 新标签页整页画板（带当前参数）。圆形按钮**可拖动**（`pointerdown` 起拖、位移超过 5px 才算拖动，否则按点击开合；位置存 localStorage `gl-fab`，窗口缩放时夹回屏内）。
+- **右侧半屏小窗**：`src/components/GeoGebraDock.vue` 挂在 `App.vue`，`v-model:open` 由 `App` 的 `dockOpen` 管；`main.dock-split` / `footer.dock-split`（`global.css`）用 `padding-right:calc(var(--dock-w) + 22px)` 给正文让位，`--dock-w` 默认 50vw（`:root`），窄屏 ≤900px 小窗满宽、正文不让位。**`:side` 可切到左边**（设置页的「画板小窗方向」）：`.ggb-dock.left` 贴左、圆角与投影镜像，`main.dock-split.dock-left` / `footer.dock-split.dock-left` 把让位改到 `padding-left`。小窗里 `<GeoGebraApp fill>` 铺满，`fill` 档高度取父容器、ResizeObserver 与 window resize 都会同步 `setSize`。
+  - 取命令走 `ggb.js` 的出口登记表：`B.ggbOutlet` 里 `setActiveOutlet({getCmds, mode, board})`，`board.destroy()` 里 `clearActiveOutlet(this)`；小窗打开时 `outletCommands()` 取当前页（多板时以最后注册的为准）的命令，没有出口就是空白板。**同一实例再开会 `reset()` 后重放命令，不换档时不要重挂载**（重挂载要重新加载一次 GeoGebra，慢）。
+  - 换路由自动收起；`/playground` 下不显示圆形按钮，页脚也隐藏（整页画板会顶出滚动条）。
+- **整页画板**：`Playground.vue` 一行工具栏 + 铺满的板子（`100dvh − 46px`，`width:100vw; margin-left:calc(50% - 50vw)` 破开 `main` 的 1440 居中与内边距）。工具栏：模式（平面/三维）、示例、清空、章节带入的 N 条命令（点开浮层列命令）、关于。
+- **关于页**：`/playground/about`（`PlaygroundAbout.vue`）装画板说明——三个入口、命令示例、两档差别、授权与体积；画板页的旧正文搬到这里，页面本身只留工具栏。底部换成与章节页同款的 `.read-row` 按钮行（回到画板 / 使用说明），不再是一个孤零零的返回链接。
+- **使用说明页**：`/playground/guide`（`PlaygroundGuide.vue`）——界面与基本操作、输入栏常用命令表、对象属性、GeoGebra 脚本（单击/更新两个事件、常用命令表、递归警示）、JavaScript 脚本（`ggbOnInit`/`onClick`/`onUpdate`、`ggbApplet` API 表），末尾两块板各用一个例子：说明1 由滑块 `k` 的更新脚本驱动两个点（**先挂 `registerObjectUpdateListener` 再 `setValue('k', …)`**，否则开屏停在初始位置）、说明2 用 `registerObjectUpdateListener` 把圆上最近点算出来并写回页面读数、`registerClickListener` 点亮提示。**GeoGebra 5 Web 版没有 `setScript`，XML 里的 `<listener type="objectUpdate" val="…"/>` 走 `setXML` 也挂不上（`getXML` 回读即丢）**，所以两块板都由页面代为绑定同一段脚本，正文已注明这一点；要真正存进文件，得在 GeoGebra 里手动填进对象属性。
+- **入站**：`/playground` 读 `?mode=`、`?cmds=`，命令作为初始命令重放，工具栏上以「章节带入 N 条」浮层列出，可以直接改。
+

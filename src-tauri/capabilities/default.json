@@ -1,0 +1,11 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "主窗口的默认能力：窗口自带操作 + 对话框与文件插件。fs 目前只给 default（只许读应用自身目录）；save.js 落地统一保存入口时再按需加 allow-write 与目录 scope。",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:default",
+    "fs:default"
+  ]
+}

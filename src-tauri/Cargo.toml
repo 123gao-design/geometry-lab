@@ -1,0 +1,30 @@
+[package]
+name = "geometry-lab"
+version = "0.1.0"
+description = "几何演示实验室（交互式高中数学演示站）的桌面壳"
+authors = ["123gao-design"]
+edition = "2021"
+
+# 桌面壳：真正的界面是 ../dist 里的 Vite 产物（tauri.conf.json 的 frontendDist），
+# Rust 侧只有窗口与插件桥接，没有业务逻辑。
+[lib]
+name = "geometry_lab_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# 发布包瘦身：LTO + 单编译单元 + 去 panic 展开与符号
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

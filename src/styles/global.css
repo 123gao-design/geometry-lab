@@ -1,0 +1,732 @@
+:root{
+  --bg:#0b0f17; --bg2:#0a0d14; --card:#111826; --line:#1f2a3a;
+  --ink:#e8eef7; --mut:#93a1b5; --faint:#5c6a80;
+  --blue:#5cadff; --orange:#ff9e4a; --green:#4ade80; --purple:#c084fc;
+  --pink:#ff7b8a; --yellow:#ffd166; --cyan:#67e8f9;
+  /* 卡片悬停亮线 / 渐变填充的底色：默认跟主题的 --blue 走，设置页「卡片悬停亮线」选自定义时
+     由 lib/settings.js 往 html 上写一条同名内联变量盖掉它 */
+  --gl-sweep-ink:var(--blue);
+  --dock-w:50vw;   /* 右侧半屏画板宽度，App.vue 的 main/footer 让位用它 */
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.85 -apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  -webkit-font-smoothing:antialiased}
+h1,h2,.sub{font-family:Georgia,'Times New Roman','Songti SC','SimSun',serif}
+main,nav .in{max-width:1720px;margin:0 auto;padding:0 20px}
+/* 路由切换过渡：App.vue 在切路由时给 main 挂 .page-in 重放动画；具体放哪种由设置页的 data-anim 决定 */
+main.page-in[data-anim=fade]{animation:pageFade .34s cubic-bezier(.2,.7,.3,1) both}
+main.page-in[data-anim=up]{animation:pageUp .36s cubic-bezier(.2,.7,.3,1) both}
+main.page-in[data-anim=zoom]{animation:pageZoom .34s cubic-bezier(.2,.7,.3,1) both}
+main.page-in[data-anim=slide]{animation:pageSlide .4s cubic-bezier(.2,.7,.3,1) both}
+main.page-in[data-anim=blur]{animation:pageBlur .42s ease both}
+main.page-in[data-anim=none]{animation:none}
+@keyframes pageFade{from{opacity:0}to{opacity:1}}
+@keyframes pageUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pageZoom{from{opacity:0;transform:scale(.988)}to{opacity:1;transform:none}}
+@keyframes pageSlide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes pageBlur{from{opacity:0;filter:blur(7px)}to{opacity:1;filter:none}}
+@media (prefers-reduced-motion:reduce){main.page-in{animation:none !important}}
+/* 助手小窗开着（半屏）时，正文与页脚让出那一半 */
+main.chat-split,footer.chat-split{max-width:none;margin:0;padding-right:calc(50vw + 22px);transition:padding .18s ease}
+main.chat-split.chat-left,footer.chat-split.chat-left{padding-left:calc(50vw + 22px);padding-right:22px}
+/* 让出一半后正文只剩半屏：右栏「本讲结构」先撤，左栏收窄，别把正文挤成一条 */
+main.chat-split .toc,main.dock-split .toc{display:none}
+main.chat-split .chap3,main.dock-split .chap3{grid-template-columns:220px minmax(0,1fr);gap:18px}
+@media (max-width:900px){main.chat-split,footer.chat-split{padding-right:22px}
+  main.chat-split.chat-left,footer.chat-split.chat-left{padding-right:22px;padding-left:22px}}
+/* 右侧半屏画板开着时，正文与页脚让出右半边（画板本身 fixed 贴在右边，见 GeoGebraDock.vue） */
+main.dock-split,footer.dock-split{max-width:none;margin:0;padding-right:calc(var(--dock-w) + 22px);
+  transition:padding .18s ease}
+/* 设置页把画板小窗换到左边时，改让左侧 */
+main.dock-split.dock-left,footer.dock-split.dock-left{padding-left:calc(var(--dock-w) + 22px);padding-right:22px}
+@media (max-width:900px){main.dock-split,footer.dock-split{padding-right:22px}
+  main.dock-split.dock-left,footer.dock-split.dock-left{padding-right:22px;padding-left:22px}}
+/* 背景光影：三团主题色柔光大幅漂移 + 明暗呼吸（默认开；主题选单底部「背景光影」可关；打印与减弱动效偏好自动关） */
+.bg-fx{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;--dim:1}
+html.light .bg-fx{--dim:.5}
+.bg-fx i{position:absolute;border-radius:50%;opacity:calc(var(--o,.18)*var(--dim,1));will-change:transform,opacity}
+.bg-fx i:nth-child(1){--o:.20;width:46vmax;height:46vmax;left:-14vmax;top:-20vmax;
+  background:radial-gradient(closest-side,var(--blue),transparent 72%);
+  animation:fxA 11s ease-in-out -3s infinite alternate,fxP 6.5s ease-in-out -1s infinite alternate}
+.bg-fx i:nth-child(2){--o:.15;width:38vmax;height:38vmax;right:-12vmax;top:26vh;
+  background:radial-gradient(closest-side,var(--purple),transparent 72%);
+  animation:fxB 14s ease-in-out -7s infinite alternate,fxP 5.5s ease-in-out -2.7s infinite alternate}
+.bg-fx i:nth-child(3){--o:.13;width:34vmax;height:34vmax;left:30vw;bottom:-18vmax;
+  background:radial-gradient(closest-side,var(--cyan),transparent 72%);
+  animation:fxC 17s ease-in-out -11s infinite alternate,fxP 7.5s ease-in-out -4.3s infinite alternate}
+html.no-anim .bg-fx{display:none}
+@media (prefers-reduced-motion:reduce){.bg-fx i{animation:none}}
+/* 背景动态：混沌吸引子的粒子光带（components/BgMotion.vue 画）；同样垫在内容之下、不挡操作 */
+.bg-motion{position:fixed;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none;opacity:1}
+html.light .bg-motion{opacity:.95}
+html.no-anim .bg-motion{display:none}
+@media print{.bg-motion{display:none!important}}
+/* 旋转多面体（components/BgPoly.vue）：三档位置由 bgSolidPos 决定。
+   左右留白档的宽度由 JS 按 main 的边距现量（band），clamp 只是首帧兜底；
+   留白不足 200px 时组件直接 display:none；右下角档是一块正方形，尺寸由 CSS 管 */
+.bg-poly{position:fixed;z-index:-1;pointer-events:none}
+.bg-poly-left{top:0;left:0;height:100vh;width:clamp(160px,12vw,700px)}
+.bg-poly-right{top:0;right:0;height:100vh;width:clamp(160px,12vw,700px)}
+.bg-poly-br{right:20px;bottom:20px;width:clamp(200px,24vw,380px);height:clamp(200px,24vw,380px)}
+html.light .bg-poly{opacity:.9}
+html.no-anim .bg-poly{display:none}
+@media (max-width:900px){.bg-poly{display:none}}
+@media print{.bg-poly{display:none!important}}
+@keyframes fxA{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(16vw,10vh,0) scale(1.25)}}
+@keyframes fxB{from{transform:translate3d(0,0,0) scale(1.12)}to{transform:translate3d(-15vw,-11vh,0) scale(.9)}}
+@keyframes fxC{from{transform:translate3d(0,0,0) scale(.94)}to{transform:translate3d(12vw,-13vh,0) scale(1.2)}}
+@keyframes fxP{from{opacity:calc(var(--o,.2)*var(--dim,1)*.7)}to{opacity:calc(var(--o,.2)*var(--dim,1)*1.3)}}
+p{margin:.7em 0}
+strong{color:#fff}
+em{font-style:normal;color:var(--yellow)}
+.term{font-size:.82em;color:var(--faint);white-space:nowrap}
+.note{border-left:3px solid var(--blue);background:rgba(92,173,255,.08);
+  border-radius:0 8px 8px 0;padding:10px 16px;margin:1em 0;font-size:.95em}
+.note.good{border-color:var(--green);background:rgba(74,222,128,.07)}
+.note.warn{border-color:var(--orange);background:rgba(255,158,74,.07)}
+/* 提示框：四边圆角、带小图标的标题、内容按行列出（用户 2026-11-11 拍板，替代原先的「坑」段落） */
+.note.tip{border:1px solid var(--orange);border-left:3px solid var(--orange);border-color:var(--orange);
+  border-radius:14px;padding:12px 18px 12px 16px;background:rgba(255,158,74,.06);
+  border-color:color-mix(in srgb, var(--orange) 38%, transparent);border-left-color:var(--orange)}
+.note.tip .tip-t{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:13.5px;font-weight:700;
+  letter-spacing:1.4px;color:var(--orange)}
+.note.tip .tip-ic{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;
+  border-radius:50%;background:color-mix(in srgb, var(--orange) 18%, transparent);font-size:12px;line-height:1}
+.note.tip .tip-list{margin:.1em 0 .1em;padding-left:1.25em}
+.note.tip .tip-list li{margin:.5em 0;line-height:1.75}
+.note.tip .tip-list li::marker{color:var(--orange)}
+.note.tip .tip-pre{margin:.2em 0 .6em;color:var(--mut)}
+.katex-display{margin:1.1em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+/* 顶部导航 */
+.topnav{position:sticky;top:0;z-index:99;background:rgba(11,15,23,.82);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.topnav .in{display:flex;align-items:center;gap:4px;height:46px;max-width:none;padding:0 26px}
+/* 模块链接收进「章节目录」按钮（点开左侧抽屉），打印/主题两枚按钮固定在最右 */
+.topnav .navdir{display:flex;align-items:center;gap:6px;flex:none;margin-left:8px;
+  background:transparent;border:1px solid var(--line);border-radius:99px;color:var(--mut);
+  font:inherit;font-size:13.5px;padding:4px 12px;cursor:pointer;white-space:nowrap}
+.topnav .navdir:hover{color:var(--ink);border-color:var(--mut)}
+.topnav .navdir.on{color:var(--blue);border-color:var(--blue)}
+.navdir-ic{font-size:12px;line-height:1}
+.topnav .nav-sp{flex:1}
+.topnav a{color:var(--mut);text-decoration:none;font-size:13.5px;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.topnav a:hover{color:var(--ink);background:rgba(255,255,255,.06)}
+.topnav a.router-link-active{color:var(--blue)}
+/* 速查与画板钉在右侧（不随模块链接滚动），描一道细边与模块链接区分开 */
+.topnav a.pin{flex:none;border:1px solid var(--line)}
+/* 顶栏的按钮型入口（助手）：与 a.pin 同款胶囊 */
+.topnav button.pin{display:inline-flex;align-items:center;gap:4px;flex:none;font:inherit;font-size:13.5px;
+  color:var(--mut);background:transparent;border:1px solid var(--line);border-radius:99px;
+  padding:4px 11px;cursor:pointer;white-space:nowrap}
+.topnav button.pin:hover{color:var(--ink);border-color:var(--mut);background:rgba(255,255,255,.06)}
+.topnav button.pin.on{color:var(--blue);border-color:var(--blue)}
+.logo{font-weight:700;color:var(--ink);margin-right:10px;white-space:nowrap;text-decoration:none}
+.logo .mark{width:21px;height:21px;border-radius:5px;flex:none;margin-right:7px;vertical-align:-4px}
+/* 首页页眉：徽标与站名并排一行，简介另起一段 */
+.hero-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.home-logo{width:58px;height:58px;border-radius:13px;display:block;flex:none}
+.hero .sub{margin:.9em 0 0}
+.logo i{font-style:normal;color:var(--blue)}
+.theme-btn{margin-left:auto;background:transparent;border:1px solid var(--line);border-radius:99px;
+  color:var(--mut);padding:3px 12px;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap;line-height:1.6}
+.theme-btn:hover{color:var(--ink);border-color:var(--mut)}
+.topnav .print-btn{margin-left:0}
+/* 主题选单：点 🎨 展开的圆角面板 —— 圆形色卡横向网格（一行四枚、自动分行），底部背景光影开关；
+   挂 body + fixed 定位（挂导航条 .in 里会被 overflow 裁掉），坐标由 board.js 在开面板时按按钮现算 */
+.theme-menu{position:fixed;z-index:120;display:grid;grid-template-columns:repeat(4,minmax(58px,1fr));
+  gap:10px 4px;min-width:288px;padding:12px 10px 8px;border:1px solid var(--line);border-radius:16px;
+  background:var(--card);box-shadow:0 16px 44px rgba(0,0,0,.30)}
+.theme-menu .theme-item{display:flex;flex-direction:column;align-items:center;gap:7px;padding:8px 2px 6px;
+  border:1px solid transparent;border-radius:12px;background:none;color:var(--mut);font:inherit;font-size:12px;
+  cursor:pointer;white-space:nowrap;line-height:1.2}
+.theme-menu .theme-item:hover{background:var(--bg2);color:var(--ink)}
+.theme-menu .theme-item .sw{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);
+  box-shadow:inset 0 2px 4px rgba(255,255,255,.22),inset 0 -3px 5px rgba(0,0,0,.22)}
+.theme-menu .theme-item.on{border-color:var(--line);background:var(--bg2);color:var(--blue);font-weight:600}
+.theme-menu .theme-item.on .sw{border-color:var(--blue);outline:2px solid var(--blue);outline-offset:2px}
+.theme-menu .mrow{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:11px;background:none;color:var(--mut);
+  font:inherit;font-size:13px;cursor:pointer}
+.theme-menu .mrow:hover{background:var(--bg2);color:var(--ink)}
+.theme-menu .mrow .tgl{flex:none;width:34px;height:19px;border-radius:10px;background:var(--line);position:relative;
+  transition:background .18s}
+.theme-menu .mrow .tgl::after{content:'';position:absolute;left:2px;top:2px;width:15px;height:15px;border-radius:50%;
+  background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.4);transition:transform .18s}
+.theme-menu .mrow.on .tgl{background:var(--blue)}
+.theme-menu .mrow.on .tgl::after{transform:translateX(15px)}
+/* 章节导航：已改为讲解页左栏的竖排目录（.chapnav） */
+.chapter-head{margin:6px 0 4px}
+.chapter-head h1{font-size:clamp(23px,3.6vw,32px);line-height:1.35;margin:10px 0 2px;letter-spacing:.5px}
+/* 左上角的面包屑圆钮（left16 / top58 / 44px）会压住首屏左上的标题首字：
+   模块主页这类整页开头的 .chapter-head 让开 56px；讲解页的章名在栏内（x≈322），不受影响，
+   那一页改由 .chap3 的下边距让开（见下方 .chap3 规则）。
+   宽屏上 main 居中、圆钮整个落在左侧留白里，这 56 / 64px 就白让了，
+   收回到 10 / 18px —— 见文件末尾的 @media (min-width:1820px) */
+main > * > .chapter-head:first-child{margin-top:56px}
+.chapmain > .chapter-head:first-child{margin-top:6px}
+.chapter-head .no{font-size:.55em;color:var(--blue);border:1px solid #274b76;border-radius:8px;
+  padding:2px 9px;margin-right:12px;vertical-align:middle;letter-spacing:1px;font-family:ui-monospace,Menlo,monospace}
+.sub{color:var(--mut);font-size:16px;margin:2px 0}
+/* 阅读进度（ChPage 底部标记 + 目录页角标） */
+.read-row{display:flex;align-items:center;gap:12px;margin-top:28px;padding-top:16px;border-top:1px dashed var(--line)}
+.readmark{background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:99px;
+  padding:5px 16px;font-size:13px;cursor:pointer;font-family:inherit}
+.readmark:hover{color:var(--ink);border-color:var(--mut)}
+.readmark.on{color:var(--green);border-color:#2c5a3c;background:rgba(74,222,128,.08)}
+.readtip{color:var(--faint);font-size:12px}
+h3.sec .prog{float:right;color:var(--faint);font-size:13px;font-weight:400;margin-top:3px}
+.readall{color:var(--faint);font-size:13.5px;margin:-6px 0 2px}
+.topic-card .tag.done{color:var(--green);border-color:#2c5a3c;margin-left:6px}
+/* 卡片 */
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:30px 34px;margin:20px 0}
+/* 画板 */
+.board-wrap{margin:18px 0 6px}
+/* 底色可自选：--bd-bg 由 board.js 的底色面板写在板根上，没选就回落到主题的 --bg2 */
+.board{background:var(--bd-bg,var(--bg2));border:1px solid var(--line);border-radius:12px;overflow:hidden;position:relative}
+.board svg{display:block;width:100%;height:auto;touch-action:none}
+.cap{color:var(--faint);font-size:13px;margin:8px 2px 0;line-height:1.7}
+.cap b{color:var(--mut)}
+/* --bd-ink：调色板自选底色时按亮度换的墨色（深底浅字、浅底深字）；没选就回落到主题 ink */
+svg text{fill:var(--bd-ink,var(--ink));font-size:12px;paint-order:stroke;stroke:var(--bd-bg,var(--bg2));stroke-width:3px;stroke-linejoin:round}
+/* 板内文字可拖动（引擎在 svg 捕获阶段做事件委托）：dyn 层的标签与顶层 hint/hintM 都算，把手标签 .hndlbl 不参与 */
+svg text:not(.hndlbl){cursor:move;user-select:none}
+svg foreignObject{cursor:move}
+/* 公式标签默认墨色：KaTeX 的 div 带内联色，自选深/浅底时用类上 !important 换成 --bd-ink */
+.board .bd-tex-ink{color:var(--bd-ink,var(--ink)) !important}
+circle.hnd{cursor:grab;transition:r .12s}
+circle.hnd:hover,circle.hnd.drag{r:9px;cursor:grabbing}
+circle.hnd.drag{stroke-width:3}
+.hndlbl{pointer-events:none;user-select:none}
+/* 画板操作条：右上角一排（缩放 / GeoGebra / 视频 / PNG），hover 才现身（触屏无 hover，常显） */
+.dlbar{position:absolute;top:8px;right:8px;z-index:6;display:flex;gap:6px}
+.dl{position:absolute;top:8px;right:8px;z-index:6;background:rgba(11,15,23,.72);border:1px solid var(--line);color:var(--mut);
+  border-radius:99px;padding:2px 11px;font-size:11.5px;cursor:pointer;font-family:inherit;opacity:0;transition:opacity .15s}
+/* 条内按钮交给 flex 排布，不再各自定位；从左到右固定为
+   ＋ － ｜ ◧ ⛶ ｜ GeoGebra ｜ 视频 ｜ ▤ 底色 ｜ Aa 底注 ｜ PNG */
+.dlbar .dl{position:static;top:auto;right:auto}
+.dlbar .zoom{order:-2;padding:2px 9px;font-size:12.5px}
+.dlbar .fs{order:-1}
+.dlbar .ggb-open{order:-1}
+.dlbar .foot{order:1}
+.dlbar .png{order:2}
+/* 录像钮：计时数字用等宽数字，秒数跳动时按钮宽度不抖 */
+.dlbar .vid{font-variant-numeric:tabular-nums}
+/* 操作条可以搬到板外（设置页「画板 · 操作条位置」）：挂在板的父容器里、排在板前面，
+   变成板上方的一条，不进板的圆角框，也就不再压住图形；这种排法常显，不靠 hover */
+.dlbar.out{position:static;top:auto;right:auto;z-index:auto;padding:0 2px 7px;justify-content:flex-end;flex-wrap:wrap}
+.dlbar.out.out-l{justify-content:flex-start}
+.dlbar.out .dl{opacity:1;background:var(--card)}
+/* 半屏 / 全屏时板是 fixed 浮层，外面留不下这一条：条跟着回板内，作浮层顶部的工具条 */
+.board.bd-float .dlbar.out{order:-1;padding:6px 10px}
+.board.bd-float .dlbar.out .dl{background:transparent}
+.board:hover .dl,.board:focus-within .dl{opacity:1}
+.dl:hover{color:var(--ink);border-color:var(--blue)}
+.dl.on{opacity:1;color:var(--red,#ff7b8a);border-color:var(--red,#ff7b8a)}
+/* 到头了的那一颗（0.4 倍时的「－」、6 倍时的「＋」）淡下去且不响应 hover；写在 .dl:hover 之后才压得住 */
+.dlbar .dl:disabled{opacity:.3;cursor:default;color:var(--mut);border-color:var(--line)}
+@media (hover:none){.dl{opacity:1}}
+/* 底色面板：挂在板根上，点「▤ 底色」在操作条下方展开一排色卡（「沿用主题」在最前） */
+.tint-pop{position:absolute;top:38px;right:8px;z-index:7;display:flex;flex-direction:column;gap:8px;
+  padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);
+  box-shadow:0 14px 36px rgba(0,0,0,.32)}
+.tint-pop .tint-t{font-size:11.5px;color:var(--mut);letter-spacing:.6px;white-space:nowrap}
+.tint-row{display:flex;align-items:center;gap:8px}
+.tint-sw{width:26px;height:26px;padding:0;border:1px solid var(--line);border-radius:50%;
+  background:var(--bg2);cursor:pointer;font:inherit;font-size:11px;color:var(--mut);line-height:1}
+.tint-sw.theme{width:auto;border-radius:99px;padding:0 10px;height:24px}
+.tint-sw:hover{border-color:var(--blue)}
+.tint-sw.on{outline:2px solid var(--blue);outline-offset:2px}
+/* 调色板行：原生取色器做圆点，选任意底色；文字墨色由 board.js 按亮度自动换 */
+.tint-row.tint-custom{padding-top:7px;border-top:1px dashed var(--line)}
+.tint-pick{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--mut);cursor:pointer}
+.tint-pick input[type=color]{width:26px;height:26px;padding:0;border:1px solid var(--line);border-radius:50%;
+  background:none;cursor:pointer;appearance:none;-webkit-appearance:none}
+.tint-pick input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.tint-pick input[type=color]::-webkit-color-swatch{border:none;border-radius:50%}
+.tint-pick input[type=color]::-moz-color-swatch{border:none;border-radius:50%}
+.tint-pick:hover{color:var(--ink)}
+.tint-pick.on{color:var(--blue)}
+.tint-pick.on input[type=color]{outline:2px solid var(--blue);outline-offset:2px}
+/* 半屏 / 全屏：把整块板 root 变成 fixed 浮层，四种模式共用的底色与投影写在 .bd-float；
+   1px 的 100vmax 外扩投影顺带压暗页面（投影不接收点击，底下的正文只是看得见、点不到） */
+.board.bd-float{position:fixed;z-index:100;display:flex;flex-direction:column;overflow:hidden;
+  border-radius:16px;box-shadow:0 0 0 100vmax rgba(6,9,14,.42),0 26px 70px rgba(0,0,0,.45)}
+html.light .board.bd-float{box-shadow:0 0 0 100vmax rgba(60,50,25,.16),0 26px 70px rgba(60,50,20,.25)}
+.board.bd-half{left:auto;right:16px;top:58px;bottom:16px;width:min(56vw,940px)}
+.board.bd-full{left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);
+  width:min(94vw,1680px);height:min(90vh,1040px)}
+/* 浮层里的 svg 撑满剩余高度（等比居中，留边由 preserveAspectRatio 处理）；控件行不参与压缩 */
+.board.bd-float svg{width:100%;height:auto;flex:1 1 auto;min-height:0}
+.board.bd-float .ctrl{flex:none;max-height:34%;overflow:auto}
+.board.bd-float .ctrl.chips{max-height:none}
+html.bd-lock{overflow:hidden}
+@media (max-width:900px){
+  .board.bd-half{left:10px;right:10px;width:auto}
+  .board.bd-full{width:96vw;height:92vh}
+}
+/* 控件 */
+.ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;
+  border-top:1px solid var(--line);background:rgba(255,255,255,.015)}
+.btn{background:#1b2536;border:1px solid #2c3b53;color:var(--ink);border-radius:8px;
+  padding:5px 13px;font-size:13.5px;cursor:pointer;font-family:inherit;line-height:1.6}
+.btn:hover{background:#243250}
+.btn.on{background:rgba(92,173,255,.18);border-color:var(--blue);color:var(--blue)}
+.btn.pri{background:rgba(255,158,74,.15);border-color:#7a4d21;color:var(--orange)}
+.btn.pri:hover{background:rgba(255,158,74,.25)}
+.slider{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mut);padding:0 4px}
+input[type=range]{accent-color:var(--blue);width:130px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#0e1626;border:1px solid #263650;
+  border-radius:99px;padding:3px 12px;font-size:13px;color:var(--mut);margin:3px 6px 3px 0}
+.chip b{color:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:600;font-size:12.5px}
+.chip.ok{border-color:#2c5a3c;color:var(--green);background:rgba(74,222,128,.07)}
+.chip.ok b{color:var(--green)}
+.chip.warn{border-color:#6b4a1e;color:var(--yellow);background:rgba(255,209,102,.06)}
+.chip.warn b{color:var(--yellow)}
+/* 目录页 */
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:18px}
+.topic-card{display:block;text-decoration:none;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;padding:20px 22px 30px;position:relative;transition:transform .15s,border-color .15s}
+.topic-card .prog-box{position:absolute;right:12px;bottom:9px;font-size:11.5px;color:var(--faint);
+  border:1px solid var(--line);border-radius:8px;padding:1px 8px;background:var(--bg2);line-height:1.5}
+.topic-card:hover{transform:translateY(-2px);border-color:var(--blue)}
+.topic-card h3{margin:0 0 4px;font-size:17px;color:var(--ink)}
+.topic-card p{margin:0;color:var(--mut);font-size:13.5px;line-height:1.7}
+.topic-card .fx{color:var(--ink);margin:2px 0 6px;font-size:15px}   /* 速查卡公式行 */
+.topic-card .tag{display:inline-block;font-size:12px;color:var(--blue);border:1px solid #274b76;
+  border-radius:6px;padding:1px 8px;margin-bottom:8px}
+.topic-card.dim{opacity:.45;pointer-events:none}
+/* 悬停填充（2026-11-16）：所有章节卡通用，子页面也一样 —— 鼠标压上去，卡内从左边铺一层很淡的渐变，
+   向右收成透明，比整块变色轻得多；首页卡在这之上还有一圈扫边（见下） */
+.topic-card{isolation:isolate}
+.topic-card::before{content:'';position:absolute;inset:0;border-radius:inherit;z-index:0;pointer-events:none;
+  background:linear-gradient(90deg,
+    color-mix(in srgb,var(--gl-sweep-ink) 15%,transparent),
+    color-mix(in srgb,var(--gl-sweep-ink) 5%,transparent) 55%,
+    transparent 88%);
+  opacity:0;transition:opacity .3s ease}
+.topic-card:hover::before{opacity:1}
+/* 填充垫在文字底下：卡片自成层，正文与标签抬到填充之上（prog-box 本来就是绝对定位，只抬 z-index） */
+.topic-card h3,.topic-card p,.topic-card .tag{position:relative;z-index:1}
+.topic-card .prog-box{z-index:1}
+/* 首页章节卡：状态框（已上线 / 规划中）挪到标题同一行的右端，卡片排成两列网格；
+   悬停时除整卡上移，圆角边框上再跑一段亮线（见下方 @property 扫边） */
+.home-grid .topic-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;
+  column-gap:12px;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.home-grid .topic-card h3{grid-column:1;grid-row:1;margin:0;transition:color .18s ease}
+.home-grid .topic-card .tag{grid-column:2;grid-row:1;justify-self:end;margin:0;
+  transition:color .18s ease,border-color .18s ease}
+.home-grid .topic-card p{grid-column:1/-1;grid-row:2;margin-top:6px}
+.home-grid .topic-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px -20px rgba(0,0,0,.75)}
+.home-grid .topic-card:hover h3{color:var(--blue)}
+.home-grid .topic-card:not(.plan-card):hover .tag{border-color:color-mix(in srgb,var(--blue) 60%,transparent)}
+/* 扫边：conic-gradient 只在 2px 的 padding 环里显影（mask 抠掉中心），角度一转，亮段就沿圆角矩形走一圈。
+   亮段收尾用近白色（卡片悬停时边框本身会转蓝，纯色线压在蓝边上就看不出），再加一层 drop-shadow 当辉光；
+   颜色读 --gl-sweep-ink（:root 里 = --blue，设置页可改成自定义色） */
+@property --gl-sweep{syntax:'<angle>';initial-value:0deg;inherits:false}
+.home-grid .topic-card::after{content:'';position:absolute;inset:-2px;border-radius:16px;padding:2px;
+  background:conic-gradient(from var(--gl-sweep),
+    transparent 0deg 160deg,
+    color-mix(in srgb,var(--gl-sweep-ink) 22%,transparent) 225deg,
+    color-mix(in srgb,var(--gl-sweep-ink) 72%,transparent) 300deg,
+    color-mix(in srgb,var(--gl-sweep-ink) 48%,#fff) 345deg,
+    #fff 354deg,
+    transparent 358deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  filter:drop-shadow(0 0 3px color-mix(in srgb,var(--gl-sweep-ink) 80%,transparent));
+  opacity:0;transition:opacity .16s ease;pointer-events:none}
+.home-grid .topic-card:hover::after{opacity:1;animation:gl-sweep 1.9s linear infinite}
+@keyframes gl-sweep{to{--gl-sweep:360deg}}
+@media (prefers-reduced-motion:reduce){
+  .home-grid .topic-card:hover::after{animation:none}
+  .home-grid .topic-card:hover{transform:none}
+}
+.chapter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:16px}
+/* 首页底部的工具行：画板与速查不是章节，单独排在目录之外，样式也与章节卡区分开 */
+.tool-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin-top:26px}
+.tool-link{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px;padding:14px 18px;
+  border:1px dashed var(--line);border-radius:14px;background:rgba(255,255,255,.02);
+  text-decoration:none;transition:border-color .16s ease,background .16s ease}
+.tool-link:hover{border-color:var(--blue);background:rgba(92,173,255,.06)}
+.tool-link .tag{font-size:11.5px;color:var(--blue);border:1px solid var(--line);border-radius:6px;padding:0 7px}
+.tool-link strong{font-size:14.5px;color:var(--ink);font-weight:600}
+.tool-link span:last-child{flex-basis:100%;color:var(--mut);font-size:12.5px;line-height:1.7}
+h3.sec{color:var(--cyan);font-size:17px;margin:1.6em 0 .2em}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:10px 0}
+td{border-bottom:1px solid var(--line);padding:7px 10px;vertical-align:top}
+td:first-child{white-space:nowrap;color:var(--cyan);font-family:ui-monospace,Menlo,monospace;font-size:13px}
+footer{color:var(--faint);text-align:center;font-size:13px;padding:30px 0 50px}
+/* ============ 讲解页三栏：左模块大纲（子专题可折叠，章全列）/ 中正文 / 右本讲结构 ============ */
+/* margin-top 让开左上圆钮（58..102）：第 46 行是顶栏高，再留 64 才落到 110 */
+.chap3{display:grid;grid-template-columns:280px minmax(0,1fr) 224px;gap:22px;align-items:start;margin-top:64px}
+.chap3.no-toc{grid-template-columns:280px minmax(0,1fr)}
+.chapmain{min-width:0}
+.chapmain article{min-width:0}
+/* 左栏：栏头（模块名 + 折叠控制）与栏底翻章按钮固定，只有中间 .cn-body 滚动 */
+.chapnav{position:sticky;top:64px;max-height:calc(100vh - 84px);display:flex;flex-direction:column;
+  overflow:hidden;padding:12px 4px 10px 10px;border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(180deg,rgba(92,173,255,.09),rgba(92,173,255,.015) 72%,transparent 100%)}
+html.light .chapnav{background:linear-gradient(180deg,rgba(33,102,176,.07),rgba(33,102,176,.012) 72%,transparent 100%)}
+.chapnav-hd{flex:none;padding-right:6px}
+.cn-body{flex:1 1 auto;min-height:0;overflow:auto;padding-right:6px;margin-top:2px}
+.chapnav-t{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:14.5px;letter-spacing:1.6px;
+  padding:2px 8px 10px}
+.chapnav-t::before{content:"";width:14px;height:2px;border-radius:2px;background:var(--blue)}
+/* 栏顶工具条：展开全部 / 合并全部（互斥，进页默认方式在设置页里选） */
+.cn-tools{display:flex;align-items:center;gap:6px;margin:0 2px;padding-bottom:9px;border-bottom:1px dashed var(--line)}
+.cn-tb{flex:1;min-width:0;max-width:132px;padding:4px 0;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.02);
+  color:var(--mut);font:inherit;font-size:12px;line-height:1.7;cursor:pointer;
+  transition:color .15s ease,border-color .15s ease,background .15s ease}
+.cn-tb:hover{color:var(--ink);border-color:var(--mut)}
+.cn-tb.on{color:var(--blue);border-color:var(--blue);background:rgba(92,173,255,.14)}
+/* 子专题组头（按钮，点开折叠）；当前子专题带一道左侧色条 */
+.cn-grp+.cn-grp{margin-top:4px;padding-top:4px;border-top:1px solid rgba(255,255,255,.045)}
+.cn-g{width:100%;display:flex;align-items:center;gap:7px;background:transparent;border:0;cursor:pointer;
+  color:var(--ink);font:inherit;font-size:14px;line-height:1.5;text-align:left;
+  padding:8px 9px;border-radius:10px;transition:color .15s ease,background .15s ease,box-shadow .15s ease}
+.cn-g:hover{background:rgba(92,173,255,.09)}
+.cn-g.on{color:var(--blue);box-shadow:inset 2px 0 0 var(--blue)}
+.cn-arw{flex:none;width:12px;font-size:10px;color:var(--faint);transition:transform .18s ease}
+.cn-arw.open{transform:rotate(90deg)}
+.cn-g.on .cn-arw{color:var(--blue)}
+.cn-gt{min-width:0}
+.cn-gn{flex:none;margin-left:auto;font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
+.cn-gn.all{color:var(--green)}
+/* 组内章列表：左侧一道竖线收拢层级 */
+.cn-list{margin:0 0 4px 15px;padding-left:6px;border-left:1px solid var(--line)}
+.chapnav .cn-list a{display:flex;align-items:baseline;gap:8px;color:var(--mut);text-decoration:none;
+  padding:5px 8px;border-radius:8px;font-size:13.5px;line-height:1.5;
+  transition:color .15s ease,background .15s ease,box-shadow .15s ease}
+.chapnav .cn-list a:hover{color:var(--ink);background:rgba(92,173,255,.09)}
+.chapnav .cn-list a.on{color:var(--blue);background:rgba(92,173,255,.13);box-shadow:inset 2px 0 0 var(--blue)}
+.chapnav .cn-i{flex:none;font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+.chapnav a.on .cn-i{color:var(--blue)}
+.chapnav .cn-t{min-width:0}
+.chapnav .rd{flex:none;font-style:normal;color:var(--green);font-size:11px;margin-left:auto}
+.chapnav .cn-pg{display:flex;gap:8px;padding:12px 2px 0;margin-top:8px;border-top:1px dashed var(--line)}
+.chapnav .cn-pg a{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
+  padding:7px 8px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.03);
+  color:var(--mut);font-size:13px;line-height:1.6;text-decoration:none;
+  transition:color .15s ease,border-color .15s ease,background .15s ease}
+.chapnav .cn-pg a:hover{color:var(--blue);border-color:var(--blue);background:rgba(92,173,255,.10)}
+html.light .cn-pg a{background:rgba(255,255,255,.5)}
+html.light .chapnav .cn-pg a:hover{background:rgba(33,102,176,.08)}
+/* 栏内滑条：细圆角、平时近乎隐身，悬停时显形（只有 .cn-body / .toc 会滚） */
+.cn-body,.toc{scrollbar-width:thin;scrollbar-color:rgba(92,173,255,.22) transparent}
+.cn-body:hover,.toc:hover{scrollbar-color:rgba(92,173,255,.42) transparent}
+html.light .cn-body,html.light .toc{scrollbar-color:rgba(33,102,176,.22) transparent}
+html.light .cn-body:hover,html.light .toc:hover{scrollbar-color:rgba(33,102,176,.42) transparent}
+.cn-body::-webkit-scrollbar,.toc::-webkit-scrollbar{width:8px}
+.cn-body::-webkit-scrollbar-track,.toc::-webkit-scrollbar-track{background:transparent}
+.cn-body::-webkit-scrollbar-thumb,.toc::-webkit-scrollbar-thumb{
+  background:rgba(92,173,255,.22);border-radius:99px;border:2px solid transparent;background-clip:content-box}
+.cn-body:hover::-webkit-scrollbar-thumb,.toc:hover::-webkit-scrollbar-thumb{background:rgba(92,173,255,.45);background-clip:content-box}
+html.light .cn-body::-webkit-scrollbar-thumb,html.light .toc::-webkit-scrollbar-thumb{
+  background:rgba(33,102,176,.22);background-clip:content-box}
+html.light .cn-body:hover::-webkit-scrollbar-thumb,html.light .toc:hover::-webkit-scrollbar-thumb{
+  background:rgba(33,102,176,.45);background-clip:content-box}
+html.light .cn-g:hover{background:rgba(33,102,176,.07)}
+html.light .chapnav .cn-list a:hover{background:rgba(33,102,176,.07)}
+html.light .chapnav .cn-list a.on{background:rgba(33,102,176,.1)}
+html.light .cn-grp+.cn-grp{border-top-color:rgba(33,102,176,.10)}
+html.light .cn-tb{background:rgba(255,255,255,.55)}
+html.light .cn-tb:hover{border-color:var(--mut)}
+html.light .cn-tb.on{background:rgba(33,102,176,.12)}
+/* 标题上方：当前子专题的几章（小号胶囊，高度与文字相当，与左右栏顶边对齐） */
+.chaptabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.chaptabs a{display:flex;align-items:baseline;gap:6px;padding:2px 10px;border:1px solid var(--line);
+  border-radius:99px;color:var(--mut);text-decoration:none;font-size:13px;line-height:1.75;
+  background:rgba(255,255,255,.02);transition:color .15s ease,border-color .15s ease,background .15s ease}
+.chaptabs a .ct-n{font-size:10.5px;color:var(--faint);font-variant-numeric:tabular-nums}
+.chaptabs a:hover{color:var(--ink);border-color:var(--mut)}
+.chaptabs a.on{color:var(--blue);border-color:var(--blue);background:rgba(92,173,255,.12)}
+.chaptabs a.on .ct-n{color:var(--blue)}
+html.light .chaptabs a:hover{background:rgba(33,102,176,.07)}
+html.light .chaptabs a.on{background:rgba(33,102,176,.11)}
+/* 右栏：本讲结构 */
+.toc{position:sticky;top:64px;max-height:calc(100vh - 84px);overflow:auto;
+  padding:14px 10px 16px;border:1px solid var(--line);border-radius:16px;
+  font-size:14.5px;line-height:1.6;scrollbar-width:thin;
+  background:linear-gradient(180deg,rgba(92,173,255,.09),rgba(92,173,255,.015) 72%,transparent 100%)}
+html.light .toc{background:linear-gradient(180deg,rgba(33,102,176,.07),rgba(33,102,176,.012) 72%,transparent 100%)}
+.toc .toc-t{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:13.5px;letter-spacing:1.6px;
+  padding:2px 8px 12px}
+.toc .toc-t::before{content:"";width:14px;height:2px;border-radius:2px;background:var(--blue)}
+.toc a{display:flex;align-items:baseline;gap:9px;color:var(--mut);text-decoration:none;
+  padding:8px 8px 8px 10px;border-radius:9px;border-left:2px solid transparent;cursor:pointer;
+  font-size:14.5px;transition:color .15s ease,background .15s ease,border-color .15s ease}
+.toc a .toc-n{flex:none;min-width:16px;font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+.toc a:hover{color:var(--ink);background:rgba(92,173,255,.10)}
+.toc a.on{color:var(--ink);border-left-color:var(--blue);background:rgba(92,173,255,.13)}
+.toc a.on .toc-n{color:var(--blue)}
+html.light .toc a:hover{background:rgba(33,102,176,.08)}
+html.light .toc a.on{background:rgba(33,102,176,.11)}
+[id]{scroll-margin-top:64px}
+/* 中等屏先收右栏 */
+@media (max-width:1340px){
+  .chap3,.chap3.no-toc{grid-template-columns:262px minmax(0,1fr);gap:20px}
+  .toc{display:none}
+}
+@media (max-width:980px){
+  /* 窄屏圆钮缩成 40px（left10 / top54），一样要让开 */
+  .chap3,.chap3.no-toc{display:block;margin-top:52px}
+  .chapnav{position:static;max-height:none;overflow:visible;padding:8px;margin-bottom:14px;border-radius:14px}
+  .cn-body{overflow:visible;padding-right:0}
+  .chapnav-t{display:none}
+  .cn-g{font-size:13.5px;padding:5px 8px}
+  .chapnav .cn-pg{display:none}
+  .chaptabs{margin-bottom:12px}
+}
+/* 宽屏拉近正文：窗口 ≥1820px 时 main 居中，正文左缘退到 70px 开外，左上角面包屑圆钮
+   整个落在留白里、压不到首屏标题。这时把上面为让开圆钮留的 56 / 64px 收回来，
+   正文顶边回到顶栏之下 10 / 18px；左栏 sticky 顶边 64 = 顶栏 46 + 18，跟着对齐。
+   助手或画板让出半屏时 main 恢复满宽（max-width:none，左内边距 20），正文又贴回左边，
+   这时不收回，保持原来的让位。 */
+@media (min-width:1820px){
+  main:not(.chat-split):not(.dock-split) > * > .chapter-head:first-child{margin-top:10px}
+  main:not(.chat-split):not(.dock-split) .chap3{margin-top:18px}
+}
+/* ============ 亮色主题（学术纸面风） ============ */
+html.light{
+  --bg:#f4f1e8; --bg2:#fdfcf8; --card:#fffdf6; --line:#e0dac8;
+  --ink:#20293a; --mut:#5f6b7a; --faint:#8a93a2;
+  --blue:#2166b0; --orange:#c96e17; --green:#1e8a4c; --purple:#7d55c4;
+  --pink:#c94055; --yellow:#96700a; --cyan:#12808f;
+}
+html.light strong{color:#101828}
+html.light em{color:#8a6400}
+html.light .topnav{background:rgba(247,244,235,.88)}
+html.light .note{background:rgba(33,102,176,.06);border-color:#2166b0}
+html.light .note.good{background:rgba(30,138,76,.06);border-color:#1e8a4c}
+html.light .note.warn{background:rgba(212,118,28,.08);border-color:#c96e17}
+html.light .btn{background:#f0ead9;border-color:#d2c9b2;color:#20293a}
+html.light .btn:hover{background:#e8e0cb}
+html.light .btn.on{background:rgba(33,102,176,.1);border-color:#2166b0;color:#2166b0}
+html.light .btn.pri{background:rgba(212,118,28,.1);border-color:#c9a36a;color:#a35b0f}
+html.light .btn.pri:hover{background:rgba(212,118,28,.18)}
+html.light .chip{background:#f4efe0;border-color:#ddd5ba;color:#5f6b7a}
+html.light .chip b{color:#20293a}
+html.light .chip.ok{border-color:#a9cdb4;color:#1e8a4c;background:rgba(30,138,76,.06)}
+html.light .chip.ok b{color:#1e8a4c}
+html.light .chip.warn{border-color:#dcc794;color:#96700a;background:rgba(150,112,10,.07)}
+html.light .chip.warn b{color:#7c5c08}
+html.light input[type=range]{accent-color:#2166b0}
+html.light .readmark.on{border-color:#a9cdb4;background:rgba(30,138,76,.06)}
+html.light .topic-card .tag.done{color:#1e8a4c;border-color:#a9cdb4}
+html.light .dl{background:rgba(253,252,248,.85)}
+html.light .card{box-shadow:0 1px 3px rgba(60,50,20,.07)}
+html.light .chapter-head .no{border-color:#b9cde5}
+html.light .topic-card .tag{border-color:#b9cde5}
+/* ============ 浅色渐变主题家族（html.light 为公共底座，此处按 data-theme 细分；同特异度靠后覆盖） ============ */
+/* 青蓝 —— 参考 sbts-notes 冷调浅色：slate 正文 + #2563eb 蓝 + #0d9488 青 */
+html[data-theme='sky']{
+  --bg:linear-gradient(172deg,#eef2f7 0%,#e6eefb 46%,#d9e7f9 100%);
+  --bg2:#f8fafc; --card:#ffffff; --line:#d9e2f0;
+  --ink:#1e293b; --mut:#64748b; --faint:#94a3b8;
+  --blue:#2563eb; --orange:#d97706; --green:#059669; --purple:#7c3aed;
+  --pink:#e11d48; --yellow:#b45309; --cyan:#0e7490;
+}
+html[data-theme='sky'] strong{color:#0f172a}
+html[data-theme='sky'] em{color:#92400e}
+html[data-theme='sky'] .topnav{background:rgba(238,242,247,.92)}
+html[data-theme='sky'] .note{background:rgba(37,99,235,.06);border-color:#2563eb}
+html[data-theme='sky'] .note.good{background:rgba(5,150,105,.06);border-color:#059669}
+html[data-theme='sky'] .note.warn{background:rgba(217,119,6,.08);border-color:#d97706}
+html[data-theme='sky'] .btn{background:#ffffff;border-color:#cbd5e1;color:#1e293b}
+html[data-theme='sky'] .btn:hover{background:#f1f5f9}
+html[data-theme='sky'] .btn.on{background:rgba(37,99,235,.1);border-color:#2563eb;color:#2563eb}
+html[data-theme='sky'] .btn.pri{background:rgba(217,119,6,.12);border-color:#e8c48e;color:#b45309}
+html[data-theme='sky'] .btn.pri:hover{background:rgba(217,119,6,.2)}
+html[data-theme='sky'] .chip{background:#f8fafc;border-color:#d9e2f0;color:#64748b}
+html[data-theme='sky'] .chip b{color:#1e293b}
+html[data-theme='sky'] .chip.ok{border-color:#a7d3bf;color:#047857;background:rgba(5,150,105,.06)}
+html[data-theme='sky'] .chip.ok b{color:#047857}
+html[data-theme='sky'] .chip.warn{border-color:#ecd3a8;color:#92400e;background:rgba(146,64,14,.06)}
+html[data-theme='sky'] .chip.warn b{color:#92400e}
+html[data-theme='sky'] input[type=range]{accent-color:#2563eb}
+html[data-theme='sky'] .readmark.on{border-color:#a7d3bf;background:rgba(5,150,105,.06)}
+html[data-theme='sky'] .topic-card .tag.done{color:#047857;border-color:#a7d3bf}
+html[data-theme='sky'] .dl{background:rgba(248,250,252,.88)}
+html[data-theme='sky'] .card{box-shadow:0 1px 3px rgba(15,23,42,.08)}
+html[data-theme='sky'] .chapter-head .no{border-color:#bfd3f2}
+html[data-theme='sky'] .topic-card .tag{border-color:#bfd3f2}
+/* 暖沙 —— 米黄渐变 + 琥珀点缀，青色冷调让位（--blue 角色改由深青担任） */
+html[data-theme='sand']{
+  --bg:linear-gradient(172deg,#faf6ec 0%,#fcf2de 48%,#f6ead0 100%);
+  --bg2:#fffdf4; --card:#fffdf6; --line:#e6dcc2;
+  --ink:#3f3a28; --mut:#77705c; --faint:#a59a80;
+  --blue:#0f766e; --orange:#c2610a; --green:#4d7c0f; --purple:#6b21a8;
+  --pink:#be123c; --yellow:#92610a; --cyan:#0e7490;
+}
+html[data-theme='sand'] strong{color:#2b2414}
+html[data-theme='sand'] em{color:#92610a}
+html[data-theme='sand'] .topnav{background:rgba(250,246,236,.92)}
+html[data-theme='sand'] .note{background:rgba(15,118,110,.07);border-color:#0f766e}
+html[data-theme='sand'] .note.good{background:rgba(77,124,15,.07);border-color:#4d7c0f}
+html[data-theme='sand'] .note.warn{background:rgba(194,97,10,.1);border-color:#c2610a}
+html[data-theme='sand'] .btn{background:#fffdf4;border-color:#ddd0b2;color:#3f3a28}
+html[data-theme='sand'] .btn:hover{background:#f7f0dd}
+html[data-theme='sand'] .btn.on{background:rgba(15,118,110,.1);border-color:#0f766e;color:#0f766e}
+html[data-theme='sand'] .btn.pri{background:rgba(194,97,10,.12);border-color:#dcb277;color:#92610a}
+html[data-theme='sand'] .btn.pri:hover{background:rgba(194,97,10,.2)}
+html[data-theme='sand'] .chip{background:#fbf7e8;border-color:#e2d7b9;color:#77705c}
+html[data-theme='sand'] .chip b{color:#3f3a28}
+html[data-theme='sand'] .chip.ok{border-color:#c2d9a8;color:#4d7c0f;background:rgba(77,124,15,.06)}
+html[data-theme='sand'] .chip.ok b{color:#4d7c0f}
+html[data-theme='sand'] .chip.warn{border-color:#e8cd9e;color:#92610a;background:rgba(146,97,10,.07)}
+html[data-theme='sand'] .chip.warn b{color:#7c5408}
+html[data-theme='sand'] input[type=range]{accent-color:#0f766e}
+html[data-theme='sand'] .readmark.on{border-color:#c2d9a8;background:rgba(77,124,15,.06)}
+html[data-theme='sand'] .topic-card .tag.done{color:#4d7c0f;border-color:#c2d9a8}
+html[data-theme='sand'] .dl{background:rgba(255,253,244,.88)}
+html[data-theme='sand'] .card{box-shadow:0 1px 3px rgba(80,60,10,.09)}
+html[data-theme='sand'] .chapter-head .no{border-color:#b7d9d2}
+html[data-theme='sand'] .topic-card .tag{border-color:#b7d9d2}
+/* 薄荷 —— 青绿渐变 + 深青主点缀，暖橙撞色提神 */
+html[data-theme='mint']{
+  --bg:linear-gradient(172deg,#ecf8f1 0%,#e0f2e8 46%,#d2eede 100%);
+  --bg2:#f4fdf8; --card:#fbfefd; --line:#cde8da;
+  --ink:#1d3b31; --mut:#5b7a6e; --faint:#8ba69a;
+  --blue:#0d9488; --orange:#d97706; --green:#15803d; --purple:#6d28d9;
+  --pink:#db2777; --yellow:#a16207; --cyan:#0e7490;
+}
+html[data-theme='mint'] strong{color:#0d2b21}
+html[data-theme='mint'] em{color:#a16207}
+html[data-theme='mint'] .topnav{background:rgba(236,248,241,.92)}
+html[data-theme='mint'] .note{background:rgba(13,148,136,.07);border-color:#0d9488}
+html[data-theme='mint'] .note.good{background:rgba(21,128,61,.07);border-color:#15803d}
+html[data-theme='mint'] .note.warn{background:rgba(217,119,6,.1);border-color:#d97706}
+html[data-theme='mint'] .btn{background:#f9fefb;border-color:#c9e5d5;color:#1d3b31}
+html[data-theme='mint'] .btn:hover{background:#ecf7f0}
+html[data-theme='mint'] .btn.on{background:rgba(13,148,136,.1);border-color:#0d9488;color:#0d9488}
+html[data-theme='mint'] .btn.pri{background:rgba(217,119,6,.12);border-color:#e6c48e;color:#a16207}
+html[data-theme='mint'] .btn.pri:hover{background:rgba(217,119,6,.2)}
+html[data-theme='mint'] .chip{background:#f4fbf7;border-color:#cde8da;color:#5b7a6e}
+html[data-theme='mint'] .chip b{color:#1d3b31}
+html[data-theme='mint'] .chip.ok{border-color:#a9d9bb;color:#15803d;background:rgba(21,128,61,.06)}
+html[data-theme='mint'] .chip.ok b{color:#15803d}
+html[data-theme='mint'] .chip.warn{border-color:#ead0a3;color:#a16207;background:rgba(146,97,10,.06)}
+html[data-theme='mint'] .chip.warn b{color:#7c5408}
+html[data-theme='mint'] input[type=range]{accent-color:#0d9488}
+html[data-theme='mint'] .readmark.on{border-color:#a9d9bb;background:rgba(21,128,61,.06)}
+html[data-theme='mint'] .topic-card .tag.done{color:#15803d;border-color:#a9d9bb}
+html[data-theme='mint'] .dl{background:rgba(244,253,248,.88)}
+html[data-theme='mint'] .card{box-shadow:0 1px 3px rgba(10,60,40,.08)}
+html[data-theme='mint'] .chapter-head .no{border-color:#b2ded0}
+html[data-theme='mint'] .topic-card .tag{border-color:#b2ded0}
+/* 暮夜 —— 暗色家族的渐变款：深蓝→暗紫夜空底；html.light 不挂，画板配色仍走 COLOR 暗列 */
+html[data-theme='dusk']{
+  --bg:linear-gradient(168deg,#0b1020 0%,#0e1230 42%,#1b1440 100%);
+  --bg2:#0d1126; --card:#131a33; --line:#252e55;
+  --ink:#e6e9f5; --mut:#9aa4c4; --faint:#6b7694;
+  --blue:#7fb0ff; --orange:#ffa25c; --green:#5fdd90; --purple:#b993ff;
+  --pink:#ff8496; --yellow:#ffd47e; --cyan:#74e2f5;
+}
+html[data-theme='dusk'] strong{color:#fff}
+html[data-theme='dusk'] .topnav{background:rgba(13,17,38,.85)}
+html[data-theme='dusk'] .chapter-head .no{border-color:#33427a}
+html[data-theme='dusk'] .topic-card .tag{border-color:#33427a}
+html[data-theme='dusk'] .topic-card .tag.done{color:#5fdd90;border-color:#2f6d4a}
+html[data-theme='dusk'] .readmark.on{border-color:#2f6d4a;background:rgba(95,221,144,.08)}
+html[data-theme='dusk'] .dl{background:rgba(19,26,51,.88)}
+/* 樱粉 —— 浅粉渐变 + 玫瑰主点缀（--blue 角色由玫瑰担任） */
+html[data-theme='sakura']{
+  --bg:linear-gradient(172deg,#fdf2f6 0%,#fce7f0 46%,#f8d9ea 100%);
+  --bg2:#fdf1f5; --card:#fffafc; --line:#eed2df;
+  --ink:#42283a; --mut:#8a6b7d; --faint:#b293a5;
+  --blue:#db2777; --orange:#d97706; --green:#059669; --purple:#7c3aed;
+  --pink:#e11d48; --yellow:#a16207; --cyan:#0e7490;
+}
+html[data-theme='sakura'] strong{color:#2e1630}
+html[data-theme='sakura'] em{color:#a16207}
+html[data-theme='sakura'] .topnav{background:rgba(253,242,246,.92)}
+html[data-theme='sakura'] .note{background:rgba(219,39,119,.06);border-color:#db2777}
+html[data-theme='sakura'] .note.good{background:rgba(5,150,105,.06);border-color:#059669}
+html[data-theme='sakura'] .note.warn{background:rgba(217,119,6,.08);border-color:#d97706}
+html[data-theme='sakura'] .btn{background:#fffafc;border-color:#eed2df;color:#42283a}
+html[data-theme='sakura'] .btn:hover{background:#fdeef4}
+html[data-theme='sakura'] .btn.on{background:rgba(219,39,119,.1);border-color:#db2777;color:#db2777}
+html[data-theme='sakura'] .btn.pri{background:rgba(217,119,6,.12);border-color:#e8c48e;color:#b45309}
+html[data-theme='sakura'] .btn.pri:hover{background:rgba(217,119,6,.2)}
+html[data-theme='sakura'] .chip{background:#fdf3f7;border-color:#eed2df;color:#8a6b7d}
+html[data-theme='sakura'] .chip b{color:#42283a}
+html[data-theme='sakura'] .chip.ok{border-color:#aad4bd;color:#047857;background:rgba(5,150,105,.06)}
+html[data-theme='sakura'] .chip.ok b{color:#047857}
+html[data-theme='sakura'] .chip.warn{border-color:#ecd3a8;color:#92400e;background:rgba(146,64,14,.06)}
+html[data-theme='sakura'] .chip.warn b{color:#92400e}
+html[data-theme='sakura'] input[type=range]{accent-color:#db2777}
+html[data-theme='sakura'] .readmark.on{border-color:#aad4bd;background:rgba(5,150,105,.06)}
+html[data-theme='sakura'] .topic-card .tag.done{color:#047857;border-color:#aad4bd}
+html[data-theme='sakura'] .dl{background:rgba(253,241,245,.88)}
+html[data-theme='sakura'] .card{box-shadow:0 1px 3px rgba(120,40,80,.08)}
+html[data-theme='sakura'] .chapter-head .no{border-color:#eec3d6}
+html[data-theme='sakura'] .topic-card .tag{border-color:#eec3d6}
+/* 云紫 —— 薰衣草渐变 + 紫罗兰主点缀 */
+html[data-theme='lav']{
+  --bg:linear-gradient(172deg,#f4f0fb 0%,#ece5f8 46%,#e0d6f4 100%);
+  --bg2:#f6f2fc; --card:#fdfbff; --line:#ded3ef;
+  --ink:#332a4a; --mut:#6f678e; --faint:#9c93b8;
+  --blue:#7c3aed; --orange:#d97706; --green:#059669; --purple:#c026d3;
+  --pink:#db2777; --yellow:#a16207; --cyan:#0e7490;
+}
+html[data-theme='lav'] strong{color:#241b3d}
+html[data-theme='lav'] em{color:#a16207}
+html[data-theme='lav'] .topnav{background:rgba(244,240,251,.92)}
+html[data-theme='lav'] .note{background:rgba(124,58,237,.06);border-color:#7c3aed}
+html[data-theme='lav'] .note.good{background:rgba(5,150,105,.06);border-color:#059669}
+html[data-theme='lav'] .note.warn{background:rgba(217,119,6,.08);border-color:#d97706}
+html[data-theme='lav'] .btn{background:#fdfbff;border-color:#ded3ef;color:#332a4a}
+html[data-theme='lav'] .btn:hover{background:#f3edfc}
+html[data-theme='lav'] .btn.on{background:rgba(124,58,237,.1);border-color:#7c3aed;color:#7c3aed}
+html[data-theme='lav'] .btn.pri{background:rgba(217,119,6,.12);border-color:#e8c48e;color:#b45309}
+html[data-theme='lav'] .btn.pri:hover{background:rgba(217,119,6,.2)}
+html[data-theme='lav'] .chip{background:#f9f5fe;border-color:#ded3ef;color:#6f678e}
+html[data-theme='lav'] .chip b{color:#332a4a}
+html[data-theme='lav'] .chip.ok{border-color:#aad4bd;color:#047857;background:rgba(5,150,105,.06)}
+html[data-theme='lav'] .chip.ok b{color:#047857}
+html[data-theme='lav'] .chip.warn{border-color:#ecd3a8;color:#92400e;background:rgba(146,64,14,.06)}
+html[data-theme='lav'] .chip.warn b{color:#92400e}
+html[data-theme='lav'] input[type=range]{accent-color:#7c3aed}
+html[data-theme='lav'] .readmark.on{border-color:#aad4bd;background:rgba(5,150,105,.06)}
+html[data-theme='lav'] .topic-card .tag.done{color:#047857;border-color:#aad4bd}
+html[data-theme='lav'] .dl{background:rgba(246,242,252,.88)}
+html[data-theme='lav'] .card{box-shadow:0 1px 3px rgba(60,40,120,.08)}
+html[data-theme='lav'] .chapter-head .no{border-color:#d5c3f0}
+html[data-theme='lav'] .topic-card .tag{border-color:#d5c3f0}
+@media (max-width:640px){.card{padding:22px 16px}.topnav .logo span{display:none}}
+/* ============ 打印讲义模式 ============ */
+/* 打印前 App.vue 的 beforeprint 已把主题切成亮色（纸面配色），故此处无需 print-color-adjust */
+@media print{
+  @page{margin:14mm}
+  .bg-fx{display:none}
+  .topnav,.chapnav,.chaptabs,footer,.read-row,.dlbar,.dl,.toc{display:none}
+  .board.bd-float{position:static;transform:none;width:auto;height:auto;box-shadow:none} /* 浮着的板印时回落到文档流 */
+  .chap3,.chap3.no-toc{display:block}
+  .ctrl{display:none}                        /* 滑块与按钮不印 */
+  .ctrl.chips{display:block;padding:2px 0}   /* 实时读数徽章保留 —— 讲义里的实验数据 */
+  main{max-width:none;padding:0}
+  .card{box-shadow:none}
+  .note,.board-wrap,.katex-display,table,tr,.topic-card{break-inside:avoid}
+  .katex-display{overflow:visible}   /* 长公式屏幕上横向滚动，打印时放开避免整段截断 */
+  h1,h2,h3{break-after:avoid}
+  a{color:inherit;text-decoration:none}
+}
+/* ============ 笔记导出 PDF ============ */
+/* .note-print 由 Notes.vue Teleport 到 body，只在打印时现身；其余（站壳、页脚、浮层）一律藏掉 */
+.note-print{display:none}
+@media print{
+  body.printing-note{background:#fff}
+  body.printing-note > *:not(.note-print){display:none !important}
+  body.printing-note .note-print{display:block;padding:0;color:#20293a;background:#fff}
+  .note-print .md-table{width:auto}
+  .note-print .md-table th,.note-print .md-table td{padding:5px 14px}
+}
+.note-print h1{font-size:24px;margin:0 0 12px;letter-spacing:.5px}
+.note-print-ft{margin-top:26px;padding-top:10px;border-top:1px solid #d8d2c2;font-size:11.5px;color:#7a7466}
+.note-print .md-math{margin:.6em 0;overflow:visible}
+.note-print .md-code{background:#f2efe6;border-radius:8px;padding:8px 12px;font-size:12.5px;overflow:auto}
+.note-print .tex-plain{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;white-space:pre-wrap;color:#4a5563}
+.note-print img{max-width:100%}

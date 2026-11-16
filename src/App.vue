@@ -1,0 +1,92 @@
+<template>
+  <div v-if="PREFS.bgMotionOn === 'on' && PREFS.bgScene === 'glow'" class="bg-fx" aria-hidden="true"><i></i><i></i><i></i></div>
+  <BgMotion v-if="!isPlayground && PREFS.bgMotionOn === 'on' && PREFS.bgScene !== 'glow'" />
+  <BgPoly v-if="!isPlayground && PREFS.bgMotionOn === 'on' && PREFS.bgSolidOn === 'on'" :pos="PREFS.bgSolidPos" />
+  <nav class="topnav"><div class="in">
+    <router-link to="/" class="logo"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="2" width="44" height="44" rx="11" fill="#5cadff"/><ellipse cx="24" cy="24" rx="15.5" ry="9.5" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M17.5 24 L24 16.4 L30.5 24" fill="none" stroke="#ffd166" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17.5" cy="24" r="2.8" fill="#fff"/><circle cx="30.5" cy="24" r="2.8" fill="#fff"/></svg><span>几何演示实验室</span></router-link>
+    <button class="navdir" type="button" :class="{ on: drawerOpen }" @click="drawerOpen = !drawerOpen">
+      <span class="navdir-ic" aria-hidden="true">☰</span>章节目录
+    </button>
+    <span class="nav-sp" />
+    <router-link to="/cheatsheet" class="pin">速查</router-link>
+    <router-link to="/playground" class="pin">画板</router-link>
+    <router-link to="/notes" class="pin">笔记</router-link>
+    <button class="pin pin-btn" type="button" :class="{ on: chatOpen }" @click="chatOpen = !chatOpen">
+      <span aria-hidden="true">💬</span> 助手
+    </button>
+    <router-link to="/settings" class="pin" title="界面偏好、模型与 API、保存位置">⚙ 设置</router-link>
+    <button id="printBtn" class="theme-btn print-btn" title="打印讲义：自动切纸面配色，隐藏控件与导航">🖨 打印</button>
+    <button id="themeBtn" class="theme-btn" title="点击展开配色选单">🎨 主题</button>
+  </div></nav>
+  <main ref="mainEl" :data-anim="PREFS.pageAnim"
+    :class="{ 'dock-split': dockOpen, 'dock-left': (dockOpen && PREFS.dockSide === 'left'),
+              'chat-split': chatOpen && PREFS.chatSize === 'half',
+              'chat-left': chatOpen && PREFS.chatSize === 'half' && PREFS.chatSide === 'left' }"><router-view /></main>
+  <ChapterDrawer v-model:open="drawerOpen" :side="PREFS.drawerSide" />
+  <GeoGebraDock v-model:open="dockOpen" :side="PREFS.dockSide" />
+  <CalcDock />
+  <ChatDock v-model:open="chatOpen" />
+  <NotesDock v-model:open="notesOpen" />
+  <FloatRail v-model:chat-open="chatOpen" v-model:notes-open="notesOpen" />
+  <Breadcrumb />
+  <footer v-if="!isPlayground" :class="{ 'dock-split': dockOpen, 'dock-left': dockOpen && PREFS.dockSide === 'left',
+    'chat-split': chatOpen && PREFS.chatSize === 'half', 'chat-left': chatOpen && PREFS.chatSize === 'half' && PREFS.chatSide === 'left' }">Geometry Lab · 单机离线运行 · Vue 3 + Vite + KaTeX · 画板引擎为框架无关的纯 SVG/JS，可独立复用</footer>
+</template>
+<script setup>
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import { applyTheme, currentTheme, mountThemeButton } from './lib/board.js';
+import GeoGebraDock from './components/GeoGebraDock.vue';
+import CalcDock from './components/CalcDock.vue';
+import ChapterDrawer from './components/ChapterDrawer.vue';
+import ChatDock from './components/ChatDock.vue';
+import NotesDock from './components/NotesDock.vue';
+import Breadcrumb from './components/Breadcrumb.vue';
+import FloatRail from './components/FloatRail.vue';
+import BgMotion from './components/BgMotion.vue';
+import BgPoly from './components/BgPoly.vue';
+import { PREFS } from './lib/settings.js';
+import { playPageAnim } from './lib/pagetransition.js';
+
+// 顶栏「章节目录」抽屉：模块链接收进一枚按钮，点开左侧列出全部模块与阅读进度
+const drawerOpen = ref(false);
+
+// 右侧半屏画板：讲解页随时点开，正文让出右半边（main.dock-split 收窄），画板贴右边
+const dockOpen = ref(false);
+
+// 助手小窗 / 随页笔记：入口在顶栏与左侧圆按钮；三者互斥，免得同时让位把正文挤没
+const chatOpen = ref(false);
+const notesOpen = ref(false);
+watch(dockOpen, v => { if (v) { chatOpen.value = false; notesOpen.value = false; } });
+watch(chatOpen, v => { if (v) { dockOpen.value = false; notesOpen.value = false; } });
+watch(notesOpen, v => { if (v) { dockOpen.value = false; chatOpen.value = false; } });
+
+// 画板页是整页画板：页脚会顶出竖向滚动条，故只在非画板页显示
+const route = useRoute();
+const isPlayground = computed(() => route.path === '/playground');
+
+// 切页过渡：动画种类由设置页决定（main[data-anim]），这里只负责重放入场；
+// 顺手收起右侧的窗——整屏助手盖着整页时点站名会看不到新页面，像是「跳不过去」
+const mainEl = ref();
+watch(() => route.path, () => {
+  playPageAnim();
+  chatOpen.value = false;
+  notesOpen.value = false;
+});
+
+// 打印讲义：打印前临时切纸面配色（画板同步重渲染；persist=false 不覆盖用户存的偏好），打印后还原原主题；菜单 Ctrl+P 同样生效
+let printTheme = null;
+onMounted(() => {
+  mountThemeButton(document.getElementById('themeBtn'));
+  const pb = document.getElementById('printBtn');
+  if (pb) pb.addEventListener('click', () => window.print());
+  window.addEventListener('beforeprint', () => {
+    printTheme = currentTheme();
+    if (printTheme !== 'light') applyTheme('light', false);
+  });
+  window.addEventListener('afterprint', () => {
+    if (printTheme && printTheme !== 'light') applyTheme(printTheme, false);
+    printTheme = null;
+  });
+});
+</script>
