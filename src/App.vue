@@ -8,6 +8,9 @@
       <span class="navdir-ic" aria-hidden="true">☰</span>章节目录
     </button>
     <span class="nav-sp" />
+    <button class="pin pin-btn" type="button" title="全站搜索（Ctrl K）" @click="searchEl && searchEl.toggle()">
+      <span aria-hidden="true">⌕</span> 搜索
+    </button>
     <router-link to="/cheatsheet" class="pin">速查</router-link>
     <router-link to="/playground" class="pin">画板</router-link>
     <router-link to="/notes" class="pin">笔记</router-link>
@@ -27,6 +30,7 @@
   <CalcDock />
   <ChatDock v-model:open="chatOpen" />
   <NotesDock v-model:open="notesOpen" />
+  <SearchPalette ref="searchEl" />
   <FloatRail v-model:chat-open="chatOpen" v-model:notes-open="notesOpen" />
   <Breadcrumb />
   <footer v-if="!isPlayground" :class="{ 'dock-split': dockOpen, 'dock-left': dockOpen && PREFS.dockSide === 'left',
@@ -41,6 +45,7 @@ import CalcDock from './components/CalcDock.vue';
 import ChapterDrawer from './components/ChapterDrawer.vue';
 import ChatDock from './components/ChatDock.vue';
 import NotesDock from './components/NotesDock.vue';
+import SearchPalette from './components/SearchPalette.vue';
 import Breadcrumb from './components/Breadcrumb.vue';
 import FloatRail from './components/FloatRail.vue';
 import BgMotion from './components/BgMotion.vue';
@@ -57,6 +62,7 @@ const dockOpen = ref(false);
 // 助手小窗 / 随页笔记：入口在顶栏与左侧圆按钮；三者互斥，免得同时让位把正文挤没
 const chatOpen = ref(false);
 const notesOpen = ref(false);
+const searchEl = ref(null);   // SearchPalette 实例：顶栏「搜索」钮与 Ctrl K 走同一个 toggle
 watch(dockOpen, v => { if (v) { chatOpen.value = false; notesOpen.value = false; } });
 watch(chatOpen, v => { if (v) { dockOpen.value = false; notesOpen.value = false; } });
 watch(notesOpen, v => { if (v) { dockOpen.value = false; chatOpen.value = false; } });
