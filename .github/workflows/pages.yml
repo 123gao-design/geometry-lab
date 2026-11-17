@@ -1,0 +1,55 @@
+name: Pages
+
+# 把网页版发到 GitHub Pages：推 main 就重建，也可以在 Actions 页面手动跑一次。
+# 站点是纯静态的（hash 路由 + base:'./'，见 vite.config.js），构建产物 dist/ 直接当站点根，
+# 不需要服务器，也不需要 404.html——所有路由都在 # 后面。
+#
+# 首次生效前要在仓库 Settings → Pages → Source 里选一次「GitHub Actions」，
+# 之后地址是 https://<用户名>.github.io/<仓库名>/ 。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write        # 发布 Pages 要给 token 这个
+  id-token: write     # deploy-pages 用 OIDC 认身份
+
+# 连着推几次时只发最后那次，别让两次部署互相覆盖
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # package-lock.json 在仓库里，用 ci 按锁定版本装，别用 install
+      - run: npm ci
+
+      # 只构建网页版：桌面端的 src-tauri 不参与，不需要 Rust 工具链
+      - run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

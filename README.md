@@ -94,6 +94,16 @@ npm run build      # 产出 dist/ —— 纯静态，可 file:// 直接打开（
 npm run preview    # 本地预览构建产物
 ```
 
+## 网页版部署（GitHub Pages）
+
+站点是纯静态的，往 GitHub 上推就能在线开：`.github/workflows/pages.yml` 在 `main` 分支每次推送时 `npm ci && npm run build`，把 `dist/` 作为 Pages 站点发布，也可以到 Actions 页面手动跑一次。
+
+一次性设置：仓库 **Settings → Pages → Source** 选 **GitHub Actions**（选分支那种方式不行，产物是 Actions 传上去的）。之后的地址是 `https://<用户名>.github.io/geometry-lab/`。
+
+hash 路由让它部署在子路径下也不用改配置（`vite.config.js` 的 `base:'./'`），刷新任何一页都还落在 `index.html`，不需要 404 兜底。`public/` 里的 GeoGebra 套件会一起进站点（约 70 MB），首次发布会慢一点。
+
+**换到线上域名时注意**：笔记、偏好、画板文字位置都存在 localStorage，按站点 origin 分开存，`localhost:5173` 里的那些不会跟着过来。搬笔记用笔记页侧栏的「⇪ 备份」，到线上再「⇩ 导入」；偏好与文字位置在设置页重新调一次即可。
+
 ## 桌面端（Tauri 2）
 
 同一份 Vite 产物装进系统 WebView，不打 Chromium。本地跑 `npm run icon` 生成图标（`scripts/gen-icon.mjs`，零依赖），再 `npm run tauri dev` / `npm run tauri build`（需 Rust 工具链）。发版走 CI：推一个 `v*` 标签，`.github/workflows/release.yml` 在 windows / macos(arm+x64) / ubuntu 矩阵上出安装包挂到 draft Release——Windows 是 NSIS `-setup.exe`，macOS 按芯片选 `.dmg`，Linux 出 `.deb` 与 `.AppImage`。配置见 `src-tauri/tauri.conf.json`。
