@@ -8,6 +8,13 @@
      icons/icon.ico          16/24/32/48/64 的 BMP 条目 + 256 的 PNG 条目（Vista 起认 PNG 条目）
      icons/icon.icns         ic07/ic08/ic09/ic10 四档，条目里直接包 PNG
 
+   网页图标（public/ 下，index.html 的 <link rel="icon"> 引用）：
+     favicon.ico             16/32/48 三档 BMP 条目，给只认 .ico 的浏览器兜底
+     favicon-32.png          32，普通位图兜底
+     favicon-192.png         192，安卓 / 平板主屏用
+     apple-touch-icon.png    180，iOS 主屏（铺满不倒角，圆角交给系统切）
+     （favicon.svg 是手写的矢量版，本脚本不动它）
+
    跑法：npm run icon   （或 node scripts/gen-icon.mjs）
    想微调设计就改下面的 DESIGN 常量，重新跑。 */
 import { deflateSync } from 'node:zlib';
@@ -51,9 +58,11 @@ function sdSeg(px, py, ax, ay, bx, by) {
   return Math.hypot(px - (ax + t * ux), py - (ay + t * uy));
 }
 
-/** 渲染一枚尺寸的 RGBA 缓冲（返回 Uint8Array，行主序） */
-function render(size) {
+/** 渲染一枚尺寸的 RGBA 缓冲（返回 Uint8Array，行主序）
+    fullBleed=true 时铺满整块方形、不倒角 —— iOS 主屏图标不吃透明，圆角由系统自己切 */
+function render(size, opts = {}) {
   const s = size / 48;                 // 48 坐标系 → 像素
+  const rect = opts.fullBleed ? { x: 0, y: 0, w: 48, h: 48, r: 0 } : D.rect;
   const g0 = hex(D.grad[0]), g1 = hex(D.grad[1]);
   const out = new Uint8Array(size * size * 4);
   // 折线按两段线段取最近距离（圆头端点由线段距离自带）
@@ -64,11 +73,11 @@ function render(size) {
       const px = (x + 0.5) / s, py = (y + 0.5) / s;
       let r = 0, g = 0, b = 0, a = 0;
       // 1) 渐变圆角方（底）
-      const dRect = sdRoundRect(px, py, D.rect) * s;
+      const dRect = sdRoundRect(px, py, rect) * s;
       const cRect = cov(dRect);
       if (cRect > 0) {
         // SVG 的 objectBoundingBox 渐变：方向 (w,h)，t 归一到 [0,1]
-        const t = clamp01(((px - D.rect.x) * D.rect.w + (py - D.rect.y) * D.rect.h) / (D.rect.w ** 2 + D.rect.h ** 2));
+        const t = clamp01(((px - rect.x) * rect.w + (py - rect.y) * rect.h) / (rect.w ** 2 + rect.h ** 2));
         r = lerp(g0[0], g1[0], t); g = lerp(g0[1], g1[1], t); b = lerp(g0[2], g1[2], t);
         a = cRect;
       }
@@ -231,3 +240,15 @@ fs.writeFileSync(path.join(iconsDir, 'icon.icns'), buildICNS([
 ]));
 
 console.log('图标已生成 → src-tauri/icons/（32 / 128 / 256 PNG、icon.ico、icon.icns）与 src-tauri/app-icon.png');
+
+/* ---------- 网页图标：铺到 public/（构建时原样进 dist） ----------
+   为什么不止一个 favicon.svg：不认 SVG favicon 的浏览器（老 Safari、部分安卓 WebView、
+   国产内置浏览器）会退回去请求站点根的 /favicon.ico；项目页挂在 /<仓库名>/ 子路径下，
+   站点根的 .ico 不是我们的，404 之后标签页就没图标了。所以 .ico 与 PNG 兜底必须自己供。 */
+const pubDir = path.join(root, 'public');
+fs.writeFileSync(path.join(pubDir, 'favicon.ico'), buildICO([16, 32, 48].map(s => ({ size: s, data: icoEntryBMP(s, render(s)) }))));
+fs.writeFileSync(path.join(pubDir, 'favicon-32.png'), encodePNG(32, render(32)));
+fs.writeFileSync(path.join(pubDir, 'favicon-192.png'), encodePNG(192, render(192)));
+// iOS 主屏图标：铺满不倒角，四角不留透明（否则 iOS 会拿黑底去填）
+fs.writeFileSync(path.join(pubDir, 'apple-touch-icon.png'), encodePNG(180, render(180, { fullBleed: true })));
+console.log('网页图标已生成 → public/（favicon.ico 16/32/48、favicon-32.png、favicon-192.png、apple-touch-icon.png）');

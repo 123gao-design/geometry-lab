@@ -46,7 +46,12 @@ src/
 src-tauri/            桌面壳（Tauri 2）：tauri.conf.json（窗口/打包/图标配置）、Cargo.toml + build.rs + src/{main,lib}.rs
                       （壳本体，只挂插件不写业务）、capabilities/default.json（权限清单）、icons/（npm run icon 生成，勿手改、
                       不进 git 前必须先跑一次生成脚本）
-scripts/gen-icon.mjs  图标生成器（零依赖：SDF 抗锯齿 + 手写 PNG/ICO/ICNS 编码器，构图照 public/favicon.svg；改设计改 DESIGN 常量重跑）
+scripts/gen-icon.mjs  图标生成器（零依赖：SDF 抗锯齿 + 手写 PNG/ICO/ICNS 编码器，构图照 public/favicon.svg；改设计改 DESIGN 常量重跑）。
+                      跑一次同时出两套：src-tauri/ 下的桌面图标，以及 public/ 下的网页图标（favicon.ico 16/32/48、
+                      favicon-32.png、favicon-192.png、apple-touch-icon.png 180 铺满不倒角）——index.html 的 <link rel="icon">
+                      按 SVG → PNG → ICO → apple-touch-icon 排一串。**只给 SVG 一种格式会踩坑**：不认 SVG favicon 的浏览器
+                      （老 Safari、部分安卓 WebView、国产内置浏览器）退回请求站点根 /favicon.ico，项目页挂在 /geometry-lab/
+                      子路径，站点根那份不是我们的、404 就没图标了（2026-11-17 用户报「GitHub 网页不显示图标」）
 .github/workflows/release.yml  发版 CI：推 v* 标签触发，三平台矩阵出安装包挂 draft Release
 ```
 
