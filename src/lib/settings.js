@@ -22,6 +22,11 @@ export const CHOICES = {
   lblPin: ['on', 'off'],           // 板内拖过的文字位置记在本机（默认开）
   dlPos: ['in', 'left', 'right'],  // 画板操作条：板内悬浮右上 / 板上靠左 / 板上靠右
   noteAuto: ['on', 'off'],         // 笔记停手后自动写进所选文件夹（默认开）
+  searchBox: ['inline', 'popup'],  // 全站搜索：顶栏直接展开 / 屏幕中间弹窗
+  canvasSide: ['left', 'right'],   // 半屏画布从哪边出
+  inkBar: ['auto', 'pin'],         // 画布工具条：点空白自动收回 / 常驻不收回
+  inkTip: ['toast', 'off'],        // 批注操作提示：画板下方弹一条 / 不提示
+  inkSelMode: ['cut', 'whole'],    // 套索选择：圈到哪段选哪段（跨界剪开）/ 整条选
 };
 
 // 「跟随主题」之外允许自带 '#rrggbb' 的项，白名单表达不了，单独校验
@@ -49,6 +54,11 @@ const DEFAULTS = {
   lblPin: 'on',
   dlPos: 'left',                   // 操作条默认放到板上方靠左（'in' 可改回板内悬浮）
   noteAuto: 'on',                  // 笔记停手后自动写进所选文件夹；没选目录时这一项不起作用
+  searchBox: 'inline',             // 搜索框默认直接长在顶栏上（用户 2026-11-17 定的）
+  canvasSide: 'right',             // 半屏画布默认贴右边
+  inkBar: 'auto',                  // 画布工具条默认自动收回（点画布空白收成一个小钮）
+  inkTip: 'toast',                 // 批注操作提示默认用画板里的小条
+  inkSelMode: 'cut',               // 套索默认「圈到哪段选哪段」（用户 2026-11-17 指定，原来的整条选可切回）
   cardInk: 'theme',                // 卡片悬停亮线颜色：默认跟主题走，也可存 '#rrggbb' 自定义
   bgInk: 'auto',                   // 背景混沌线条颜色：默认冷蓝色带，或 '#rrggbb'
   bgAlpha: 0.3,                    // 背景线条浓度倍数（0.3–2.5，默认 30%，用户 2026-11-16 拍板）

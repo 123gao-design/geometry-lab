@@ -3,7 +3,7 @@
     <div class="chapter-head">
       <h1>高等几何（射影几何）</h1>
       <p class="sub">把平行线看成在无穷远处相交，射影平面就多了一条无穷远线。齐次坐标让点与线共用一套三元组，射影变换保持共线与交比；点线互换得到对偶原理，二次曲线则给每点配一条极线。帕斯卡定理把六个点的位置锁定成一条直线，最后用变换群把射影、仿射与欧氏排成一列——群越大，能说的话越少。</p>
-      <div class="readall">已上线 {{ built }} / {{ total }} 章：射影平面 5/5，二次曲线 3/3，变换群与几何 3/3</div>
+      <div class="readall">学习进度：已读 {{ readAll }} / {{ total }} 章</div>
     </div>
 
     <h3 class="sec">子专题一 · 射影平面<span class="prog">已读 {{ cnt(pln) }}/{{ pln.length }} · 5 章</span></h3>
@@ -33,7 +33,7 @@
       </router-link>
     </div>
 
-    <div class="note good">十一块画板各管一件事。射影平面五台：齐次坐标机拖动仿射点，滑块缩放 <Katex tex="\lambda" />，切到无穷远档后平行线在箭头处会合；射影变换机把方格网与单位正方形一起拉成梯形，灭点位置随参数滑动；交比机上下两排各放四个点，换平移、倒数、分式三种变换，两块徽章始终显示同一个数；对偶机左右并排放一张四点六线图与一张四线六点图，按组对照；德萨格与帕普斯机左右分置，拖顶点与中心看共线轴不动，再拖交叉点看帕普斯线转，共线行列式恒为零。二次曲线三台：配极机拖动 <Katex tex="P" />，黄色极线与两条紫色切线同步移动，<Katex tex="P" /> 进到圆内极线就跑到圆外；分类机在椭圆、抛物线、双曲线之间切换，右侧读与无穷远线的交点数；帕斯卡机拖动六个角滑块，黄色帕斯卡线始终穿过三个交点，一切到对偶版就是外切六边形的三线共点。变换群三台：变换群机拿字母 F 做被试，八个按钮读出元素、阶与逆元；分层机让同一个正方形在四级变换下依次变形；无穷远线位置机拖动一条红线，同一条圆锥曲线在椭圆与双曲线之间连续改口。</div>
+    <div class="note good">拓展阅读：① 对偶原理把点与线互换，一条关于点的定理自动得到一条关于线的定理；② 交比在射影变换下不变，调和点列 <Katex tex="(A,B;C,D)=-1" /> 把它与中点、极线接上；③ 帕斯卡定理与布里安雄定理互为对偶，六点与六线的构型因此成对出现；④ 极点极线把曲线上的点与切线、曲线外的点与切点弦写成同一个对应；⑤ 埃尔朗根纲领以变换群划分几何：射影 ⊃ 仿射 ⊃ 欧氏，群越小，能说的话越多。全站定理总表见顶栏<strong>速查</strong>。</div>
   </div>
 </template>
 <script setup>
@@ -62,7 +62,7 @@ const grp = [
 const cnt = arr => arr.filter(c => READ.set.has(c.to)).length;
 const higher = higherOf('projgeom');
 const total = higher.groups.reduce((s, g) => s + g.items.length, 0);
-const built = pln.length + con.length + grp.length;
+const readAll = cnt(pln) + cnt(con) + cnt(grp);
 </script>
 <style scoped>
 .note.good { margin-top: 26px; }

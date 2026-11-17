@@ -1,36 +1,32 @@
 <template>
+  <!-- 顶栏展开模式：搜索框直接长在导航条里 -->
+  <span v-if="inline" class="nav-search" :class="{ on: panel }" role="search">
+    <span class="sp-mag" aria-hidden="true">⌕</span>
+    <input ref="qEl" v-model="q" class="nav-q" type="search" autocomplete="off" spellcheck="false"
+      placeholder="搜章节、定理、结论" aria-label="全站搜索" @focus="openInline" @keydown="onKey" @input="openInline" />
+    <kbd class="nav-kbd" aria-hidden="true">Ctrl K</kbd>
+  </span>
+  <!-- 弹窗模式：还是原来那枚顶栏按钮 -->
+  <button v-else class="pin pin-btn" type="button" :class="{ on: open }" title="全站搜索（Ctrl K）" @click="toggle">
+    <span aria-hidden="true">⌕</span> 搜索
+  </button>
+
   <Teleport to="body">
-    <div v-if="open" class="sp-mask" @pointerdown.self="close">
+    <!-- 顶栏展开：结果浮层挂在搜索框下面（顶栏是 overflow-x:auto，不能挂在它里面） -->
+    <div v-if="inline && panel" ref="dropEl" class="sp-drop" :style="dropStyle" role="dialog" aria-label="搜索结果">
+      <SearchResults :q="q" :hits="hits" :cur="cur" :loading="loading" @hover="cur = $event" @pick="go" />
+    </div>
+
+    <!-- 弹窗：屏幕中间的大对话框（设置里可选回这一种） -->
+    <div v-if="!inline && open" class="sp-mask" @pointerdown.self="close">
       <div class="sp-box" role="dialog" aria-modal="true" aria-label="全站搜索">
         <div class="sp-bar">
           <span class="sp-mag" aria-hidden="true">⌕</span>
-          <input ref="qEl" v-model="q" class="sp-q" type="search" autocomplete="off" spellcheck="false"
+          <input ref="qEl2" v-model="q" class="sp-q" type="search" autocomplete="off" spellcheck="false"
             placeholder="搜章节、定理、结论（余弦定理 / 留数 / 二次函数）" @keydown="onKey" />
           <kbd class="sp-kbd">Esc</kbd>
         </div>
-
-        <div v-if="!q.trim()" class="sp-tip">
-          <span class="sp-lb">常用</span>
-          <router-link v-for="s in SUGGEST" :key="s.to" :to="s.to" class="sp-chip" @click="close">{{ s.t }}</router-link>
-          <span class="sp-say">Ctrl K 随时呼出</span>
-        </div>
-
-        <div v-else-if="loading" class="sp-empty">正在装载索引…</div>
-        <div v-else-if="!hits.length" class="sp-empty">没找到「{{ q }}」，换个说法试试——章节名、定理名、结论里的一句话都行</div>
-        <ul v-else class="sp-list">
-          <li v-for="(it, i) in hits" :key="it.to + '#' + i">
-            <router-link :to="it.to" class="sp-row" :class="{ on: i === cur }"
-              @click="close" @mouseenter="cur = i">
-              <span class="sp-k">{{ it.k }}</span>
-              <span class="sp-main">
-                <span class="sp-t">{{ it.t }}</span>
-                <span v-if="it.d" class="sp-d">{{ it.d }}</span>
-                <span v-else-if="it.s" class="sp-s">{{ it.s }}</span>
-              </span>
-              <span v-if="it.tag" class="sp-tag">{{ it.tag }}</span>
-            </router-link>
-          </li>
-        </ul>
+        <SearchResults :q="q" :hits="hits" :cur="cur" :loading="loading" @hover="cur = $event" @pick="go" />
       </div>
     </div>
   </Teleport>
@@ -38,25 +34,30 @@
 
 <script setup>
 // 全站搜索（Ctrl+K / ⌘K）：索引与匹配在 lib/search.js，这里只管呼出、键盘走位与样式。
-// 索引按需加载——第一次打开才去取 376 条速查那份约 117 kB 的包。
+// 两种呈现（设置页「搜索框样式」可选）：inline = 搜索框直接展开在顶栏、结果从下面浮出（默认）；
+// popup = 原来那种屏幕中间的对话框。索引按需加载——第一次用才去取那份约 100 kB 的包。
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { indexReady, loadIndex, search } from '../lib/search.js';
+import SearchResults from './SearchResults.vue';
 
+const props = defineProps({
+  mode: { type: String, default: 'inline' },   // inline | popup
+});
 const router = useRouter();
-const open = ref(false);
+const route = useRoute();
+const inline = computed(() => props.mode !== 'popup');
+
+const open = ref(false);    // 弹窗模式：对话框开着
+const panel = ref(false);   // 顶栏展开模式：结果浮层开着
 const q = ref('');
 const qEl = ref(null);
+const qEl2 = ref(null);
+const dropEl = ref(null);
+const dropStyle = ref({});
 const cur = ref(0);
 const ready = ref(indexReady());
 const loading = ref(false);
-
-const SUGGEST = [
-  { t: '定理速查', to: '/cheatsheet' },
-  { t: '自由画板', to: '/playground' },
-  { t: '笔记', to: '/notes' },
-  { t: '设置', to: '/settings' },
-];
 
 const hits = computed(() => (ready.value ? search(q.value) : []));
 watch(q, () => { cur.value = 0; });
@@ -69,21 +70,51 @@ async function ensure() {
 }
 
 function show() {
-  if (open.value) return;
-  open.value = true;
-  ensure();
-  nextTick(() => { if (qEl.value) qEl.value.focus(); });
+  if (inline.value) {
+    if (panel.value) return;
+    panel.value = true;
+    ensure();
+    nextTick(() => { place(); if (qEl.value && qEl.value.focus) qEl.value.focus(); });
+  } else {
+    if (open.value) return;
+    open.value = true;
+    ensure();
+    nextTick(() => { if (qEl2.value && qEl2.value.focus) qEl2.value.focus(); });
+  }
 }
-function close() { open.value = false; }
-function toggle() { if (open.value) close(); else show(); }
+function close() {
+  open.value = false;
+  panel.value = false;
+}
+function toggle() { if (open.value || panel.value) close(); else show(); }
+// 顶栏里的输入框一获得焦点（或开始打字）就把结果浮层带出来
+function openInline() { if (!panel.value) { panel.value = true; ensure(); } nextTick(place); }
 
 function go(to) {
   close();
   router.push(to);
 }
 
+/** 浮层对着搜索框右缘摆放：够宽放结果，越出屏幕就往里收 */
+function place() {
+  if (!inline.value || !panel.value) return;
+  const el = qEl.value;
+  if (!el || !el.getBoundingClientRect || typeof window === 'undefined') return;
+  const r = el.getBoundingClientRect();
+  const w = Math.max(380, Math.min(window.innerWidth - 24, Math.round(r.width * 2.6)));
+  let left = r.left + r.width - w;
+  left = Math.max(12, Math.min(left, window.innerWidth - w - 12));
+  dropStyle.value = { left: left + 'px', top: (r.bottom + 8) + 'px', width: w + 'px' };
+}
+watch(panel, v => { if (v) nextTick(place); });
+
 function onKey(e) {
-  if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    close();
+    if (inline.value && qEl.value && qEl.value.blur) qEl.value.blur();
+    return;
+  }
   const n = hits.value.length;
   if (e.key === 'ArrowDown') { e.preventDefault(); if (n) cur.value = (cur.value + 1) % n; }
   else if (e.key === 'ArrowUp') { e.preventDefault(); if (n) cur.value = (cur.value - 1 + n) % n; }
@@ -96,13 +127,64 @@ function onWinKey(e) {
     toggle();
   }
 }
+// 点浮层与搜索框以外的地方就收起（顶栏输入框本身不吞点击，所以用 pointerdown 判）
+function onDocDown(e) {
+  if (!panel.value) return;
+  const t = e && e.target;
+  if (t && ((dropEl.value && dropEl.value.contains && dropEl.value.contains(t)) ||
+            (qEl.value && qEl.value.contains && qEl.value.contains(t)))) return;
+  panel.value = false;
+}
 
-onMounted(() => window.addEventListener('keydown', onWinKey));
-onBeforeUnmount(() => window.removeEventListener('keydown', onWinKey));
+// 换页收起（点结果跳转时也已经先收起过一次）
+watch(() => route.path, close);
+
+onMounted(() => {
+  window.addEventListener('keydown', onWinKey);
+  window.addEventListener('resize', place);
+  document.addEventListener('pointerdown', onDocDown, true);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onWinKey);
+  window.removeEventListener('resize', place);
+  document.removeEventListener('pointerdown', onDocDown, true);
+});
 defineExpose({ toggle });
 </script>
 
 <style scoped>
+/* ---- 顶栏里的搜索框 ---- */
+.nav-search {
+  display: flex; align-items: center; gap: 7px; flex: none; height: 30px;
+  padding: 0 11px; border: 1px solid color-mix(in srgb, var(--mut) 48%, transparent);
+  border-radius: 99px; background: var(--card); color: var(--mut);
+  transition: border-color .16s ease, background .16s ease;
+}
+.nav-search:hover { border-color: var(--mut); }
+.nav-search:focus-within, .nav-search.on {
+  border-color: var(--blue); background: color-mix(in srgb, var(--blue) 10%, var(--card));
+}
+.nav-q {
+  width: 220px; border: none; outline: none; background: none; color: var(--ink);
+  font: inherit; font-size: 13px; padding: 0; line-height: 1;
+}
+.nav-q::placeholder { color: var(--mut); opacity: .9; }
+.nav-q::-webkit-search-cancel-button { display: none; }
+.nav-kbd {
+  flex: none; font: inherit; font-size: 10.5px; color: var(--mut); opacity: .8;
+  border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; line-height: 1.55;
+}
+@media (max-width: 1100px) { .nav-kbd { display: none; } .nav-q { width: 150px; } }
+@media (max-width: 760px) { .nav-search { padding: 0 9px; } .nav-q { width: 100px; } }
+
+/* ---- 顶栏展开模式的结果浮层 ---- */
+.sp-drop {
+  position: fixed; z-index: 1200; max-height: 66vh; display: flex; flex-direction: column;
+  border: 1px solid var(--line); border-radius: 14px; background: var(--card);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, .42); overflow: hidden;
+}
+
+/* ---- 弹窗模式 ---- */
 .sp-mask {
   position: fixed; inset: 0; z-index: 1200;
   display: flex; justify-content: center; align-items: flex-start;
@@ -126,31 +208,5 @@ defineExpose({ toggle });
   flex: none; padding: 2px 7px; border: 1px solid var(--line); border-radius: 6px;
   font: inherit; font-size: 11px; color: var(--mut);
 }
-.sp-tip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 14px; }
-.sp-lb { font-size: 12px; color: var(--mut); }
-.sp-chip {
-  padding: 5px 11px; border: 1px solid var(--line); border-radius: 99px; background: none;
-  color: var(--mut); font: inherit; font-size: 12.5px; cursor: pointer; text-decoration: none;
-}
-.sp-chip:hover { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 50%, transparent); }
-.sp-say { margin-left: auto; font-size: 12px; color: var(--mut); opacity: .8; }
-.sp-empty { padding: 22px 16px 26px; font-size: 13.5px; color: var(--mut); text-align: center; }
-.sp-list { margin: 0; padding: 6px; list-style: none; overflow-y: auto; }
-.sp-row {
-  display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px;
-  color: var(--ink); text-decoration: none;
-}
-.sp-row.on { background: color-mix(in srgb, var(--blue) 13%, transparent); }
-.sp-k {
-  flex: none; width: 52px; text-align: center; padding: 2px 0; border-radius: 6px;
-  font-size: 11px; color: var(--mut); border: 1px solid var(--line);
-}
-.sp-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.sp-t { font-size: 14px; }
-.sp-d, .sp-s {
-  font-size: 12px; color: var(--mut);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.sp-tag { flex: none; font-size: 11px; color: var(--blue); opacity: .85; }
 html.light .sp-mask { background: rgba(20, 24, 32, .3); }
 </style>

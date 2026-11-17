@@ -2,8 +2,8 @@
   <div>
     <div class="chapter-head">
       <h1>空间解析几何</h1>
-      <p class="sub">把平面几何抬到三维：向量先把方向与长度写成坐标，数量积、向量积与混合积各读一个量；平面与直线由法向量与方向向量定出，距离与夹角一律化为向量运算；曲面与曲线把方程画成形状，用截痕一层层读出来。三个子专题已经全部上线。</p>
-      <div class="readall">已上线 {{ built }} / {{ total }} 章：空间向量 {{ vec.length }}/4、平面与直线 {{ pla.length }}/4、曲面与曲线 {{ sur.length }}/4，三组全部完结</div>
+      <p class="sub">把平面几何抬到三维：向量先把方向与长度写成坐标，数量积、向量积与混合积各读一个量；平面与直线由法向量与方向向量定出，距离与夹角一律化为向量运算；曲面与曲线把方程画成形状，用截痕一层层读出来。</p>
+      <div class="readall">学习进度：已读 {{ readAll }} / {{ total }} 章</div>
     </div>
 
     <h3 class="sec">子专题一 · 空间向量<span class="prog">已读 {{ cnt(vec) }}/{{ vec.length }}</span></h3>
@@ -33,7 +33,7 @@
       </router-link>
     </div>
 
-    <div class="note good">十二块画板各守一件事：空间坐标机让点在三轴上投影读三个分量，数量积机把夹角与投影同时摆在两条向量之间，向量积机画右手法则下的法向量与平行四边形，混合积机用平行六面体的体积判三向量共面；平面机绕法向量改变倾斜、平面随距离平移，直线机把定点与方向向量摆成一条线并写成对称式与参数式，位置关系机让两张平面、直线与平面、两条直线逐对判平行垂直与异面，距离机从点向平面、向直线各落一条垂足线段；曲面一侧，柱面与锥面机用准线与母线扫出曲面，旋转曲面机绕轴转出纬圆，二次曲面机用一枚截痕高度滑块把椭球、双曲面与抛物面逐层截开，空间曲线机让螺旋线沿着圆与正弦两个投影一起上升。</div>
+    <div class="note good">拓展阅读：① 点到平面的距离 <Katex tex="\dfrac{|Ax_0+By_0+Cz_0+D|}{\sqrt{A^2+B^2+C^2}}" /> 与异面直线的公垂线都由投影给出；② 两直线的夹角取方向向量，线面角取方向向量与法向量的余角；③ 旋转曲面、柱面与锥面可由母线绕轴或沿准线平移生成，方程中缺少的变量正是轴向；④ 柱坐标与球坐标是极坐标的两种三维推广，对称性明显的区域用它计算更省事；⑤ 二次曲面按二次型的符号分类（椭球、双曲面、抛物面），与线性代数模块的二次型相接。全站定理总表见顶栏<strong>速查</strong>。</div>
   </div>
 </template>
 <script setup>
@@ -59,8 +59,8 @@ const sur = [
   { to: '/spacegeom/s4', t: '空间曲线', d: '参数方程给点随参数动，一般方程写成两张曲面的联立，投影落到三个坐标面上。' },
 ];
 const cnt = arr => arr.filter(c => READ.set.has(c.to)).length;
-const built = vec.length + pla.length + sur.length;
-const total = built;
+const readAll = cnt(vec) + cnt(pla) + cnt(sur);
+const total = vec.length + pla.length + sur.length;
 </script>
 <style scoped>
 .note.good { margin-top: 26px; }

@@ -3,7 +3,7 @@
     <div class="chapter-head">
       <h1>复变函数</h1>
       <p class="sub">复数让乘法变成旋转加伸缩，复变函数因此比实函数硬气得多：在一点可导，就能推出处处可导。柯西定理、级数展开与留数定理是这条路上的三个台阶，最后落到用围道积分算实积分。</p>
-      <div class="readall">已上线 {{ built }} / {{ total }} 章：复数与复变函数 3/3，解析函数 4/4，级数与留数 5/5</div>
+      <div class="readall">学习进度：已读 {{ readAll }} / {{ total }} 章</div>
     </div>
 
     <h3 class="sec">子专题一 · 复数与复变函数<span class="prog">已读 {{ cnt(cplx) }}/{{ cplx.length }} · 3 章</span></h3>
@@ -33,7 +33,7 @@
       </router-link>
     </div>
 
-    <div class="note good">子专题一的三块画板各管一件事：几何表示机把点、模、辐角、共轭与乘 <Katex tex="i" /> 的旋转摆在同一张复平面上，拖一圈就把四个象限的辐角都看遍；映射机左右两张平面共用一条比例尺，<Katex tex="w=iz+1" /> 保形状、<Katex tex="w=z^2" /> 折半平面、<Katex tex="w=1/z" /> 卷圆族；初等函数机把 <Katex tex="e^z" /> 的横带与 <Katex tex="\operatorname{Log}z" /> 的分支并排摆开，竖线映成圆、横线映成射线。子专题二的四块画板接着把这套几何语言用在微分与积分上：导数机让差商轨迹随方向转满一圈，缩成一点才算可导；柯西-黎曼机把两族等值线与两支梯度箭头叠在同一张平面上；积分机把闭路上每走一步的贡献累成一条曲线，回不回起点一眼可见；积分公式机左右并排，把边界绕一圈与内部一点的值并排读出。子专题三的五块画板收在计算上：泰勒级数机把部分和连成折线，看它是否向 <Katex tex="f(z)" /> 收拢、金圈内外两样结果；洛朗机用条形图画系数，金色条是主部，一根、无穷根、零根分别对应极点、本性奇点与可去奇点；留数机拖动圆路圈住奇点，留数之和与数值积分同栏对照；保角机把同心圆与射线搬到另一张平面，夹角是否保住由读数给出；实积分机上半圆围道圈住一个极点，右图的阴影随半径铺开，截断积分一步步落到留数给出的精确值。</div>
+    <div class="note good">拓展阅读：① 柯西积分公式把解析函数在内部一点的值写成边界上的积分，高阶导数公式随即成立；② 洛朗级数把奇点分成本性、极点与可去三类，留数定理用一圈积分读出留数之和；③ 用留数计算实积分（有理函数、<Katex tex="\int_{-\infty}^{\infty}" /> 上的积分、含三角函数的积分）是它的主要去处；④ 共形映射保持夹角，儒可夫斯基变换把圆盘映成机翼剖面；⑤ 调和函数是解析函数的实部与虚部，最大模原理与刘维尔定理是这一支的两个结论。全站定理总表见顶栏<strong>速查</strong>。</div>
   </div>
 </template>
 <script setup>
@@ -63,7 +63,7 @@ const ser = [
 const cnt = arr => arr.filter(c => READ.set.has(c.to)).length;
 const higher = higherOf('complexvar');
 const total = higher.groups.reduce((s, g) => s + g.items.length, 0);
-const built = cplx.length + ana.length + ser.length;
+const readAll = cnt(cplx) + cnt(ana) + cnt(ser);
 </script>
 <style scoped>
 .note.good { margin-top: 26px; }
