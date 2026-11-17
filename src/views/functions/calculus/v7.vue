@@ -5,7 +5,7 @@
     <div class="note good" id="v7-law"><strong>平方和及其缩比极限</strong>：<Katex tex="\sum_{k=1}^{n}k^2=\dfrac{n(n+1)(2n+1)}{6}" />；把 [0,1] 均分 n 份取右端点作矩形和，<Katex tex="R_n=\dfrac{1}{n^3}\sum_{k=1}^{n}k^2=\dfrac{(n+1)(2n+1)}{6n^2}=\dfrac{1}{3}+\dfrac{1}{2n}+\dfrac{1}{6n^2}\ \to\ \dfrac{1}{3}" />，而 <Katex tex="\dfrac{1}{3}=\int_0^1x^2\,\mathrm{d}x" /> —— 离散求和的极限就是积分。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSum" />
-      <div class="cap">图 V7 · <b>平方和积分机</b>：上栏离散平方塔（第 k 根条高 <Katex tex="\propto k^2"/>），下栏 [0,1] 上的右端点矩形 —— 两栏逐列对齐、同一轮廓，中间隔一个 ÷<Katex tex="n^3"/>。拖大 n：高出曲线的金边消失，矩形和趋于绿区 <Katex tex="1/3"/>；「⏩ n 逐级翻倍」把误差减半的过程做成动画。</div>
+      <div class="cap">图 V7 · <b>平方和与定积分</b>：上栏离散平方塔（第 k 根条高 <Katex tex="\propto k^2"/>），下栏 [0,1] 上的右端点矩形 —— 两栏逐列对齐、同一轮廓，中间隔一个 ÷<Katex tex="n^3"/>。拖大 n：高出曲线的金边消失，矩形和趋于绿区 <Katex tex="1/3"/>；「⏩ n 逐级翻倍」把误差减半的过程做成动画。</div>
     </div>
 
     <h3 class="sec" id="v7-sum">三个求和公式：差分累加</h3>

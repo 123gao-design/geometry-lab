@@ -5,7 +5,7 @@
     <div class="note good" id="g1-law"><Katex tex="a,b>0" /> 时，<Katex tex="\sqrt{ab}\le\dfrac{a+b}{2}" />，等号当且仅当 <Katex tex="a=b" />。左边是几何均值、右边是算术均值，故称均值不等式；取等点在两数相等处，a、b 越悬殊差距越大。</div>
     <div class="board-wrap">
       <BoardMount :factory="createMC" />
-      <div class="cap">图 基1 · <b>圆图均值机</b>：拖 a、b 或点预设，蓝橙两段直径被 C 分成 a 与 b，绿竖弦长 <Katex tex="\sqrt{ab}"/>、金半径长 <Katex tex="(a+b)/2"/>。看点：<Katex tex="a\ne b"/> 时 D 沉在弧顶下方，两条水平虚线之间夹着差距 <Katex tex="A-G"/>（右侧花括号读数）；按「⏩」让 b 滑向 a，竖弦缓缓升到半径、两线重合。</div>
+      <div class="cap">图 基1 · <b>基本不等式的圆图证明</b>：拖 a、b 或点预设，蓝橙两段直径被 C 分成 a 与 b，绿竖弦长 <Katex tex="\sqrt{ab}"/>、金半径长 <Katex tex="(a+b)/2"/>。看点：<Katex tex="a\ne b"/> 时 D 沉在弧顶下方，两条水平虚线之间夹着差距 <Katex tex="A-G"/>（右侧花括号读数）；按「⏩」让 b 滑向 a，竖弦缓缓升到半径、两线重合。</div>
     </div>
 
     <h3 class="sec" id="g1-plan">图上安置：直径与垂线</h3>
@@ -46,7 +46,7 @@
     <h3 class="sec" id="g1-concave">凹凸性：ln 与 eˣ 的中点高低</h3>
     <div class="board-wrap">
       <BoardMount :factory="createLC" />
-      <div class="cap">图 基1c · <b>凹凸性证明机</b>：模式一是上凸的 <Katex tex="y=\ln x"/>，橙弦整段落在蓝曲线下方，横坐标中点处曲线上的绿点 N 高过弦上的金点 M；模式二是下凸的 <Katex tex="y=e^x"/>，弦翻到曲线上方，N 反而低于 M。两种情形下中点的高低差都非负，取指数或开方就落回 <Katex tex="\sqrt{ab}\le\dfrac{a+b}{2}"/>。</div>
+      <div class="cap">图 基1c · <b>基本不等式的凹凸性证明</b>：模式一是上凸的 <Katex tex="y=\ln x"/>，橙弦整段落在蓝曲线下方，横坐标中点处曲线上的绿点 N 高过弦上的金点 M；模式二是下凸的 <Katex tex="y=e^x"/>，弦翻到曲线上方，N 反而低于 M。两种情形下中点的高低差都非负，取指数或开方就落回 <Katex tex="\sqrt{ab}\le\dfrac{a+b}{2}"/>。</div>
     </div>
     <p>第三条路来自函数的凹凸性。对数曲线 <Katex tex="y=\ln x" /> 是上凸（凹）的：曲线上任意两点连成的弦，整段落在曲线下方。取横坐标 <Katex tex="a" /> 与 <Katex tex="b" /> 两点 P、Q，在横坐标中点 <Katex tex="\frac{a+b}{2}" /> 处竖直相比：曲线上的高度是 <Katex tex="\ln\frac{a+b}{2}" />，弦上的高度是两端高度的平均 <Katex tex="\frac{\ln a+\ln b}{2}=\ln\sqrt{ab}" />。弦在下方，于是</p>
     <p style="text-align:center"><Katex tex="\ln\dfrac{a+b}{2}\ \ge\ \dfrac{\ln a+\ln b}{2}=\ln\sqrt{ab}" display /></p>

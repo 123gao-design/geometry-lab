@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createMatAdd" />
-      <div class="cap">图 矩1 · <b>矩阵的线性运算机</b>：蓝框是 <Katex tex="A" />、橙框是 <Katex tex="B" />、绿框是结果，细虚线连起对应的格子。看点：切到 <Katex tex="A+B" /> 与 <Katex tex="A-B" />，只有格子里的数在变，位置一律不动；切到 <Katex tex="\lambda A" /> 后拖 <Katex tex="\lambda" />，整张表同时缩放，<Katex tex="\lambda" /> 取负时每个元素连符号一起翻；切到 <Katex tex="A^{T}" />，连线变成「行列对调」的交叉。</div>
+      <div class="cap">图 矩1 · <b>矩阵的线性运算</b>：蓝框是 <Katex tex="A" />、橙框是 <Katex tex="B" />、绿框是结果，细虚线连起对应的格子。看点：切到 <Katex tex="A+B" /> 与 <Katex tex="A-B" />，只有格子里的数在变，位置一律不动；切到 <Katex tex="\lambda A" /> 后拖 <Katex tex="\lambda" />，整张表同时缩放，<Katex tex="\lambda" /> 取负时每个元素连符号一起翻；切到 <Katex tex="A^{T}" />，连线变成「行列对调」的交叉。</div>
     </div>
 
     <h3 class="sec" id="m1-def">矩阵与它的形状</h3>

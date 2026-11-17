@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createHom" />
-      <div class="cap">图 结3 · <b>同态机</b>：<Katex tex="\mathbb{Z}_{12}\to\mathbb{Z}_m" /> 的取余映射，m 由按钮切换。看点：① 每个整数沿彩色线落到自己的余数；② 金线标出核——这些数全落到 0；③ m=12 时上下两排一一对应，映射成为同构。</div>
+      <div class="cap">图 结3 · <b>同态</b>：<Katex tex="\mathbb{Z}_{12}\to\mathbb{Z}_m" /> 的取余映射，m 由按钮切换。看点：① 每个整数沿彩色线落到自己的余数；② 金线标出核——这些数全落到 0；③ m=12 时上下两排一一对应，映射成为同构。</div>
     </div>
 
     <h3 class="sec" id="s3-def">同态的定义</h3>

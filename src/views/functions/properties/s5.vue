@@ -5,7 +5,7 @@
     <div class="note good" id="s5-def"><strong>轴对称的判定式</strong>：若对一切 x 都有 <Katex tex="f(a+x)=f(b-x)" />，则图象关于直线 <Katex tex="x=\tfrac{a+b}{2}" /> 对称；<strong>中心对称的判定式</strong>：把等号换成 <Katex tex="f(a+x)+f(b-x)=0" />，则图象关于点 <Katex tex="\left(\tfrac{a+b}{2},\ 0\right)" /> 对称。反过来也成立（充要）。证明只是代入：令 <Katex tex="u=x+\tfrac{b-a}{2}" />，则 <Katex tex="a+u" /> 变成 <Katex tex="x+\tfrac{a+b}{2}" />、<Katex tex="b-u" /> 变成 <Katex tex="\tfrac{a+b}{2}-x" />，两条式子分别化为 <Katex tex="f(c+x)=f(c-x)" /> 与 <Katex tex="f(c+x)+f(c-x)=0" />（<Katex tex="c=\tfrac{a+b}{2}" />）—— 一切对称信息都锁在 a、b 的<strong>中点</strong>里。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSymTrans" />
-      <div class="cap">图 S5 · <b>对称翻译机</b>：四个预设做同一件事 —— 把抽象式翻译成对称轴/中心。①② 是「检验函数」：两个检验函数形状完全不像抛物线（W 形、S 形），但式子照样唯一确定对称轴/中心 —— <strong>对称性属于式子，不属于图象形状</strong>；③ 是「由一半写另一半」：右半给定、左半由 f(x)=f(4−x) 整段翻译出来；④ 是参数关：f(x)=x²+mx+1 要满足 ① 的式子，拖 m 验证 —— 只有 m=−4 满足。探针 u 的两翼端点 (u, f(u)) 与 (4−u, f(4−u)) 关于 x=2 等距，直接读「等高=轴对称、等值反向=中心对称」。</div>
+      <div class="cap">图 S5 · <b>对称轴与对称中心</b>：四个预设做同一件事 —— 把抽象式翻译成对称轴/中心。①② 是「检验函数」：两个检验函数形状完全不像抛物线（W 形、S 形），但式子照样唯一确定对称轴/中心 —— <strong>对称性属于式子，不属于图象形状</strong>；③ 是「由一半写另一半」：右半给定、左半由 f(x)=f(4−x) 整段翻译出来；④ 是参数关：f(x)=x²+mx+1 要满足 ① 的式子，拖 m 验证 —— 只有 m=−4 满足。探针 u 的两翼端点 (u, f(u)) 与 (4−u, f(4−u)) 关于 x=2 等距，直接读「等高=轴对称、等值反向=中心对称」。</div>
     </div>
 
     <h3 class="sec" id="s5-half">由一半写另一半</h3>

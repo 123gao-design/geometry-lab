@@ -6,7 +6,7 @@
     <div class="note good" id="l3-law">设可行域 <Katex tex="D" /> 是闭且有界的平面区域，目标函数 <Katex tex="z=ax+by" /> 连续。若最优点 <Katex tex="Q" /> 落在光滑边界上，则等值线 <Katex tex="ax+by=z" /> 在 <Katex tex="Q" /> 处与边界相切：等值线若与边界相交而不相切，跨过它的一小段里仍有点属于区域，<Katex tex="z" /> 就还能继续增大或减小。于是求最值化为求切点。</div>
     <div class="board-wrap">
       <BoardMount :factory="createConic" />
-      <div class="cap">图 线3 · <b>曲线可行域机</b>：三个预设切换可行域 <Katex tex="x^2+y^2\le4" />、<Katex tex="\frac{x^2}{4}+y^2\le1" />、<Katex tex="x^2\le y\le4" />。金色虚线是当前等值线，绿色实线与青色虚线分别是最大值、最小值所在的等值线，接触点标在边界上。看点：拖动 z 让等值线平移；切到抛物带，观察最优点怎样从端点移到曲边切点。</div>
+      <div class="cap">图 线3 · <b>曲线围成的可行域</b>：三个预设切换可行域 <Katex tex="x^2+y^2\le4" />、<Katex tex="\frac{x^2}{4}+y^2\le1" />、<Katex tex="x^2\le y\le4" />。金色虚线是当前等值线，绿色实线与青色虚线分别是最大值、最小值所在的等值线，接触点标在边界上。看点：拖动 z 让等值线平移；切到抛物带，观察最优点怎样从端点移到曲边切点。</div>
     </div>
 
     <h3 class="sec" id="l3-circle">圆域：圆心到等值线的距离</h3>

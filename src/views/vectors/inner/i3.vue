@@ -6,7 +6,7 @@
     <div class="note good" id="i3-id">对任意两个向量 <Katex tex="\vec a,\vec b" />，有 <Katex tex="\vec a\cdot\vec b=\dfrac{|\vec a+\vec b|^2-|\vec a-\vec b|^2}{4}" />；又有 <Katex tex="|\vec a+\vec b|^2+|\vec a-\vec b|^2=2(|\vec a|^2+|\vec b|^2)" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createPolarId" />
-      <div class="cap">图 积3 · <b>极化恒等式机</b>：金色一支是 <Katex tex="\vec a+\vec b" />，紫色一支是 <Katex tex="\vec a-\vec b" />，两者正是平行四边形 OACB 的两条对角线。看点：② 把两支拖成互相垂直，两条对角线等长，平行四边形变成矩形；③、④ 拖到共线，其中一条对角线缩成零，恒等式退化为模的加减。</div>
+      <div class="cap">图 积3 · <b>极化恒等式</b>：金色一支是 <Katex tex="\vec a+\vec b" />，紫色一支是 <Katex tex="\vec a-\vec b" />，两者正是平行四边形 OACB 的两条对角线。看点：② 把两支拖成互相垂直，两条对角线等长，平行四边形变成矩形；③、④ 拖到共线，其中一条对角线缩成零，恒等式退化为模的加减。</div>
     </div>
 
     <h3 class="sec" id="i3-id">两个恒等式</h3>

@@ -7,7 +7,7 @@
     <h3 class="sec" id="a4-lab">反比例母机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createRecipHyp" />
-      <div class="cap">图 A4 · <b>反比例母机</b>：左是母本 <Katex tex="y=1/x" />（两条渐近线就是坐标轴），右是目标双曲线。拖动 Q 沿母本跑：面积恒为 1 的矩形被变换成平行四边形，<Katex tex="P=T(Q)" /> 始终落在双曲线上，两条坐标轴被变换成渐近线方向 <Katex tex="(a,\ \pm b)" />。把 a 拖到与 b 相等：渐近线夹角回到 <Katex tex="90^\circ" />，变换只剩正交变换+均匀放缩 —— <strong>相似</strong>；<Katex tex="a\ne b" /> 时夹角不保，必须真仿射。</div>
+      <div class="cap">图 A4 · <b>反比例函数与双曲线</b>：左是母本 <Katex tex="y=1/x" />（两条渐近线就是坐标轴），右是目标双曲线。拖动 Q 沿母本跑：面积恒为 1 的矩形被变换成平行四边形，<Katex tex="P=T(Q)" /> 始终落在双曲线上，两条坐标轴被变换成渐近线方向 <Katex tex="(a,\ \pm b)" />。把 a 拖到与 b 相等：渐近线夹角回到 <Katex tex="90^\circ" />，变换只剩正交变换+均匀放缩 —— <strong>相似</strong>；<Katex tex="a\ne b" /> 时夹角不保，必须真仿射。</div>
     </div>
     <p>这台机器是 A1 伸缩机的"斜切版"：伸缩机把<strong>圆</strong>变成椭圆（保住对称轴），这台机器把<strong>反比例函数</strong>变成双曲线（保住渐近线结构）。不变量清单（A1）在这里逐条兑现：相切、共线、平行、比例、中点全部保持，唯独角度与长度不保持 —— 所以母本里"垂直的两条渐近线"到像里可以不垂直。</p>
 

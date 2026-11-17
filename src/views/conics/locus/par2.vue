@@ -7,7 +7,7 @@
     <h3 class="sec" id="p2-lab">交轨法机器</h3>
     <div class="board-wrap">
       <BoardMount :factory="createLocusGen" />
-      <div class="cap">图 P2 · <b>交轨法轨迹机</b>：过 A(−a,0) 的蓝线与过 B(a,0) 的橙线，被约束 <Katex tex="k_1k_2=K" />（定值）拴在一起。拖动蓝线，交点 P 应声而动；按「生成轨迹」看 P 扫出整条曲线。切到双曲线模式，留意 k₁ 越过 <Katex tex="\pm\tfrac{b}{a}" /> 时两线平行 —— 那正是渐近线方向，P 从一支跳到另一支。</div>
+      <div class="cap">图 P2 · <b>交轨法求轨迹</b>：过 A(−a,0) 的蓝线与过 B(a,0) 的橙线，被约束 <Katex tex="k_1k_2=K" />（定值）拴在一起。拖动蓝线，交点 P 应声而动；按「生成轨迹」看 P 扫出整条曲线。切到双曲线模式，留意 k₁ 越过 <Katex tex="\pm\tfrac{b}{a}" /> 时两线平行 —— 那正是渐近线方向，P 从一支跳到另一支。</div>
     </div>
 
     <h3 class="sec" id="p2-cross">交轨法：两行推导</h3>

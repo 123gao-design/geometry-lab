@@ -5,7 +5,7 @@
     <div class="note good" id="z3-def"><strong>三角形面积</strong>：<Katex tex="S=\frac12 ab\sin\gamma" />，也就是「底 × 高 ÷ 2」的夹角写法。已知两边及其夹角（SAS），面积一步到位；范围问题的关键是 <Katex tex="\sin\gamma\le1" /> 与「同弦同角先定圆」。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 Z3 · <b>面积范围机</b>：<strong>模式一 · 夹角扫掠</strong> —— 底 b 平放、杆 a 绕 C 扫角 <Katex tex="\gamma"/>，高 <Katex tex="h=a\sin\gamma" /> 现场记录，右栏画出 <Katex tex="S(\gamma)"/> 的半周期驼峰，<Katex tex="\gamma=90^\circ"/> 达到最大；<strong>模式二 · 同弦同角对比</strong> —— 固定弦 a 与圆周角 <Katex tex="\alpha"/>，外接圆唯一确定（Z1 的结论），A 沿大弧滑动，S 与 <Katex tex="b+c"/> 两条读数<strong>同时在等腰 <Katex tex="b=c"/> 处达到最大</strong>，右栏双峰同顶曲线实时核验。</div>
+      <div class="cap">图 Z3 · <b>三角形面积的取值范围</b>：<strong>模式一 · 夹角扫掠</strong> —— 底 b 平放、杆 a 绕 C 扫角 <Katex tex="\gamma"/>，高 <Katex tex="h=a\sin\gamma" /> 现场记录，右栏画出 <Katex tex="S(\gamma)"/> 的半周期驼峰，<Katex tex="\gamma=90^\circ"/> 达到最大；<strong>模式二 · 同弦同角对比</strong> —— 固定弦 a 与圆周角 <Katex tex="\alpha"/>，外接圆唯一确定（Z1 的结论），A 沿大弧滑动，S 与 <Katex tex="b+c"/> 两条读数<strong>同时在等腰 <Katex tex="b=c"/> 处达到最大</strong>，右栏双峰同顶曲线实时核验。</div>
     </div>
 
     <h3 class="sec" id="z3-area">面积公式：夹角写法</h3>

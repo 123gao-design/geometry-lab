@@ -5,7 +5,7 @@
     <div class="note good" id="g3-fact"><strong>提因子纪律</strong>：<Katex tex="f(ax+b)=f\!\left(a\left(x+\dfrac{b}{a}\right)\right)" /> —— 括号里的加法必须先提因子再读：真正的平移量是 <Katex tex="\dfrac{b}{a}" />，不是 b。复合变换 <Katex tex="y=b\,f(a(x-h))+k" /> 的读法拆解：括号内管横（先右移 h、再压到 <Katex tex="\dfrac{1}{a}" />），括号外管竖（纵缩 b 倍、再上移 k）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createOrder" />
-      <div class="cap">图 G3 · <b>变形顺序机</b>：模式一「顺序对比」—— 金线是提因子后的正确读法、红虚线是把 h 直接当平移量的误读，两个起笔点 (h,k) 与 <Katex tex="(h/a,\,k)"/> 直接分离；模式二「由图反演」—— 出题按钮发一条金目标曲线，拖 a、h、b、k 把橙线贴上去，最大偏差小于 0.06 即求解。</div>
+      <div class="cap">图 G3 · <b>变换的先后顺序</b>：模式一「顺序对比」—— 金线是提因子后的正确读法、红虚线是把 h 直接当平移量的误读，两个起笔点 (h,k) 与 <Katex tex="(h/a,\,k)"/> 直接分离；模式二「由图反演」—— 出题按钮发一条金目标曲线，拖 a、h、b、k 把橙线贴上去，最大偏差小于 0.06 即求解。</div>
     </div>
 
     <h3 class="sec" id="g3-fact">提因子纪律</h3>

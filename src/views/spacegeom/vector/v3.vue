@@ -29,7 +29,7 @@
     <p>它等价于向2 的「勾股—投影」写法，两者的差别只在计算量。求两条平行线之间的距离也用它：在一条直线上任取一点，算到另一条直线的距离即可。</p>
     <div class="board-wrap">
       <BoardMount :factory="createSpaceCross" />
-      <div class="cap">图 向3 · <b>向量积与面积机</b>：绿色平行四边形由 <Katex tex="\vec a" />、<Katex tex="\vec b" /> 张成，紫色箭头是 <Katex tex="\vec c=\vec a\times\vec b" />（方向按真实单位向量、长度压缩到便于观察），原点的两处直角标记说明 <Katex tex="\vec c" /> 与两条向量都垂直，橙色虚线与直角是平行四边形的高。徽章读面积、向量积坐标与夹角。看点：<Katex tex="\theta" /> 推到 <Katex tex="90^\circ" /> 时面积取到最大 <Katex tex="|\vec a||\vec b|" />；把 <Katex tex="\theta" /> 压到零，平行四边形塌成一条线，向量积缩成零向量、紫色的箭头整条消失；拨动方位角 <Katex tex="\varphi" />，紫色箭头绕着底面垂直方向转动，模始终不变。</div>
+      <div class="cap">图 向3 · <b>向量积与平行四边形面积</b>：绿色平行四边形由 <Katex tex="\vec a" />、<Katex tex="\vec b" /> 张成，紫色箭头是 <Katex tex="\vec c=\vec a\times\vec b" />（方向按真实单位向量、长度压缩到便于观察），原点的两处直角标记说明 <Katex tex="\vec c" /> 与两条向量都垂直，橙色虚线与直角是平行四边形的高。徽章读面积、向量积坐标与夹角。看点：<Katex tex="\theta" /> 推到 <Katex tex="90^\circ" /> 时面积取到最大 <Katex tex="|\vec a||\vec b|" />；把 <Katex tex="\theta" /> 压到零，平行四边形塌成一条线，向量积缩成零向量、紫色的箭头整条消失；拨动方位角 <Katex tex="\varphi" />，紫色箭头绕着底面垂直方向转动，模始终不变。</div>
     </div>
 
     <h3 class="sec" id="v3-normal">求平面的法向量</h3>

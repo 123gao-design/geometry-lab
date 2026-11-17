@@ -5,7 +5,7 @@
     <div class="note good" id="n2-law"><strong>升降幂与半角</strong>：<Katex tex="\sin^2\alpha=\tfrac{1-\cos2\alpha}{2}" />，<Katex tex="\cos^2\alpha=\tfrac{1+\cos2\alpha}{2}" />（降幂）；<Katex tex="1-\cos2\alpha=2\sin^2\alpha" />，<Katex tex="1+\cos2\alpha=2\cos^2\alpha" />（升幂）；<Katex tex="\sin\tfrac\alpha2=\pm\sqrt{\tfrac{1-\cos\alpha}{2}}" />，<Katex tex="\cos\tfrac\alpha2=\pm\sqrt{\tfrac{1+\cos\alpha}{2}}" />（半角，<Katex tex="\pm"/> 由半角所在象限定）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 N2 · <b>升降幂验证机</b>：蓝实线 <Katex tex="y=\sin^2x"/> 与金虚线 <strong><Katex tex="(1-\cos2x)/2"/></strong> 完全重合 —— 同一条曲线的两种记法；灰虚母波 sin x 对照，可见<strong>平方把负半波翻上来</strong>：周期折半成 <Katex tex="\pi"/>。探针 <Katex tex="x_0"/> 处两种写法同高（蓝金双点叠影），<Katex tex="x_0+\pi"/> 处空心点等高 —— 平移 <Katex tex="\pi"/> 完全重合，半角徽章直接判定 <Katex tex="\pm"/>。</div>
+      <div class="cap">图 N2 · <b>升幂与降幂公式</b>：蓝实线 <Katex tex="y=\sin^2x"/> 与金虚线 <strong><Katex tex="(1-\cos2x)/2"/></strong> 完全重合 —— 同一条曲线的两种记法；灰虚母波 sin x 对照，可见<strong>平方把负半波翻上来</strong>：周期折半成 <Katex tex="\pi"/>。探针 <Katex tex="x_0"/> 处两种写法同高（蓝金双点叠影），<Katex tex="x_0+\pi"/> 处空心点等高 —— 平移 <Katex tex="\pi"/> 完全重合，半角徽章直接判定 <Katex tex="\pm"/>。</div>
     </div>
 
     <h3 class="sec" id="n2-half">周期折半：平方把负半波翻上来</h3>

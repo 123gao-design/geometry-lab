@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createCompactness" />
-      <div class="cap">图 连3 · <b>有限子覆盖机</b>：同一条数轴的闭区间与开区间。看点：① 闭区间这边几个彩色区间摞成一叠，段数一加就盖满，任意一族开覆盖里总能抽出有限个；② 切到开区间 <Katex tex="(0,1)" />，用 <Katex tex="\left(\frac{1}{k+1},\frac{1}{k-1}\right)" /> 一族去盖，红色缺口永远贴着 <Katex tex="0" />；③ 段数再多也只是把缺口往左挪一点，有限个无论如何盖不满——<Katex tex="(0,1)" /> 不紧致。</div>
+      <div class="cap">图 连3 · <b>紧致性与有限子覆盖</b>：同一条数轴的闭区间与开区间。看点：① 闭区间这边几个彩色区间摞成一叠，段数一加就盖满，任意一族开覆盖里总能抽出有限个；② 切到开区间 <Katex tex="(0,1)" />，用 <Katex tex="\left(\frac{1}{k+1},\frac{1}{k-1}\right)" /> 一族去盖，红色缺口永远贴着 <Katex tex="0" />；③ 段数再多也只是把缺口往左挪一点，有限个无论如何盖不满——<Katex tex="(0,1)" /> 不紧致。</div>
     </div>
 
     <h3 class="sec" id="c3-def">开覆盖与有限子覆盖</h3>

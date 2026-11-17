@@ -12,7 +12,7 @@
     <p>法向量可以随意伸缩：<Katex tex="2\vec n" /> 与 <Katex tex="\vec n" /> 给出同一张平面，方程两边同乘一个非零数也一样。解题时把法向量化成整数、让首项系数为正，是常用的整理习惯。</p>
     <div class="board-wrap">
       <BoardMount :factory="createPlaneForms" />
-      <div class="cap">图 面1 · <b>平面方程与法向量机</b>：三档共用一张画板。① 点法式——方向角 <Katex tex="\theta" />、方位角 <Katex tex="\varphi" /> 两个滑块转动法向量，距离 <Katex tex="d" /> 让平面沿法线平移，橙色点是定点 <Katex tex="P_0" />；② 三点定平面——A、B、C 三点的高度各自可调，法向量由 <Katex tex="\overrightarrow{AB}\times\overrightarrow{AC}" /> 现算，三点压到一条线上时平面不再确定；③ 一般式——四个系数独立拨动，<Katex tex="D=0" /> 时平面穿过原点。徽章读方程、法向量与原点到平面的距离；紫色箭头从垂足画出，四处直角标记说明垂足与法线的关系。看点：三档之间切换，同一张平面会用三种写法读出来；<Katex tex="\varphi" /> 转过半圈，法向量方向翻转，平面绕原点自动换到另一侧。</div>
+      <div class="cap">图 面1 · <b>平面方程与法向量</b>：三档共用一张画板。① 点法式——方向角 <Katex tex="\theta" />、方位角 <Katex tex="\varphi" /> 两个滑块转动法向量，距离 <Katex tex="d" /> 让平面沿法线平移，橙色点是定点 <Katex tex="P_0" />；② 三点定平面——A、B、C 三点的高度各自可调，法向量由 <Katex tex="\overrightarrow{AB}\times\overrightarrow{AC}" /> 现算，三点压到一条线上时平面不再确定；③ 一般式——四个系数独立拨动，<Katex tex="D=0" /> 时平面穿过原点。徽章读方程、法向量与原点到平面的距离；紫色箭头从垂足画出，四处直角标记说明垂足与法线的关系。看点：三档之间切换，同一张平面会用三种写法读出来；<Katex tex="\varphi" /> 转过半圈，法向量方向翻转，平面绕原点自动换到另一侧。</div>
     </div>
 
     <h3 class="sec" id="p1-general">一般式与截距式</h3>

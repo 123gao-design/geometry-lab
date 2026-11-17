@@ -6,7 +6,7 @@
     <div class="note good" id="i2-def">设 <Katex tex="\vec a=(x_1,y_1)" />，<Katex tex="\vec b=(x_2,y_2)" />，则 <Katex tex="\vec a\cdot\vec b=x_1x_2+y_1y_2" />。由此 <Katex tex="\cos\theta=\dfrac{x_1x_2+y_1y_2}{\sqrt{x_1^2+y_1^2}\sqrt{x_2^2+y_2^2}}" />，<Katex tex="\vec a\perp\vec b\iff x_1x_2+y_1y_2=0" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCoordDot" />
-      <div class="cap">图 积2 · <b>坐标数量积机</b>：徽章逐项列出两个分量之积再相加，夹角由余弦反算。看点：② 拖成垂直，点积归零、原点处补出直角标记；③ 拖成同向平行，余弦为 1、夹角归零；④ 拖到钝角一侧，点积为负、余弦为负。</div>
+      <div class="cap">图 积2 · <b>坐标形式的数量积</b>：徽章逐项列出两个分量之积再相加，夹角由余弦反算。看点：② 拖成垂直，点积归零、原点处补出直角标记；③ 拖成同向平行，余弦为 1、夹角归零；④ 拖到钝角一侧，点积为负、余弦为负。</div>
     </div>
 
     <h3 class="sec" id="i2-def">坐标公式</h3>

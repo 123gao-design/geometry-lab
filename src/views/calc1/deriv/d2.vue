@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createProdLab" />
-      <div class="cap">图 微2a · <b>乘积法则机</b>：边长 <Katex tex="a" />、<Katex tex="b" /> 的矩形代表乘积 <Katex tex="ab" />。两条边同时伸长 <Katex tex="t" />，多出来的面积是三块：右条 <Katex tex="bt" />、上条 <Katex tex="at" />、角上的 <Katex tex="t^2" />。同除 <Katex tex="t" /> 后令 <Katex tex="t\to0" />，只剩 <Katex tex="a+b" />。</div>
+      <div class="cap">图 微2a · <b>乘积法则</b>：边长 <Katex tex="a" />、<Katex tex="b" /> 的矩形代表乘积 <Katex tex="ab" />。两条边同时伸长 <Katex tex="t" />，多出来的面积是三块：右条 <Katex tex="bt" />、上条 <Katex tex="at" />、角上的 <Katex tex="t^2" />。同除 <Katex tex="t" /> 后令 <Katex tex="t\to0" />，只剩 <Katex tex="a+b" />。</div>
     </div>
 
     <h3 class="sec" id="d2-arith">四则运算</h3>
@@ -27,7 +27,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createChainLab" />
-      <div class="cap">图 微2b · <b>链式法则机</b>：左边是内层 <Katex tex="u=g(x)" />，右边是外层 <Katex tex="y=f(u)" />，两处各画一条切线读斜率。横轴每走 <Katex tex="1" />，<Katex tex="u" /> 走 <Katex tex="g'(x_0)" />；<Katex tex="u" /> 再每走 <Katex tex="1" />，<Katex tex="y" /> 走 <Katex tex="f'(u_0)" />。两段倍数相乘，就是 <Katex tex="y" /> 对 <Katex tex="x" /> 的变化率，右栏的差值核对该乘积。</div>
+      <div class="cap">图 微2b · <b>链式法则</b>：左边是内层 <Katex tex="u=g(x)" />，右边是外层 <Katex tex="y=f(u)" />，两处各画一条切线读斜率。横轴每走 <Katex tex="1" />，<Katex tex="u" /> 走 <Katex tex="g'(x_0)" />；<Katex tex="u" /> 再每走 <Katex tex="1" />，<Katex tex="y" /> 走 <Katex tex="f'(u_0)" />。两段倍数相乘，就是 <Katex tex="y" /> 对 <Katex tex="x" /> 的变化率，右栏的差值核对该乘积。</div>
     </div>
 
     <h3 class="sec" id="d2-chain">链式法则</h3>

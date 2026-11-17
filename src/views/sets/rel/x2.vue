@@ -5,7 +5,7 @@
     <div class="note good" id="x2-law"><strong>计数公式</strong>：n 元集合的子集 <Katex tex="2^n" /> 个；<strong>真子集</strong> <Katex tex="2^n-1" />（减去 A 本身）；<strong>非空子集</strong> <Katex tex="2^n-1" />（减去 ∅）；<strong>非空真子集</strong> <Katex tex="2^n-2" />（两者都减去）。按元素个数分类：<Katex tex="\mathrm{C}_n^0+\mathrm{C}_n^1+\cdots+\mathrm{C}_n^n=2^n" />（二项式定理在 x=y=1 的取值）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFam" />
-      <div class="cap">图 X2 · <b>子集家族机</b>：toggle 条逐个决定每个元素的「留 / 去」，网格按元素个数 k 分行陈列全部 <Katex tex="2^n"/> 个子集 —— n 滑到 4，1、4、6、4、1 的杨辉三角行直接显示；点卡片选定，四口径计数实时核验。</div>
+      <div class="cap">图 X2 · <b>子集的个数</b>：toggle 条逐个决定每个元素的「留 / 去」，网格按元素个数 k 分行陈列全部 <Katex tex="2^n"/> 个子集 —— n 滑到 4，1、4、6、4、1 的杨辉三角行直接显示；点卡片选定，四口径计数实时核验。</div>
     </div>
 
     <h3 class="sec" id="x2-mult">乘法原理：每个元素两道选题</h3>

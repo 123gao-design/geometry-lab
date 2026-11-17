@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createPowerlab" />
-      <div class="cap">图 级4a · <b>幂级数收敛半径机</b>：上条数轴上的绿色带是收敛区间，金点是当前取的 <Katex tex="x" />；下框画部分和随 <Katex tex="n" /> 的变化。<b>看点</b>：金点走进绿带，部分和很快稳住；走出绿带，部分和往画框外跑。第三档的绿带缩成一点，第四档的两端是空心圈——端点不在收敛域内。</div>
+      <div class="cap">图 级4a · <b>幂级数的收敛半径</b>：上条数轴上的绿色带是收敛区间，金点是当前取的 <Katex tex="x" />；下框画部分和随 <Katex tex="n" /> 的变化。<b>看点</b>：金点走进绿带，部分和很快稳住；走出绿带，部分和往画框外跑。第三档的绿带缩成一点，第四档的两端是空心圈——端点不在收敛域内。</div>
     </div>
 
     <h3 class="sec" id="s4-alg">收敛半径从哪里来</h3>
@@ -28,7 +28,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createTaylorseries" />
-      <div class="cap">图 级4b · <b>泰勒逼近机</b>：蓝线是原函数，橙虚线是截到第 <Katex tex="n" /> 项的多项式，金点与竖直虚线段是当前 <Katex tex="x" /> 处的偏差。<b>看点</b>：<Katex tex="n" /> 每加一项，橙线就在原点附近多贴一段；离原点越远，需要的项数越多。第四档在 <Katex tex="x=1" /> 附近整条橙线都跟不上。</div>
+      <div class="cap">图 级4b · <b>幂级数展开与泰勒级数</b>：蓝线是原函数，橙虚线是截到第 <Katex tex="n" /> 项的多项式，金点与竖直虚线段是当前 <Katex tex="x" /> 处的偏差。<b>看点</b>：<Katex tex="n" /> 每加一项，橙线就在原点附近多贴一段；离原点越远，需要的项数越多。第四档在 <Katex tex="x=1" /> 附近整条橙线都跟不上。</div>
     </div>
 
     <h3 class="sec" id="s4-apply">展开的用处</h3>

@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createReduceorder" />
-      <div class="cap">图 方4 · <b>降阶机</b>：蓝线是解 <Katex tex="y" />，绿虚线是它的导数 <Katex tex="y'" />。拖 <Katex tex="C_1" />、<Katex tex="C_2" /> 两个滑块，能看到常数各自只管一件事。<b>看点</b>：<Katex tex="C_2" /> 只让蓝线上下平移，<Katex tex="C_1" /> 同时改变斜率与高度。</div>
+      <div class="cap">图 方4 · <b>可降阶的高阶方程</b>：蓝线是解 <Katex tex="y" />，绿虚线是它的导数 <Katex tex="y'" />。拖 <Katex tex="C_1" />、<Katex tex="C_2" /> 两个滑块，能看到常数各自只管一件事。<b>看点</b>：<Katex tex="C_2" /> 只让蓝线上下平移，<Katex tex="C_1" /> 同时改变斜率与高度。</div>
     </div>
 
     <h3 class="sec" id="o4-dy">缺 y 型：直接积两次</h3>

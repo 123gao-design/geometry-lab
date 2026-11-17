@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createSeplab" />
-      <div class="cap">图 方2 · <b>可分离变量机</b>：右栏是分离与积分两步，蓝线是 <Katex tex="C" /> 定下的那一条解，橙色细线是同族的其他曲线。<b>看点</b>：<Katex tex="C" /> 一拖整族换高度，而每条曲线在 <Katex tex="x_0" /> 处的斜率始终与方程给的值一致。</div>
+      <div class="cap">图 方2 · <b>可分离变量的方程</b>：右栏是分离与积分两步，蓝线是 <Katex tex="C" /> 定下的那一条解，橙色细线是同族的其他曲线。<b>看点</b>：<Katex tex="C" /> 一拖整族换高度，而每条曲线在 <Katex tex="x_0" /> 处的斜率始终与方程给的值一致。</div>
     </div>
 
     <h3 class="sec" id="o2-int">两边积分与通解</h3>

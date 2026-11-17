@@ -7,7 +7,7 @@
     <h3 class="sec" id="a6-lab">考古机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createQuadDig" />
-      <div class="cap">图 A6 · <b>二次曲线考古机</b>：滑六个系数看曲线形态改变，读数区把三个步骤全部列出 —— 类型 → 中心 → 特征值 → 标准形（e 与焦点自动给出）。预设按钮一键回到典型曲线：按下「对勾」，读数区给出 <strong><Katex tex="e\approx 1.082" /></strong>、转轴角 <Katex tex="67.5^\circ" />、半轴 2.20 与 0.91 —— 与 A5 的 <Katex tex="\sec(\psi/2)" /> 一字不差。</div>
+      <div class="cap">图 A6 · <b>一般二次方程的化简</b>：滑六个系数看曲线形态改变，读数区把三个步骤全部列出 —— 类型 → 中心 → 特征值 → 标准形（e 与焦点自动给出）。预设按钮一键回到典型曲线：按下「对勾」，读数区给出 <strong><Katex tex="e\approx 1.082" /></strong>、转轴角 <Katex tex="67.5^\circ" />、半轴 2.20 与 0.91 —— 与 A5 的 <Katex tex="\sec(\psi/2)" /> 一字不差。</div>
     </div>
 
     <h3 class="sec" id="a6-type">第一步：<Katex tex="B^2-4AC" /> 定类型</h3>

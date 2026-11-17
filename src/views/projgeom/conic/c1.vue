@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createPolar" />
-      <div class="cap">图 曲1 · <b>配极机</b>：拖动 <Katex tex="P" />，黄色极线随之移动。看点：① <Katex tex="P" /> 在圆外时，紫色虚线是两条切线，切点都落在极线上；② <Katex tex="P" /> 移到圆内，切线变成虚的，极线整体跑到圆外；③ <Katex tex="P" /> 落在圆上，极线正好是过该点的切线——三种位置由同一方程统一。</div>
+      <div class="cap">图 曲1 · <b>极点与极线</b>：拖动 <Katex tex="P" />，黄色极线随之移动。看点：① <Katex tex="P" /> 在圆外时，紫色虚线是两条切线，切点都落在极线上；② <Katex tex="P" /> 移到圆内，切线变成虚的，极线整体跑到圆外；③ <Katex tex="P" /> 落在圆上，极线正好是过该点的切线——三种位置由同一方程统一。</div>
     </div>
 
     <h3 class="sec" id="c1-polar">极线与极点的定义</h3>

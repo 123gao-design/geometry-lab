@@ -6,7 +6,7 @@
     <div class="note good" id="f2-law">对任意实数，<Katex tex="(a^2+b^2)(c^2+d^2)\ge(ac+bd)^2" />，等号当且仅当 <Katex tex="ad=bc" />，即两数对 (a,b) 与 (c,d) 成比例。向量形式更见筋骨：<Katex tex="|\vec u\cdot\vec v|\le|\vec u|\,|\vec v|" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCB" />
-      <div class="cap">图 放2 · <b>柯西不等式机</b>：拖 a/b/c/d 或点四个预设，粉色四边形是 u、v 张开的带符号面积 <Katex tex="|ad-bc|"/>，青色虚线是 v 在 u 上的投影。看点：拖到③共线取等时四边形塌成一条直线、面积归零，内积读数攀到两模长之积——取等与面积同现；②正交例面积最大、内积最小。</div>
+      <div class="cap">图 放2 · <b>柯西不等式</b>：拖 a/b/c/d 或点四个预设，粉色四边形是 u、v 张开的带符号面积 <Katex tex="|ad-bc|"/>，青色虚线是 v 在 u 上的投影。看点：拖到③共线取等时四边形塌成一条直线、面积归零，内积读数攀到两模长之积——取等与面积同现；②正交例面积最大、内积最小。</div>
     </div>
 
     <h3 class="sec" id="f2-vec">向量读法：内积与投影</h3>

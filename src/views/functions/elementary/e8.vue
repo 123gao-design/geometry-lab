@@ -5,7 +5,7 @@
     <div class="note good" id="e8-fold"><strong>三种嵌套</strong>（原图 f）：<Katex tex="y=|f(x)|" /> —— x 轴下方部分翻上来，值域下界抬到 0；<Katex tex="y=f(|x|)" /> —— 右半图象原样、左半是右半关于 y 轴的<strong>镜像复制</strong>（必偶）；<Katex tex="y=|f(|x|)|" /> —— 先折拢再翻上，两道一起。分层口诀：<strong>里层的 |x| 管定义域（横向折叠），外层的 |·| 管值域（纵向翻折）</strong> —— 由内向外逐层剥。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFold" />
-      <div class="cap">图 E8 · <b>绝对值折叠机</b>：蓝线 = 原图，金线 = 变形过程中的像，金虚线 = 折缝（x 轴或 y 轴）。折叠滑块 t 从 0 拖到 1 看连续变形：|f| 把下方压平再翻上、f(|x|) 把左半先压向 y 轴再贴成镜像。预设 ③ 直线 x−1 是巧合现场：两种折法给出同一个 V。</div>
+      <div class="cap">图 E8 · <b>|f(x)| 与 f(|x|) 的图象</b>：蓝线 = 原图，金线 = 变形过程中的像，金虚线 = 折缝（x 轴或 y 轴）。折叠滑块 t 从 0 拖到 1 看连续变形：|f| 把下方压平再翻上、f(|x|) 把左半先压向 y 轴再贴成镜像。预设 ③ 直线 x−1 是巧合现场：两种折法给出同一个 V。</div>
     </div>
 
     <h3 class="sec" id="e8-zeros">零点核验：不变与翻倍</h3>

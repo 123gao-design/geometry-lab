@@ -5,7 +5,7 @@
     <div class="note good" id="h2-def"><strong>两个方向不对等</strong>：窗内 <Katex tex="\arcsin(\sin\theta)=\theta" /> 与域内 <Katex tex="\sin(\arcsin x)=x" /> 都恒真；θ 出窗后，<Katex tex="\arcsin(\sin\theta)" /> 按<strong>镜像与整圈平移改判</strong>。对偶恒等式 <Katex tex="\arcsin x+\arccos x=\tfrac\pi2" /> 把两者的关系并成一行。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 H2 · <b>周期折叠机</b>：拖 θ —— 横线 <Katex tex="y=\sin\theta"/> 上同高的角逐个亮出：窗内金点原样返回，窗外空心点全部排除改判；金色<strong>折叠波</strong>把整条正弦波压成 <Katex tex="[-\pi/2,\ \pi/2]"/> 内的三角波（折点恰在 <Katex tex="\pi/2"/> 与 <Katex tex="3\pi/2"/>）。四个预设按钮一键复演「窗内 / 镜像 / 下半岸 / 整圈」四种判读。</div>
+      <div class="cap">图 H2 · <b>反三角函数的周期延拓</b>：拖 θ —— 横线 <Katex tex="y=\sin\theta"/> 上同高的角逐个亮出：窗内金点原样返回，窗外空心点全部排除改判；金色<strong>折叠波</strong>把整条正弦波压成 <Katex tex="[-\pi/2,\ \pi/2]"/> 内的三角波（折点恰在 <Katex tex="\pi/2"/> 与 <Katex tex="3\pi/2"/>）。四个预设按钮一键复演「窗内 / 镜像 / 下半岸 / 整圈」四种判读。</div>
     </div>
 
     <h3 class="sec" id="h2-back">反向代入恒等式</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="e6-inv"><strong>互为反函数</strong>：<Katex tex="y=a^x" /> 与 <Katex tex="y=\log_a x" />（同底）互为反函数 —— 把 y=a^x 里的 x、y <strong>对调</strong>再解出 y，就得到 <Katex tex="x=a^y" /> 即 <Katex tex="y=\log_a x" />。几何上，点 (t, a^t) 与 (a^t, t) 关于直线 y=x 互为镜像，所以<strong>两图象关于 y=x 对称</strong>；代数上，<Katex tex="\log_a(a^t)=t" /> —— 先正运算再逆运算，回到原地。</div>
     <div class="board-wrap">
       <BoardMount :factory="createMirror" />
-      <div class="cap">图 E6 · <b>指对反演镜</b>：金虚线 <Katex tex="y=x" /> 是折缝（等单位取景，<Katex tex="45^\circ" /> 才是 <Katex tex="45^\circ" />）。把手 P 锁在指数上，镜像点 <Katex tex="P'=(a^t,\ t)" /> 落在对数上 —— 红虚线正是「对折」的动作线。灰点 <Katex tex="(0,1)" /> 与 <Katex tex="(1,0)" /> 互为镜像：恒过点也互换。③ 预设 <Katex tex="a=\sqrt{2}" /> 与折缝恰有交点（<Katex tex="(\sqrt{2})^4=4" />）。</div>
+      <div class="cap">图 E6 · <b>指数函数与对数函数互为反函数</b>：金虚线 <Katex tex="y=x" /> 是折缝（等单位取景，<Katex tex="45^\circ" /> 才是 <Katex tex="45^\circ" />）。把手 P 锁在指数上，镜像点 <Katex tex="P'=(a^t,\ t)" /> 落在对数上 —— 红虚线正是「对折」的动作线。灰点 <Katex tex="(0,1)" /> 与 <Katex tex="(1,0)" /> 互为镜像：恒过点也互换。③ 预设 <Katex tex="a=\sqrt{2}" /> 与折缝恰有交点（<Katex tex="(\sqrt{2})^4=4" />）。</div>
     </div>
 
     <h3 class="sec" id="e6-prop">互反的性质对照表</h3>

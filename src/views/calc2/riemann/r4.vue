@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createTriplInt" />
-      <div class="cap">图 重4 · <b>三重积分机</b>：区域是圆柱 <Katex tex="x^2+y^2\le1" />、<Katex tex="0\le z\le2" />，被积函数 <Katex tex="1+z" />。① 在底面圆盘上拖一点，金色竖线沿 <Katex tex="z" /> 方向穿过整个柱体，内层 <Katex tex="\int_0^2(1+z)dz=4" />，再对底面圆盘积一次得 <Katex tex="4\pi" />；② 青色圆盘是高度 <Katex tex="z" /> 处的横切面，先对它积得 <Katex tex="\pi(1+z)" />，再对 <Katex tex="z" /> 从 0 积到 2，结果同为 <Katex tex="4\pi\approx12.57" />。</div>
+      <div class="cap">图 重4 · <b>三重积分</b>：区域是圆柱 <Katex tex="x^2+y^2\le1" />、<Katex tex="0\le z\le2" />，被积函数 <Katex tex="1+z" />。① 在底面圆盘上拖一点，金色竖线沿 <Katex tex="z" /> 方向穿过整个柱体，内层 <Katex tex="\int_0^2(1+z)dz=4" />，再对底面圆盘积一次得 <Katex tex="4\pi" />；② 青色圆盘是高度 <Katex tex="z" /> 处的横切面，先对它积得 <Katex tex="\pi(1+z)" />，再对 <Katex tex="z" /> 从 0 积到 2，结果同为 <Katex tex="4\pi\approx12.57" />。</div>
     </div>
 
     <h3 class="sec" id="r4-def">定义与两种顺序</h3>

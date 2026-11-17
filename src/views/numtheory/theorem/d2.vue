@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createPhi" />
-      <div class="cap">图 定2 · <b>欧拉函数机</b>：把 1 到 n 排成格阵，与 n 互素的格子染绿。看点：① 绿色的个数就是 <Katex tex="\varphi(n)" />；② 共享因子的格子按素因子成排出现，2 的倍数是一整列、3 的倍数是一整列；③ 右栏按分解式 <Katex tex="n\prod(1-1/p)" /> 逐项算出同一个数，两种算法始终一致。</div>
+      <div class="cap">图 定2 · <b>欧拉函数</b>：把 1 到 n 排成格阵，与 n 互素的格子染绿。看点：① 绿色的个数就是 <Katex tex="\varphi(n)" />；② 共享因子的格子按素因子成排出现，2 的倍数是一整列、3 的倍数是一整列；③ 右栏按分解式 <Katex tex="n\prod(1-1/p)" /> 逐项算出同一个数，两种算法始终一致。</div>
     </div>
 
     <h3 class="sec" id="d2-def">定义与互素计数</h3>

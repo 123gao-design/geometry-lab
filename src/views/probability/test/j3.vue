@@ -7,7 +7,7 @@
       检验 <Katex tex="H_0:\mu=\mu_0" /> 时，使用统计量 <Katex tex="z=\dfrac{\bar x-\mu_0}{\sigma/\sqrt n}" />，在 <Katex tex="H_0" /> 成立时它服从标准正态分布。</div>
     <div class="board-wrap">
       <BoardMount :factory="createZTest" />
-      <div class="cap">图 检3 · <b>均值检验机</b>：上图是 <Katex tex="H_0" /> 成立时 <Katex tex="z" /> 的分布，红色面积是显著性水平 0.05 对应的拒绝域；下图把观测值 <Katex tex="z" /> 之外的面积涂成金色，就是 p 值。三档切换双侧与单侧，两个滑块控制样本均值与样本量。看点：固定 <Katex tex="\bar x" /> 不变，把样本量从 4 调到 36，标准误缩小到三分之一，<Katex tex="z" /> 随之放大 —— 同一份偏离在更大的样本里更有说服力。换成单侧，拒绝域只占一侧，同样的 <Katex tex="z" /> 更容易显著。</div>
+      <div class="cap">图 检3 · <b>正态分布下的均值检验</b>：上图是 <Katex tex="H_0" /> 成立时 <Katex tex="z" /> 的分布，红色面积是显著性水平 0.05 对应的拒绝域；下图把观测值 <Katex tex="z" /> 之外的面积涂成金色，就是 p 值。三档切换双侧与单侧，两个滑块控制样本均值与样本量。看点：固定 <Katex tex="\bar x" /> 不变，把样本量从 4 调到 36，标准误缩小到三分之一，<Katex tex="z" /> 随之放大 —— 同一份偏离在更大的样本里更有说服力。换成单侧，拒绝域只占一侧，同样的 <Katex tex="z" /> 更容易显著。</div>
     </div>
 
     <h3 class="sec" id="j3-se">样本均值的分布与标准误</h3>

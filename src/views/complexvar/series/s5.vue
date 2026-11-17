@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createResInt" />
-      <div class="cap">图 级5 · <b>留数算实积分机</b>：左图是上半圆围道与两个极点，右图是实轴上的被积函数和截断到 <Katex tex="[-R,R]" /> 的阴影面积。看点：① 半圆半径怎么变，里面始终只有上半平面那个极点，下半平面的一直留在外面；② 拖 <Katex tex="R" /> 增大，右图阴影向两端铺开，读数栏的「实轴截断」一步步靠向回路积分给出的精确值；③ 换到 ② 号预设，二阶极点要按求导法则算留数，「留数和」从 <Katex tex="-\tfrac{i}{2}" /> 变成 <Katex tex="-\tfrac{i}{4}" />，精确值也跟着从 <Katex tex="\pi" /> 落到 <Katex tex="\tfrac{\pi}{2}" />。</div>
+      <div class="cap">图 级5 · <b>用留数计算实积分</b>：左图是上半圆围道与两个极点，右图是实轴上的被积函数和截断到 <Katex tex="[-R,R]" /> 的阴影面积。看点：① 半圆半径怎么变，里面始终只有上半平面那个极点，下半平面的一直留在外面；② 拖 <Katex tex="R" /> 增大，右图阴影向两端铺开，读数栏的「实轴截断」一步步靠向回路积分给出的精确值；③ 换到 ② 号预设，二阶极点要按求导法则算留数，「留数和」从 <Katex tex="-\tfrac{i}{2}" /> 变成 <Katex tex="-\tfrac{i}{4}" />，精确值也跟着从 <Katex tex="\pi" /> 落到 <Katex tex="\tfrac{\pi}{2}" />。</div>
     </div>
 
     <h3 class="sec" id="s5-lemma">两条收口引理</h3>

@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createSubstLab" />
-      <div class="cap">图 积2 · <b>换元机</b>：模式一左右两幅各画一段面积，左边是 <Katex tex="2x\cos x^2" /> 在 <Katex tex="[a,b]" /> 上的，右边是 <Katex tex="\cos u" /> 在 <Katex tex="[a^2,b^2]" /> 上的，两段一样大；模式二在半径 <Katex tex="a" /> 的圆上读出 <Katex tex="x=a\sin\theta" /> 与 <Katex tex="\sqrt{a^2-x^2}=a\cos\theta" />。</div>
+      <div class="cap">图 积2 · <b>换元积分法</b>：模式一左右两幅各画一段面积，左边是 <Katex tex="2x\cos x^2" /> 在 <Katex tex="[a,b]" /> 上的，右边是 <Katex tex="\cos u" /> 在 <Katex tex="[a^2,b^2]" /> 上的，两段一样大；模式二在半径 <Katex tex="a" /> 的圆上读出 <Katex tex="x=a\sin\theta" /> 与 <Katex tex="\sqrt{a^2-x^2}=a\cos\theta" />。</div>
     </div>
 
     <h3 class="sec" id="i2-first">第一类换元：凑微分</h3>

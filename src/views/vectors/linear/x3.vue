@@ -6,7 +6,7 @@
     <div class="note good" id="x3-def">实数 <Katex tex="\lambda" /> 与向量 <Katex tex="\vec a" /> 的乘积仍是一个向量，记作 <Katex tex="\lambda\vec a" />，它的模为 <Katex tex="|\lambda||\vec a|" />。当 <Katex tex="\lambda>0" /> 时与 <Katex tex="\vec a" /> 同向，当 <Katex tex="\lambda<0" /> 时与 <Katex tex="\vec a" /> 反向，当 <Katex tex="\lambda=0" /> 或 <Katex tex="\vec a=\vec 0" /> 时得到零向量。</div>
     <div class="board-wrap">
       <BoardMount :factory="createScaleLab" />
-      <div class="cap">图 向3 · <b>数乘与共线机</b>：蓝色是 <Katex tex="\vec a" />，金色一支是 <Katex tex="\lambda\vec a" />，绿色是 <Katex tex="\vec b" />。看点：拖动 λ 滑块越过 0，金色箭头在原点处翻向反面，长度按 <Katex tex="|λ|" /> 伸缩；把绿箭头的终点拖到蓝箭头的延长线上，共线徽章给出 <Katex tex="\vec b=\lambda\vec a" /> 中的那个倍数，拖偏一点则横排判定的差不为零。</div>
+      <div class="cap">图 向3 · <b>数乘与共线</b>：蓝色是 <Katex tex="\vec a" />，金色一支是 <Katex tex="\lambda\vec a" />，绿色是 <Katex tex="\vec b" />。看点：拖动 λ 滑块越过 0，金色箭头在原点处翻向反面，长度按 <Katex tex="|λ|" /> 伸缩；把绿箭头的终点拖到蓝箭头的延长线上，共线徽章给出 <Katex tex="\vec b=\lambda\vec a" /> 中的那个倍数，拖偏一点则横排判定的差不为零。</div>
     </div>
 
     <h3 class="sec" id="x3-def">数乘的定义与运算律</h3>

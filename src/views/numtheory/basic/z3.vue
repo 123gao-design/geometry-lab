@@ -9,7 +9,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createCong" />
-      <div class="cap">图 整3 · <b>同余机</b>：模 <Katex tex="m" /> 的表盘上只有 <Katex tex="m" /> 个刻度，数字 <Katex tex="a" />、<Katex tex="b" /> 各落一格。看点：① 两枚指针落在同一刻度时 <Katex tex="a\equiv b" />，落不到一起就不同余；② 右栏把两数分别写成 <Katex tex="mq+r" />，可以看到同余与「余数相等」是同一件事；③ 拖动 <Katex tex="a" /> 走过一圈，它会回到原来的刻度，这正是同余的周期性。</div>
+      <div class="cap">图 整3 · <b>同余</b>：模 <Katex tex="m" /> 的表盘上只有 <Katex tex="m" /> 个刻度，数字 <Katex tex="a" />、<Katex tex="b" /> 各落一格。看点：① 两枚指针落在同一刻度时 <Katex tex="a\equiv b" />，落不到一起就不同余；② 右栏把两数分别写成 <Katex tex="mq+r" />，可以看到同余与「余数相等」是同一件事；③ 拖动 <Katex tex="a" /> 走过一圈，它会回到原来的刻度，这正是同余的周期性。</div>
     </div>
 
     <h3 class="sec" id="z3-def">同余的定义</h3>

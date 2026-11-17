@@ -6,7 +6,7 @@
     <div class="note good" id="c3-def">若 <Katex tex="P(A\cap B)=P(A)P(B)" />，称事件 <Katex tex="A" /> 与 <Katex tex="B" /> 相互独立。等价地，<Katex tex="P(A)>0" /> 时 <Katex tex="P(B\mid A)=P(B)" /> —— 知道 <Katex tex="A" /> 发生不改变 <Katex tex="B" /> 的概率。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRepeatLab" />
-      <div class="cap">图 独3 · <b>独立与重复试验机</b>：① 档用单位正方形，横竖两刀把它分成四格，四格面积正是「都中、只中一人、都不中」的概率，两个滑块分别改甲、乙命中的概率；② 档把同一件事重复 <Katex tex="n" /> 次，金色曲线是「至少中一次」，蓝色是「一次都不中」。看点：两刀滑动时四格面积始终是各自概率相乘；② 档里每加一次，蓝线乘以 <Katex tex="1-p" />，金线也就抬一截。</div>
+      <div class="cap">图 独3 · <b>相互独立与独立重复试验</b>：① 档用单位正方形，横竖两刀把它分成四格，四格面积正是「都中、只中一人、都不中」的概率，两个滑块分别改甲、乙命中的概率；② 档把同一件事重复 <Katex tex="n" /> 次，金色曲线是「至少中一次」，蓝色是「一次都不中」。看点：两刀滑动时四格面积始终是各自概率相乘；② 档里每加一次，蓝线乘以 <Katex tex="1-p" />，金线也就抬一截。</div>
     </div>
 
     <h3 class="sec" id="c3-def">相互独立的定义</h3>

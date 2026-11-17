@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createDerivC" />
-      <div class="cap">图 解1 · <b>复变函数的导数机</b>：左图从 <Katex tex="z_0" /> 引出两个小位移，红色沿实轴、橙色沿可调的方向角；右图把差商 <Katex tex="\dfrac{\Delta w}{\Delta h}" /> 画成点，并让位移方向转满一圈。看点：① <Katex tex="f=z^2" /> 的差商轨迹缩成一个点，两个方向的读数完全一样，导数存在；② <Katex tex="f=\bar z" /> 的差商轨迹是整条单位圆，方向一变读数就变，极限不存在；③ <Katex tex="f=|z|^2" /> 的轨迹是半径 <Katex tex="|z_0|" /> 的圆，只有把点拖到原点才缩成一点。</div>
+      <div class="cap">图 解1 · <b>复变函数的导数与解析性</b>：左图从 <Katex tex="z_0" /> 引出两个小位移，红色沿实轴、橙色沿可调的方向角；右图把差商 <Katex tex="\dfrac{\Delta w}{\Delta h}" /> 画成点，并让位移方向转满一圈。看点：① <Katex tex="f=z^2" /> 的差商轨迹缩成一个点，两个方向的读数完全一样，导数存在；② <Katex tex="f=\bar z" /> 的差商轨迹是整条单位圆，方向一变读数就变，极限不存在；③ <Katex tex="f=|z|^2" /> 的轨迹是半径 <Katex tex="|z_0|" /> 的圆，只有把点拖到原点才缩成一点。</div>
     </div>
 
     <h3 class="sec" id="a1-def">差商与它的方向依赖</h3>

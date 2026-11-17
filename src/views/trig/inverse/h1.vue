@@ -5,7 +5,7 @@
     <div class="note good" id="h1-def"><strong>反三角函数三步走</strong>：① <strong>检验</strong> —— sin、cos、tan 的整条波过不了水平线检验（一个高度相交得到多个角），多值，不配反函数；② <strong>裁剪</strong> —— 各裁一段单调段作<strong>主值区间</strong>：arcsin 取 <Katex tex="[-\tfrac\pi2,\ \tfrac\pi2]" />、arccos 取 <Katex tex="[0,\ \pi]" />、arctan 取 <Katex tex="(-\tfrac\pi2,\ \tfrac\pi2)" />；③ <strong>翻折</strong> —— 主值段关于 <Katex tex="y=x" /> 的镜像就是反函数图象，定义域与值域互换。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 H1 · <b>主值区间机</b>：拖探针 t —— 左栏水平线 y=t 在全波上相交得到的每个交点都是一个「同高角」，主值窗（金带）内的金点才是 arcsin 认可的那个；右栏主值段关于 y=x 翻折出反函数曲线，蓝带压<strong>定义域</strong>、金带压<strong>值域</strong>。三个模式按钮切换三个函数；|t|&gt;1 时探针现场<strong>排除</strong>，arctan 的定义域是全体实数、永不排除。</div>
+      <div class="cap">图 H1 · <b>反三角函数的主值区间</b>：拖探针 t —— 左栏水平线 y=t 在全波上相交得到的每个交点都是一个「同高角」，主值窗（金带）内的金点才是 arcsin 认可的那个；右栏主值段关于 y=x 翻折出反函数曲线，蓝带压<strong>定义域</strong>、金带压<strong>值域</strong>。三个模式按钮切换三个函数；|t|&gt;1 时探针现场<strong>排除</strong>，arctan 的定义域是全体实数、永不排除。</div>
     </div>
 
     <h3 class="sec" id="h1-why">水平线检验：多值不配反函数</h3>

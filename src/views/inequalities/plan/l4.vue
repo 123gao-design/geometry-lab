@@ -6,7 +6,7 @@
     <div class="note good" id="l4-law">设可行域 <Katex tex="D" /> 是凸多边形。目标 <Katex tex="z=\frac{y-b}{x-a}" /> 表示过定点 <Katex tex="P(a,b)" /> 与点 <Katex tex="(x,y)" /> 的直线斜率；目标 <Katex tex="z=(x-a)^2+(y-b)^2" /> 表示点 <Katex tex="(x,y)" /> 到 <Katex tex="P" /> 的距离平方。当 <Katex tex="P" /> 在 <Katex tex="D" /> 外时，斜率的最值在过 <Katex tex="P" /> 的两条切线的接触顶点取得；距离平方的最大值在离 <Katex tex="P" /> 最远的顶点，最小值可以在边的内部一点（垂足）取得。</div>
     <div class="board-wrap">
       <BoardMount :factory="createNL" />
-      <div class="cap">图 线4 · <b>非线性目标机</b>：可行域仍是线2 的四边形 <Katex tex="x\ge0,\ y\ge0,\ x+y\le4,\ x+2y\le7" />，橙色点 <Katex tex="P" /> 与青色点 <Katex tex="Q" /> 都可以拖动。斜率型模式画过 <Katex tex="P" /> 的两条边界切线（绿、青）与过 <Katex tex="Q" /> 的当前直线（金色虚线）；距离型模式画以 <Katex tex="P" /> 为圆心的两个圆，分别经过最近点与最远点。看点：拖 P 让最近点从顶点滑到边的内部，观察最小值的位置与顶点法给出的答案不同。</div>
+      <div class="cap">图 线4 · <b>非线性目标函数</b>：可行域仍是线2 的四边形 <Katex tex="x\ge0,\ y\ge0,\ x+y\le4,\ x+2y\le7" />，橙色点 <Katex tex="P" /> 与青色点 <Katex tex="Q" /> 都可以拖动。斜率型模式画过 <Katex tex="P" /> 的两条边界切线（绿、青）与过 <Katex tex="Q" /> 的当前直线（金色虚线）；距离型模式画以 <Katex tex="P" /> 为圆心的两个圆，分别经过最近点与最远点。看点：拖 P 让最近点从顶点滑到边的内部，观察最小值的位置与顶点法给出的答案不同。</div>
     </div>
 
     <h3 class="sec" id="l4-types">三类目标：线性、斜率、距离</h3>

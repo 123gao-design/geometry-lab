@@ -5,7 +5,7 @@
     <div class="note good" id="v3-law"><strong>极值判据</strong>：f 在 <Katex tex="x=c"/> 处取得极值，须 f 在 c 附近有定义且存在 <Katex tex="f'(c)=0"/>（或不可导），且 <Katex tex="f'"/> 在 c 两侧<strong>变号</strong>：正变负是极大、负变正是极小。<strong>闭区间最值</strong>：连续函数在 [p,q] 上必有最值（S4 的界墙定理），候选点集 = <Katex tex="\{\text{驻点}\}\cup\{p,\ q\}" /> —— 逐个比较取最大最小。</div>
     <div class="board-wrap">
       <BoardMount :factory="createExt" />
-      <div class="cap">图 V3 · <b>极值最值判定机</b>：曲线按 f′ 符号染色，驻点金点出极值、红空圈排除「清零不变号」的假情形；拖区间端点 p、q，看候选点（极值点+端点）怎么比较 —— 端点出界时最值直接改变。</div>
+      <div class="cap">图 V3 · <b>极值与最值</b>：曲线按 f′ 符号染色，驻点金点出极值、红空圈排除「清零不变号」的假情形；拖区间端点 p、q，看候选点（极值点+端点）怎么比较 —— 端点出界时最值直接改变。</div>
     </div>
 
     <h3 class="sec" id="v3-crit">驻点与变号判据</h3>

@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createDet3D" />
-      <div class="cap">图 行2 · <b>三阶行列式与体积机</b>：三支向量 <Katex tex="a" />、<Katex tex="b" />、<Katex tex="c" /> 张成平行六面体，六个面各涂一色。看点：拖动视角能看清底面积与高；把 <Katex tex="c" /> 的仰角推过 0°，体积大小不变而符号翻转；把 <Katex tex="c" /> 的方位角转一圈，体积一路不动——它的长度与仰角没变，高就没变。</div>
+      <div class="cap">图 行2 · <b>三阶行列式与体积</b>：三支向量 <Katex tex="a" />、<Katex tex="b" />、<Katex tex="c" /> 张成平行六面体，六个面各涂一色。看点：拖动视角能看清底面积与高；把 <Katex tex="c" /> 的仰角推过 0°，体积大小不变而符号翻转；把 <Katex tex="c" /> 的方位角转一圈，体积一路不动——它的长度与仰角没变，高就没变。</div>
     </div>
 
     <h3 class="sec" id="d2-def">三阶的两种算法</h3>

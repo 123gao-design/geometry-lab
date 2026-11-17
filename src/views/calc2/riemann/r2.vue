@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createDblCalc" />
-      <div class="cap">图 重2 · <b>二重积分的计算机</b>：区域 <Katex tex="D" /> 由 <Katex tex="y=x^2" /> 与 <Katex tex="y=2-x^2" /> 围成，被积函数 <Katex tex="x^2+y" />。① 竖条的下端是抛物线 <Katex tex="y=x^2" />、上端是 <Katex tex="y=2-x^2" />，内层一次写完；② 横条在 <Katex tex="y=1" /> 处换了一对边界，紫色虚线标出分界，同一个区域要拆成两块。两个方向算出的结果都是 3.20。</div>
+      <div class="cap">图 重2 · <b>二重积分的计算</b>：区域 <Katex tex="D" /> 由 <Katex tex="y=x^2" /> 与 <Katex tex="y=2-x^2" /> 围成，被积函数 <Katex tex="x^2+y" />。① 竖条的下端是抛物线 <Katex tex="y=x^2" />、上端是 <Katex tex="y=2-x^2" />，内层一次写完；② 横条在 <Katex tex="y=1" /> 处换了一对边界，紫色虚线标出分界，同一个区域要拆成两块。两个方向算出的结果都是 3.20。</div>
     </div>
 
     <h3 class="sec" id="r2-quad">区域的两种写法</h3>

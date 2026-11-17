@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createPartDeriv" />
-      <div class="cap">图 微2 · <b>偏导数与全微分机</b>：曲面 <Katex tex="z=f(x,y)" /> 上取切点 <Katex tex="P_0" />，过它作 <Katex tex="y=y_0" /> 与 <Katex tex="x=x_0" /> 两张竖直截面，绿、橙两条曲线在 <Katex tex="P_0" /> 处的切线斜率就是两个偏导数；两条切线张成金色的切平面。拖 <Katex tex="\Delta x" />、<Katex tex="\Delta y" />：绿点落在切平面上，紫点落在真实曲面上，红线段是 <Katex tex="\Delta z-dz" />。看点：① 抛物面的切平面贴着曲面，红线很短；② 鞍面的一条切线朝上、一条朝下，红线随离 <Katex tex="P_0" /> 的远近变长。</div>
+      <div class="cap">图 微2 · <b>偏导数与全微分</b>：曲面 <Katex tex="z=f(x,y)" /> 上取切点 <Katex tex="P_0" />，过它作 <Katex tex="y=y_0" /> 与 <Katex tex="x=x_0" /> 两张竖直截面，绿、橙两条曲线在 <Katex tex="P_0" /> 处的切线斜率就是两个偏导数；两条切线张成金色的切平面。拖 <Katex tex="\Delta x" />、<Katex tex="\Delta y" />：绿点落在切平面上，紫点落在真实曲面上，红线段是 <Katex tex="\Delta z-dz" />。看点：① 抛物面的切平面贴着曲面，红线很短；② 鞍面的一条切线朝上、一条朝下，红线随离 <Katex tex="P_0" /> 的远近变长。</div>
     </div>
 
     <h3 class="sec" id="m2-part">偏导数</h3>

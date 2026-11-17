@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createPIntegral" />
-      <div class="cap">图 定4 · <b>反常积分机</b>：模式一把上限推到 <Katex tex="B" />，模式二把下限压到 <Katex tex="\varepsilon" />，绿色区域随之伸缩。看点：把 <Katex tex="p" /> 拖到 1 的两侧，同一个拖法下区域是「越拖越收敛」还是「一路长大」，判据只差 <Katex tex="p-1" /> 的符号。</div>
+      <div class="cap">图 定4 · <b>反常积分</b>：模式一把上限推到 <Katex tex="B" />，模式二把下限压到 <Katex tex="\varepsilon" />，绿色区域随之伸缩。看点：把 <Katex tex="p" /> 拖到 1 的两侧，同一个拖法下区域是「越拖越收敛」还是「一路长大」，判据只差 <Katex tex="p-1" /> 的符号。</div>
     </div>
 
     <h3 class="sec" id="f4-inf">无穷限积分</h3>

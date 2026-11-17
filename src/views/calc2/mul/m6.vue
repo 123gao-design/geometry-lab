@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createLagrange" />
-      <div class="cap">图 微6 · <b>拉格朗日乘数机</b>：金线是约束 <Katex tex="\varphi=0" />，底色是目标函数的等值线地图，红点是切点，绿线是过切点的那条等值线，紫虚线是两条曲线在切点处的公切线；蓝色与青色分别是 <Katex tex="\nabla f" /> 与 <Katex tex="\nabla\varphi" />，它们始终在同一直线上。看点：① 拖动半径，切点沿圆走，<Katex tex="\lambda" /> 恒为 <Katex tex="1/2" />；② 椭圆上离 <Katex tex="(3,0)" /> 最近与最远的两点都在 <Katex tex="x" /> 轴上；③ 直线约束下切点落在 <Katex tex="(c/2,c/2)" />。</div>
+      <div class="cap">图 微6 · <b>拉格朗日乘数法</b>：金线是约束 <Katex tex="\varphi=0" />，底色是目标函数的等值线地图，红点是切点，绿线是过切点的那条等值线，紫虚线是两条曲线在切点处的公切线；蓝色与青色分别是 <Katex tex="\nabla f" /> 与 <Katex tex="\nabla\varphi" />，它们始终在同一直线上。看点：① 拖动半径，切点沿圆走，<Katex tex="\lambda" /> 恒为 <Katex tex="1/2" />；② 椭圆上离 <Katex tex="(3,0)" /> 最近与最远的两点都在 <Katex tex="x" /> 轴上；③ 直线约束下切点落在 <Katex tex="(c/2,c/2)" />。</div>
     </div>
 
     <h3 class="sec" id="m6-idea">条件极值的几何想法</h3>

@@ -6,7 +6,7 @@
     <div class="note good" id="b3-def">设 <Katex tex="\vec a=(x_1,y_1)" />，<Katex tex="\vec b=(x_2,y_2)" />，且 <Katex tex="\vec a\ne\vec 0" />，则 <Katex tex="\vec a\parallel\vec b" /> 的充要条件是 <Katex tex="x_1y_2-x_2y_1=0" />。若 <Katex tex="A(x_1,y_1)" />、<Katex tex="B(x_2,y_2)" />，点 <Katex tex="P" /> 在直线 <Katex tex="AB" /> 上且满足 <Katex tex="\overrightarrow{AP}=\lambda\overrightarrow{PB}" />，则 <Katex tex="P\left(\dfrac{x_1+\lambda x_2}{1+\lambda},\ \dfrac{y_1+\lambda y_2}{1+\lambda}\right)" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRatioPoint" />
-      <div class="cap">图 基3 · <b>定比分点机</b>：绿色、橙色两点是端点 A、B，金色点是分点 P。看点：λ 从 2 滑到 1，金色点从 2:1 的内分点移到 AB 中点；切到 ③，λ=−2，金色点跑到 AB 的延长线上，成了外分点；切到 ④，λ=−1，分母为零，金色点消失，分点不存在。</div>
+      <div class="cap">图 基3 · <b>定比分点</b>：绿色、橙色两点是端点 A、B，金色点是分点 P。看点：λ 从 2 滑到 1，金色点从 2:1 的内分点移到 AB 中点；切到 ③，λ=−2，金色点跑到 AB 的延长线上，成了外分点；切到 ④，λ=−1，分母为零，金色点消失，分点不存在。</div>
     </div>
 
     <h3 class="sec" id="b3-coll">共线的坐标判定</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="m1-law"><strong>和差公式全体</strong>：<Katex tex="\cos(\alpha-\beta)=\cos\alpha\cos\beta+\sin\alpha\sin\beta" />；<Katex tex="\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta" />；<Katex tex="\tan(\alpha\pm\beta)=\dfrac{\tan\alpha\pm\tan\beta}{1\mp\tan\alpha\tan\beta}" />。全站只推一次 —— 其余都是换名与换角的代数练习。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 M1 · <b>弦长两式机</b>：单位圆上 <Katex tex="P(\alpha)"/>、<Katex tex="Q(\beta)"/> 拖动，橙弦 <strong><Katex tex="d"/></strong> 的长有两种表达式 —— <strong>坐标距离式</strong>（U1 的坐标展开）与<strong>余弦定理式</strong>（夹角 <Katex tex="\alpha-\beta"/>）；两种表达式记同一根弦，<Katex tex="\cos(\alpha-\beta)"/> 的展开式随即得到。「α ↔ β」互换按钮验证偶性：式子纹丝不动。</div>
+      <div class="cap">图 M1 · <b>弦长的两种求法</b>：单位圆上 <Katex tex="P(\alpha)"/>、<Katex tex="Q(\beta)"/> 拖动，橙弦 <strong><Katex tex="d"/></strong> 的长有两种表达式 —— <strong>坐标距离式</strong>（U1 的坐标展开）与<strong>余弦定理式</strong>（夹角 <Katex tex="\alpha-\beta"/>）；两种表达式记同一根弦，<Katex tex="\cos(\alpha-\beta)"/> 的展开式随即得到。「α ↔ β」互换按钮验证偶性：式子纹丝不动。</div>
     </div>
 
     <h3 class="sec" id="m1-chord">弦长两式：<Katex tex="\cos(\alpha-\beta)"/> 的来源</h3>

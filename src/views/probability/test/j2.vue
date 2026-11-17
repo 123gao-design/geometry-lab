@@ -7,7 +7,7 @@
       <Katex tex="\chi^2=\dfrac{n(ad-bc)^2}{(a+b)(c+d)(a+c)(b+d)}" />。当 <Katex tex="\chi^2\ge 3.841" /> 时，有 95% 的把握认为两个变量有关；当 <Katex tex="\chi^2\ge 6.635" /> 时，这一把握提高到 99%。</div>
     <div class="board-wrap">
       <BoardMount :factory="createChisqTest" />
-      <div class="cap">图 检2 · <b>独立性检验机</b>：左侧 2×2 列联表的四格可以逐个改动，右侧是自由度 1 的 χ² 密度曲线，橙色竖线标出观测值，两条紫色虚线是 3.841 与 6.635。看点：把 <Katex tex="a" /> 与 <Katex tex="d" /> 同时调大、<Katex tex="b" /> 与 <Katex tex="c" /> 同时调小，乘积 <Katex tex="ad-bc" /> 拉开，χ² 迅速上升并越过临界值 —— 此时两个分类变量表现为「同类相吸」，独立性不成立。四格平均时 <Katex tex="ad-bc=0" />，χ² 恰好为零。</div>
+      <div class="cap">图 检2 · <b>独立性检验</b>：左侧 2×2 列联表的四格可以逐个改动，右侧是自由度 1 的 χ² 密度曲线，橙色竖线标出观测值，两条紫色虚线是 3.841 与 6.635。看点：把 <Katex tex="a" /> 与 <Katex tex="d" /> 同时调大、<Katex tex="b" /> 与 <Katex tex="c" /> 同时调小，乘积 <Katex tex="ad-bc" /> 拉开，χ² 迅速上升并越过临界值 —— 此时两个分类变量表现为「同类相吸」，独立性不成立。四格平均时 <Katex tex="ad-bc=0" />，χ² 恰好为零。</div>
     </div>
 
     <h3 class="sec" id="j2-table">列联表</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="r3-alg"><strong>二分法</strong>：设 <Katex tex="f" /> 在 <Katex tex="[a,b]" /> 上连续且 <Katex tex="f(a)f(b)<0" />。循环四步 —— ① 取中点 <Katex tex="m=\dfrac{a+b}{2}" />；② 算 <Katex tex="f(m)" />（若恰为 0，零点就是 m，直接完成）；③ 判定：<Katex tex="f(m)" /> 与 <Katex tex="f(a)" /> 异号则零点在 <Katex tex="[a,m]" />、同号则在 <Katex tex="[m,b]" />；④ 留下变号的那半，回到 ①。每一步的依据都来自 R2 的定理：<strong>留下的半区间端点依旧异号、函数依旧连续，所以零点一定还在里面</strong> —— 二分法是存在性定理的算法化。</div>
     <div class="board-wrap">
       <BoardMount :factory="createBisect" />
-      <div class="cap">图 R3 · <b>二分显微镜</b>：左栏全景金带 = 当前异号区间，右栏显微镜自动放大它 —— 看中点 m 与 <Katex tex="f(m)"/> 的符号判定、金线一步步贴近灰点（真零点）。① 求出 <Katex tex="\sqrt{2}"/>；② 求 R1 ② 的无理根 0.347…；③ 求 R2 ④ 的唯一零点 0.682…。「二分一步」单步看判定，「连续二分」自动跑到精度 ε，步数徽章实时记着 <Katex tex="\text{宽}=\text{初始宽}\times 2^{-n}"/>。</div>
+      <div class="cap">图 R3 · <b>二分法</b>：左栏全景金带 = 当前异号区间，右栏放大视图自动放大它 —— 看中点 m 与 <Katex tex="f(m)"/> 的符号判定、金线一步步贴近灰点（真零点）。① 求出 <Katex tex="\sqrt{2}"/>；② 求 R1 ② 的无理根 0.347…；③ 求 R2 ④ 的唯一零点 0.682…。「二分一步」单步看判定，「连续二分」自动跑到精度 ε，步数徽章实时记着 <Katex tex="\text{宽}=\text{初始宽}\times 2^{-n}"/>。</div>
     </div>
 
     <h3 class="sec" id="r3-err">误差与步数：对数关系</h3>

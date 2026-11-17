@@ -6,7 +6,7 @@
     <div class="note good">若 <Katex tex="a_n=(An+B)q^{\,n-1}" />（<Katex tex="q\ne1" />），则 <Katex tex="S_n" /> 可写成 <Katex tex="S_n=(Cn+D)q^{\,n}+E" /> 的形式，其中 <Katex tex="C,D,E" /> 由待定或由错位相减直接算出。</div>
     <div class="board-wrap">
       <BoardMount :factory="createShiftArith" />
-      <div class="cap">图 和2 · <b>等差乘等比机</b>：每列左右两根柱子，左柱是 <Katex tex="S_n" /> 的项，右柱是 <Katex tex="qS_n" /> 错后一列的对应项，画在同一条基线上。绿色竖段是这一列相减后剩下的 <Katex tex="q^{k-1}" />；这些竖段从前往后拼成一段等比数列，最右一列再减去 <Katex tex="nq^n" />。拖动 q 与 n 看绿色段的变化。</div>
+      <div class="cap">图 和2 · <b>等差乘等比求和</b>：每列左右两根柱子，左柱是 <Katex tex="S_n" /> 的项，右柱是 <Katex tex="qS_n" /> 错后一列的对应项，画在同一条基线上。绿色竖段是这一列相减后剩下的 <Katex tex="q^{k-1}" />；这些竖段从前往后拼成一段等比数列，最右一列再减去 <Katex tex="nq^n" />。拖动 q 与 n 看绿色段的变化。</div>
     </div>
 
     <h3 class="sec" id="h2-shape">适用形态</h3>

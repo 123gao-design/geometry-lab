@@ -7,7 +7,7 @@
     <h3 class="sec" id="a5-lab">对勾函数机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createHookHyp" />
-      <div class="cap">图 A5 · <b>对勾函数机</b>：焦点、实轴、顶点全套实时画出 —— 这不是示意图，是按公式直接生成的真双曲线。拖 P（或按「换支」换到另一支）验证第一定义（<Katex tex="|r_1-r_2|=2A" />），按「演化」看 a 从 0 增到 2.5：渐近线夹角 <Katex tex="\psi" /> 逐渐变窄，e 从 <Katex tex="\sqrt2" /> 递减到 1。注意绿点勾底与金点顶点<strong>不是同一个点</strong>。</div>
+      <div class="cap">图 A5 · <b>对勾函数与双曲线</b>：焦点、实轴、顶点全套实时画出 —— 这不是示意图，是按公式直接生成的真双曲线。拖 P（或按「换支」换到另一支）验证第一定义（<Katex tex="|r_1-r_2|=2A" />），按「演化」看 a 从 0 增到 2.5：渐近线夹角 <Katex tex="\psi" /> 逐渐变窄，e 从 <Katex tex="\sqrt2" /> 递减到 1。注意绿点勾底与金点顶点<strong>不是同一个点</strong>。</div>
     </div>
     <p>画板里最反直觉的一幕：对勾函数的「最低点」（勾底，均值不等式的等号处）并不是双曲线的顶点。顶点在<strong>角平分线</strong>（实轴）上、是曲线上离中心最近的点；勾底只是切线放平的地方。两个头衔，两个主人。</p>
 

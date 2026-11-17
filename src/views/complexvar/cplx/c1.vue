@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createCPlane" />
-      <div class="cap">图 复1 · <b>复数的几何表示机</b>：拖金色点 <Katex tex="z" /> 走遍四个象限。看点：① 金线段的长度是模 <Katex tex="|z|" />，橙弧从正实轴逆时针量到 <Katex tex="z" />，是辐角；② 两条灰色虚线把 <Katex tex="z" /> 投影到两条轴上，横坐标是实部、纵坐标是虚部；③ 紫点是共轭 <Katex tex="\bar z" />，总在实轴的另一侧；④ 青点 <Katex tex="iz" /> 由 <Katex tex="z" /> 直接转 <Katex tex="90^\circ" /> 得到，模一点没变。</div>
+      <div class="cap">图 复1 · <b>复数的几何表示</b>：拖金色点 <Katex tex="z" /> 走遍四个象限。看点：① 金线段的长度是模 <Katex tex="|z|" />，橙弧从正实轴逆时针量到 <Katex tex="z" />，是辐角；② 两条灰色虚线把 <Katex tex="z" /> 投影到两条轴上，横坐标是实部、纵坐标是虚部；③ 紫点是共轭 <Katex tex="\bar z" />，总在实轴的另一侧；④ 青点 <Katex tex="iz" /> 由 <Katex tex="z" /> 直接转 <Katex tex="90^\circ" /> 得到，模一点没变。</div>
     </div>
 
     <h3 class="sec" id="c1-rep">复平面上的点</h3>

@@ -6,7 +6,7 @@
     <div class="note good">对两个向量 <Katex tex="\vec a" />、<Katex tex="\vec b" />，向量积 <Katex tex="\vec a\times\vec b" /> 是一个向量，它的模为 <Katex tex="|\vec a||\vec b|\sin\theta" />，方向垂直于 <Katex tex="\vec a" />、<Katex tex="\vec b" /> 所确定的平面，指向由右手定则给出。二维情形下这支向量只能沿 <Katex tex="z" /> 轴，于是只剩一个带符号的分量 <Katex tex="x_1y_2-x_2y_1" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCross2D" />
-      <div class="cap">图 积4a · <b>有向面积机</b>：蓝、橙两支向量张成平行四边形，<Katex tex="\theta" /> 处的金色短弧带箭头，标出从 <Katex tex="\vec a" /> 转到 <Katex tex="\vec b" /> 的方向。看点：逆时针转时色块为蓝、有向面积为正；顺时针转时色块变为橙色、有向面积为负；两支拖到共线，色块消失，有向面积归零。面积徽章把 <Katex tex="|\vec a||\vec b|\sin\theta" /> 的三项乘积逐项列出，可与有向面积的绝对值对照。</div>
+      <div class="cap">图 积4a · <b>向量积与有向面积</b>：蓝、橙两支向量张成平行四边形，<Katex tex="\theta" /> 处的金色短弧带箭头，标出从 <Katex tex="\vec a" /> 转到 <Katex tex="\vec b" /> 的方向。看点：逆时针转时色块为蓝、有向面积为正；顺时针转时色块变为橙色、有向面积为负；两支拖到共线，色块消失，有向面积归零。面积徽章把 <Katex tex="|\vec a||\vec b|\sin\theta" /> 的三项乘积逐项列出，可与有向面积的绝对值对照。</div>
     </div>
 
     <h3 class="sec" id="i4-def">定义与右手定则</h3>
@@ -16,7 +16,7 @@
     <p>交换两支向量，右手四指改为从 <Katex tex="\vec b" /> 弯向 <Katex tex="\vec a" />，拇指指向相反，所以 <Katex tex="\vec a\times\vec b=-\vec b\times\vec a" />。向量积不满足交换律，这是它与数量积最显眼的区别。两支共线时 <Katex tex="\sin\theta=0" />，向量积为零向量；<Katex tex="\vec a\times\vec a=\vec 0" /> 是它的特例。</p>
     <div class="board-wrap">
       <BoardMount :factory="createCross3D" />
-      <div class="cap">图 积4b · <b>向量积机</b>：两支向量落在水平面内，金色箭头是 <Katex tex="\vec a\times\vec b" />，两处直角标记说明它同时垂直于 <Katex tex="\vec a" /> 与 <Katex tex="\vec b" />。看点：拖动两支向量的端点，金色箭头始终垂直于水平面，长度随平行四边形的面积一起增减；把 <Katex tex="\vec b" /> 拖到 <Katex tex="\vec a" /> 的另一侧，转向反过来，箭头改指平面下方。徽章里的坐标式只留下 <Katex tex="z" /> 分量，正是二维的有向面积。</div>
+      <div class="cap">图 积4b · <b>向量积</b>：两支向量落在水平面内，金色箭头是 <Katex tex="\vec a\times\vec b" />，两处直角标记说明它同时垂直于 <Katex tex="\vec a" /> 与 <Katex tex="\vec b" />。看点：拖动两支向量的端点，金色箭头始终垂直于水平面，长度随平行四边形的面积一起增减；把 <Katex tex="\vec b" /> 拖到 <Katex tex="\vec a" /> 的另一侧，转向反过来，箭头改指平面下方。徽章里的坐标式只留下 <Katex tex="z" /> 分量，正是二维的有向面积。</div>
     </div>
 
     <h3 class="sec" id="i4-2d">二维：有向面积</h3>

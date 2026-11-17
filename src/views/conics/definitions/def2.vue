@@ -6,7 +6,7 @@
     <div class="note good" id="d2-def"><strong>双曲线的第一定义</strong>：平面内到两个定点 <Katex tex="F_1" />、<Katex tex="F_2" /> 的距离之差的绝对值为常数 <Katex tex="2a" />（要求 <Katex tex="0 < 2a < |F_1F_2|" />）的点 P 的轨迹，称为<strong>双曲线</strong> <span class="term">(hyperbola)</span>。<Katex tex="F_1" />、<Katex tex="F_2" /> 为焦点，<Katex tex="|F_1F_2| = 2c" /> 为焦距；离 <Katex tex="F_2" /> 近的那支（右支）上 <Katex tex="|PF_1| - |PF_2| = +2a" />，左支上为 <Katex tex="-2a" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createHypDef" />
-      <div class="cap">图 D2 · <b>双曲线第一定义实验台</b>：拖动 P（拖过 y 轴即换支），底部长度条中蓝橙两条从同一原点出发，端点之差恒等于 2a。虚线是两条渐近线 —— 把 P 拖向远方，曲线与渐近线几乎贴合。滑块 a、c 重塑形状，注意这次要求 c &gt; a，与椭圆恰好相反。</div>
+      <div class="cap">图 D2 · <b>双曲线的第一定义</b>：拖动 P（拖过 y 轴即换支），底部长度条中蓝橙两条从同一原点出发，端点之差恒等于 2a。虚线是两条渐近线 —— 把 P 拖向远方，曲线与渐近线几乎贴合。滑块 a、c 重塑形状，注意这次要求 c &gt; a，与椭圆恰好相反。</div>
     </div>
 
     <h3 class="sec" id="d2-deriv">标准方程的推导：同样的两次平方</h3>

@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createSeqLab" />
-      <div class="cap">图 极1 · <b>数列极限机</b>：横轴是序号 <Katex tex="n" />，纵轴是项的值；金带是窗口 <Katex tex="|a_n-L|<\varepsilon" />，蓝点在带内、橙点在带外，紫色竖线的位置是最后一个落在带外的序号 <Katex tex="N" />。看点：把 <Katex tex="\varepsilon" /> 拖小，带变窄，橙点只能右移，<Katex tex="N" /> 随之变大；切到 <Katex tex="(-1)^n" />，无论带宽取多大，总有一半的点留在带外，<Katex tex="N" /> 不存在。</div>
+      <div class="cap">图 极1 · <b>数列的极限</b>：横轴是序号 <Katex tex="n" />，纵轴是项的值；金带是窗口 <Katex tex="|a_n-L|<\varepsilon" />，蓝点在带内、橙点在带外，紫色竖线的位置是最后一个落在带外的序号 <Katex tex="N" />。看点：把 <Katex tex="\varepsilon" /> 拖小，带变窄，橙点只能右移，<Katex tex="N" /> 随之变大；切到 <Katex tex="(-1)^n" />，无论带宽取多大，总有一半的点留在带外，<Katex tex="N" /> 不存在。</div>
     </div>
 
     <h3 class="sec" id="l1-conv">数列与收敛</h3>

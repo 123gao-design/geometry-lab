@@ -806,7 +806,7 @@
       <router-link class="topic-card" to="/algebra/n6"><span class="tag">网6</span><h3>图的着色与匹配</h3><p class="fx"><Katex tex="\omega\le\chi\le\Delta+1" /></p><p>团给下界、贪心给上界，五边形说明两者可以不相等；二分图色数为 2，最大匹配在二分图里等于最小顶点覆盖。</p></router-link>
     </div>
 
-    <div class="cap">速查页只收「一句话能说清的结论」：先在这里定位，再点进章节看推导、易错点与实验台 —— 蓝色标签即章节编号（如 性1、次1、基1）。</div>  </div>
+    <div class="cap">速查页只收「一句话能说清的结论」：先在这里定位，再点进章节看推导、易错点与画板 —— 蓝色标签即章节编号（如 性1、次1、基1）。</div>  </div>
 </template>
 <script setup>
 import Katex from '../components/Katex.vue';

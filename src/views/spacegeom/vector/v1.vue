@@ -19,7 +19,7 @@
     <p>共线的判据也与平面内相同：<Katex tex="\vec a\parallel\vec b" /> 当且仅当存在 <Katex tex="\lambda" /> 使 <Katex tex="\vec a=\lambda\vec b" />，写成坐标就是三对数成比例（分母为零时按分量单独核对，不写成 <Katex tex="\tfrac{a_1}{0}" />）。</p>
     <div class="board-wrap">
       <BoardMount :factory="createSpaceCoords" />
-      <div class="cap">图 向1 · <b>空间坐标与向量机</b>：三个滑块各给一个坐标，紫色向量 <Katex tex="\overrightarrow{OP}" /> 的终点就是点 <Katex tex="P" />，长方体的棱把三个分量拆到三条轴上，轴上的粗线段长度正是分量的绝对值。徽章读坐标、模与方向余弦。看点：把 <Katex tex="z" /> 推到零，点落进 <Katex tex="xOy" /> 平面，竖直的棱全部消失；两个坐标推到零，点退到轴上，方向余弦里只剩一个 1；拖动画面旋转，三条棱始终贴着各自的轴。</div>
+      <div class="cap">图 向1 · <b>空间直角坐标与向量</b>：三个滑块各给一个坐标，紫色向量 <Katex tex="\overrightarrow{OP}" /> 的终点就是点 <Katex tex="P" />，长方体的棱把三个分量拆到三条轴上，轴上的粗线段长度正是分量的绝对值。徽章读坐标、模与方向余弦。看点：把 <Katex tex="z" /> 推到零，点落进 <Katex tex="xOy" /> 平面，竖直的棱全部消失；两个坐标推到零，点退到轴上，方向余弦里只剩一个 1；拖动画面旋转，三条棱始终贴着各自的轴。</div>
     </div>
 
     <h3 class="sec" id="v1-mod">模与方向余弦</h3>

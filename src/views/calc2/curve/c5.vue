@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createSurfInt2" />
-      <div class="cap">图 线5 · <b>第二类曲面积分机</b>：曲面是上半球面，法向朝外（紫箭），橙箭是场，金色小片是 <Katex tex="P" /> 附近的一块，紫箭头是它的外法向。三个场：① 竖直常场 <Katex tex="F=(0,0,1)" />，通量 <Katex tex="\pi R^2" />，正好等于赤道圆盘的面积；② <Katex tex="F=(0,0,z)" />，越靠顶部场越强，通量 <Katex tex="2\pi R^3/3" />；③ 辐射场 <Katex tex="F=(x,y,z)" />，处处沿法向，通量 <Katex tex="2\pi R^3" />。把 <Katex tex="\varphi" /> 拖到顶部，看 <Katex tex="F\cdot n" /> 随位置的变化。</div>
+      <div class="cap">图 线5 · <b>第二类曲面积分</b>：曲面是上半球面，法向朝外（紫箭），橙箭是场，金色小片是 <Katex tex="P" /> 附近的一块，紫箭头是它的外法向。三个场：① 竖直常场 <Katex tex="F=(0,0,1)" />，通量 <Katex tex="\pi R^2" />，正好等于赤道圆盘的面积；② <Katex tex="F=(0,0,z)" />，越靠顶部场越强，通量 <Katex tex="2\pi R^3/3" />；③ 辐射场 <Katex tex="F=(x,y,z)" />，处处沿法向，通量 <Katex tex="2\pi R^3" />。把 <Katex tex="\varphi" /> 拖到顶部，看 <Katex tex="F\cdot n" /> 随位置的变化。</div>
     </div>
 
     <h3 class="sec" id="c5-def">通量与曲面定向</h3>

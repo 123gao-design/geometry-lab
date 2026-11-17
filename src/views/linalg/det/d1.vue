@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createDet2D" />
-      <div class="cap">图 行1 · <b>二阶行列式与面积机</b>：蓝橙两支列向量 <Katex tex="a" />、<Katex tex="b" />，它们张成的平行四边形就是金色单位正方形的像。看点：拖动任一支向量的端点，右栏的行列式与面积同步变化；把 <Katex tex="b" /> 拖到 <Katex tex="a" /> 的另一侧，面积不变而符号翻负；把两支拖成共线，平行四边形压成线段，<Katex tex="D" /> 归零。</div>
+      <div class="cap">图 行1 · <b>二阶行列式与面积</b>：蓝橙两支列向量 <Katex tex="a" />、<Katex tex="b" />，它们张成的平行四边形就是金色单位正方形的像。看点：拖动任一支向量的端点，右栏的行列式与面积同步变化；把 <Katex tex="b" /> 拖到 <Katex tex="a" /> 的另一侧，面积不变而符号翻负；把两支拖成共线，平行四边形压成线段，<Katex tex="D" /> 归零。</div>
     </div>
 
     <h3 class="sec" id="d1-def">定义与展开</h3>

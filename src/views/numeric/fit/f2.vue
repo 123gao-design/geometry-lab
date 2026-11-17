@@ -10,7 +10,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createCurveFit" />
-      <div class="cap">图 拟2 · <b>线性化拟合机</b>：左图是原坐标里样本与拟合曲线，右图是取对数后的散点与拟合直线。看点：切换「指数型 / 幂函数型」，右图的横轴在 <Katex tex="x" /> 与 <Katex tex="\ln x" /> 之间换掉；把真实 <Katex tex="b_0" /> 调大，右图直线变陡，回代得到的 <Katex tex="\hat b" /> 跟着变，而 <Katex tex="\hat A" /> 始终贴着真实值。</div>
+      <div class="cap">图 拟2 · <b>非线性拟合与线性化</b>：左图是原坐标里样本与拟合曲线，右图是取对数后的散点与拟合直线。看点：切换「指数型 / 幂函数型」，右图的横轴在 <Katex tex="x" /> 与 <Katex tex="\ln x" /> 之间换掉；把真实 <Katex tex="b_0" /> 调大，右图直线变陡，回代得到的 <Katex tex="\hat b" /> 跟着变，而 <Katex tex="\hat A" /> 始终贴着真实值。</div>
     </div>
 
     <h3 class="sec" id="f2-why">曲线不好拟合，直线好拟合</h3>

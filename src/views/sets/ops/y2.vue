@@ -5,7 +5,7 @@
     <div class="note good" id="y2-law"><strong>补集</strong>：<Katex tex="\complement_U A=\{x\in U\mid x\notin A\}" /> —— 双重身份缺一不可：先在 U 内、再不在 A。<strong>差集恒等式</strong>：<Katex tex="A\setminus B=A\cap\complement_U B" /> —— 差集就是「跟 B 的补集取交」。<strong>双重否定</strong>：<Katex tex="\complement_U(\complement_U A)=A" />。同一个 A 配不同的 U，补集不同：<Katex tex="\complement_{\mathbb{Q}}\{0\}\ne\complement_{\mathbb{R}}\{0\}" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createComp" />
-      <div class="cap">图 Y2 · <b>补集演示台</b>：推「右墙 u」滑块 —— 圈外 6、7、8、9 号元素从虚影变成实点、逐个纳入全集，补集的成员清单跟着变；三挡模式 ∁U A、A∖B、∁U(∁U A) 各配一条恒等式徽章。</div>
+      <div class="cap">图 Y2 · <b>补集</b>：推「右墙 u」滑块 —— 圈外 6、7、8、9 号元素从虚影变成实点、逐个纳入全集，补集的成员清单跟着变；三挡模式 ∁U A、A∖B、∁U(∁U A) 各配一条恒等式徽章。</div>
     </div>
 
     <h3 class="sec" id="y2-stage">全集：补集的前提</h3>

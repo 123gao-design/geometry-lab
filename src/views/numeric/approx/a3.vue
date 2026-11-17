@@ -11,7 +11,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createQuadNum" />
-      <div class="cap">图 逼3 · <b>数值积分机</b>：被积函数 <Katex tex="\dfrac{1}{1+x^2}" /> 在 <Katex tex="[0,1]" /> 上的积分等于 <Katex tex="\dfrac{\pi}{4}" />，真值已知，所以误差能直接读出。金色是矩形或梯形的填色，绿色是辛普森用的抛物线。看点：固定分段数切换四个公式，右栏的误差从 <Katex tex="10^{-1}" /> 一路降到 <Katex tex="10^{-7}" />；再推动分段数，看右栏「误差降到 1/几」这一行怎么变。</div>
+      <div class="cap">图 逼3 · <b>数值积分</b>：被积函数 <Katex tex="\dfrac{1}{1+x^2}" /> 在 <Katex tex="[0,1]" /> 上的积分等于 <Katex tex="\dfrac{\pi}{4}" />，真值已知，所以误差能直接读出。金色是矩形或梯形的填色，绿色是辛普森用的抛物线。看点：固定分段数切换四个公式，右栏的误差从 <Katex tex="10^{-1}" /> 一路降到 <Katex tex="10^{-7}" />；再推动分段数，看右栏「误差降到 1/几」这一行怎么变。</div>
     </div>
 
     <h3 class="sec" id="a3-riemann">从黎曼和出发</h3>

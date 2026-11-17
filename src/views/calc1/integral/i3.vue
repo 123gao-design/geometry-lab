@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createPartsLab" />
-      <div class="cap">图 积3 · <b>分部积分机</b>：模式一的曲线由参数给出，蓝块横着切（<Katex tex="\int u\,\mathrm{d}v" />），橙块竖着切（<Katex tex="\int v\,\mathrm{d}u" />），两块拼起来正好是大矩形减小矩形；模式二把 <Katex tex="\int x\mathrm{e}^x\mathrm{d}x" /> 的两条曲线叠在一处，橙线的斜率处处等于蓝线的高度。</div>
+      <div class="cap">图 积3 · <b>分部积分法</b>：模式一的曲线由参数给出，蓝块横着切（<Katex tex="\int u\,\mathrm{d}v" />），橙块竖着切（<Katex tex="\int v\,\mathrm{d}u" />），两块拼起来正好是大矩形减小矩形；模式二把 <Katex tex="\int x\mathrm{e}^x\mathrm{d}x" /> 的两条曲线叠在一处，橙线的斜率处处等于蓝线的高度。</div>
     </div>
 
     <h3 class="sec" id="i3-geo">面积的拆法</h3>

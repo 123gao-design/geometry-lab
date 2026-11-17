@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createTwoSide" />
-      <div class="cap">图 极2 · <b>左右极限机</b>：绿点从左侧滑向 <Katex tex="x_0=1" />，紫点从右侧滑来，<Katex tex="\delta" /> 滑块控制它们与 <Katex tex="x_0" /> 的距离；空心圈是曲线在该点的缺口，金色实心点是 <Katex tex="f(1)" /> 的实际取值。看点：三个预设依次是连续、可去、跳跃，前两个的两个彩色点落向同一个高度，第三个落向两个不同高度；<Katex tex="f(1)" /> 的位置始终不参与判决。</div>
+      <div class="cap">图 极2 · <b>函数的左右极限</b>：绿点从左侧滑向 <Katex tex="x_0=1" />，紫点从右侧滑来，<Katex tex="\delta" /> 滑块控制它们与 <Katex tex="x_0" /> 的距离；空心圈是曲线在该点的缺口，金色实心点是 <Katex tex="f(1)" /> 的实际取值。看点：三个预设依次是连续、可去、跳跃，前两个的两个彩色点落向同一个高度，第三个落向两个不同高度；<Katex tex="f(1)" /> 的位置始终不参与判决。</div>
     </div>
 
     <h3 class="sec" id="l2-near">两种趋近方式</h3>

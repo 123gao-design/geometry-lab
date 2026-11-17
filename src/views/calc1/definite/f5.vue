@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createAreaApp" />
-      <div class="cap">图 定5 · <b>定积分的应用机</b>：模式一画两条曲线之间的一块，积分是「上减下」；模式二把 <Katex tex="y=\sqrt{x}" /> 绕 <Katex tex="x" /> 轴转，在若干 <Katex tex="x" /> 处切出圆盘，每片体积 <Katex tex="\pi f^2\mathrm{d}x" />。看点：拖右界 <Katex tex="b" />，面积与体积两栏都跟着长，且长的速度正是被积函数。</div>
+      <div class="cap">图 定5 · <b>定积分的应用</b>：模式一画两条曲线之间的一块，积分是「上减下」；模式二把 <Katex tex="y=\sqrt{x}" /> 绕 <Katex tex="x" /> 轴转，在若干 <Katex tex="x" /> 处切出圆盘，每片体积 <Katex tex="\pi f^2\mathrm{d}x" />。看点：拖右界 <Katex tex="b" />，面积与体积两栏都跟着长，且长的速度正是被积函数。</div>
     </div>
 
     <h3 class="sec" id="f5-area">平面图形的面积</h3>

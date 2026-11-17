@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createMetric" />
-      <div class="cap">图 拓5 · <b>度量球与序列机</b>：左图是 <Katex tex="p" />-范数下的单位球，右图是同一个球放大成半径 <Katex tex="\varepsilon" /> 的邻域，点列 <Katex tex="z_n=(1+1/n,\ \sin(2.2n)/n)" /> 落在球内的涂绿、球外的留橙。看点：① 拖 <Katex tex="p" /> 从 <Katex tex="1" /> 到 <Katex tex="6" />，菱形鼓成圆再收向方框，两图的球同步变；② 拖 <Katex tex="\varepsilon" /> 收紧，绿点变少，「阈值」一格跳到更靠后的项，尾巴一旦全部进圈，这个数就不再变；③ 换到 <Katex tex="p=\infty" />，球变成方框，同一批点在「坐标差的最大值」这把尺子下重新判一次内外。</div>
+      <div class="cap">图 拓5 · <b>度量球与序列收敛</b>：左图是 <Katex tex="p" />-范数下的单位球，右图是同一个球放大成半径 <Katex tex="\varepsilon" /> 的邻域，点列 <Katex tex="z_n=(1+1/n,\ \sin(2.2n)/n)" /> 落在球内的涂绿、球外的留橙。看点：① 拖 <Katex tex="p" /> 从 <Katex tex="1" /> 到 <Katex tex="6" />，菱形鼓成圆再收向方框，两图的球同步变；② 拖 <Katex tex="\varepsilon" /> 收紧，绿点变少，「阈值」一格跳到更靠后的项，尾巴一旦全部进圈，这个数就不再变；③ 换到 <Katex tex="p=\infty" />，球变成方框，同一批点在「坐标差的最大值」这把尺子下重新判一次内外。</div>
     </div>
 
     <h3 class="sec" id="s5-met">距离与三条性质</h3>

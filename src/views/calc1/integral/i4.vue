@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createRatLab" />
-      <div class="cap">图 积4 · <b>有理函数积分机</b>：蓝线是原式，橙紫两条虚线是拆出来的每一项。看点：两条虚线逐点相加始终回到蓝线，右栏的「逐项和」与「原式」两栏在任何 <Katex tex="x_0" /> 上都一致，差值一栏恒为零。</div>
+      <div class="cap">图 积4 · <b>有理函数的积分</b>：蓝线是原式，橙紫两条虚线是拆出来的每一项。看点：两条虚线逐点相加始终回到蓝线，右栏的「逐项和」与「原式」两栏在任何 <Katex tex="x_0" /> 上都一致，差值一栏恒为零。</div>
     </div>
 
     <h3 class="sec" id="i4-form">真分式与部分分式</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="r1-def"><strong>零点</strong>：设函数 <Katex tex="y=f(x)" /> 的定义域为 D，若 <Katex tex="c\in D" /> 使 <Katex tex="f(c)=0" />，则称 c 为 f 的零点。<strong>数</strong> —— <Katex tex="f(c)=0" /> 代入验证成立；<strong>式</strong> —— x=c 是方程 <Katex tex="f(x)=0" /> 的实根；<strong>图</strong> —— 曲线与 x 轴交点 <Katex tex="(c,\,0)" /> 的<strong>横坐标</strong>。判定只认第一条，后两条是「解方程」与「看图」的两种途径 —— 图 R1 的探针落在金点上时，三个徽章同时点亮，说的都是同一个 c。</div>
     <div class="board-wrap">
       <BoardMount :factory="createZeroLang" />
-      <div class="cap">图 R1 · <b>零点对照仪</b>：曲线按 f 的符号分色（绿 = <Katex tex="f>0"/>、红 = <Katex tex="f<0"/>）—— <strong>颜色交界的穿轴处就是零点</strong>。① 整根 −1、3 一读就对上；② 三个无理根，探针只能靠近、永远落不上（<Katex tex="f(c)=0"/> 要求严格成立）—— 逼出 R3 二分法与 R4 牛顿法；③ <Katex tex="1/x"/> 与 x 轴只渐近相望，永不相交，无零点；④ 二重零点：触轴不穿轴，两侧同为绿色 —— <Katex tex="f(a)f(b)<0"/> 检测不到它。</div>
+      <div class="cap">图 R1 · <b>零点的图象判读</b>：曲线按 f 的符号分色（绿 = <Katex tex="f>0"/>、红 = <Katex tex="f<0"/>）—— <strong>颜色交界的穿轴处就是零点</strong>。① 整根 −1、3 一读就对上；② 三个无理根，探针只能靠近、永远落不上（<Katex tex="f(c)=0"/> 要求严格成立）—— 逼出 R3 二分法与 R4 牛顿法；③ <Katex tex="1/x"/> 与 x 轴只渐近相望，永不相交，无零点；④ 二重零点：触轴不穿轴，两侧同为绿色 —— <Katex tex="f(a)f(b)<0"/> 检测不到它。</div>
     </div>
 
     <h3 class="sec" id="r1-iso">易错清单</h3>

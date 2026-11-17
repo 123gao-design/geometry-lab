@@ -6,7 +6,7 @@
     <div class="note good">等差数列 <Katex tex="\{a_n\}" /> 中，若 <Katex tex="m+n=p+q" />（<Katex tex="m,n,p,q\in\mathbb{N}^*" />），则 <Katex tex="a_m+a_n=a_p+a_q" />。特别地，与首末两端等距离的两项之和都相等：<Katex tex="a_1+a_n=a_2+a_{n-1}=\dots" />，这条性质用于配对求和，见 等3。判定方面，一个数列为等差数列当且仅当对一切 <Katex tex="n" /> 有 <Katex tex="2a_{n+1}=a_n+a_{n+2}" />，也当且仅当通项是 <Katex tex="n" /> 的一次式。</div>
     <div class="board-wrap">
       <BoardMount :factory="createIndexSum" />
-      <div class="cap">图 等2 · <b>下标和机</b>：金点是中心项 <Katex tex="a_c" />，蓝点是 <Katex tex="a_{c-1}" /> 与 <Katex tex="a_{c+1}" />，橙点是 <Katex tex="a_{c-2}" /> 与 <Katex tex="a_{c+2}" />。两对点关于金点上下对称，右侧虚线把它们的高度引出来读值。拖动中心 c 或公差 d：每一对都保持水平等高，行与行之间的距离也跟着变。</div>
+      <div class="cap">图 等2 · <b>下标和性质</b>：金点是中心项 <Katex tex="a_c" />，蓝点是 <Katex tex="a_{c-1}" /> 与 <Katex tex="a_{c+1}" />，橙点是 <Katex tex="a_{c-2}" /> 与 <Katex tex="a_{c+2}" />。两对点关于金点上下对称，右侧虚线把它们的高度引出来读值。拖动中心 c 或公差 d：每一对都保持水平等高，行与行之间的距离也跟着变。</div>
     </div>
 
     <h3 class="sec" id="d2-prop">下标和的性质</h3>

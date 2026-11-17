@@ -6,7 +6,7 @@
     <div class="note good" id="c1-def">设 <Katex tex="P(A)>0" />，在事件 <Katex tex="A" /> 发生的条件下事件 <Katex tex="B" /> 发生的概率记作 <Katex tex="P(B\mid A)" />，定义为 <Katex tex="P(B\mid A)=\dfrac{P(A\cap B)}{P(A)}" />。分子取两者同时发生，分母换成已知发生的那个事件。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCondProb" />
-      <div class="cap">图 独1 · <b>条件概率机</b>：蓝圆 <Katex tex="A" /> 加粗表示它是已知发生的事件，圆外的样本点全部淡出，样本空间只剩圆内这一块。右侧两根横条并排比较 <Katex tex="P(B)" /> 与 <Katex tex="P(B\mid A)" />。看点：把 <Katex tex="B" /> 拖进 <Katex tex="A" />，条件概率随之上升；两圆拉开则降到零。两根横条几乎等高时，两事件接近独立。</div>
+      <div class="cap">图 独1 · <b>条件概率</b>：蓝圆 <Katex tex="A" /> 加粗表示它是已知发生的事件，圆外的样本点全部淡出，样本空间只剩圆内这一块。右侧两根横条并排比较 <Katex tex="P(B)" /> 与 <Katex tex="P(B\mid A)" />。看点：把 <Katex tex="B" /> 拖进 <Katex tex="A" />，条件概率随之上升；两圆拉开则降到零。两根横条几乎等高时，两事件接近独立。</div>
     </div>
 
     <h3 class="sec" id="c1-def">条件概率的定义</h3>

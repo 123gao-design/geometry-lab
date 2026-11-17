@@ -5,7 +5,7 @@
     <div class="note good" id="s4-def"><strong>上界</strong>：存在常数 <Katex tex="M" />，使得对定义域 D 内<strong>任意</strong> <Katex tex="x" /> 都有 <Katex tex="f(x)\le M" />（下界把不等号反过来）。既有上界又有下界称 f <strong>有界</strong>。<strong>最大值</strong>：存在 <Katex tex="x_0\in D" /> 使 <Katex tex="f(x_0)\ge f(x)" /> 对任意 <Katex tex="x\in D" /> 成立 —— 关键在 <Katex tex="x_0" /> <strong>真的取到</strong>。最小上界叫<strong>上确界</strong>：取到了，上确界就是最大值；取不到，就只有界没有最值。</div>
     <div class="board-wrap">
       <BoardMount :factory="createBoundWall" />
-      <div class="cap">图 S4 · <b>界墙机</b>：拖金色的墙 <Katex tex="M" />，徽章实时判定它是上界还是下界、被哪个点穿透（红点标在穿透处）；「确界线」开关揭晓答案 —— ① <Katex tex="x^2" /> 在 [−2,2]：墙降到 4 恰好拦住，且被 <Katex tex="x=\pm 2" /> <strong>取到</strong>，上确界=最大值；② x 在 (0,1)：墙降到 1 拦住了，却永远差一点取不到 —— <strong>有界而无最值</strong>，取不到的端点就是原因；③ <Katex tex="1/x^2" /> 在 (0,2]：多高的墙都拦不住（渐近线方向冲出画框），无上界，但下界 <Katex tex="1/4" /> 在 <Katex tex="x=2" /> 处取到 —— 最小值照常存在。看点：端点的实心/空心点，就是「取得到/取不到」的直接证据。</div>
+      <div class="cap">图 S4 · <b>函数的有界性与最值</b>：拖金色的墙 <Katex tex="M" />，徽章实时判定它是上界还是下界、被哪个点穿透（红点标在穿透处）；「确界线」开关揭晓答案 —— ① <Katex tex="x^2" /> 在 [−2,2]：墙降到 4 恰好拦住，且被 <Katex tex="x=\pm 2" /> <strong>取到</strong>，上确界=最大值；② x 在 (0,1)：墙降到 1 拦住了，却永远差一点取不到 —— <strong>有界而无最值</strong>，取不到的端点就是原因；③ <Katex tex="1/x^2" /> 在 (0,2]：多高的墙都拦不住（渐近线方向冲出画框），无上界，但下界 <Katex tex="1/4" /> 在 <Katex tex="x=2" /> 处取到 —— 最小值照常存在。看点：端点的实心/空心点，就是「取得到/取不到」的直接证据。</div>
     </div>
 
     <h3 class="sec" id="s4-thm">最值定理与确界的区分</h3>

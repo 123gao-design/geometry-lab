@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createCoord3d" />
-      <div class="cap">图 重5 · <b>柱面坐标与球面坐标机</b>：① 柱面坐标下 P 由 <Katex tex="r" />、<Katex tex="\theta" />、<Katex tex="z" /> 三个数定位，金色折线从原点走到 P，橙色小格是 P 附近的一块，边长分别沿径向、切向与竖直方向；② 球面坐标下 P 由 <Katex tex="\rho" />、<Katex tex="\varphi" />、<Katex tex="\theta" /> 定位，三条大圆是半径为 <Katex tex="\rho" /> 的球面与三张坐标面的交线，橙色弧是 <Katex tex="\varphi" />、紫色弧是 <Katex tex="\theta" />。切到第二档并把 <Katex tex="\varphi" /> 拖到 90° 附近，看体积元因子里 <Katex tex="\sin\varphi" /> 的变化。</div>
+      <div class="cap">图 重5 · <b>柱面坐标与球面坐标</b>：① 柱面坐标下 P 由 <Katex tex="r" />、<Katex tex="\theta" />、<Katex tex="z" /> 三个数定位，金色折线从原点走到 P，橙色小格是 P 附近的一块，边长分别沿径向、切向与竖直方向；② 球面坐标下 P 由 <Katex tex="\rho" />、<Katex tex="\varphi" />、<Katex tex="\theta" /> 定位，三条大圆是半径为 <Katex tex="\rho" /> 的球面与三张坐标面的交线，橙色弧是 <Katex tex="\varphi" />、紫色弧是 <Katex tex="\theta" />。切到第二档并把 <Katex tex="\varphi" /> 拖到 90° 附近，看体积元因子里 <Katex tex="\sin\varphi" /> 的变化。</div>
     </div>
 
     <h3 class="sec" id="r5-cyl">柱面坐标</h3>

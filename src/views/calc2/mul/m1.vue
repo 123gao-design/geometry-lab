@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createDoubleLim" />
-      <div class="cap">图 微1 · <b>二重极限机</b>：左图四条路径同时向原点收拢，右侧把沿每条路径的函数值画成 <Katex tex="r" /> 的函数。看点：① 四条曲线都压向同一个高度 <Katex tex="0" />，又与 <Katex tex="f(0,0)=0" /> 接上；② 沿 <Katex tex="y=x" /> 停在 <Katex tex="0.5" />、沿 <Katex tex="y=2x" /> 停在 <Katex tex="0.4" />，两条直线就分开了；③ 三条直线都趋于 <Katex tex="0" />，只有沿抛物线 <Katex tex="y=x^2" /> 的那条升到 <Katex tex="0.5" />——只查直线会漏掉这种情形。</div>
+      <div class="cap">图 微1 · <b>二重极限与连续</b>：左图四条路径同时向原点收拢，右侧把沿每条路径的函数值画成 <Katex tex="r" /> 的函数。看点：① 四条曲线都压向同一个高度 <Katex tex="0" />，又与 <Katex tex="f(0,0)=0" /> 接上；② 沿 <Katex tex="y=x" /> 停在 <Katex tex="0.5" />、沿 <Katex tex="y=2x" /> 停在 <Katex tex="0.4" />，两条直线就分开了；③ 三条直线都趋于 <Katex tex="0" />，只有沿抛物线 <Katex tex="y=x^2" /> 的那条升到 <Katex tex="0.5" />——只查直线会漏掉这种情形。</div>
     </div>
 
     <h3 class="sec" id="m1-def">二元函数的极限</h3>

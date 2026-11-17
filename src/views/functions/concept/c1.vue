@@ -6,7 +6,7 @@
     <div class="note good" id="c1-map"><strong>映射</strong>：设 A、B 是两个<strong>非空集合</strong>，如果按某个确定的对应法则 f，使得对 A 中<strong>任意</strong>一个元素 x，在 B 中都有<strong>唯一确定</strong>的元素 y 与之对应，那么称 f 为从集合 A 到集合 B 的一个映射 <span class="term">(mapping)</span>，记作 <Katex tex="f:A\to B" />，并写 <Katex tex="x\mapsto y=f(x)" />。y 叫做 x 的<strong>像</strong>，x 叫做 y 的<strong>原像</strong>。</div>
     <div class="board-wrap">
       <BoardMount :factory="createArrowMap" />
-      <div class="cap">图 C1 · <b>箭头实验台</b>：四种对应方式逐一检验 —— ①一对一、②多对一、③一对多、④有输入没输出。右上四个判定徽章实时点亮或熄灭：③ 违反"像唯一"（单值性），④ 违反"每个输入都有像"（完整性），均不构成函数；② 合法 —— 函数允许多对一，不允许一对多与无像。拖"输入 x"看选中的那条箭头：f(3) 是谁、有没有像，一目了然。</div>
+      <div class="cap">图 C1 · <b>映射的四种对应</b>：四种对应方式逐一检验 —— ①一对一、②多对一、③一对多、④有输入没输出。右上四个判定徽章实时点亮或熄灭：③ 违反"像唯一"（单值性），④ 违反"每个输入都有像"（完整性），均不构成函数；② 合法 —— 函数允许多对一，不允许一对多与无像。拖"输入 x"看选中的那条箭头：f(3) 是谁、有没有像，一目了然。</div>
     </div>
 
     <h3 class="sec" id="c1-req">三要求逐条核验</h3>

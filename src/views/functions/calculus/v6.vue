@@ -5,7 +5,7 @@
     <div class="note good" id="v6-law"><strong>麦克劳林公式（x₀=0 处的泰勒）</strong>：与 f 在 0 处同值、同各阶导数（直到 n 阶）的多项式是 <Katex tex="P_n(x)=\sum_{k=0}^{n}\dfrac{f^{(k)}(0)}{k!}\,x^k" /> —— 阶乘来自求导计数：x^k 连求 k 次导得 k!。e^x 求导不变形 ⟹ 展开系数全是 1/k!：<Katex tex="e^x=1+x+\dfrac{x^2}{2!}+\dfrac{x^3}{3!}+\cdots" />；令 x=1 得 <Katex tex="e=\sum_{k=0}^{\infty}\dfrac{1}{k!}\approx 2.71828" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFit" />
-      <div class="cap">图 V6 · <b>泰勒拟合机</b>：蓝=目标函数，金=部分和 <Katex tex="P_n"/> —— 拖「阶数」看金曲线一项项逼近蓝曲线，检验点误差徽章同步骤减（<Katex tex="e^x"/> 例 <Katex tex="x=1"/>：误差从 <Katex tex="n=0"/> 的 1.72 降到 <Katex tex="n=6"/> 的 0.0002）；「虚线逐项」看每一项各自的形状。第三原图把检验点拖过 1：越出 <Katex tex="\ln(1+x)"/> 的收敛半径，加阶数也无法弥补。</div>
+      <div class="cap">图 V6 · <b>泰勒多项式逼近</b>：蓝=目标函数，金=部分和 <Katex tex="P_n"/> —— 拖「阶数」看金曲线一项项逼近蓝曲线，检验点误差徽章同步骤减（<Katex tex="e^x"/> 例 <Katex tex="x=1"/>：误差从 <Katex tex="n=0"/> 的 1.72 降到 <Katex tex="n=6"/> 的 0.0002）；「虚线逐项」看每一项各自的形状。第三原图把检验点拖过 1：越出 <Katex tex="\ln(1+x)"/> 的收敛半径，加阶数也无法弥补。</div>
     </div>
 
     <h3 class="sec" id="v6-fit">拟合：从切线到逐阶对齐</h3>

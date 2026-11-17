@@ -6,7 +6,7 @@
     <div class="note good">等差数列前 <Katex tex="n" /> 项的和有两个常用写法：<Katex tex="S_n=\dfrac{n(a_1+a_n)}{2}" />，以及 <Katex tex="S_n=na_1+\dfrac{n(n-1)}{2}d" />。前者由倒序相加得到，已知首末两项时用；后者由通项代入前者得到，已知首项与公差时用。两者的关系是 <Katex tex="a_n=a_1+(n-1)d" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createReverseAdd" />
-      <div class="cap">图 等3a · <b>倒序相加机</b>：每一列下方是 <Katex tex="a_k" />（蓝），上方是 <Katex tex="a_{n+1-k}" />（橙），两段拼起来的高度都是 <Katex tex="a_1+a_n" />（金色虚线）。右侧把正序、倒序两式与逐列相加的结果依次写出。拖动「第 k 列」：选中列的上下两段随 k 变化，总高度不变。</div>
+      <div class="cap">图 等3a · <b>倒序相加</b>：每一列下方是 <Katex tex="a_k" />（蓝），上方是 <Katex tex="a_{n+1-k}" />（橙），两段拼起来的高度都是 <Katex tex="a_1+a_n" />（金色虚线）。右侧把正序、倒序两式与逐列相加的结果依次写出。拖动「第 k 列」：选中列的上下两段随 k 变化，总高度不变。</div>
     </div>
 
     <h3 class="sec" id="d3-alg">倒序相加</h3>
@@ -17,7 +17,7 @@
     <h3 class="sec" id="d3-area">台阶拼成的矩形</h3>
     <div class="board-wrap">
       <BoardMount :factory="createStepLevel" />
-      <div class="cap">图 等3b · <b>台阶削平机</b>：每一项画成一列竖条，金色矩形的高度取平均高度 <Katex tex="m=\dfrac{a_1+a_n}{2}" />、宽度为 <Katex tex="n" />。竖条高出矩形的部分（绿）与对称位置不足的部分（红）等量，削平后正好填满矩形，面积 <Katex tex="n\cdot m" /> 就是 <Katex tex="S_n" />。拖动「n」与「公差 d」：红绿两块始终等面积。</div>
+      <div class="cap">图 等3b · <b>倒序相加：台阶削平</b>：每一项画成一列竖条，金色矩形的高度取平均高度 <Katex tex="m=\dfrac{a_1+a_n}{2}" />、宽度为 <Katex tex="n" />。竖条高出矩形的部分（绿）与对称位置不足的部分（红）等量，削平后正好填满矩形，面积 <Katex tex="n\cdot m" /> 就是 <Katex tex="S_n" />。拖动「n」与「公差 d」：红绿两块始终等面积。</div>
     </div>
     <p>把每一项画成宽度为 1 的竖条，从左到右排开，条顶连成的折线是台阶形。台阶的面积就是 <Katex tex="S_n" />。取平均高度 <Katex tex="m=\dfrac{a_1+a_n}{2}" /> 作水平线，第 <Katex tex="k" /> 条高出 <Katex tex="m" /> 的部分，与第 <Katex tex="n+1-k" /> 条低于 <Katex tex="m" /> 的部分高度相同，一块凸一块凹，正好互相填平。</p>
     <p>填平以后，台阶变成高 <Katex tex="m" />、宽 <Katex tex="n" /> 的矩形，面积是 <Katex tex="n\cdot\dfrac{a_1+a_n}{2}" />。这与倒序相加是同一件事的两种画法：一个把两列数按位拼成等高条，一个把一列数削成等高条。图 等3a 与图 等3b 并排看，正好互为镜像。</p>

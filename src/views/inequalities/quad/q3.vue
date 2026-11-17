@@ -5,7 +5,7 @@
     <div class="note good" id="q3-law"><Katex tex="c>0" /> 时：<Katex tex="|x-m|<c\iff m-c<x<m+c" />（带内），<Katex tex="|x-m|>c\iff x<m-c\ \text{或}\ x>m+c" />（带外）。统一式（<Katex tex="a\ne 0" />、<Katex tex="c>0" />）：<Katex tex="|ax+b|\lessgtr c\iff \bigl|x+\tfrac ba\bigr|\lessgtr \tfrac{c}{|a|}" />。<Katex tex="c=0" />：<Katex tex="|u|<0" /> 无解、<Katex tex="|u|>0\iff u\ne 0" />；<Katex tex="c<0" />：小于恒无解、大于恒成立。</div>
     <div class="board-wrap">
       <BoardMount :factory="createAD" />
-      <div class="cap">图 次3 · <b>绝对值距离机</b>：上轴是换元 <Katex tex="t=ax+b" />、下轴是 x，拖 a、b、c 或点三个预设，「&lt;c / &gt;c」两模式切换。看点：紫虚线把 t 带两端与反解后的 x 端点连线，x 带以 <Katex tex="m=-b/a" /> 为中心、半宽 <Katex tex="c/|a|" /> —— a 只是距离的换算率；c 拖过零时「小于」恒无解、「大于」恒成立；a=0 时左边退化为常数，与 c 直接比较。</div>
+      <div class="cap">图 次3 · <b>绝对值不等式的几何意义</b>：上轴是换元 <Katex tex="t=ax+b" />、下轴是 x，拖 a、b、c 或点三个预设，「&lt;c / &gt;c」两模式切换。看点：紫虚线把 t 带两端与反解后的 x 端点连线，x 带以 <Katex tex="m=-b/a" /> 为中心、半宽 <Katex tex="c/|a|" /> —— a 只是距离的换算率；c 拖过零时「小于」恒无解、「大于」恒成立；a=0 时左边退化为常数，与 c 直接比较。</div>
     </div>
 
     <h3 class="sec" id="q3-band">距离读法：带内与带外</h3>

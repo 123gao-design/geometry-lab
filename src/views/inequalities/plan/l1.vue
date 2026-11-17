@@ -6,7 +6,7 @@
     <div class="note good" id="l1-law">在平面上，<Katex tex="Ax+By+C=0" />（<Katex tex="A,B" /> 不同时为 <Katex tex="0" />）是一条直线。它把平面分成两个半平面，在同一个半平面内 <Katex tex="Ax+By+C" /> 的符号处处相同。因此不等式 <Katex tex="Ax+By+C>0" /> 表示其中一个半平面，判定时只需在该侧任取一点代入看符号——习惯上取原点，<Katex tex="C" /> 的符号即答案。</div>
     <div class="board-wrap">
       <BoardMount :factory="createHP" />
-      <div class="cap">图 线1 · <b>半平面与可行域机</b>：模式一里拖动 P 点跨越金色边界线，读数 <Katex tex="f=Ax+By+C" /> 的符号当场翻转，蓝区始终是 <Katex tex="f\ge0" /> 的一侧（换边可改为 <Katex tex="f\le0" />）；模式二把四条约束逐条开关，绿色可行域被一条条边界线切小。看点：同侧的点代入同号，跨过边界才变号。</div>
+      <div class="cap">图 线1 · <b>半平面与可行域</b>：模式一里拖动 P 点跨越金色边界线，读数 <Katex tex="f=Ax+By+C" /> 的符号当场翻转，蓝区始终是 <Katex tex="f\ge0" /> 的一侧（换边可改为 <Katex tex="f\le0" />）；模式二把四条约束逐条开关，绿色可行域被一条条边界线切小。看点：同侧的点代入同号，跨过边界才变号。</div>
     </div>
 
     <h3 class="sec" id="l1-half">半平面：代点定号</h3>

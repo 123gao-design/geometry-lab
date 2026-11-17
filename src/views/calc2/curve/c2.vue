@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createLineInt2" />
-      <div class="cap">图 线2 · <b>第二类曲线积分机</b>：向量场 <Katex tex="F=(0,x)" />（深蓝箭头，方向竖直向上、大小随横坐标变大），金色点是质点 <Katex tex="P" />，绿箭是路径的切向，橙箭是场力。三条路径：① 上半圆 <Katex tex="A\to B" />，功 <Katex tex="\frac{\pi R^2}{2}" />；② 沿 <Katex tex="x" /> 轴的直线段，功为 0；③ 整圆回到 <Katex tex="A" />，功 <Katex tex="\pi R^2" />。看点：终点相同、路径不同，功就不同；绕一圈回来也不为零。</div>
+      <div class="cap">图 线2 · <b>第二类曲线积分</b>：向量场 <Katex tex="F=(0,x)" />（深蓝箭头，方向竖直向上、大小随横坐标变大），金色点是质点 <Katex tex="P" />，绿箭是路径的切向，橙箭是场力。三条路径：① 上半圆 <Katex tex="A\to B" />，功 <Katex tex="\frac{\pi R^2}{2}" />；② 沿 <Katex tex="x" /> 轴的直线段，功为 0；③ 整圆回到 <Katex tex="A" />，功 <Katex tex="\pi R^2" />。看点：终点相同、路径不同，功就不同；绕一圈回来也不为零。</div>
     </div>
 
     <h3 class="sec" id="c2-def">定义与方向</h3>

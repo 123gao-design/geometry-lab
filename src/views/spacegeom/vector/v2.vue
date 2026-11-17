@@ -20,7 +20,7 @@
     <p>画板里的两行读数是同一条公式的两面：左边按定义算 <Katex tex="|\vec a||\vec b|\cos\theta" />，右边按坐标算三个分量的乘积和，两数始终相等。把方位角 <Katex tex="\varphi" /> 拨动，向量绕着 <Katex tex="\vec a" /> 转一圈，<Katex tex="\vec a\cdot\vec b" /> 一动不动——数量积只与夹角有关，与向量绕轴转到哪里无关。</p>
     <div class="board-wrap">
       <BoardMount :factory="createSpaceDot" />
-      <div class="cap">图 向2 · <b>数量积与投影机</b>：金色 <Katex tex="\vec a" /> 沿 <Katex tex="x" /> 轴，蓝色 <Katex tex="\vec b" /> 由夹角 <Katex tex="\theta" /> 与方位 <Katex tex="\varphi" /> 两个滑块定位，橙色弧标夹角，紫色段是 <Katex tex="\vec b" /> 在 <Katex tex="\vec a" /> 方向上的投影，垂足处画直角。徽章读数量积、余弦与投影长度。看点：<Katex tex="\theta" /> 推到 <Katex tex="90^\circ" /> 时投影缩成一点、数量积归零；超过 <Katex tex="90^\circ" /> 后紫色段跑到原点另一侧，数量积变负；拨动 <Katex tex="\varphi" />，蓝色向量绕轴转了一圈，三个读数都不动。</div>
+      <div class="cap">图 向2 · <b>数量积与投影</b>：金色 <Katex tex="\vec a" /> 沿 <Katex tex="x" /> 轴，蓝色 <Katex tex="\vec b" /> 由夹角 <Katex tex="\theta" /> 与方位 <Katex tex="\varphi" /> 两个滑块定位，橙色弧标夹角，紫色段是 <Katex tex="\vec b" /> 在 <Katex tex="\vec a" /> 方向上的投影，垂足处画直角。徽章读数量积、余弦与投影长度。看点：<Katex tex="\theta" /> 推到 <Katex tex="90^\circ" /> 时投影缩成一点、数量积归零；超过 <Katex tex="90^\circ" /> 后紫色段跑到原点另一侧，数量积变负；拨动 <Katex tex="\varphi" />，蓝色向量绕轴转了一圈，三个读数都不动。</div>
     </div>
 
     <h3 class="sec" id="v2-angle">夹角与垂直</h3>

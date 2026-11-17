@@ -7,7 +7,7 @@
     <h3 class="sec" id="p5-lab">蒙日圆机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createMonge" />
-      <div class="cap">图 P5 · <b>蒙日圆机</b>：拖 M 任意走 —— 两条切线由极线（切点弦）现场求出。把 M 拖到金色圆上：两切线恰好成直角，右角标记现身，<strong>两块读数同时变绿</strong>；按「巡游」让 M 贴圆走一整圈，垂直关系纹丝不动。</div>
+      <div class="cap">图 P5 · <b>蒙日圆</b>：拖 M 任意走 —— 两条切线由极线（切点弦）现场求出。把 M 拖到金色圆上：两切线恰好成直角，右角标记现身，<strong>两块读数同时变绿</strong>；按「巡游」让 M 贴圆走一整圈，垂直关系纹丝不动。</div>
     </div>
 
     <h3 class="sec" id="p5-der">推导：六行代数</h3>

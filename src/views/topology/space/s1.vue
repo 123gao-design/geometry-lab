@@ -13,7 +13,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createOpenSet" />
-      <div class="cap">图 拓1 · <b>开集与开球机</b>：圆盘 <Katex tex="A" /> 里拖着一点 <Katex tex="P" />，球半径由滑块控制。看点：① 球整颗落在 <Katex tex="A" /> 里时描边转黄，跨出边界就转粉，判读跟着翻；② 圆周边上那枚粉点说明边界点的处境——它的任何小球都会同时碰到 <Katex tex="A" /> 与外部；③ 把 <Katex tex="P" /> 一点点推向圆周，能塞进球里的最大半径越缩越小，但总还有正的一点余量，这就是「开」字的含义。</div>
+      <div class="cap">图 拓1 · <b>开集与开球</b>：圆盘 <Katex tex="A" /> 里拖着一点 <Katex tex="P" />，球半径由滑块控制。看点：① 球整颗落在 <Katex tex="A" /> 里时描边转黄，跨出边界就转粉，判读跟着翻；② 圆周边上那枚粉点说明边界点的处境——它的任何小球都会同时碰到 <Katex tex="A" /> 与外部；③ 把 <Katex tex="P" /> 一点点推向圆周，能塞进球里的最大半径越缩越小，但总还有正的一点余量，这就是「开」字的含义。</div>
     </div>
 
     <h3 class="sec" id="s1-axiom">三条公理</h3>

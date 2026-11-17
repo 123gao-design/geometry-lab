@@ -6,7 +6,7 @@
     <div class="note good" id="b3-idea">记 <Katex tex="f(x)=(1+x)^n" />，则 <Katex tex="f(1)=2^n" /> 是全部系数之和，<Katex tex="f(-1)=0" /> 是偶数项与奇数项系数之差；两式相加除以 2 得偶次项和，相减除以 2 得奇次项和。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCoefSumLab" />
-      <div class="cap">图 项3 · <b>赋值法与系数和机</b>：每一项系数画成一根柱，偶次项蓝色、奇次项金色，柱高按平方根压缩。看点：拖 <Katex tex="n" /> 看整行柱子的和翻倍，蓝金两半的高矮始终一样多；下方的两行读数正是 <Katex tex="x=1" /> 与 <Katex tex="x=-1" /> 两个赋值的结果。</div>
+      <div class="cap">图 项3 · <b>赋值法与系数和</b>：每一项系数画成一根柱，偶次项蓝色、奇次项金色，柱高按平方根压缩。看点：拖 <Katex tex="n" /> 看整行柱子的和翻倍，蓝金两半的高矮始终一样多；下方的两行读数正是 <Katex tex="x=1" /> 与 <Katex tex="x=-1" /> 两个赋值的结果。</div>
     </div>
 
     <h3 class="sec" id="b3-idea">赋值法的思路</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="x1-law"><strong>子集定义</strong>：<Katex tex="A\subseteq B\iff\forall x\,(x\in A\Rightarrow x\in B)" />。<strong>真子集</strong>：A⊆B 且 <Katex tex="B" /> 中至少有一个元素不在 A 里，记 <Katex tex="A\subsetneq B" />。<strong>外延性（相等）</strong>：<Katex tex="A=B\iff A\subseteq B\ \text{且}\ B\subseteq A" /> —— 两个集合元素完全相同就是同一个集合。<strong>空集</strong>：<Katex tex="\varnothing\subseteq A" /> 对任何 A 恒成立（反例元素根本找不到）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSub" />
-      <div class="cap">图 X1 · <b>子集演示台</b>：拖金圈 A 靠近、压上、越过蓝圈 B —— 元素点实时变色：全被 B 罩住是 A⊆B，元素跟出去一个就是反例；四个预设演足 ⊊、=、⊈、∅ 四种结局，A∖A 的「剩余」同步核验。</div>
+      <div class="cap">图 X1 · <b>子集</b>：拖金圈 A 靠近、压上、越过蓝圈 B —— 元素点实时变色：全被 B 罩住是 A⊆B，元素跟出去一个就是反例；四个预设演足 ⊊、=、⊈、∅ 四种结局，A∖A 的「剩余」同步核验。</div>
     </div>
 
     <h3 class="sec" id="x1-def">定义：一个蕴含式</h3>

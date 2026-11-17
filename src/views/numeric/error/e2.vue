@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createErrProp" />
-      <div class="cap">图 误2 · <b>误差传播机</b>：蓝带是输入 <Katex tex="x_0" /> 的误差范围，金色虚线是这一点的切线，右侧红条是被函数放大之后的输出范围。看点：换四个函数，同样的 <Katex tex="\Delta x" /> 换来的 <Katex tex="\Delta y" /> 差别很大；把 <Katex tex="x_0" /> 拖向 <Katex tex="x=1" /> 的右边，<Katex tex="x-1" /> 这一档的放大倍数会一路涨上去。</div>
+      <div class="cap">图 误2 · <b>误差的传播与条件数</b>：蓝带是输入 <Katex tex="x_0" /> 的误差范围，金色虚线是这一点的切线，右侧红条是被函数放大之后的输出范围。看点：换四个函数，同样的 <Katex tex="\Delta x" /> 换来的 <Katex tex="\Delta y" /> 差别很大；把 <Katex tex="x_0" /> 拖向 <Katex tex="x=1" /> 的右边，<Katex tex="x-1" /> 这一档的放大倍数会一路涨上去。</div>
     </div>
 
     <h3 class="sec" id="e2-prop">一步运算的误差</h3>

@@ -16,7 +16,7 @@
     <p>反过来也成立：看到方程里只有 <Katex tex="x^2+y^2" />、没有单独的 <Katex tex="x" /> 或 <Katex tex="y" />，就知道它绕 <Katex tex="z" /> 轴旋转而来，母线可以取成 <Katex tex="xOz" /> 平面内的那一段（令 <Katex tex="y=0" /> 反解）。</p>
     <div class="board-wrap">
       <BoardMount :factory="createRevsurf" />
-      <div class="cap">图 曲2 · <b>旋转曲面机</b>：金色母线画在 <Katex tex="xOz" /> 平面内，淡金色是它的另一侧，蓝色一圈圈纬圆铺出曲面，绿色纬圆随滑块上下移动，它的半径由母线在该高度处的横坐标读出。三档母线：① 抛物线 <Katex tex="z=kr^2" />，得旋转抛物面；② 直线 <Katex tex="z=mr" />，得圆锥面；③ 竖直线 <Katex tex="r=R" />，得圆柱面。看点：把抛物系数 <Katex tex="k" /> 调小，开口变宽、纬圆在相同高度处更大；第二档的纬圆半径随高度线性增大，正是「母线与轴夹角固定」的样子；第三档无论 <Katex tex="z" /> 取多少，纬圆半径都是同一个数。</div>
+      <div class="cap">图 曲2 · <b>旋转曲面</b>：金色母线画在 <Katex tex="xOz" /> 平面内，淡金色是它的另一侧，蓝色一圈圈纬圆铺出曲面，绿色纬圆随滑块上下移动，它的半径由母线在该高度处的横坐标读出。三档母线：① 抛物线 <Katex tex="z=kr^2" />，得旋转抛物面；② 直线 <Katex tex="z=mr" />，得圆锥面；③ 竖直线 <Katex tex="r=R" />，得圆柱面。看点：把抛物系数 <Katex tex="k" /> 调小，开口变宽、纬圆在相同高度处更大；第二档的纬圆半径随高度线性增大，正是「母线与轴夹角固定」的样子；第三档无论 <Katex tex="z" /> 取多少，纬圆半径都是同一个数。</div>
     </div>
 
     <h3 class="sec" id="s2-cases">三种母线与对应曲面</h3>

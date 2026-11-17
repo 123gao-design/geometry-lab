@@ -5,7 +5,7 @@
     <div class="note good" id="z1-def"><strong>正弦定理</strong>：在任意 △ABC 中，<Katex tex="\frac{a}{\sin\alpha}=\frac{b}{\sin\beta}=\frac{c}{\sin\gamma}=2R" />（R 为外接圆半径）。每条边与它对角的正弦之比都是同一笔常数 —— 边越大、对角越大，但「边 : 对角正弦」这个比值全员恒等。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 Z1 · <b>SSA 铰链机</b>：已知底边 c、角 α 与对边 a —— 以 B 为圆心、a 为半径画紫圆，看它与角 A 的另一条边交出几个点：交几点、三角形就有几解。金色虚线是 B 到射线的垂距 <Katex tex="h=c\sin\alpha" />，a 与它比大小即定无解/一解/两解；右栏把 <Katex tex="a/\sin\alpha" />、<Katex tex="b/\sin\beta" />、<Katex tex="c/\sin\gamma" />、<Katex tex="2R" /> 画成对照表条 —— <strong>四条等高，就是正弦定理本身</strong>。</div>
+      <div class="cap">图 Z1 · <b>SSA 的解数</b>：已知底边 c、角 α 与对边 a —— 以 B 为圆心、a 为半径画紫圆，看它与角 A 的另一条边交出几个点：交几点、三角形就有几解。金色虚线是 B 到射线的垂距 <Katex tex="h=c\sin\alpha" />，a 与它比大小即定无解/一解/两解；右栏把 <Katex tex="a/\sin\alpha" />、<Katex tex="b/\sin\beta" />、<Katex tex="c/\sin\gamma" />、<Katex tex="2R" /> 画成对照表条 —— <strong>四条等高，就是正弦定理本身</strong>。</div>
     </div>
 
     <h3 class="sec" id="z1-law">定理与外接圆直径</h3>

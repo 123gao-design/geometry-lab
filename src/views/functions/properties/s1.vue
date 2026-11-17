@@ -5,7 +5,7 @@
     <div class="note good" id="s1-def"><strong>单调递增</strong>：设函数 f(x) 的定义域为 D，区间 <Katex tex="I\subseteq D" /> —— 若对任意 <Katex tex="x_1,x_2\in I" />，当 <Katex tex="x_1&lt;x_2" /> 时都有 <Katex tex="f(x_1)&lt;f(x_2)" />，则称 f(x) 在区间 I 上单调递增，I 叫单调递增区间。把不等号反过来即<strong>单调递减</strong>。两个关键词：<strong>区间</strong>（单调性是局部属性，离开区间没有意义）与<strong>任取</strong>（验证两个点不算数，必须对所有点成立）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createMonoRead" />
-      <div class="cap">图 S1 · <b>单调性阅读机</b>：两个把手沿曲线任取 <Katex tex="x_1" />、<Katex tex="x_2" /> —— 弦连两点、虚线引到 x 轴，徽章实时核验。① <Katex tex="x^2" /> 默认摆出 <Katex tex="x_1=-2" />、<Katex tex="x_2=2" />：等高！对称回折让"抽查"直接失效；② <Katex tex="x^3-3x" /> 增减交替，多点抽查才知道哪段单调；③ <Katex tex="1/x" /> 把两点拖到缺口两侧：样本支持"增"，判定却显示异常 —— 定义只对<strong>整个落在定义域内的区间</strong>成立。看点：判定徽章永远写着"抽查不是证明"。</div>
+      <div class="cap">图 S1 · <b>单调性的定义</b>：两个把手沿曲线任取 <Katex tex="x_1" />、<Katex tex="x_2" /> —— 弦连两点、虚线引到 x 轴，徽章实时核验。① <Katex tex="x^2" /> 默认摆出 <Katex tex="x_1=-2" />、<Katex tex="x_2=2" />：等高！对称回折让"抽查"直接失效；② <Katex tex="x^3-3x" /> 增减交替，多点抽查才知道哪段单调；③ <Katex tex="1/x" /> 把两点拖到缺口两侧：样本支持"增"，判定却显示异常 —— 定义只对<strong>整个落在定义域内的区间</strong>成立。看点：判定徽章永远写着"抽查不是证明"。</div>
     </div>
 
     <h3 class="sec" id="s1-proof">作差法证明模板</h3>

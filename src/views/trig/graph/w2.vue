@@ -5,7 +5,7 @@
     <div class="note good" id="w2-law"><strong>平移等价</strong>：<Katex tex="\cos x=\sin\Bigl(x+\tfrac{\pi}{2}\Bigr)" />；<strong>余弦函数</strong>：<Katex tex="y=\cos x" />，定义域 <Katex tex="\mathbb{R}" />，值域 <Katex tex="[-1,1]" />，周期 <Katex tex="T=2\pi" />；<strong>五点骨架</strong>：<Katex tex="(0,1),\ \Bigl(\tfrac{\pi}{2},0\Bigr),\ (\pi,-1),\ \Bigl(\tfrac{3\pi}{2},0\Bigr),\ (2\pi,1)" /> —— 峰、降、谷、升、峰；<strong>偶函数</strong>：<Katex tex="\cos(-x)=\cos x" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createWave" />
-      <div class="cap">图 W2 · <b>余弦平移等价机</b>：「五点法」模式亮出 cos 的五个金点；切「平移等价」—— 蓝色 sin 与橙色 cos 同屏，拖 <Katex tex="x_0"/>：蓝点 <Katex tex="(x_0+\pi/2,\ \sin(x_0+\pi/2))"/> 与橙点 <Katex tex="(x_0,\ \cos x_0)"/> <strong>恒等高</strong>，金色虚线就是「左移 <Katex tex="\pi/2"/>」的平移路径。</div>
+      <div class="cap">图 W2 · <b>sin 与 cos 的平移关系</b>：「五点法」模式亮出 cos 的五个金点；切「平移等价」—— 蓝色 sin 与橙色 cos 同屏，拖 <Katex tex="x_0"/>：蓝点 <Katex tex="(x_0+\pi/2,\ \sin(x_0+\pi/2))"/> 与橙点 <Katex tex="(x_0,\ \cos x_0)"/> <strong>恒等高</strong>，金色虚线就是「左移 <Katex tex="\pi/2"/>」的平移路径。</div>
     </div>
 
     <h3 class="sec" id="w2-shift">平移等价：sin 左移 π/2</h3>

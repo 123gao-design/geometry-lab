@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createNormal" />
-      <div class="cap">图 群3 · <b>正规判定机</b>：<Katex tex="S_3" /> 取两个子群，左右两列逐行对照陪集。看点：① <Katex tex="H=\langle(12)\rangle" /> 时两列对不上，红叉标出；② 换成 <Katex tex="A_3" />，两列逐行相等，判为正规；③ 正规时商群阶为 2，非正规时商集没有群结构。</div>
+      <div class="cap">图 群3 · <b>正规子群的判定</b>：<Katex tex="S_3" /> 取两个子群，左右两列逐行对照陪集。看点：① <Katex tex="H=\langle(12)\rangle" /> 时两列对不上，红叉标出；② 换成 <Katex tex="A_3" />，两列逐行相等，判为正规；③ 正规时商群阶为 2，非正规时商集没有群结构。</div>
     </div>
 
     <h3 class="sec" id="g3-norm">正规的三种写法</h3>

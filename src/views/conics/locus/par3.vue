@@ -7,7 +7,7 @@
     <h3 class="sec" id="p3-lab">焦点弦实验机</h3>
     <div class="board-wrap">
       <BoardMount :factory="createFocalChord" />
-      <div class="cap">图 P3 · <b>焦点弦实验机</b>：金色光脉冲沿弦 P₁P₂ 穿过焦点；以焦点弦为直径的圆与准线的<strong>关系只由 e 决定</strong> —— 拖 e 滑块连续变形，看圆从与准线相离，跨过恰好相切，变成与准线相交。</div>
+      <div class="cap">图 P3 · <b>焦点弦</b>：金色光脉冲沿弦 P₁P₂ 穿过焦点；以焦点弦为直径的圆与准线的<strong>关系只由 e 决定</strong> —— 拖 e 滑块连续变形，看圆从与准线相离，跨过恰好相切，变成与准线相交。</div>
     </div>
 
     <h3 class="sec" id="p3-der">弦长公式：极坐标两行</h3>

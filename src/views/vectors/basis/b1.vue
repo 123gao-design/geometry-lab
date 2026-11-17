@@ -6,7 +6,7 @@
     <div class="note good" id="b1-def">如果 <Katex tex="\vec e_1" />、<Katex tex="\vec e_2" /> 是同一平面内两个<strong>不共线</strong>的向量，那么对这一平面内的任一向量 <Katex tex="\vec a" />，存在唯一的一对实数 <Katex tex="\lambda_1,\lambda_2" />，使 <Katex tex="\vec a=\lambda_1\vec e_1+\lambda_2\vec e_2" />。不共线的两个向量 <Katex tex="\vec e_1,\vec e_2" /> 叫做这一平面内所有向量的<strong>一个基底</strong>。</div>
     <div class="board-wrap">
       <BoardMount :factory="createBasisVec" />
-      <div class="cap">图 基1 · <b>平面向量基本定理机</b>：蓝色、橙色两支是不共线的基底，绿色是目标向量 <Katex tex="\vec p" />。看点：金色折线从原点沿 <Katex tex="\vec e_1" /> 走 <Katex tex="x" /> 步、再沿 <Katex tex="\vec e_2" /> 走 <Katex tex="y" /> 步到达 <Katex tex="\vec p" /> 的终点，系数徽章读的正是这对步数；切到 ③，两支基向量落到同一条直线上，系数就解不出来了。</div>
+      <div class="cap">图 基1 · <b>平面向量基本定理</b>：蓝色、橙色两支是不共线的基底，绿色是目标向量 <Katex tex="\vec p" />。看点：金色折线从原点沿 <Katex tex="\vec e_1" /> 走 <Katex tex="x" /> 步、再沿 <Katex tex="\vec e_2" /> 走 <Katex tex="y" /> 步到达 <Katex tex="\vec p" /> 的终点，系数徽章读的正是这对步数；切到 ③，两支基向量落到同一条直线上，系数就解不出来了。</div>
     </div>
 
     <h3 class="sec" id="b1-th">定理与基底</h3>

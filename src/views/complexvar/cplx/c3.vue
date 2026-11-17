@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createElemCplx" />
-      <div class="cap">图 复3 · <b>初等复变函数机</b>：左图 <Katex tex="z" /> 平面，右图 <Katex tex="w" /> 平面。看点：① 横带 <Katex tex="-\pi<y<\pi" /> 被 <Katex tex="e^z" /> 卷成整个去掉了负实轴与原点的地方——竖线 <Katex tex="x=c" /> 映成半径 <Katex tex="e^c" /> 的圆（蓝），横线 <Katex tex="y=c" /> 映成张角 <Katex tex="c" /> 的射线（橙）；② 带的上、下边缘都映到负实轴上，所以带的宽度 <Katex tex="2\pi" /> 就是周期；③ 切到对数，紫虚线是分支的分界，换 <Katex tex="k" /> 整条带沿虚轴挪 <Katex tex="2\pi" />，同一个 <Katex tex="z" /> 因此有无穷多个对数。</div>
+      <div class="cap">图 复3 · <b>初等复变函数</b>：左图 <Katex tex="z" /> 平面，右图 <Katex tex="w" /> 平面。看点：① 横带 <Katex tex="-\pi<y<\pi" /> 被 <Katex tex="e^z" /> 卷成整个去掉了负实轴与原点的地方——竖线 <Katex tex="x=c" /> 映成半径 <Katex tex="e^c" /> 的圆（蓝），横线 <Katex tex="y=c" /> 映成张角 <Katex tex="c" /> 的射线（橙）；② 带的上、下边缘都映到负实轴上，所以带的宽度 <Katex tex="2\pi" /> 就是周期；③ 切到对数，紫虚线是分支的分界，换 <Katex tex="k" /> 整条带沿虚轴挪 <Katex tex="2\pi" />，同一个 <Katex tex="z" /> 因此有无穷多个对数。</div>
     </div>
 
     <h3 class="sec" id="c3-exp">指数函数</h3>

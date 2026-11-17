@@ -5,7 +5,7 @@
     <div class="note good" id="v4-law"><strong>凹凸性与切线放缩（区间版）</strong>：若 f 在区间 I 上满足 <Katex tex="f''\ge 0"/>（下凸），则对 I 内<strong>任意</strong> x、<Katex tex="x_0"/>：<Katex tex="f(x)\ \ge\ f(x_0)+f'(x_0)(x-x_0)" /> —— 曲线不低于 I 内的任何一条切线；<Katex tex="f''\le 0"/>（上凸）时不等号反向。经典特例（全程凸，故全程成立）：<Katex tex="e^x\ge x+1" />（<Katex tex="x_0=0"/>）、<Katex tex="\ln x\le x-1" />（<Katex tex="x_0=1"/>）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createGate" />
-      <div class="cap">图 V4 · <b>切线不等式机</b>：拖切点，「二阶判读」徽章直接读数 —— <Katex tex="f''>0"/> 下凸、<Katex tex="f''<0"/> 上凸、<Katex tex="f''=0"/> 拐点候选；间隙着色把「曲线−切线」画成颜色：绿=曲线高、红=切线高。<Katex tex="e^x"/> 全程绿、<Katex tex="\ln x"/> 全程红；<Katex tex="x^3"/> 的切线只在切点所在的凹（或凸）半边成立 —— 出了凹凸区间，间隙着色换色，放缩失效。</div>
+      <div class="cap">图 V4 · <b>切线与曲线的位置关系</b>：拖切点，「二阶判读」徽章直接读数 —— <Katex tex="f''>0"/> 下凸、<Katex tex="f''<0"/> 上凸、<Katex tex="f''=0"/> 拐点候选；间隙着色把「曲线−切线」画成颜色：绿=曲线高、红=切线高。<Katex tex="e^x"/> 全程绿、<Katex tex="\ln x"/> 全程红；<Katex tex="x^3"/> 的切线只在切点所在的凹（或凸）半边成立 —— 出了凹凸区间，间隙着色换色，放缩失效。</div>
     </div>
 
     <h3 class="sec" id="v4-second">二阶导数：斜率怎么转</h3>

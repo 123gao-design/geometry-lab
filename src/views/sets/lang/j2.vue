@@ -5,7 +5,7 @@
     <div class="note good" id="j2-law"><strong>描述法格式</strong>：<Katex tex="A=\{x\in U\mid P(x)\}" /> —— 三部件：<strong>代表元</strong> x（在讨论什么对象）、<strong>前置集合</strong> <Katex tex="x\in U" />（从哪个大集合里选）、<strong>条件</strong> P(x)（还须满足什么）。不写前置时默认 <Katex tex="x\in\mathbb{R}" />。<strong>列举法</strong> <Katex tex="\{-2,-1,0,1,2\}" /> 只适合有限集；无限集用描述法或数轴图示。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRep" />
-      <div class="cap">图 J2 · <b>表示互译机</b>：四个预设集合各自上轴，拖金探针 x —— 先过「前置集合」这关、再验条件；吸附网格让探针精确踩上端点 3 与 −1，开闭直接核验。列举法、描述法、数轴图示三种语言实时互译。</div>
+      <div class="cap">图 J2 · <b>列举法、描述法与数轴图示</b>：四个预设集合各自上轴，拖金探针 x —— 先过「前置集合」这关、再验条件；吸附网格让探针精确踩上端点 3 与 −1，开闭直接核验。列举法、描述法、数轴图示三种语言实时互译。</div>
     </div>
     <div class="board-wrap">
       <BoardMount id="ps" :factory="createPs" />

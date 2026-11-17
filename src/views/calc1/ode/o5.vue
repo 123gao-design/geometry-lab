@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createCharroots" />
-      <div class="cap">图 方5 · <b>特征根机</b>：固定初始条件 <Katex tex="y(0)=1" />、<Katex tex="y'(0)=0" />，只拖 <Katex tex="p" /> 与 <Katex tex="q" />。右栏读特征根与判别式。<b>看点</b>：判别式由正变负那一刻，单调衰减的图像突然开始上下振荡——两种形状在同一条抛物线的临界处相接。</div>
+      <div class="cap">图 方5 · <b>二阶常系数线性方程的特征根</b>：固定初始条件 <Katex tex="y(0)=1" />、<Katex tex="y'(0)=0" />，只拖 <Katex tex="p" /> 与 <Katex tex="q" />。右栏读特征根与判别式。<b>看点</b>：判别式由正变负那一刻，单调衰减的图像突然开始上下振荡——两种形状在同一条抛物线的临界处相接。</div>
     </div>
 
     <h3 class="sec" id="o5-distinct">两个不等实根：两个指数解相加</h3>

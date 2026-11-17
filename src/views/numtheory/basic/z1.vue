@@ -9,7 +9,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createDivMod" />
-      <div class="cap">图 整1 · <b>整除与带余除法机</b>：拖动两个滑块改变被除数与除数。看点：① 蓝块是排满的每一组 <Katex tex="m" />，橙块是最后一组不足 <Katex tex="m" /> 的部分，它的长度就是余数；② 数轴上的绿色竖线是 <Katex tex="m" /> 的倍数，<Katex tex="a" /> 永远落在相邻两条绿线之间；③ 把 <Katex tex="m" /> 调大，商变小而余数的范围 <Katex tex="[0,m)" /> 跟着变宽。</div>
+      <div class="cap">图 整1 · <b>整除与带余除法</b>：拖动两个滑块改变被除数与除数。看点：① 蓝块是排满的每一组 <Katex tex="m" />，橙块是最后一组不足 <Katex tex="m" /> 的部分，它的长度就是余数；② 数轴上的绿色竖线是 <Katex tex="m" /> 的倍数，<Katex tex="a" /> 永远落在相邻两条绿线之间；③ 把 <Katex tex="m" /> 调大，商变小而余数的范围 <Katex tex="[0,m)" /> 跟着变宽。</div>
     </div>
 
     <h3 class="sec" id="z1-div">带余除法</h3>

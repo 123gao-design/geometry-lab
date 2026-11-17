@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createProjMap" />
-      <div class="cap">图 射2 · <b>透视机</b>：变换 <Katex tex="(x,y)\mapsto(x,y)/(1+kx)" /> 把网格整体压向灭点。看点：① 网格线弯不了，仍是直线；② 原来平行的横线，变换后一起挤向红点 <Katex tex="V" />；③ 正方形变成一般四边形，边长与角度都变了，共线与交比没变。</div>
+      <div class="cap">图 射2 · <b>射影变换与灭点</b>：变换 <Katex tex="(x,y)\mapsto(x,y)/(1+kx)" /> 把网格整体压向灭点。看点：① 网格线弯不了，仍是直线；② 原来平行的横线，变换后一起挤向红点 <Katex tex="V" />；③ 正方形变成一般四边形，边长与角度都变了，共线与交比没变。</div>
     </div>
 
     <h3 class="sec" id="p2-mat">矩阵与比例</h3>

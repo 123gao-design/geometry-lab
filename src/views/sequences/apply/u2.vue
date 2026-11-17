@@ -6,7 +6,7 @@
     <div class="note good">数列 <Katex tex="a_n=f(n)" /> 的单调性：<Katex tex="a_{n+1}-a_n>0" /> 时递增，<Katex tex="<0" /> 时递减。各项为正时也可作比：<Katex tex="\dfrac{a_{n+1}}{a_n}>1" /> 递增，<Katex tex="<1" /> 递减。比值由大于 1 变为小于 1 的位置，就是最大项所在。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSeqIneq" />
-      <div class="cap">图 用2 · <b>数列最值机</b>：上栏是 <Katex tex="a_n=\dfrac{n^2}{c^{\,n}}" /> 的各项，金色柱是最大项；下栏是相邻项之比，绿点高于 <Katex tex="y=1" />、红点低于它。比值穿过 1 的位置与最大项的位置一一对应。拖动 c，看最大项向左或向右移动。</div>
+      <div class="cap">图 用2 · <b>数列的最大项</b>：上栏是 <Katex tex="a_n=\dfrac{n^2}{c^{\,n}}" /> 的各项，金色柱是最大项；下栏是相邻项之比，绿点高于 <Katex tex="y=1" />、红点低于它。比值穿过 1 的位置与最大项的位置一一对应。拖动 c，看最大项向左或向右移动。</div>
     </div>
 
     <h3 class="sec" id="u2-func">数列是函数</h3>

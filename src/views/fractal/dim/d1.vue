@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createSelfSim" />
-      <div class="cap">图 维1 · <b>自相似机</b>：每边分 <Katex tex="k" /> 份，把整体换成一堆缩小的自身。看点：① 线段分 <Katex tex="k" /> 份得 <Katex tex="N=k" /> 个小段，正方形分 <Katex tex="k" /> 份得 <Katex tex="N=k^2" /> 个小方块；② 层数加一，每个副本里又长出一模一样的结构；③ 橙色那格始终是整体的缩印——形状没变，只差一个比例。</div>
+      <div class="cap">图 维1 · <b>自相似集</b>：每边分 <Katex tex="k" /> 份，把整体换成一堆缩小的自身。看点：① 线段分 <Katex tex="k" /> 份得 <Katex tex="N=k" /> 个小段，正方形分 <Katex tex="k" /> 份得 <Katex tex="N=k^2" /> 个小方块；② 层数加一，每个副本里又长出一模一样的结构；③ 橙色那格始终是整体的缩印——形状没变，只差一个比例。</div>
     </div>
 
     <h3 class="sec" id="d1-def">定义与三个例子</h3>

@@ -6,7 +6,7 @@
     <div class="note good" id="b2-def">在直角坐标系中，以原点 <Katex tex="O" /> 为起点的向量 <Katex tex="\overrightarrow{OP}" />，其终点 <Katex tex="P" /> 的坐标 <Katex tex="(x,y)" /> 就叫做向量 <Katex tex="\overrightarrow{OP}" /> 的<strong>坐标</strong>，记作 <Katex tex="\overrightarrow{OP}=(x,y)" />。一般地，若 <Katex tex="A(x_1,y_1)" />、<Katex tex="B(x_2,y_2)" />，则 <Katex tex="\overrightarrow{AB}=(x_2-x_1,\ y_2-y_1)" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCoordVec" />
-      <div class="cap">图 基2 · <b>向量坐标机</b>：拖动 A、B 两点，蓝色是 <Katex tex="\overrightarrow{AB}" />；橙色虚线一支把 AB 整个平移到原点，两支箭头等长同向，坐标自然相同。看点：④ 把 A 拖到原点，坐标式里两个减法项都变成 0，读出的正是 B 的坐标；⑤ 把 A、B 合到一点，箭头缩成零向量，坐标与模都归零。</div>
+      <div class="cap">图 基2 · <b>向量的坐标</b>：拖动 A、B 两点，蓝色是 <Katex tex="\overrightarrow{AB}" />；橙色虚线一支把 AB 整个平移到原点，两支箭头等长同向，坐标自然相同。看点：④ 把 A 拖到原点，坐标式里两个减法项都变成 0，读出的正是 B 的坐标；⑤ 把 A、B 合到一点，箭头缩成零向量，坐标与模都归零。</div>
     </div>
 
     <h3 class="sec" id="b2-def">坐标的定义</h3>

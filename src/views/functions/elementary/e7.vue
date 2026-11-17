@@ -5,7 +5,7 @@
     <div class="note good" id="e7-shape"><strong>对勾函数</strong>：<Katex tex="f(x)=ax+\dfrac{b}{x}" />（a,b&gt;0），定义域 <Katex tex="x\ne 0" />，渐近线 x=0 与斜渐近线 y=ax。<strong>奇函数</strong>（S3）：左支 = 右支绕原点转半圈。右支在 <Katex tex="\left(0,\sqrt{\tfrac{b}{a}}\right]" /> 递减、<Katex tex="\left[\sqrt{\tfrac{b}{a}},+\infty\right)" /> 递增，最小值 <Katex tex="f\left(\sqrt{\tfrac{b}{a}}\right)=2\sqrt{ab}" /> —— 两段一支勾，形状像对勾。</div>
     <div class="board-wrap">
       <BoardMount :factory="createHook" />
-      <div class="cap">图 E7 · <b>对勾双证台</b>：<Katex tex="f=ax+\frac{b}{x}" /> 单栏全景（导数不另占一栏，双证全在徽章上核验）—— 金点 = 顶点 <Katex tex="\left(\sqrt{b/a},\ 2\sqrt{ab}\right)" />，导数证的驻点与均值证的等号条件落到同一个点。橙线 <Katex tex="y=c" /> 拖动判根（<Katex tex="\Delta=c^2-4ab" />）：两根、相切（切点=金点）、无解三态。</div>
+      <div class="cap">图 E7 · <b>对勾函数的最值</b>：<Katex tex="f=ax+\frac{b}{x}" /> 单栏全景（导数不另占一栏，双证全在徽章上核验）—— 金点 = 顶点 <Katex tex="\left(\sqrt{b/a},\ 2\sqrt{ab}\right)" />，导数证的驻点与均值证的等号条件落到同一个点。橙线 <Katex tex="y=c" /> 拖动判根（<Katex tex="\Delta=c^2-4ab" />）：两根、相切（切点=金点）、无解三态。</div>
     </div>
 
     <h3 class="sec" id="e7-proof">一形两证：导数 × 均值</h3>

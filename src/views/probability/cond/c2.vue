@@ -6,7 +6,7 @@
     <div class="note good" id="c2-part">若事件 <Katex tex="A_1,A_2,\dots,A_n" /> 两两互斥且 <Katex tex="A_1\cup A_2\cup\cdots\cup A_n=\Omega" />，则称它们构成一个<b>完备事件组</b>（划分）。任何事件 <Katex tex="B" /> 都被这组事件切成互斥的几块：<Katex tex="B=(B\cap A_1)\cup(B\cap A_2)\cup\cdots\cup(B\cap A_n)" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createBayes" />
-      <div class="cap">图 独2 · <b>全概率与贝叶斯机</b>：左枝是来源 <Katex tex="A_1" />、右枝是 <Katex tex="A_2" />，每个来源各分成「出现 <Katex tex="B" />」与「不出现」两支，线宽随概率变化。看点：三条路径上的乘积相加就是 <Katex tex="P(B)" />；右侧两根竖条对比 <Katex tex="A_1" /> 的先验与后验，滑动条件概率，后验会被推向条件更有利的那一支。</div>
+      <div class="cap">图 独2 · <b>全概率公式与贝叶斯公式</b>：左枝是来源 <Katex tex="A_1" />、右枝是 <Katex tex="A_2" />，每个来源各分成「出现 <Katex tex="B" />」与「不出现」两支，线宽随概率变化。看点：三条路径上的乘积相加就是 <Katex tex="P(B)" />；右侧两根竖条对比 <Katex tex="A_1" /> 的先验与后验，滑动条件概率，后验会被推向条件更有利的那一支。</div>
     </div>
 
     <h3 class="sec" id="c2-part">完备事件组</h3>

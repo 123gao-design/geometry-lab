@@ -10,7 +10,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createTaylorApprox" />
-      <div class="cap">图 逼1 · <b>泰勒逼近机</b>：上板蓝线是 <Katex tex="\cos x" />，金线是 <Katex tex="n" /> 阶麦克劳林多项式；下板红线是两者的差，紫色虚线是余项上界 <Katex tex="|x|^{n+1}/(n+1)!" />。看点：把 <Katex tex="n" /> 从 0 拖到 10，上板的贴合区间以 0 为中心向外扩张，下板的红线始终被紫线压住；红点标在 <Katex tex="x=2" /> 处，右栏的四个读数跟着变。</div>
+      <div class="cap">图 逼1 · <b>泰勒多项式与余项界</b>：上板蓝线是 <Katex tex="\cos x" />，金线是 <Katex tex="n" /> 阶麦克劳林多项式；下板红线是两者的差，紫色虚线是余项上界 <Katex tex="|x|^{n+1}/(n+1)!" />。看点：把 <Katex tex="n" /> 从 0 拖到 10，上板的贴合区间以 0 为中心向外扩张，下板的红线始终被紫线压住；红点标在 <Katex tex="x=2" /> 处，右栏的四个读数跟着变。</div>
     </div>
 
     <h3 class="sec" id="a1-build">怎样逐阶对齐</h3>

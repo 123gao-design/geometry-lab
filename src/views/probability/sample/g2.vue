@@ -6,11 +6,11 @@
     <div class="note good" id="g2-freq">在相同条件下重复试验，事件 <Katex tex="A" /> 出现的频率 <Katex tex="f_n(A)=\dfrac{m}{n}" /> 随次数增多总在一个常数附近摆动，摆动幅度越来越小，这个常数就是 <Katex tex="P(A)" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFreqStab" />
-      <div class="cap">图 概2a · <b>频率折线机</b>：一枚正面概率为 <Katex tex="p" /> 的硬币连投 <Katex tex="n" /> 次，折线是前 <Katex tex="k" /> 次中正面所占的比例，金色虚线是 <Katex tex="p" />。看点：次数少时折线大幅跳动，上到几百次后贴着虚线，偏差进入 2 倍标准差的范围；把 <Katex tex="n" /> 拉回几十次，折线立刻重新乱摆。上方一排小方块是最近若干次的结果，金色为正面。</div>
+      <div class="cap">图 概2a · <b>频率的稳定性</b>：一枚正面概率为 <Katex tex="p" /> 的硬币连投 <Katex tex="n" /> 次，折线是前 <Katex tex="k" /> 次中正面所占的比例，金色虚线是 <Katex tex="p" />。看点：次数少时折线大幅跳动，上到几百次后贴着虚线，偏差进入 2 倍标准差的范围；把 <Katex tex="n" /> 拉回几十次，折线立刻重新乱摆。上方一排小方块是最近若干次的结果，金色为正面。</div>
     </div>
     <div class="board-wrap">
       <BoardMount :factory="createGeoProb" />
-      <div class="cap">图 概2b · <b>几何概型机</b>：① 档在线段 <Katex tex="[0,6]" /> 上取点，拖动两端移动金色区间，概率就是长度之比，下方一行散点是同一批随机点；② 档在正方形里撒点，拖动半径改圆的大小，概率由面积之比给出。两档的频率都只是把比值量出来，点撒得越多越贴近。</div>
+      <div class="cap">图 概2b · <b>几何概型</b>：① 档在线段 <Katex tex="[0,6]" /> 上取点，拖动两端移动金色区间，概率就是长度之比，下方一行散点是同一批随机点；② 档在正方形里撒点，拖动半径改圆的大小，概率由面积之比给出。两档的频率都只是把比值量出来，点撒得越多越贴近。</div>
     </div>
 
     <h3 class="sec" id="g2-freq">频率的稳定性</h3>

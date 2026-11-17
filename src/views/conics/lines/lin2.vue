@@ -7,7 +7,7 @@
     <h3 class="sec" id="l2-lab">弦长机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createChordLen" />
-      <div class="cap">图 L2 · <b>弦长机</b>：拖直线扫过椭圆，弦 AB、中点 M 实时读数。读数区把两套弦长公式并排亮出：<strong>实测弦长 <Katex tex="=\tfrac{\sqrt{\Delta}}{|A|}" />（沿线参数）<Katex tex="=\sqrt{1+k^2}\cdot|x_1-x_2|" /></strong>，中点读数则实时验证 <strong><Katex tex="k_{\text{chord}}\cdot k_{OM}=-\tfrac{b^2}{a^2}" /></strong>（A2 的点差法在此 live）。</div>
+      <div class="cap">图 L2 · <b>弦长公式</b>：拖直线扫过椭圆，弦 AB、中点 M 实时读数。读数区把两套弦长公式并排亮出：<strong>实测弦长 <Katex tex="=\tfrac{\sqrt{\Delta}}{|A|}" />（沿线参数）<Katex tex="=\sqrt{1+k^2}\cdot|x_1-x_2|" /></strong>，中点读数则实时验证 <strong><Katex tex="k_{\text{chord}}\cdot k_{OM}=-\tfrac{b^2}{a^2}" /></strong>（A2 的点差法在此 live）。</div>
     </div>
 
     <h3 class="sec" id="l2-der">推导：韦达四件套与弦长</h3>

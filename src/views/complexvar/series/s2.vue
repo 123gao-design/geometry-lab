@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createLaurent" />
-      <div class="cap">图 级2 · <b>洛朗级数与奇点机</b>：左图金色环带是能展开的区域，红点是奇点，点 <Katex tex="z" /> 可拖；右图是洛朗系数 <Katex tex="a_n" /> 的条形图（纵轴取对数刻度），金色条是负幂项、青色条是非负幂项。看点：① <Katex tex="\dfrac1{z(1-z)}" /> 只有 <Katex tex="a_{-1}=1" /> 一根金色条，一阶极点；② <Katex tex="e^{1/z}" /> 的金色条一直排下去不归零，本性奇点；③ <Katex tex="\dfrac{\sin z}{z}" /> 一根金色条也没有，奇点可去。</div>
+      <div class="cap">图 级2 · <b>洛朗级数与孤立奇点</b>：左图金色环带是能展开的区域，红点是奇点，点 <Katex tex="z" /> 可拖；右图是洛朗系数 <Katex tex="a_n" /> 的条形图（纵轴取对数刻度），金色条是负幂项、青色条是非负幂项。看点：① <Katex tex="\dfrac1{z(1-z)}" /> 只有 <Katex tex="a_{-1}=1" /> 一根金色条，一阶极点；② <Katex tex="e^{1/z}" /> 的金色条一直排下去不归零，本性奇点；③ <Katex tex="\dfrac{\sin z}{z}" /> 一根金色条也没有，奇点可去。</div>
     </div>
 
     <h3 class="sec" id="s2-lau">环域上的洛朗级数</h3>

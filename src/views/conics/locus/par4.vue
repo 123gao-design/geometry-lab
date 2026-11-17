@@ -7,7 +7,7 @@
     <h3 class="sec" id="p4-lab">极坐标机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createPolarCon" />
-      <div class="cap">图 P4 · <b>极坐标机</b>：拖 θ 看统一定义重现 —— <strong>|PF| 与 P 到准线的垂线段实时读数，比值固定为 e</strong>。滑 e 穿过 1：椭圆 → 抛物线 → 双曲线连续变形（D4 的扫略机换一种坐标重新呈现），中心从极点右侧滑向无穷、再从左侧回来。绿色对径点 Q 与 P 构成焦点弦，右下角倒数和恒为 <Katex tex="\tfrac{2}{ed}" />。</div>
+      <div class="cap">图 P4 · <b>圆锥曲线的极坐标方程</b>：拖 θ 看统一定义重现 —— <strong>|PF| 与 P 到准线的垂线段实时读数，比值固定为 e</strong>。滑 e 穿过 1：椭圆 → 抛物线 → 双曲线连续变形（D4 的变化过程换一种坐标重新呈现），中心从极点右侧滑向无穷、再从左侧回来。绿色对径点 Q 与 P 构成焦点弦，右下角倒数和恒为 <Katex tex="\tfrac{2}{ed}" />。</div>
     </div>
 
     <h3 class="sec" id="p4-der">推导：统一定义的直译</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="c3-dom"><strong>定义域</strong>：使解析式有意义的自变量取值全体。无实际背景时按"自然限制条件"确定：<strong>分母不为零</strong>、<strong>偶次根号下 <Katex tex="\ge 0" /></strong>、<strong>对数真数 <Katex tex="&gt; 0" /></strong>（底数 <Katex tex="&gt; 0" /> 且 <Katex tex="\ne 1" />）；有实际背景的（重量、人数、时间）还要依题意确定。<strong>值域</strong> <span class="term">(range)</span>：全体函数值构成的集合 —— 它由定义域与法则共同决定，是全部函数值的集合。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRangeSweep" />
-      <div class="cap">图 C3 · <b>值域扫描机</b>：四个预设各带一种定义域限制 —— ① 配方法型、② 根号限定下界、③ 观察法的渐近缺口、④ 分母挖点。绿色带画在 x 轴上是定义域；拖"扫描 x"（或按 ▶ 自动扫描），扫描点把 f(x) 沿虚线投影到 y 轴，刷出金色的"已取到的值"。看点：③ 的金带始终刷不到 0 —— 那个下界 0 是<strong>算出来</strong>的（分母 ≥ 1 ⟹ 0 &lt; y ≤ 1），不是扫出来的；④ 越过 x=1 时扫描点从 −∞ 侧跳到 +∞ 侧，0 恰是整个值域唯一的缺口。</div>
+      <div class="cap">图 C3 · <b>求函数的值域</b>：四个预设各带一种定义域限制 —— ① 配方法型、② 根号限定下界、③ 观察法的渐近缺口、④ 分母挖点。绿色带画在 x 轴上是定义域；拖"扫描 x"（或按 ▶ 自动扫描），扫描点把 f(x) 沿虚线投影到 y 轴，刷出金色的"已取到的值"。看点：③ 的金带始终刷不到 0 —— 那个下界 0 是<strong>算出来</strong>的（分母 ≥ 1 ⟹ 0 &lt; y ≤ 1），不是扫出来的；④ 越过 x=1 时扫描点从 −∞ 侧跳到 +∞ 侧，0 恰是整个值域唯一的缺口。</div>
     </div>
 
     <h3 class="sec" id="c3-ex">多重限制：解不等式组</h3>

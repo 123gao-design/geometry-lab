@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createMapW" />
-      <div class="cap">图 复2 · <b>复变函数与映射机</b>：左图 <Katex tex="z" /> 平面上铺着方格网，右图是同一张网在 <Katex tex="w=f(z)" /> 下的像，竖线族蓝、横线族绿。看点：① <Katex tex="w=iz+1" /> 把方格整体转 <Katex tex="90^\circ" /> 再平移，格子还是方的；② <Katex tex="w=z^2" /> 把直线族弯成抛物线，第一象限被折进上半平面；③ <Katex tex="w=1/z" /> 把直线族卷成过原点的圆族，离原点越近的格子翻得越大。拖动左图的点，右图的像同步走。</div>
+      <div class="cap">图 复2 · <b>复变函数与映射</b>：左图 <Katex tex="z" /> 平面上铺着方格网，右图是同一张网在 <Katex tex="w=f(z)" /> 下的像，竖线族蓝、横线族绿。看点：① <Katex tex="w=iz+1" /> 把方格整体转 <Katex tex="90^\circ" /> 再平移，格子还是方的；② <Katex tex="w=z^2" /> 把直线族弯成抛物线，第一象限被折进上半平面；③ <Katex tex="w=1/z" /> 把直线族卷成过原点的圆族，离原点越近的格子翻得越大。拖动左图的点，右图的像同步走。</div>
     </div>
 
     <h3 class="sec" id="c2-map">把函数看成搬家</h3>

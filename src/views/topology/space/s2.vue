@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createBasis" />
-      <div class="cap">图 拓2 · <b>基与子空间机</b>：L 形开集 <Katex tex="A" /> 上铺满网格，每格中心放一颗基球。看点：① 半径调大时跨出边界的球变虚，蓝球只剩完全落在 <Katex tex="A" /> 内部的那批；② 每颗蓝球都落在 <Katex tex="A" /> 里，而 <Katex tex="A" /> 里每一点都落在某颗蓝球里，两层包含合起来说明 <Katex tex="A" /> 由基球并成；③ 切到子空间视角，球与直线 <Katex tex="Y" /> 的交被染成绿段，<Katex tex="Y" /> 里的开集正是这些交。</div>
+      <div class="cap">图 拓2 · <b>基与子空间</b>：L 形开集 <Katex tex="A" /> 上铺满网格，每格中心放一颗基球。看点：① 半径调大时跨出边界的球变虚，蓝球只剩完全落在 <Katex tex="A" /> 内部的那批；② 每颗蓝球都落在 <Katex tex="A" /> 里，而 <Katex tex="A" /> 里每一点都落在某颗蓝球里，两层包含合起来说明 <Katex tex="A" /> 由基球并成；③ 切到子空间视角，球与直线 <Katex tex="Y" /> 的交被染成绿段，<Katex tex="Y" /> 里的开集正是这些交。</div>
     </div>
 
     <h3 class="sec" id="s2-basis">基的定义与判据</h3>

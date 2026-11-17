@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createResidue" />
-      <div class="cap">图 级3 · <b>留数定理机</b>：左图的金色圆路可以拖圆心、拉半径，圈内的奇点亮红并标出留数，圈外的转灰；右栏是留数之和、<Katex tex="2\pi i" /> 乘留数和、沿圆路数值积分的结果与两者的差。看点：① <Katex tex="\dfrac1{z^2+1}" /> 两个留数一正一负，圈住两个就归零；② <Katex tex="\dfrac1{z(z-2)}" /> 只圈住 <Katex tex="z=0" /> 时读 <Katex tex="-\pi i" />，把半径拉过 <Katex tex="2" /> 又归零；③ <Katex tex="\dfrac{z}{z^2+1}" /> 两个留数同为 <Katex tex="\tfrac12" />，圈住两个正好是 <Katex tex="2\pi i" />。</div>
+      <div class="cap">图 级3 · <b>留数定理</b>：左图的金色圆路可以拖圆心、拉半径，圈内的奇点亮红并标出留数，圈外的转灰；右栏是留数之和、<Katex tex="2\pi i" /> 乘留数和、沿圆路数值积分的结果与两者的差。看点：① <Katex tex="\dfrac1{z^2+1}" /> 两个留数一正一负，圈住两个就归零；② <Katex tex="\dfrac1{z(z-2)}" /> 只圈住 <Katex tex="z=0" /> 时读 <Katex tex="-\pi i" />，把半径拉过 <Katex tex="2" /> 又归零；③ <Katex tex="\dfrac{z}{z^2+1}" /> 两个留数同为 <Katex tex="\tfrac12" />，圈住两个正好是 <Katex tex="2\pi i" />。</div>
     </div>
 
     <h3 class="sec" id="s3-def">留数与它的求法</h3>

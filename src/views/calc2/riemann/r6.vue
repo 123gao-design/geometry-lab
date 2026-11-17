@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createMassApp" />
-      <div class="cap">图 重6 · <b>重积分的应用机</b>：区域是半圆 <Katex tex="x^2+y^2\le R^2" />、<Katex tex="y\ge0" />（蓝色边界），面密度 <Katex tex="\rho=1+y" />，颜色越橙越重。红色 <Katex tex="C" /> 是质心，紫色虚线是对称轴。拖半径 <Katex tex="R" />，质量 <Katex tex="M" />、质心高度 <Katex tex="\bar y" /> 与 <Katex tex="I_O" /> 三个读数同时变化。看点：质心始终在对称轴上，但比均匀半圆的 <Katex tex="4R/(3\pi)" /> 高——上半部分更重，质心被抬起来了。</div>
+      <div class="cap">图 重6 · <b>重积分的应用</b>：区域是半圆 <Katex tex="x^2+y^2\le R^2" />、<Katex tex="y\ge0" />（蓝色边界），面密度 <Katex tex="\rho=1+y" />，颜色越橙越重。红色 <Katex tex="C" /> 是质心，紫色虚线是对称轴。拖半径 <Katex tex="R" />，质量 <Katex tex="M" />、质心高度 <Katex tex="\bar y" /> 与 <Katex tex="I_O" /> 三个读数同时变化。看点：质心始终在对称轴上，但比均匀半圆的 <Katex tex="4R/(3\pi)" /> 高——上半部分更重，质心被抬起来了。</div>
     </div>
 
     <h3 class="sec" id="r6-mass">质量与面积</h3>

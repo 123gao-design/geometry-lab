@@ -12,7 +12,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createChainComp" />
-      <div class="cap">图 微3a · <b>复合函数求导机</b>：左图是 <Katex tex="z=u^2v" /> 的等值线与路径 <Katex tex="u=t" />、<Katex tex="v=t^2" />，右图是 <Katex tex="z(t)=t^4" />。看点：无论 <Katex tex="t" /> 取何值，右图切线的斜率都等于左图绿色投影的长度；<Katex tex="t" /> 小的时候梯度与切向的夹角大，投影短，斜率也小。</div>
+      <div class="cap">图 微3a · <b>复合函数求导</b>：左图是 <Katex tex="z=u^2v" /> 的等值线与路径 <Katex tex="u=t" />、<Katex tex="v=t^2" />，右图是 <Katex tex="z(t)=t^4" />。看点：无论 <Katex tex="t" /> 取何值，右图切线的斜率都等于左图绿色投影的长度；<Katex tex="t" /> 小的时候梯度与切向的夹角大，投影短，斜率也小。</div>
     </div>
 
     <h3 class="sec" id="m3-one">一元中间变量</h3>
@@ -29,7 +29,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createImplicit" />
-      <div class="cap">图 微3b · <b>隐函数求导机</b>：金线是 <Katex tex="F(x,y)=0" /> 的曲线，蓝箭头是梯度 <Katex tex="(F_x,F_y)" />（曲线的法向），绿线是切线，斜率 <Katex tex="dy/dx=-F_x/F_y" />。看点：② 是过原点的圆，拖到 <Katex tex="x" /> 轴上时 <Katex tex="F_y=0" />，切线竖直，此时 <Katex tex="y" /> 在这一点的邻域内写不成 <Katex tex="x" /> 的函数。</div>
+      <div class="cap">图 微3b · <b>隐函数求导</b>：金线是 <Katex tex="F(x,y)=0" /> 的曲线，蓝箭头是梯度 <Katex tex="(F_x,F_y)" />（曲线的法向），绿线是切线，斜率 <Katex tex="dy/dx=-F_x/F_y" />。看点：② 是过原点的圆，拖到 <Katex tex="x" /> 轴上时 <Katex tex="F_y=0" />，切线竖直，此时 <Katex tex="y" /> 在这一点的邻域内写不成 <Katex tex="x" /> 的函数。</div>
     </div>
 
     <h3 class="sec" id="m3-impl">隐函数求导</h3>

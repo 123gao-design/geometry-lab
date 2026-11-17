@@ -5,7 +5,7 @@
     <div class="note good" id="i1-law"><strong>诱导公式（镜像五组）</strong>：<Katex tex="\sin(\alpha+2k\pi)=\sin\alpha" />；<Katex tex="\sin(-\alpha)=-\sin\alpha,\ \cos(-\alpha)=\cos\alpha" />；<Katex tex="\sin(\pi-\alpha)=\sin\alpha,\ \cos(\pi-\alpha)=-\cos\alpha" />；<Katex tex="\sin(\pi+\alpha)=-\sin\alpha,\ \cos(\pi+\alpha)=-\cos\alpha" />；<Katex tex="\sin(2\pi-\alpha)=-\sin\alpha,\ \cos(2\pi-\alpha)=\cos\alpha" />。<strong>口诀：函数名不变，符号看象限</strong>（新角 β 的象限）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createMirror" />
-      <div class="cap">图 I1 · <b>对称镜像机</b>：拖 P 换角、点 ①..⑤ 换镜子 —— 金色点 P′ 是 P 的像，两条坐标读数并排挂着；盯住「谁的坐标变了号」：五组公式不过是三面镜子加一整圈的记录。</div>
+      <div class="cap">图 I1 · <b>诱导公式与对称</b>：拖 P 换角、点 ①..⑤ 换镜子 —— 金色点 P′ 是 P 的像，两条坐标读数并排挂着；盯住「谁的坐标变了号」：五组公式不过是三面镜子加一整圈的记录。</div>
     </div>
 
     <h3 class="sec" id="i1-why">为什么要诱导</h3>

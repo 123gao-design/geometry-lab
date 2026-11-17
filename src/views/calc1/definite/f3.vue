@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createSymmetry" />
-      <div class="cap">图 定3 · <b>对称区间机</b>：<Katex tex="[-a,0]" /> 与 <Katex tex="[0,a]" /> 上各画一块有向面积。看点：奇函数的两块一正一负、大小相等，合计恒为零；偶函数的两块完全一样，合计是右半的两倍。四个预设覆盖 <Katex tex="\sin x" />、<Katex tex="x^3" />、<Katex tex="\cos x" />、<Katex tex="x^2" />。</div>
+      <div class="cap">图 定3 · <b>对称区间上的定积分</b>：<Katex tex="[-a,0]" /> 与 <Katex tex="[0,a]" /> 上各画一块有向面积。看点：奇函数的两块一正一负、大小相等，合计恒为零；偶函数的两块完全一样，合计是右半的两倍。四个预设覆盖 <Katex tex="\sin x" />、<Katex tex="x^3" />、<Katex tex="\cos x" />、<Katex tex="x^2" />。</div>
     </div>
 
     <h3 class="sec" id="f3-sub">换元换限</h3>

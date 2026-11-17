@@ -6,7 +6,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createMachine" />
-      <div class="cap">图 C5 · <b>双机器改装台</b>：一个 h 滑块同时驱动两条变形曲线 —— 金色 <strong><Katex tex="f(x)+h" /></strong> 竖着走、蓝色 <strong><Katex tex="f(x+h)" /></strong> 横着走，灰色虚线是基准 f。三个基准切换：① 抛物线看<strong>顶点</strong>：金点沿 y 轴爬、蓝点沿 x 轴滑；② <Katex tex="\sqrt{x}" /> 看<strong>端点</strong>：输出端改装定义域纹丝不动，输入端改装把整个定义域抬走（蓝端点横着走）；③ <Katex tex="1/x" /> 看<strong>渐近线</strong>：输入端改装挪动竖直渐近线，输出端改装挪动水平渐近线 —— 各自只动自己那一侧。</div>
+      <div class="cap">图 C5 · <b>f(x)+h 与 f(x+h) 的图象</b>：一个 h 滑块同时驱动两条变形曲线 —— 金色 <strong><Katex tex="f(x)+h" /></strong> 竖着走、蓝色 <strong><Katex tex="f(x+h)" /></strong> 横着走，灰色虚线是基准 f。三个基准切换：① 抛物线看<strong>顶点</strong>：金点沿 y 轴爬、蓝点沿 x 轴滑；② <Katex tex="\sqrt{x}" /> 看<strong>端点</strong>：输出端改装定义域纹丝不动，输入端改装把整个定义域抬走（蓝端点横着走）；③ <Katex tex="1/x" /> 看<strong>渐近线</strong>：输入端改装挪动竖直渐近线，输出端改装挪动水平渐近线 —— 各自只动自己那一侧。</div>
     </div>
 
     <h3 class="sec" id="c5-why">左加右减的代数原理</h3>

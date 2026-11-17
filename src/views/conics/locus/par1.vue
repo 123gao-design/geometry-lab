@@ -20,7 +20,7 @@
     <h3 class="sec" id="p1-hb">双曲线：割线与切线</h3>
     <div class="board-wrap">
       <BoardMount :factory="createHypParam" />
-      <div class="cap">图 P1b · <b>双曲线参数机</b>：竖直线过 <Katex tex="E=(a\sec t,\ 0)" />（x 轴上、永远在辅助圆外的"割线端"），水平线过 <Katex tex="G=(0,\ b\tan t)" />，交点 P 落在双曲线上。金色线段是从 E 向辅助圆所作的<strong>切线</strong> —— 切点恰好是辅助圆上离心角为 t 的点。t 逼近 <Katex tex="\pm 90^\circ" /> 时 P 沿渐近线趋向无穷：<strong>参数失效处正是渐近方向</strong>（大学里由 cosh/sinh 续写）。</div>
+      <div class="cap">图 P1b · <b>双曲线的参数方程</b>：竖直线过 <Katex tex="E=(a\sec t,\ 0)" />（x 轴上、永远在辅助圆外的"割线端"），水平线过 <Katex tex="G=(0,\ b\tan t)" />，交点 P 落在双曲线上。金色线段是从 E 向辅助圆所作的<strong>切线</strong> —— 切点恰好是辅助圆上离心角为 t 的点。t 逼近 <Katex tex="\pm 90^\circ" /> 时 P 沿渐近线趋向无穷：<strong>参数失效处正是渐近方向</strong>（大学里由 cosh/sinh 续写）。</div>
     </div>
     <p>把恒等式换成 <Katex tex="\sec^2t-\tan^2t=1" />，消参一行完成：</p>
     <Katex tex="x=\frac{a}{\cos t},\qquad y=b\tan t\quad(\cos t\ne 0)" display />
@@ -34,7 +34,7 @@
     <h3 class="sec" id="p1-pb">抛物线：时间参数</h3>
     <div class="board-wrap">
       <BoardMount :factory="createParaParam" />
-      <div class="cap">图 P1c · <b>抛物线时间机</b>：取 <Katex tex="x=2pt^2,\ y=2pt" />。把竖直方向当"时钟"（<Katex tex="y=2pt" /> 匀速走过），水平落点 <Katex tex="x=2pt^2" /> 按时间的<strong>平方</strong>膨胀 —— 轴上金色刻度按 <strong>1:3:5:7</strong> 拉开，这是伽利略斜面实验的奇数定律。抛物线的参数 t 不是任何角度，<strong>它是时间本身</strong>。</div>
+      <div class="cap">图 P1c · <b>抛物线的参数方程与落点</b>：取 <Katex tex="x=2pt^2,\ y=2pt" />。把竖直方向当"时钟"（<Katex tex="y=2pt" /> 匀速走过），水平落点 <Katex tex="x=2pt^2" /> 按时间的<strong>平方</strong>膨胀 —— 轴上金色刻度按 <strong>1:3:5:7</strong> 拉开，这是伽利略斜面实验的奇数定律。抛物线的参数 t 不是任何角度，<strong>它是时间本身</strong>。</div>
     </div>
     <p>它的物理来源：抛体运动里，水平方向匀速 <Katex tex="x=v_0\tau" />，竖直方向匀加速 <Katex tex="y=\tfrac12 g\tau^2" /> —— 消去时间 τ 就得抛物线。反过来说，<Katex tex="y^2=2px" /> 上以 t 为参数的写法 <Katex tex="x=2pt^2,\ y=2pt" /> 恰好把"时间"直接写进了坐标：y 匀速（时钟），x 按平方膨胀（匀加速位移）。</p>
     <p>轴上 1:3:5:7 的来历不过一个平方差：</p>

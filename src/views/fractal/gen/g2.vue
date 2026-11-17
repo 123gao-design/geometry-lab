@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createLSystem" />
-      <div class="cap">图 生2 · <b>L 系统龟行机</b>：三种规则，层数逐代展开。看点：① 雪花曲线每代线段数乘 4，与科赫曲线同一套折角；② 分形草用方括号分出侧枝，主茎仍在向前；③ 二叉分枝把 <Katex tex="F" /> 换成两个 <Katex tex="F" />、把 <Katex tex="X" /> 换成带分枝的串，层数加到 5 就长成树冠。</div>
+      <div class="cap">图 生2 · <b>L 系统与龟行解释</b>：三种规则，层数逐代展开。看点：① 雪花曲线每代线段数乘 4，与科赫曲线同一套折角；② 分形草用方括号分出侧枝，主茎仍在向前；③ 二叉分枝把 <Katex tex="F" /> 换成两个 <Katex tex="F" />、把 <Katex tex="X" /> 换成带分枝的串，层数加到 5 就长成树冠。</div>
     </div>
 
     <h3 class="sec" id="g2-rewrite">并行重写</h3>

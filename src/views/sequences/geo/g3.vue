@@ -6,11 +6,11 @@
     <div class="note good"><Katex tex="q\ne1" /> 时，<Katex tex="S_n=\dfrac{a_1(1-q^n)}{1-q}=\dfrac{a_1-a_nq}{1-q}" />；<Katex tex="q=1" /> 时，<Katex tex="S_n=na_1" />。两个式子不能互相替代，用公式前先看公比是否为 1。</div>
     <div class="board-wrap">
       <BoardMount :factory="createShiftMul" />
-      <div class="cap">图 比3a · <b>错位相减机</b>：上排是 <Katex tex="S_n" /> 的各项，下排是 <Katex tex="qS_n" /> 的各项，整体右移一列。绿色列上下等高，相减为零；只剩第 1 列的 <Katex tex="a_1" /> 与第 <Katex tex="n+1" /> 列的 <Katex tex="a_{n+1}" />（金色）。右侧依次写出两式、相减、解出 <Katex tex="S_n" />。</div>
+      <div class="cap">图 比3a · <b>错位相减</b>：上排是 <Katex tex="S_n" /> 的各项，下排是 <Katex tex="qS_n" /> 的各项，整体右移一列。绿色列上下等高，相减为零；只剩第 1 列的 <Katex tex="a_1" /> 与第 <Katex tex="n+1" /> 列的 <Katex tex="a_{n+1}" />（金色）。右侧依次写出两式、相减、解出 <Katex tex="S_n" />。</div>
     </div>
     <div class="board-wrap">
       <BoardMount :factory="createSegFill" />
-      <div class="cap">图 比3b · <b>线段填充机</b>（<Katex tex="0<q<1" />）：线段总长取 <Katex tex="L=\dfrac{a_1}{1-q}" />，依次截下 <Katex tex="a_1,a_1q,a_1q^2,\dots" />，每一段是前一段的 <Katex tex="q" /> 倍。截完 <Katex tex="n" /> 段后剩下的空档是 <Katex tex="Lq^n" />，所以 <Katex tex="S_n=L-Lq^n" />。拖动 <Katex tex="n" /> 看空档按 <Katex tex="q" /> 倍缩小。</div>
+      <div class="cap">图 比3b · <b>无穷等比数列的线段填充</b>（<Katex tex="0<q<1" />）：线段总长取 <Katex tex="L=\dfrac{a_1}{1-q}" />，依次截下 <Katex tex="a_1,a_1q,a_1q^2,\dots" />，每一段是前一段的 <Katex tex="q" /> 倍。截完 <Katex tex="n" /> 段后剩下的空档是 <Katex tex="Lq^n" />，所以 <Katex tex="S_n=L-Lq^n" />。拖动 <Katex tex="n" /> 看空档按 <Katex tex="q" /> 倍缩小。</div>
     </div>
 
     <h3 class="sec" id="g3-form">错位相减</h3>

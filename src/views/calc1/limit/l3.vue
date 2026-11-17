@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createOrdLab" />
-      <div class="cap">图 极3 · <b>无穷小阶的比较机</b>：三条曲线 <Katex tex="y=\sin x" />、<Katex tex="y=x" />、<Katex tex="y=1-\cos x" /> 都落在原点，绿虚线是 <Katex tex="y=\dfrac{x^2}{2}" />。看点：把 <Katex tex="x" /> 拖向 <Katex tex="0" />，蓝色比值 <Katex tex="\dfrac{\sin x}{x}" /> 稳定在 <Katex tex="1" />，绿色比值 <Katex tex="\dfrac{1-\cos x}{x^2}" /> 稳定在 <Katex tex="\dfrac12" />；<Katex tex="y=1-\cos x" /> 贴着绿虚线走，与 <Katex tex="y=x" /> 的距离却在缩小，说明它比 <Katex tex="x" /> 消失得更快。</div>
+      <div class="cap">图 极3 · <b>无穷小的阶</b>：三条曲线 <Katex tex="y=\sin x" />、<Katex tex="y=x" />、<Katex tex="y=1-\cos x" /> 都落在原点，绿虚线是 <Katex tex="y=\dfrac{x^2}{2}" />。看点：把 <Katex tex="x" /> 拖向 <Katex tex="0" />，蓝色比值 <Katex tex="\dfrac{\sin x}{x}" /> 稳定在 <Katex tex="1" />，绿色比值 <Katex tex="\dfrac{1-\cos x}{x^2}" /> 稳定在 <Katex tex="\dfrac12" />；<Katex tex="y=1-\cos x" /> 贴着绿虚线走，与 <Katex tex="y=x" /> 的距离却在缩小，说明它比 <Katex tex="x" /> 消失得更快。</div>
     </div>
 
     <h3 class="sec" id="l3-def">无穷小的定义</h3>

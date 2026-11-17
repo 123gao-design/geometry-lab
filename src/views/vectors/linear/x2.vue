@@ -6,7 +6,7 @@
     <div class="note good" id="x2-def">向量加法有两条画法，画出的结果相同。<strong>三角形法则</strong>：把 <Katex tex="\vec b" /> 的起点接到 <Katex tex="\vec a" /> 的终点上，由 <Katex tex="\vec a" /> 的起点指向 <Katex tex="\vec b" /> 的终点的向量就是 <Katex tex="\vec a+\vec b" />。<strong>平行四边形法则</strong>：把 <Katex tex="\vec a" /> 与 <Katex tex="\vec b" /> 的起点并到一处，以它们为邻边作平行四边形，从公共起点出发的对角线就是 <Katex tex="\vec a+\vec b" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createAddRule" />
-      <div class="cap">图 向2 · <b>加法法则机</b>：拖动 A、B 两个终点，蓝色是 <Katex tex="\vec a" />，橙色是 <Katex tex="\vec b" />，绿色是运算结果。看点：第一档把橙箭头平移到蓝箭头的终点，绿色对角线由公共起点直达平移后的终点；第二档的两个虚线边补成平行四边形，对角线是同一条；第三档换取 <Katex tex="\vec a-\vec b" />，绿色箭头改从 <Katex tex="\vec b" /> 的终点指回 <Katex tex="\vec a" /> 的终点。</div>
+      <div class="cap">图 向2 · <b>向量的加法</b>：拖动 A、B 两个终点，蓝色是 <Katex tex="\vec a" />，橙色是 <Katex tex="\vec b" />，绿色是运算结果。看点：第一档把橙箭头平移到蓝箭头的终点，绿色对角线由公共起点直达平移后的终点；第二档的两个虚线边补成平行四边形，对角线是同一条；第三档换取 <Katex tex="\vec a-\vec b" />，绿色箭头改从 <Katex tex="\vec b" /> 的终点指回 <Katex tex="\vec a" /> 的终点。</div>
     </div>
 
     <h3 class="sec" id="x2-tri">三角形法则：首尾相接</h3>

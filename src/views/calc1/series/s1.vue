@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createSerieslab" />
-      <div class="cap">图 级1 · <b>部分和机</b>：蓝点连成部分和数列，绿虚线画出它的极限，金点是当前 <Katex tex="n" /> 的位置。<b>看点</b>：四档通项里有两档部分和停住、一档一路往上爬——每一项都在变小，和却可以没有上限。</div>
+      <div class="cap">图 级1 · <b>级数与部分和</b>：蓝点连成部分和数列，绿虚线画出它的极限，金点是当前 <Katex tex="n" /> 的位置。<b>看点</b>：四档通项里有两档部分和停住、一档一路往上爬——每一项都在变小，和却可以没有上限。</div>
     </div>
 
     <h3 class="sec" id="s1-geo">等比级数：能算清的那一类</h3>

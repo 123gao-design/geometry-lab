@@ -5,7 +5,7 @@
     <div class="note good" id="v2-law"><strong>四则运算法则</strong>：<Katex tex="(u\pm v)'=u'\pm v'" />、<Katex tex="(cu)'=c\,u'" />、<Katex tex="(uv)'=u'v+uv'" />、<Katex tex="\Bigl(\dfrac{u}{v}\Bigr)'=\dfrac{u'v-uv'}{v^2}\ (v\neq 0)" /> —— 前两条是「记录不混项」，后两条的几何来源都能在图 V2 的面积板上看到。</div>
     <div class="board-wrap">
       <BoardMount :factory="createArea" />
-      <div class="cap">图 V2 · <b>乘法法则面积板</b>：<Katex tex="u\times v"/> 的矩形一边各伸长一点，增量自动拆成三块 —— 橙条 <Katex tex="v\cdot\Delta u"/>、金条 <Katex tex="u\cdot\Delta v"/>、红角 <Katex tex="\Delta u\cdot\Delta v"/>。「⏩ Δ 双双归零」看红角消失：除以 <Katex tex="\Delta x"/> 后二阶项归零，一次项分别取各自的导数 —— <Katex tex="(uv)'=u'v+uv'"/> 由面积分解直接得到。</div>
+      <div class="cap">图 V2 · <b>乘积法则与矩形面积</b>：<Katex tex="u\times v"/> 的矩形一边各伸长一点，增量自动拆成三块 —— 橙条 <Katex tex="v\cdot\Delta u"/>、金条 <Katex tex="u\cdot\Delta v"/>、红角 <Katex tex="\Delta u\cdot\Delta v"/>。「⏩ Δ 双双归零」看红角消失：除以 <Katex tex="\Delta x"/> 后二阶项归零，一次项分别取各自的导数 —— <Katex tex="(uv)'=u'v+uv'"/> 由面积分解直接得到。</div>
     </div>
 
     <h3 class="sec" id="v2-ledger">四则法则</h3>

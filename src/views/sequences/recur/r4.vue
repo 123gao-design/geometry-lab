@@ -6,7 +6,7 @@
     <div class="note good">二阶线性递推 <Katex tex="a_{n+2}=pa_{n+1}+qa_n" />（<Katex tex="p,q" /> 为常数）对应<strong>特征方程</strong> <Katex tex="r^2-pr-q=0" />。设它的两根为 <Katex tex="r_1,r_2" />。<Katex tex="r_1\ne r_2" /> 时通项为 <Katex tex="a_n=C_1r_1^n+C_2r_2^n" />；<Katex tex="r_1=r_2=r" /> 时为 <Katex tex="a_n=(C_1+C_2n)r^n" />。常数 <Katex tex="C_1,C_2" /> 由 <Katex tex="a_1,a_2" /> 确定。这一方法叫<strong>特征根法</strong>。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCharRoot" />
-      <div class="cap">图 递4 · <b>特征根法机</b>：蓝点是由递推式逐项算出的 <Katex tex="a_n" />，绿点是第一分量 <Katex tex="C_1r_1^n" />，紫点是第二分量 <Katex tex="C_2r_2^n" />，紫虚线把绿点接到蓝点（长度就是紫点的值）。右侧从「设 <Katex tex="a_n=r^n" />」一路推到两个系数。预设 ① 是斐波那契，② 是两个不等的根，③ 是重根；把 p、q 调到 <Katex tex="p=0,q=-1" /> 还能看到共轭复根，此时紫圈是包络线，蓝点在两条包络之间来回摆动。</div>
+      <div class="cap">图 递4 · <b>特征根法</b>：蓝点是由递推式逐项算出的 <Katex tex="a_n" />，绿点是第一分量 <Katex tex="C_1r_1^n" />，紫点是第二分量 <Katex tex="C_2r_2^n" />，紫虚线把绿点接到蓝点（长度就是紫点的值）。右侧从「设 <Katex tex="a_n=r^n" />」一路推到两个系数。预设 ① 是斐波那契，② 是两个不等的根，③ 是重根；把 p、q 调到 <Katex tex="p=0,q=-1" /> 还能看到共轭复根，此时紫圈是包络线，蓝点在两条包络之间来回摆动。</div>
     </div>
 
     <h3 class="sec" id="r4-guess">为什么猜 <Katex tex="a_n=r^n" /></h3>

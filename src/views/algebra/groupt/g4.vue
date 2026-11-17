@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createFundhom" />
-      <div class="cap">图 群4 · <b>取余同态机</b>：整数沿彩色线送到 <Katex tex="\mathbb{Z}_n" />，模数由滑块控制。看点：① 金色整数是核 <Katex tex="n\mathbb{Z}" />，全部压到 0；② 同余的整数落到同一列；③ 核的大小与商群阶都等于 n，像也是 <Katex tex="\mathbb{Z}_n" />。</div>
+      <div class="cap">图 群4 · <b>取余同态</b>：整数沿彩色线送到 <Katex tex="\mathbb{Z}_n" />，模数由滑块控制。看点：① 金色整数是核 <Katex tex="n\mathbb{Z}" />，全部压到 0；② 同余的整数落到同一列；③ 核的大小与商群阶都等于 n，像也是 <Katex tex="\mathbb{Z}_n" />。</div>
     </div>
 
     <h3 class="sec" id="g4-map">整数到剩余类的同态</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="p2-law">作差：<Katex tex="a-b>0\iff a>b" />（对一切实数成立）。作商：<Katex tex="a,b>0:\ \tfrac{a}{b}>1\iff a>b" />；<Katex tex="a,b<0:\ \tfrac{a}{b}>1\iff a<b" />（同负时结论相反）；异号时不须比较，<Katex tex="b=0" /> 时作商失效。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCMP" />
-      <div class="cap">图 性2 · <b>大小比较机</b>：拖 a、b 两滑块或点三个预设（同正 / 同负 / 异号），在「作差比零」「作商比一」两模式间切换。看点：作差永远可靠；作商在预设② 处给出警示 —— 两数同负时商大于 1，结论反而反转；异号时商为负，与 1 比较给不出结论。</div>
+      <div class="cap">图 性2 · <b>作差与作商比较</b>：拖 a、b 两滑块或点三个预设（同正 / 同负 / 异号），在「作差比零」「作商比一」两模式间切换。看点：作差永远可靠；作商在预设② 处给出警示 —— 两数同负时商大于 1，结论反而反转；异号时商为负，与 1 比较给不出结论。</div>
     </div>
 
     <h3 class="sec" id="p2-diff">作差法：三步定号</h3>

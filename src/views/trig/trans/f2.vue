@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="2" no="F2" base="/trig/f" :chapters="F_CHAPTERS"
     title="变换顺序与由图反演" sub="先压缩后平移 $\pi/6$、先平移后压缩 $\pi/3$ —— 中间产物不同、终点相同；由图反演三步：峰高定 $A$、峰距定 $T$、升段零点定 $\varphi$。"
-    :toc="[{ id: 'f2-two', t: '两路演算与中间产物' }, { id: 'f2-rev', t: '由图反演三步' }, { id: 'f2-g', t: '与 G3 变形顺序机的回收' }, { id: 'f2-pit', t: '易错点与口诀' }]">
+    :toc="[{ id: 'f2-two', t: '两路演算与中间产物' }, { id: 'f2-rev', t: '由图反演三步' }, { id: 'f2-g', t: '与 G3 变换顺序的回收' }, { id: 'f2-pit', t: '易错点与口诀' }]">
     <div class="note good" id="f2-law"><strong>两路都通，平移量不同</strong>：从 sin x 到 <Katex tex="\sin\bigl(2x+\tfrac{\pi}{3}\bigr)" /> —— 先伸缩后平移走 <Katex tex="\sin x\to\sin 2x\to\sin\bigl(2(x+\tfrac{\pi}{6})\bigr)" />，实际平移 <Katex tex="\tfrac{\pi}{6}" />；先平移后伸缩走 <Katex tex="\sin x\to\sin\bigl(x+\tfrac{\pi}{3}\bigr)\to\sin\bigl(2x+\tfrac{\pi}{3}\bigr)" />，实际平移 <Katex tex="\tfrac{\pi}{3}" />。中间产物不同，终点相同。<strong>由图反演三步</strong>：峰高定 A、峰距定 T（<Katex tex="\omega=\tfrac{2\pi}{T}" />）、升段过零点定 x₀（<Katex tex="\varphi=-\omega x_0" />）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createWave" />
-      <div class="cap">图 F2 · <b>变序分波机</b>：甲（蓝）先压缩后平移、乙（橙）先平移后压缩，两条路同时演算 —— <Katex tex="t=1"/> 时中间产物分离（<Katex tex="\sin 2x"/> 与 <Katex tex="\sin(x+\pi/3)"/> 显然是两条不同的波），<Katex tex="t=2"/> 在金虚目标 <Katex tex="\sin\bigl(2x+\tfrac{\pi}{3}\bigr)" /> 汇合；切「由图反演」模式求解：🎯 出题给一条金线，三滑块把蓝线贴上去。</div>
+      <div class="cap">图 F2 · <b>先压缩后平移与先平移后压缩</b>：甲（蓝）先压缩后平移、乙（橙）先平移后压缩，两条路同时演算 —— <Katex tex="t=1"/> 时中间产物分离（<Katex tex="\sin 2x"/> 与 <Katex tex="\sin(x+\pi/3)"/> 显然是两条不同的波），<Katex tex="t=2"/> 在金虚目标 <Katex tex="\sin\bigl(2x+\tfrac{\pi}{3}\bigr)" /> 汇合；切「由图反演」模式求解：🎯 出题给一条金线，三滑块把蓝线贴上去。</div>
     </div>
 
     <h3 class="sec" id="f2-two">两路演算与中间产物</h3>
@@ -15,7 +15,7 @@
     <h3 class="sec" id="f2-rev">由图反演三步</h3>
     <p>切「由图反演」、按 🎯 出题：一条金线 <Katex tex="y=A\sin(\omega x+\varphi)" /> 出场，三滑块把蓝线贴上去，最大偏差 &lt; 0.06 判<strong>求解</strong>。三步读图，每步回收一章：<strong>① 峰高定 A</strong> —— 金线最高点就是 A（F1 的值域带、W1 的峰）；<strong>② 相邻峰距定 T</strong>，换 <Katex tex="\omega=\tfrac{2\pi}{T}" />（W3 的周期观点；相邻同向零点的距离也是 T）；<strong>③ 升段过零点定 x₀</strong>，换 <Katex tex="\varphi=-\omega x_0" />（F1 的起点）。顺序讲究：前两步不依赖原点位置、稳；第三步依赖原点、最易错 —— 把它放到最后，用前两步的结果兜住。题库四道轮换，求解后答案在徽章里揭晓。</p>
 
-    <h3 class="sec" id="f2-g">与 G3 变形顺序机的回收</h3>
+    <h3 class="sec" id="f2-g">与 G3 变换顺序的回收</h3>
     <p>G3 模式一的金线 <Katex tex="b\,f\bigl(a(x-h)\bigr)+k" /> 与红虚误读线 <Katex tex="b\,f(ax-h)+k" /> 之争，三角版就是「先提系数（甲）还是先平移（乙）」：<Katex tex="\sin\bigl(2(x+\tfrac{\pi}{6})\bigr)" /> 的记法把平移量写在系数之后，图上直接可见；把 φ 直接当平移量，就会多平移一倍 —— G3 红虚线的「差 a 倍」在此处是「差 ω 倍」。记忆锚点：F1 的起点公式 <Katex tex="x_0=-\tfrac{\varphi}{\omega}" /> 本身就在提醒 —— 平移量是<strong>除以 ω 后</strong>的结果。</p>
 
     <h3 class="sec" id="f2-pit">易错点与口诀</h3>

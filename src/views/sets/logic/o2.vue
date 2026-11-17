@@ -5,7 +5,7 @@
     <div class="note good" id="o2-law"><strong>量词的否定对偶</strong>：<Katex tex="\neg(\forall x\in M,\ p(x))=\exists x\in M,\ \neg p(x)" />、<Katex tex="\neg(\exists x\in M,\ p(x))=\forall x\in M,\ \neg p(x)" /> —— 量词互换，结论取反。</div>
     <div class="board-wrap">
       <BoardMount :factory="createND" />
-      <div class="cap">图 O2 · <b>量词对偶机</b>：上带是 p(x) 的满足情况、下带是 ¬p(x) 的 —— 两带逐点颜色互补；四个预设各给出原命题、否定式与误写三支的实时判定。看点：否定式永远与原命题一真一假，而量词没换的误写在红绿相间的带子上与原命题同真同假 —— 当场失去否定的资格。</div>
+      <div class="cap">图 O2 · <b>量词的否定</b>：上带是 p(x) 的满足情况、下带是 ¬p(x) 的 —— 两带逐点颜色互补；四个预设各给出原命题、否定式与误写三支的实时判定。看点：否定式永远与原命题一真一假，而量词没换的误写在红绿相间的带子上与原命题同真同假 —— 当场失去否定的资格。</div>
     </div>
 
     <h3 class="sec" id="o2-law">否定式：两行推导</h3>

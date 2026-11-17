@@ -7,7 +7,7 @@
     <h3 class="sec" id="a1-lab">伸缩机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createStretch" />
-      <div class="cap">图 A1 · <b>伸缩变换机</b>：左侧圆及其切线，右侧是压缩后的像。拖动圆上的 Q（或按「同步扫描」），像点 <Katex tex="Q'" /> 与像切线同步运动 —— 注意读数区：圆切线方程里把 <Katex tex="\sin\theta" /> 换成 <Katex tex="\sin\theta/k" />，就逐字得到椭圆切线方程。k 拖到 1 时两个世界完全重合。</div>
+      <div class="cap">图 A1 · <b>伸缩变换</b>：左侧圆及其切线，右侧是压缩后的像。拖动圆上的 Q（或按「同步扫描」），像点 <Katex tex="Q'" /> 与像切线同步运动 —— 注意读数区：圆切线方程里把 <Katex tex="\sin\theta" /> 换成 <Katex tex="\sin\theta/k" />，就逐字得到椭圆切线方程。k 拖到 1 时两个世界完全重合。</div>
     </div>
     <p>这个实验值得盯住的一件事：<strong>切线变成切线</strong>。圆的切线只与椭圆碰一下（相切），压扁后这条直线的像也只与椭圆的像碰一下 —— "只碰一下"这件事没有被压扁破坏。</p>
 

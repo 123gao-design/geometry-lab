@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createIntPath" />
-      <div class="cap">图 解3 · <b>复积分与柯西定理机</b>：左图是一条逆时针圆路，半径可调；右图是「积分走到哪里」的累计曲线——沿路每走一小步，就把 <Katex tex="f(z)\Delta z" /> 加进累计和。看点：① <Katex tex="f=z^2" /> 解析，累计曲线走满一圈又落回起点，闭路积分为 <Katex tex="0" />；② <Katex tex="f=1/z" /> 在圆内有奇点，累计曲线恰好绕一圈，终点是 <Katex tex="2\pi i" />，拖半径不动分毫；③ <Katex tex="f=\bar z" /> 非解析，累计曲线不闭合，终点随半径按 <Katex tex="2\pi iR^2" /> 变。</div>
+      <div class="cap">图 解3 · <b>复积分与柯西定理</b>：左图是一条逆时针圆路，半径可调；右图是「积分走到哪里」的累计曲线——沿路每走一小步，就把 <Katex tex="f(z)\Delta z" /> 加进累计和。看点：① <Katex tex="f=z^2" /> 解析，累计曲线走满一圈又落回起点，闭路积分为 <Katex tex="0" />；② <Katex tex="f=1/z" /> 在圆内有奇点，累计曲线恰好绕一圈，终点是 <Katex tex="2\pi i" />，拖半径不动分毫；③ <Katex tex="f=\bar z" /> 非解析，累计曲线不闭合，终点随半径按 <Katex tex="2\pi iR^2" /> 变。</div>
     </div>
 
     <h3 class="sec" id="a3-def">复积分的定义</h3>

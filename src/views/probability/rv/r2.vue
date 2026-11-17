@@ -7,7 +7,7 @@
       <Katex tex="P(X=k)=\binom{n}{k}p^k(1-p)^{n-k},\quad k=0,1,\dots,n" />，称 <Katex tex="X" /> 服从<b>二项分布</b>，记作 <Katex tex="X\sim B(n,p)" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createBinomDist" />
-      <div class="cap">图 分2a · <b>二项分布机</b>：n 次独立重复试验，每根柱子是恰有 k 次成功的概率。滑块改试验次数 n、单次概率 p 与观察的 k。看点：p=0.5 时柱形左右对称，峰落在 n/2；p 偏离 0.5，峰就偏向一侧；n 变大时柱子更密也更窄，最高的柱子对应的成功次数约为 (n+1)p。金色柱读出当前 k 的概率，青色描边标出最可能的成功次数。</div>
+      <div class="cap">图 分2a · <b>二项分布</b>：n 次独立重复试验，每根柱子是恰有 k 次成功的概率。滑块改试验次数 n、单次概率 p 与观察的 k。看点：p=0.5 时柱形左右对称，峰落在 n/2；p 偏离 0.5，峰就偏向一侧；n 变大时柱子更密也更窄，最高的柱子对应的成功次数约为 (n+1)p。金色柱读出当前 k 的概率，青色描边标出最可能的成功次数。</div>
     </div>
 
     <h3 class="sec" id="r2-binom">独立重复试验与二项分布</h3>
@@ -21,7 +21,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createHyperGeom" />
-      <div class="cap">图 分2b · <b>超几何分布机</b>：袋中 N 个球里有 M 个红球，一次抽出 n 个且不放回，柱子是恰抽到 k 个红球的概率。三个滑块分别改 N、M、n。看点：取值从 max(0, n−(N−M)) 到 min(n, M)，两端被红球数与蓝球数同时卡住；M 变大时整条柱形右移，n 接近 N 时几乎能确定抽到多少红球，柱子收窄成一根。</div>
+      <div class="cap">图 分2b · <b>超几何分布</b>：袋中 N 个球里有 M 个红球，一次抽出 n 个且不放回，柱子是恰抽到 k 个红球的概率。三个滑块分别改 N、M、n。看点：取值从 max(0, n−(N−M)) 到 min(n, M)，两端被红球数与蓝球数同时卡住；M 变大时整条柱形右移，n 接近 N 时几乎能确定抽到多少红球，柱子收窄成一根。</div>
     </div>
 
     <h3 class="sec" id="r2-hyper">超几何分布</h3>

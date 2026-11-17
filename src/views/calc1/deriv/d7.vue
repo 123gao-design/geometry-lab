@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createShapeLab" />
-      <div class="cap">图 微7 · <b>单调与极值机</b>：上栏是 <Katex tex="f(x)=\dfrac{x^3}{3}-ax" />，下栏是它的导数 <Katex tex="x^2-a" />，两栏横轴对齐。下栏横轴上的绿色色带表示导数为正、红色表示导数为负。金色点与橙色点分别是极大值点、极小值点，紫色点是拐点。看点：拖动 <Katex tex="a" />，两个驻点同时向外分开；<Katex tex="a" /> 归零时色带连成一片，极值消失。</div>
+      <div class="cap">图 微7 · <b>单调性与极值</b>：上栏是 <Katex tex="f(x)=\dfrac{x^3}{3}-ax" />，下栏是它的导数 <Katex tex="x^2-a" />，两栏横轴对齐。下栏横轴上的绿色色带表示导数为正、红色表示导数为负。金色点与橙色点分别是极大值点、极小值点，紫色点是拐点。看点：拖动 <Katex tex="a" />，两个驻点同时向外分开；<Katex tex="a" /> 归零时色带连成一片，极值消失。</div>
     </div>
 
     <h3 class="sec" id="d7-mono">单调性判据</h3>

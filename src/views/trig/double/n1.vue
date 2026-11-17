@@ -5,7 +5,7 @@
     <div class="note good" id="n1-law"><strong>倍角三式</strong>：<Katex tex="\sin2\alpha=2\sin\alpha\cos\alpha" />；<Katex tex="\cos2\alpha=\cos^2\alpha-\sin^2\alpha=2\cos^2\alpha-1=1-2\sin^2\alpha" />；<Katex tex="\tan2\alpha=\dfrac{2\tan\alpha}{1-\tan^2\alpha}" />。全部是 M1 中 <Katex tex="\beta=\alpha"/> 的特例 —— 没有任何新原理。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 N1 · <b>倍角面积机</b>：拖 α —— 单位圆内接矩形（宽 <strong><Katex tex="2\cos\alpha"/></strong>、高 <strong><Katex tex="\sin\alpha"/></strong>）的面积 <strong><Katex tex="2\cos\alpha\cdot\sin\alpha"/></strong> 与 <strong><Katex tex="2\alpha"/> 弧</strong>上的正弦恒等；金色 <Katex tex="2\alpha"/> 弧正是「角翻倍」的实物。三个读数徽章分别验 <Katex tex="\sin2\alpha"/>、<Katex tex="\cos2\alpha"/> 三形态、<Katex tex="\tan2\alpha"/>，<Katex tex="\alpha=\pi/4"/> 时 <Katex tex="\tan2\alpha"/> 分母为零预警变红。</div>
+      <div class="cap">图 N1 · <b>倍角公式的几何来源</b>：拖 α —— 单位圆内接矩形（宽 <strong><Katex tex="2\cos\alpha"/></strong>、高 <strong><Katex tex="\sin\alpha"/></strong>）的面积 <strong><Katex tex="2\cos\alpha\cdot\sin\alpha"/></strong> 与 <strong><Katex tex="2\alpha"/> 弧</strong>上的正弦恒等；金色 <Katex tex="2\alpha"/> 弧正是「角翻倍」的实物。三个读数徽章分别验 <Katex tex="\sin2\alpha"/>、<Katex tex="\cos2\alpha"/> 三形态、<Katex tex="\tan2\alpha"/>，<Katex tex="\alpha=\pi/4"/> 时 <Katex tex="\tan2\alpha"/> 分母为零预警变红。</div>
     </div>
 
     <h3 class="sec" id="n1-rect">面积来源：内接矩形的直译</h3>

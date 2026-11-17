@@ -5,7 +5,7 @@
     <div class="note good" id="g1-law"><strong>平移定理</strong>：函数 <Katex tex="y=f(x)" /> 的图象向右平移 <Katex tex="h" /> 个单位、再向上平移 <Katex tex="k" /> 个单位，所得新图象的解析式是 <Katex tex="y=f(x-h)+k" />（<Katex tex="h,k" /> 可正可负，负号自动改方向）。图上每个点 <Katex tex="(x_0,y_0)" /> 都移到 <Katex tex="(x_0+h,\ y_0+k)" /> —— 特殊点（顶点、起笔点、渐近线）随图象整体平移，是读图定位的第一锚。</div>
     <div class="board-wrap">
       <BoardMount :factory="createShift" />
-      <div class="cap">图 G1 · <b>平移读写机</b>：拖 h、k 两个滑块看原图平移；探针 P 锁在原图上、金点 <Katex tex="P'"/> 是它的像，橙色分解路径「先横 h 后竖 k」把平移向量画在图上。三张原图（<Katex tex="\sqrt{x}"/> / <Katex tex="x^2"/> / <Katex tex="e^x"/>）换着平移：起笔点、顶点、渐近线各自记录。</div>
+      <div class="cap">图 G1 · <b>图象的平移</b>：拖 h、k 两个滑块看原图平移；探针 P 锁在原图上、金点 <Katex tex="P'"/> 是它的像，橙色分解路径「先横 h 后竖 k」把平移向量画在图上。三张原图（<Katex tex="\sqrt{x}"/> / <Katex tex="x^2"/> / <Katex tex="e^x"/>）换着平移：起笔点、顶点、渐近线各自记录。</div>
     </div>
 
     <h3 class="sec" id="g1-why">为什么横移要反着写</h3>

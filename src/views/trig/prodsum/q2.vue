@@ -5,7 +5,7 @@
     <div class="note good" id="q2-law"><strong>辅助角与和差化积</strong>：<Katex tex="a\sin x+b\cos x=\sqrt{a^2+b^2}\,\sin(x+\varphi)" />（其中 <Katex tex="\cos\varphi=\tfrac{a}{\sqrt{a^2+b^2}}" />，<Katex tex="\sin\varphi=\tfrac{b}{\sqrt{a^2+b^2}}" />）；<Katex tex="\sin A+\sin B=2\sin\tfrac{A+B}{2}\cos\tfrac{A-B}{2}" />，<Katex tex="\cos A+\cos B=2\cos\tfrac{A+B}{2}\cos\tfrac{A-B}{2}" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 Q2 · <b>辅助角机</b>：拖系数 a、b —— 蓝实线（原始叠加 <Katex tex="a\sin x+b\cos x"/>）与金虚线（辅助角写法 <Katex tex="R\sin(x+\varphi)"/>）恒重合；右上直角三角形两直角边 a、b，斜边 <strong><Katex tex="R=\sqrt{a^2+b^2}"/></strong>、夹角 φ 实时联动。探针核验徽章在任意 <Katex tex="x_0"/> 处验「两写法同高」；a=1、b=1 预设即经典的 <Katex tex="\sqrt2\sin(x+\pi/4)"/>。</div>
+      <div class="cap">图 Q2 · <b>辅助角公式</b>：拖系数 a、b —— 蓝实线（原始叠加 <Katex tex="a\sin x+b\cos x"/>）与金虚线（辅助角写法 <Katex tex="R\sin(x+\varphi)"/>）恒重合；右上直角三角形两直角边 a、b，斜边 <strong><Katex tex="R=\sqrt{a^2+b^2}"/></strong>、夹角 φ 实时联动。探针核验徽章在任意 <Katex tex="x_0"/> 处验「两写法同高」；a=1、b=1 预设即经典的 <Katex tex="\sqrt2\sin(x+\pi/4)"/>。</div>
     </div>
 
     <h3 class="sec" id="q2-aux">辅助角：直角三角形读 R 与 φ</h3>

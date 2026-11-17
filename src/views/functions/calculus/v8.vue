@@ -5,7 +5,7 @@
     <div class="note good" id="v8-law"><strong>牛顿–莱布尼茨公式</strong>：若 <Katex tex="F'=f" />，则 <Katex tex="\int_a^b f(x)\,\mathrm{d}x=F(b)-F(a)" /> —— 定积分 = 任一原函数在两端点的差。原函数不必唯一：<Katex tex="F(x)+C" /> 代入后常数互相抵消。<strong>面积定义式</strong>：<Katex tex="\int_a^b f=\lim_{n\to\infty}\sum_{i=1}^{n}f(x_i)\,\Delta x" />，<Katex tex="\Delta x=\dfrac{b-a}{n}" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRie" />
-      <div class="cap">图 V8 · <b>黎曼累加机</b>：上栏蓝色矩形条逐段累加逼近曲边面积（右端点采样偏高、左端点偏低），下栏绿色面积曲线 F 同步生长 —— 探针处的切线斜率恰好等于上栏当前高度。n 加倍误差约减半，「和滑向面积」直接可验。</div>
+      <div class="cap">图 V8 · <b>黎曼和逼近面积</b>：上栏蓝色矩形条逐段累加逼近曲边面积（右端点采样偏高、左端点偏低），下栏绿色面积曲线 F 同步生长 —— 探针处的切线斜率恰好等于上栏当前高度。n 加倍误差约减半，「和滑向面积」直接可验。</div>
     </div>
 
     <h3 class="sec" id="v8-riemann">黎曼和：以直代曲的加法</h3>

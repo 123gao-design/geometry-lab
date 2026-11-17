@@ -5,7 +5,7 @@
     <div class="note good" id="w3-law"><strong>正切函数</strong>：<Katex tex="y=\tan x" />，定义域 <Katex tex="\Bigl\{x\ \Big|\ x\neq\tfrac{\pi}{2}+k\pi\Bigr\}" />，值域 <Katex tex="\mathbb{R}" />，周期 <Katex tex="T=\pi" />；<strong>奇函数</strong>：<Katex tex="\tan(-x)=-\tan x" />；<strong>每支</strong>：在 <Katex tex="\Bigl(-\tfrac{\pi}{2}+k\pi,\ \tfrac{\pi}{2}+k\pi\Bigr)" /> 内从 −∞ 单调升至 +∞。</div>
     <div class="board-wrap">
       <BoardMount :factory="createGap" />
-      <div class="cap">图 W3 · <b>正切断口机</b>：紫色竖直渐近线 <Katex tex="x=\pi/2+k\pi"/> 就是 cos 的零点（排除处）；开「周期 π」拖 <Katex tex="x_0"/> —— 两枚金点恒等高，平移 <Katex tex="\pi"/> 完全重合；探针逼近断口时，读数溢出、左右两支各自奔向 <Katex tex="\infty"/>。</div>
+      <div class="cap">图 W3 · <b>正切的渐近线</b>：紫色竖直渐近线 <Katex tex="x=\pi/2+k\pi"/> 就是 cos 的零点（排除处）；开「周期 π」拖 <Katex tex="x_0"/> —— 两枚金点恒等高，平移 <Katex tex="\pi"/> 完全重合；探针逼近断口时，读数溢出、左右两支各自奔向 <Katex tex="\infty"/>。</div>
     </div>
 
     <h3 class="sec" id="w3-gap">断口：排除点与渐近线</h3>

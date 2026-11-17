@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createDifffield" />
-      <div class="cap">图 方1 · <b>方向场机</b>：每格画一小段短线，斜率等于方程在该点规定的值。拖动 <Katex tex="(x_0,y_0)" /> 换起点，蓝色曲线沿短线走出解。<b>看点</b>：曲线不必求解公式也能画准——它只是处处与短线相切。</div>
+      <div class="cap">图 方1 · <b>微分方程与方向场</b>：每格画一小段短线，斜率等于方程在该点规定的值。拖动 <Katex tex="(x_0,y_0)" /> 换起点，蓝色曲线沿短线走出解。<b>看点</b>：曲线不必求解公式也能画准——它只是处处与短线相切。</div>
     </div>
 
     <h3 class="sec" id="o1-order">方程、阶与解</h3>

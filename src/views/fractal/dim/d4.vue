@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createHausdorff" />
-      <div class="cap">图 维4 · <b>豪斯多夫测度机</b>：左图逐层搭康托集，第 <Katex tex="k" /> 层的 <Katex tex="2^k" /> 条区间就是直径 <Katex tex="\delta=3^{-k}" /> 的覆盖；右图画 <Katex tex="F_k(s)=\sum\delta^{s}" /> 的对数曲线，每条是一条直线。看点：① 拖层数 <Katex tex="k" />，左图区间数翻倍、每条缩到三分之一，右图直线的斜率随之变陡；② 拖 <Katex tex="s" /> 越过 <Katex tex="0.6309" />，读数栏的 <Katex tex="F_k" /> 从随 <Katex tex="k" /> 猛涨变成迅速衰减；③ 把 <Katex tex="s" /> 停在虚线处，每一层的 <Katex tex="F_k" /> 都恰好等于 <Katex tex="1" />——测度既不零也不无穷，这正是维数的含义。</div>
+      <div class="cap">图 维4 · <b>豪斯多夫维数</b>：左图逐层搭康托集，第 <Katex tex="k" /> 层的 <Katex tex="2^k" /> 条区间就是直径 <Katex tex="\delta=3^{-k}" /> 的覆盖；右图画 <Katex tex="F_k(s)=\sum\delta^{s}" /> 的对数曲线，每条是一条直线。看点：① 拖层数 <Katex tex="k" />，左图区间数翻倍、每条缩到三分之一，右图直线的斜率随之变陡；② 拖 <Katex tex="s" /> 越过 <Katex tex="0.6309" />，读数栏的 <Katex tex="F_k" /> 从随 <Katex tex="k" /> 猛涨变成迅速衰减；③ 把 <Katex tex="s" /> 停在虚线处，每一层的 <Katex tex="F_k" /> 都恰好等于 <Katex tex="1" />——测度既不零也不无穷，这正是维数的含义。</div>
     </div>
 
     <h3 class="sec" id="d4-def">从覆盖到测度</h3>

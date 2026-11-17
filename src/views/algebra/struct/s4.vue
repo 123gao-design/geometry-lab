@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createPoly" />
-      <div class="cap">图 结4 · <b>余式机</b>：蓝色曲线是 <Katex tex="p(x)=x^3-3x+2" />，黄色竖线与金点标出 <Katex tex="x=a" /> 处的高度。看点：① 拖动 a，金点沿曲线滑动，余式读数同步变化；② 金点落到 x 轴上，余式归零、整除成立；③ 紫色空圈是 p(x)=0 的根，其中 x=1 是重根，曲线在这里与轴相切。</div>
+      <div class="cap">图 结4 · <b>余式与根</b>：蓝色曲线是 <Katex tex="p(x)=x^3-3x+2" />，黄色竖线与金点标出 <Katex tex="x=a" /> 处的高度。看点：① 拖动 a，金点沿曲线滑动，余式读数同步变化；② 金点落到 x 轴上，余式归零、整除成立；③ 紫色空圈是 p(x)=0 的根，其中 x=1 是重根，曲线在这里与轴相切。</div>
     </div>
 
     <h3 class="sec" id="s4-ring">多项式构成环</h3>

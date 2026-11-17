@@ -5,7 +5,7 @@
     <div class="note good" id="o1-law"><strong>全称量词命题</strong>：<Katex tex="\forall x\in M,\ p(x)" /> —— 「对 M 内<strong>每一个</strong> x，p(x) 都成立」；<strong>存在量词命题</strong>：<Katex tex="\exists x\in M,\ p(x)" /> —— 「M 内<strong>至少有一个</strong> x 使 p(x) 成立」。全称命题为真 <Katex tex="\iff"/> M 内无反例；存在命题为真 <Katex tex="\iff"/> M 内有见证。</div>
     <div class="board-wrap">
       <BoardMount :factory="createQL" />
-      <div class="cap">图 O1 · <b>量词判定机</b>：数轴上方是满足情况带 —— 绿=满足、红=不满足、M 外留空；拖金探针逐点读数或点 ⏩ 扫轴看全带，再点「换量词」对照真假。看点：红处即反例（全称命题由一个点推翻）、绿处即见证（存在命题由一个点成立），而「真」的论证靠证明不靠数。</div>
+      <div class="cap">图 O1 · <b>全称命题与存在命题</b>：数轴上方是满足情况带 —— 绿=满足、红=不满足、M 外留空；拖金探针逐点读数或点 ⏩ 扫轴看全带，再点「换量词」对照真假。看点：红处即反例（全称命题由一个点推翻）、绿处即见证（存在命题由一个点成立），而「真」的论证靠证明不靠数。</div>
     </div>
 
     <h3 class="sec" id="o1-def">命题与量词</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="q1-law"><strong>积化和差四式</strong>：<Katex tex="\sin\alpha\cos\beta=\tfrac12[\sin(\alpha+\beta)+\sin(\alpha-\beta)]" />；<Katex tex="\cos\alpha\sin\beta=\tfrac12[\sin(\alpha+\beta)-\sin(\alpha-\beta)]" />；<Katex tex="\cos\alpha\cos\beta=\tfrac12[\cos(\alpha+\beta)+\cos(\alpha-\beta)]" />；<Katex tex="\sin\alpha\sin\beta=\tfrac12[\cos(\alpha-\beta)-\cos(\alpha+\beta)]" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 Q1 · <b>加减消元机</b>：左侧两行和差公式摆好，按下方四个模式按钮轮看 —— 每个积都能由「① ＋ ②」或「② − ①」直接读出：异名交叉项对消、同名平方项对消，剩下的一块就是积。右侧单位圆挂 α、β 两针供对照验证；拖动滑块，左右两边的数值恒等。</div>
+      <div class="cap">图 Q1 · <b>和差公式推出积化和差</b>：左侧两行和差公式摆好，按下方四个模式按钮轮看 —— 每个积都能由「① ＋ ②」或「② − ①」直接读出：异名交叉项对消、同名平方项对消，剩下的一块就是积。右侧单位圆挂 α、β 两针供对照验证；拖动滑块，左右两边的数值恒等。</div>
     </div>
 
     <h3 class="sec" id="q1-derive">两行加减出四个积</h3>

@@ -6,7 +6,7 @@
     <div class="note good">归纳—猜想的流程：算出前若干项 → 观察规律并写出猜测 <Katex tex="a_n=f(n)" /> → 用数学归纳法证明。证明分两步：验证 <Katex tex="n=1" />（或起点）；假设 <Katex tex="a_k=f(k)" />，把它代入递推式，化简出 <Katex tex="a_{k+1}=f(k+1)" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createGuessProve" />
-      <div class="cap">图 归2 · <b>归纳证明机</b>：左栏逐项计算 <Katex tex="a_{n+1}=\dfrac{a_n}{1+3a_n}" />，与公式 <Katex tex="\dfrac{1}{3n-2}" /> 并列对照，六项全部相符后下猜测；右栏做归纳步骤，把假设 <Katex tex="a_k=\dfrac{1}{3k-2}" /> 代入递推式，化简到 <Katex tex="\dfrac{1}{3(k+1)-2}" />。拖动 k，看右边的分母怎样随假设同步改写。</div>
+      <div class="cap">图 归2 · <b>数学归纳法</b>：左栏逐项计算 <Katex tex="a_{n+1}=\dfrac{a_n}{1+3a_n}" />，与公式 <Katex tex="\dfrac{1}{3n-2}" /> 并列对照，六项全部相符后下猜测；右栏做归纳步骤，把假设 <Katex tex="a_k=\dfrac{1}{3k-2}" /> 代入递推式，化简到 <Katex tex="\dfrac{1}{3(k+1)-2}" />。拖动 k，看右边的分母怎样随假设同步改写。</div>
     </div>
 
     <h3 class="sec" id="i2-guess">先算几项，再猜</h3>

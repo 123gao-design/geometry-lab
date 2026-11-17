@@ -5,7 +5,7 @@
     <div class="note good" id="y4-law"><strong>区间即集合</strong>：<Katex tex="[a,b)=\{x\mid a\le x<b\}" />，闭端实心（取得到）、开端空心（取不到）。<strong>运算口诀</strong>：交取公共 —— 两端各取靠内端、同点重合时「开优先」；并取覆盖 —— 重叠或闭端相触即连成一段，<strong>两端都开</strong>的触点才留断口；补 = 在 U 里挖去 A，剩余各段端点开闭对调（闭变开、开变闭）。<strong>不等式组</strong>的解集 = 各不等式解集的交集。</div>
     <div class="board-wrap">
       <BoardMount :factory="createAxis" />
-      <div class="cap">图 Y4 · <b>数轴运算机</b>：上轴摆 A=[−3.5, 1.5)、B=(0.5, 4]，四个把手拖位置、四个开关切端点开闭 —— 下轴实时输出 A∩B / A∪B / ∁U A；金探针 x 顺带验证「这一点在不在结果里」，断口只在两端都开时留下。</div>
+      <div class="cap">图 Y4 · <b>数轴上的区间运算</b>：上轴摆 A=[−3.5, 1.5)、B=(0.5, 4]，四个把手拖位置、四个开关切端点开闭 —— 下轴实时输出 A∩B / A∪B / ∁U A；金探针 x 顺带验证「这一点在不在结果里」，断口只在两端都开时留下。</div>
     </div>
 
     <h3 class="sec" id="y4-real">解集：区间的集合身份</h3>

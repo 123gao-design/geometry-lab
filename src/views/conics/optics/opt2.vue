@@ -7,7 +7,7 @@
     <h3 class="sec" id="t2-lab">聚光机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createEllRefl" />
-      <div class="cap">图 T2 · <b>椭圆聚光机</b>：黄色光脉冲从 <Katex tex="F_1" /> 出发，打到曲面上的 P 后折向 <Katex tex="F_2" /> —— 拖动 P，折点随便选，光路永远 <Katex tex="F_1 \to P \to F_2" />。两段金色圆弧标出入射角与反射角（都相对切线度量），读数恒相等；光程一栏始终是 <Katex tex="2a" />。</div>
+      <div class="cap">图 T2 · <b>椭圆的光学性质</b>：黄色光脉冲从 <Katex tex="F_1" /> 出发，打到曲面上的 P 后折向 <Katex tex="F_2" /> —— 拖动 P，折点随便选，光路永远 <Katex tex="F_1 \to P \to F_2" />。两段金色圆弧标出入射角与反射角（都相对切线度量），读数恒相等；光程一栏始终是 <Katex tex="2a" />。</div>
     </div>
     <p>把这个实验倒过来听：因为无论 P 在哪，光程 <Katex tex="|F_1P| + |PF_2|" /> 都等于 <Katex tex="2a" />，光"走哪条路都一样耗时" —— 反射点便可以取遍整个椭圆。这正是下面证明的物理直觉，也是"椭圆台球桌"的规则：从一个焦点开杆的球，无论往哪打，一次反弹后必进另一个焦点。</p>
 

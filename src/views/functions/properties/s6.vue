@@ -5,7 +5,7 @@
     <div class="note good" id="s6-def"><strong>周期</strong>：设 f(x) 定义域为 D，若存在 <Katex tex="T\ne 0" />，使得对任意 <Katex tex="x\in D" /> 都有 <Katex tex="x+T\in D" /> 且 <Katex tex="f(x+T)=f(x)" />，则 T 是 f 的一个周期。两个口径与 S1/S3 一脉相承：<strong>任意 x</strong>（不是抽查几个点），且 <strong>x+T 也得落回定义域</strong>（定义域须在平移下不变 —— 只在 [0,+∞) 上定义的函数不可能是周期函数）。若 T 是周期，则 kT（<Katex tex="k\in\mathbb{Z}" />，k≠0）全是周期；若存在最小的正周期，记作 <Katex tex="T_0" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createPeriodCopy" />
-      <div class="cap">图 S6 · <b>周期延拓机</b>：四个预设各验一项。① 平移重合验收：拖 s 看平移像 <Katex tex="f(x-s)" /> —— <Katex tex="s=2" /> 时谷对峰、完全错位，<Katex tex="s=4" /> 完全重合：<strong>周期说的是重合，不是对半折</strong>；② 双轴推周期：检验函数故意选不对称的形状（排除「周期其实是 2」的错觉），两条对称轴相距 <Katex tex="d=2" /> <Katex tex="\Longrightarrow" /> <Katex tex="T=2d=4" />；③ 轴+中心推周期：三角波轴心交替、相距 <Katex tex="d=1" /> <Katex tex="\Longrightarrow" /> <Katex tex="T=4d=4" />；④ 周期延拓：只给基本段 [0,2)，<Katex tex="f(x)=f(x-2k)" /> 把全轴延拓出来 —— 探针直接演示化归链 <Katex tex="x_0\to x_0-2k" /> → 基本段。</div>
+      <div class="cap">图 S6 · <b>函数的周期性</b>：四个预设各验一项。① 平移重合验收：拖 s 看平移像 <Katex tex="f(x-s)" /> —— <Katex tex="s=2" /> 时谷对峰、完全错位，<Katex tex="s=4" /> 完全重合：<strong>周期说的是重合，不是对半折</strong>；② 双轴推周期：检验函数故意选不对称的形状（排除「周期其实是 2」的错觉），两条对称轴相距 <Katex tex="d=2" /> <Katex tex="\Longrightarrow" /> <Katex tex="T=2d=4" />；③ 轴+中心推周期：三角波轴心交替、相距 <Katex tex="d=1" /> <Katex tex="\Longrightarrow" /> <Katex tex="T=4d=4" />；④ 周期延拓：只给基本段 [0,2)，<Katex tex="f(x)=f(x-2k)" /> 把全轴延拓出来 —— 探针直接演示化归链 <Katex tex="x_0\to x_0-2k" /> → 基本段。</div>
     </div>
 
     <h3 class="sec" id="s6-thm">对称换算两条定理</h3>

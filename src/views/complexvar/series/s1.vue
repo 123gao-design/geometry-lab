@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createTaylor" />
-      <div class="cap">图 级1 · <b>泰勒级数机</b>：左图金圈是收敛圆、红点是函数的奇点，点 <Katex tex="z" /> 可以拖进拖出；右图把前 <Katex tex="N+1" /> 个部分和依次连成一条折线，金色点是 <Katex tex="f(z)" />。看点：① <Katex tex="\dfrac1{1-z}" /> 在圈内折线向金点收拢，拖到圈外折线越走越远；② <Katex tex="e^z" /> 没有奇点，金圈退场，任何位置都收；③ <Katex tex="\dfrac1{1+z^2}" /> 的奇点落在 <Katex tex="\pm i" />，离原点正好一个单位，所以半径是 <Katex tex="1" />。</div>
+      <div class="cap">图 级1 · <b>复级数与泰勒级数</b>：左图金圈是收敛圆、红点是函数的奇点，点 <Katex tex="z" /> 可以拖进拖出；右图把前 <Katex tex="N+1" /> 个部分和依次连成一条折线，金色点是 <Katex tex="f(z)" />。看点：① <Katex tex="\dfrac1{1-z}" /> 在圈内折线向金点收拢，拖到圈外折线越走越远；② <Katex tex="e^z" /> 没有奇点，金圈退场，任何位置都收；③ <Katex tex="\dfrac1{1+z^2}" /> 的奇点落在 <Katex tex="\pm i" />，离原点正好一个单位，所以半径是 <Katex tex="1" />。</div>
     </div>
 
     <h3 class="sec" id="s1-num">复数项级数</h3>

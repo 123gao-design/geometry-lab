@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createEigenDiag" />
-      <div class="cap">图 特2 · <b>对角化机</b>：金色与紫色虚线是两条特征方向，橙色箭头是任取的 <Katex tex="x" />、绿色箭头是它的像 <Katex tex="Ax" />，两条粗折线把 <Katex tex="x" /> 与 <Katex tex="Ax" /> 各自沿特征方向拆成两段。看点：拖 <Katex tex="x" /> 到任意方向，右栏「坐标」一行的两个数就是 <Katex tex="x" /> 在特征基下的分量；变换后同一行的两个数各自乘上 <Katex tex="\lambda_1,\lambda_2" />，交叉项始终为零——这就是 <Katex tex="D" /> 的含意。切到「一个为零」档，绿色像被压到一条直线上。</div>
+      <div class="cap">图 特2 · <b>对角化</b>：金色与紫色虚线是两条特征方向，橙色箭头是任取的 <Katex tex="x" />、绿色箭头是它的像 <Katex tex="Ax" />，两条粗折线把 <Katex tex="x" /> 与 <Katex tex="Ax" /> 各自沿特征方向拆成两段。看点：拖 <Katex tex="x" /> 到任意方向，右栏「坐标」一行的两个数就是 <Katex tex="x" /> 在特征基下的分量；变换后同一行的两个数各自乘上 <Katex tex="\lambda_1,\lambda_2" />，交叉项始终为零——这就是 <Katex tex="D" /> 的含意。切到「一个为零」档，绿色像被压到一条直线上。</div>
     </div>
 
     <h3 class="sec" id="e2-diag">对角化 A = PDP⁻¹</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="g2-law"><strong>伸缩定理</strong>：<Katex tex="y=f(ax)" /> 把 <Katex tex="y=f(x)" /> 的图象横向变为原来的 <Katex tex="\dfrac{1}{a}" />（a&gt;1 压缩、0&lt;a&lt;1 拉伸）；<Katex tex="y=b\,f(x)" /> 纵向变为原来的 b 倍。图上的点 <Katex tex="(x_0,y_0)" /> 变到 <Katex tex="\left(\dfrac{x_0}{a},\ b\,y_0\right)" /> —— 横坐标除、纵坐标乘，方向相反。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFold" />
-      <div class="cap">图 G2 · <b>伸缩翻折机</b>：原图 <Katex tex="\sqrt{x}"/> 固定，a、b 两个滑块从正拖到负 —— 曲线先塌缩再从另一侧展开，翻折由符号一并决定，无需另设开关。特征点 (1,1)、(4,2) 与它们的像实时核验；探针连线读出「横除纵乘」。</div>
+      <div class="cap">图 G2 · <b>伸缩与翻折</b>：原图 <Katex tex="\sqrt{x}"/> 固定，a、b 两个滑块从正拖到负 —— 曲线先塌缩再从另一侧展开，翻折由符号一并决定，无需另设开关。特征点 (1,1)、(4,2) 与它们的像实时核验；探针连线读出「横除纵乘」。</div>
     </div>
 
     <h3 class="sec" id="g2-law">伸缩定理：为什么横是除</h3>

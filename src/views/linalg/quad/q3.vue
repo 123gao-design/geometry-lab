@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createConicType" />
-      <div class="cap">图 型3 · <b>分类图机</b>：左栏是 <Katex tex="(\lambda_1,\lambda_2)" /> 平面，四块区域各标出一种曲线；右栏是当前点对应曲线 <Katex tex="\lambda_1x'^2+\lambda_2y'^2=1" /> 的实际形状，金紫两条虚线是两条特征方向。看点：把金色点拖过 <Katex tex="\lambda_2=0" /> 这条轴，椭圆突然断开成两支；再看从第一象限拖进第三象限，蓝线先缩成一点、随后整条消失；点停到坐标轴上时两个特征值里有一个为零，右栏换成一对平行直线，那正是退化的那一档。</div>
+      <div class="cap">图 型3 · <b>用特征值给曲线分类</b>：左栏是 <Katex tex="(\lambda_1,\lambda_2)" /> 平面，四块区域各标出一种曲线；右栏是当前点对应曲线 <Katex tex="\lambda_1x'^2+\lambda_2y'^2=1" /> 的实际形状，金紫两条虚线是两条特征方向。看点：把金色点拖过 <Katex tex="\lambda_2=0" /> 这条轴，椭圆突然断开成两支；再看从第一象限拖进第三象限，蓝线先缩成一点、随后整条消失；点停到坐标轴上时两个特征值里有一个为零，右栏换成一对平行直线，那正是退化的那一档。</div>
     </div>
 
     <h3 class="sec" id="q3-map">特征值平面上的四块</h3>

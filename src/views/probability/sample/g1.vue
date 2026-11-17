@@ -6,7 +6,7 @@
     <div class="note good" id="g1-space">随机试验的一切可能结果组成的集合叫<b>样本空间</b> <Katex tex="\Omega" />，其中的每个结果是一个<b>样本点</b>；样本点的子集叫<b>随机事件</b>，只含一个样本点的是基本事件，<Katex tex="\Omega" /> 本身是必然事件，空集是不可能事件。</div>
     <div class="board-wrap">
       <BoardMount :factory="createEventOps" />
-      <div class="cap">图 概1 · <b>事件运算机</b>：样本空间里撒下 170 个等可能的样本点，蓝圆是事件 <Katex tex="A" />、橙圆是事件 <Katex tex="B" />，三个滑块分别改两个半径与圆心距。看点：① 档取并，蓝点橙点全亮；② 档取交，只剩两圆重叠处的紫点；③ 档取 <Katex tex="A" /> 的对立事件，圆外的点全亮。下面四枚徽章按点数读概率，可直接核对 <Katex tex="P(A\cup B)=P(A)+P(B)-P(A\cap B)" />；把圆拉到不相交，并的概率恰等于两概率之和。</div>
+      <div class="cap">图 概1 · <b>事件的关系与运算</b>：样本空间里撒下 170 个等可能的样本点，蓝圆是事件 <Katex tex="A" />、橙圆是事件 <Katex tex="B" />，三个滑块分别改两个半径与圆心距。看点：① 档取并，蓝点橙点全亮；② 档取交，只剩两圆重叠处的紫点；③ 档取 <Katex tex="A" /> 的对立事件，圆外的点全亮。下面四枚徽章按点数读概率，可直接核对 <Katex tex="P(A\cup B)=P(A)+P(B)-P(A\cap B)" />；把圆拉到不相交，并的概率恰等于两概率之和。</div>
     </div>
 
     <h3 class="sec" id="g1-space">样本空间与随机事件</h3>

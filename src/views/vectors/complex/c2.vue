@@ -6,7 +6,7 @@
     <div class="note good">设 <Katex tex="z_1=a+b\mathrm{i}" />，<Katex tex="z_2=c+d\mathrm{i}" />（<Katex tex="a,b,c,d\in\mathbb{R}" />）。加减与乘法都只用到分配律、交换律与 <Katex tex="\mathrm{i}^2=-1" />；除法多一步，把分子分母同乘分母的共轭。四则运算的结果仍是复数，实部与虚部分开写在两段里。</div>
     <div class="board-wrap">
       <BoardMount :factory="createComplexOps" />
-      <div class="cap">图 复2 · <b>复数的运算机</b>：蓝色 <Katex tex="z_1" />、橙色 <Katex tex="z_2" /> 两支固定为输入，金色一支是运算结果。看点：加法档把两支按平行四边形合成，虚线补出另外两条边；乘法档换成 ②，<Katex tex="z_2=\mathrm{i}" />，金色结果正好是蓝色箭头逆时针转过 90°、长度不变；③ 取一对共轭复数相乘，积落回实轴。除法档 ④ 的商为 <Katex tex="\mathrm{i}" />，虚轴上的金点就是答案。</div>
+      <div class="cap">图 复2 · <b>复数的运算</b>：蓝色 <Katex tex="z_1" />、橙色 <Katex tex="z_2" /> 两支固定为输入，金色一支是运算结果。看点：加法档把两支按平行四边形合成，虚线补出另外两条边；乘法档换成 ②，<Katex tex="z_2=\mathrm{i}" />，金色结果正好是蓝色箭头逆时针转过 90°、长度不变；③ 取一对共轭复数相乘，积落回实轴。除法档 ④ 的商为 <Katex tex="\mathrm{i}" />，虚轴上的金点就是答案。</div>
     </div>
 
     <h3 class="sec" id="c2-add">加减与乘法</h3>

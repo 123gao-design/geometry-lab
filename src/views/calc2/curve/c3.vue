@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createGreen" />
-      <div class="cap">图 线3 · <b>格林公式机</b>：淡蓝是区域 <Katex tex="D" />，绿色是正向边界 <Katex tex="L" />（逆时针，箭头给出走向），深蓝箭头是场。右栏两根柱分别是边界上的环流与区域上的二重积分，永远等高。三个预设：① 圆域配旋转场 <Katex tex="F=(-y,x)" />，两边都是 <Katex tex="2\pi R^2" />；② 方域配同一个场，两边都是 <Katex tex="8a^2" />——区域形状换成方形，等式照旧；③ 圆域配保守场 <Katex tex="F=(y,x)" />，<Katex tex="Q_x-P_y=0" />，两边同时为零。</div>
+      <div class="cap">图 线3 · <b>格林公式</b>：淡蓝是区域 <Katex tex="D" />，绿色是正向边界 <Katex tex="L" />（逆时针，箭头给出走向），深蓝箭头是场。右栏两根柱分别是边界上的环流与区域上的二重积分，永远等高。三个预设：① 圆域配旋转场 <Katex tex="F=(-y,x)" />，两边都是 <Katex tex="2\pi R^2" />；② 方域配同一个场，两边都是 <Katex tex="8a^2" />——区域形状换成方形，等式照旧；③ 圆域配保守场 <Katex tex="F=(y,x)" />，<Katex tex="Q_x-P_y=0" />，两边同时为零。</div>
     </div>
 
     <h3 class="sec" id="c3-thm">公式与正向边界</h3>

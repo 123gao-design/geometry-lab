@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createHomog" />
-      <div class="cap">图 射1 · <b>齐次坐标机</b>：拖动 <Katex tex="x" />、<Katex tex="y" /> 移动点，拖动 <Katex tex="\lambda" /> 只改三元组的写法。看点：① <Katex tex="[x:y:1]" /> 与 <Katex tex="[\lambda x:\lambda y:\lambda]" /> 始终标在同一点；② 切到「落到无穷远」，<Katex tex="z" /> 变成 0，点不再有仿射坐标；③ 两条平行线在同一个方向汇合，那个方向就是无穷远点。</div>
+      <div class="cap">图 射1 · <b>齐次坐标</b>：拖动 <Katex tex="x" />、<Katex tex="y" /> 移动点，拖动 <Katex tex="\lambda" /> 只改三元组的写法。看点：① <Katex tex="[x:y:1]" /> 与 <Katex tex="[\lambda x:\lambda y:\lambda]" /> 始终标在同一点；② 切到「落到无穷远」，<Katex tex="z" /> 变成 0，点不再有仿射坐标；③ 两条平行线在同一个方向汇合，那个方向就是无穷远点。</div>
     </div>
 
     <h3 class="sec" id="p1-hom">三元数组与比例</h3>

@@ -8,7 +8,7 @@
     <h3 class="sec" id="m1-unfold">表面积：展开图</h3>
     <div class="board-wrap">
       <BoardMount :factory="createMeasureLab" />
-      <div class="cap">图 积1 · <b>柱锥台体积与表面积机</b>：三档切换正棱柱、正棱锥、正棱台，边数 <Katex tex="n" /> 从 3 推到 8，底面边长 <Katex tex="a" />、高 <Katex tex="h" />、上底边长 <Katex tex="a_2" /> 各自成滑块。底面金色、上底绿色、侧面按面分色。看点：把 <Katex tex="n" /> 往上推，侧面积徽章逐渐逼近圆柱的 <Katex tex="2\pi rh" />；切换三档时 <Katex tex="a_2=a" /> 与 <Katex tex="a_2\to0" /> 两种极限在体积徽章上直接显形；拖动画面可以转到背面，核对每个面都算进了侧面积。</div>
+      <div class="cap">图 积1 · <b>柱、锥、台的体积与表面积</b>：三档切换正棱柱、正棱锥、正棱台，边数 <Katex tex="n" /> 从 3 推到 8，底面边长 <Katex tex="a" />、高 <Katex tex="h" />、上底边长 <Katex tex="a_2" /> 各自成滑块。底面金色、上底绿色、侧面按面分色。看点：把 <Katex tex="n" /> 往上推，侧面积徽章逐渐逼近圆柱的 <Katex tex="2\pi rh" />；切换三档时 <Katex tex="a_2=a" /> 与 <Katex tex="a_2\to0" /> 两种极限在体积徽章上直接显形；拖动画面可以转到背面，核对每个面都算进了侧面积。</div>
     </div>
     <p>侧面展开的关键是找到「展开后每条边的长度」。棱柱的侧面展开后是一个矩形，宽是底面周长 <Katex tex="c" />、高是 <Katex tex="h" />；正棱锥的侧面展开后是以底面边长为底、斜高 <Katex tex="h'" /> 为高的等腰三角形，<Katex tex="n" /> 个拼起来是 <Katex tex="\tfrac12ch'" />。圆柱沿一条母线剪开摊平，侧面是长 <Katex tex="2\pi r" />、宽 <Katex tex="h" /> 的矩形。</p>
     <p>圆锥的展开图是扇形，弧长等于底面周长 <Katex tex="2\pi r" />，半径等于母线 <Katex tex="l" />，所以扇形面积 <Katex tex="\tfrac12\cdot2\pi r\cdot l=\pi rl" />。圆台展开成扇环，面积等于两底周长之和的一半乘母线：<Katex tex="\pi(r+r')l" />。</p>

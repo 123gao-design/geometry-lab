@@ -5,7 +5,7 @@
     <div class="note good" id="r2-thm"><strong>零点存在性定理</strong>：若 <Katex tex="y=f(x)" /> 在闭区间 <Katex tex="[a,b]" /> 上连续，且 <Katex tex="f(a)\cdot f(b)<0" />（端点异号），则存在 <Katex tex="c\in(a,b)" /> 使 <Katex tex="f(c)=0" />。一句话：连续曲线从 x 轴下方走到上方（或反过来），中途必有穿轴点。三个「不」要记牢：<strong>不给位置</strong>（c 在哪另算）、<strong>不给个数</strong>（一个也行、三个也行 —— 图 R2 ① 实况 3 个）、<strong>条件不必不可少</strong>（同号也可能有零点 —— 图 R2 ②）。它的价值在于给算法兜底：只要异号区间在手上，R3 的二分法就有了依据。</div>
     <div class="board-wrap">
       <BoardMount :factory="createIvtWitness" />
-      <div class="cap">图 R2 · <b>端点验号机</b>：两个把手 a、b 锁在曲线上拖（只改横坐标），绿带就是区间、灰点是零点实况。① 连续异号 <Katex tex="\to"/> 存在，实况 3 个 —— 定理只承诺「至少一个」；② <Katex tex="x^2"/> 同号却有零点 —— 「充分不必要」现场；③ 分段函数在 0.5 处跳变 3 格：端点异号、区间内却无零点 —— 连续性被偷走，定理失效；④ <Katex tex="x^3+x-1"/> 严格单调 + 异号 <Katex tex="\to"/> 存在且唯一，实况恰好对上。</div>
+      <div class="cap">图 R2 · <b>零点存在定理</b>：两个把手 a、b 锁在曲线上拖（只改横坐标），绿带就是区间、灰点是零点实况。① 连续异号 <Katex tex="\to"/> 存在，实况 3 个 —— 定理只承诺「至少一个」；② <Katex tex="x^2"/> 同号却有零点 —— 「充分不必要」现场；③ 分段函数在 0.5 处跳变 3 格：端点异号、区间内却无零点 —— 连续性被偷走，定理失效；④ <Katex tex="x^3+x-1"/> 严格单调 + 异号 <Katex tex="\to"/> 存在且唯一，实况恰好对上。</div>
     </div>
 
     <h3 class="sec" id="r2-why">为什么连续不可少</h3>

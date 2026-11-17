@@ -7,7 +7,7 @@
     <h3 class="sec" id="l3-lab">点位机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createPointPolar" />
-      <div class="cap">图 L3 · <b>点位机</b>：拖 M 任意走。F(M) 的符号一秒分内外；M 在椭圆外时两条切线与<strong>切点弦</strong>自动现身 —— 切点弦的方程与金色极线逐字相同（La Hire）；把 M 放到曲线上，极线恰好塌成 <strong>M 处的切线</strong>；M 走进椭圆，切线消失、极线仍在。</div>
+      <div class="cap">图 L3 · <b>点与圆锥曲线的位置关系</b>：拖 M 任意走。F(M) 的符号一秒分内外；M 在椭圆外时两条切线与<strong>切点弦</strong>自动现身 —— 切点弦的方程与金色极线逐字相同（La Hire）；把 M 放到曲线上，极线恰好塌成 <strong>M 处的切线</strong>；M 走进椭圆，切线消失、极线仍在。</div>
     </div>
 
     <h3 class="sec" id="l3-judge">推导：点的内外与切线条数</h3>

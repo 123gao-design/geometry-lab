@@ -5,7 +5,7 @@
     <div class="note good" id="e2-thm"><strong>区间最值（a&gt;0）</strong>：设对称轴 <Katex tex="x^*=-\dfrac{b}{2a}" />、区间 <Katex tex="[p,q]" />。①轴在区间内（<Katex tex="p\le x^*\le q" />）：min 在顶点 <Katex tex="f(x^*)=\dfrac{4ac-b^2}{4a}" />，max 在距轴较远的端点；②轴在左外（<Katex tex="x^*&lt;p" />）：min=f(p)、max=f(q)；③轴在右外（<Katex tex="x^*&gt;q" />）：min=f(q)、max=f(p)。开口向下（a&lt;0）时全部对调：顶点管 max，端点压 min。</div>
     <div class="board-wrap">
       <BoardMount :factory="createQuadmin" />
-      <div class="cap">图 E2 · <b>区间最值机</b>：① 定轴动区间 —— 拖把手 p、q 扫过轴；② 动轴定区间 —— 滑块 t 拖顶点穿过 [1,4]；③ 开口向下时判定相反。绿点=min 位点、红点=max 位点，徽章实时核验；蓝带 = 区间，金点 = 顶点。</div>
+      <div class="cap">图 E2 · <b>闭区间上的最值</b>：① 定轴动区间 —— 拖把手 p、q 扫过轴；② 动轴定区间 —— 滑块 t 拖顶点穿过 [1,4]；③ 开口向下时判定相反。绿点=min 位点、红点=max 位点，徽章实时核验；蓝带 = 区间，金点 = 顶点。</div>
     </div>
 
     <h3 class="sec" id="e2-dyn">双动态：两类大题型</h3>
@@ -16,7 +16,7 @@
     <div class="note good"><strong>根分布</strong>：已知 <Katex tex="ax^2+bx+c=0" />（<Katex tex="a\ne 0" />），问实根相对某个参照位置（点 k 或参照区间 <Katex tex="(1,3)" />）落在哪侧/之内。全部工具与最值共用，只有三项：① <strong>Δ</strong> —— 根存在吗（<Katex tex="\Delta=b^2-4ac\ge 0" /> 是一切讨论的前提，无根则不必讨论分布）；② <strong>对称轴</strong> <Katex tex="x=-\dfrac{b}{2a}" /> —— 根的「平均位置」（两根之和的一半），轴在哪，两根整体就在哪；③ <strong>端点符号 a·f(k)</strong> —— k 在两根之内还是之外，一个乘积即可判定。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRootDist" />
-      <div class="cap">图 E2b · <b>根位置判据机</b>：绿带是参照区间 (1,3)、金点是两根 r₁ r₂、灰点是顶点。① 顶点滑动：拖 t 看两根经历「左外 → 一内一外 → 都在内 → 右外」；② 顶点固定在左端点 x=1 上：无实根（悬空）、c=1 双根压线、一内一外 —— 压线情形单独讨论；③ 开口向下 a=−1：同样的五态，但 a·f(k) 的符号跟着对调。判定徽章实时分类，k 检验徽章直接验证 a·f(1)、a·f(3)。</div>
+      <div class="cap">图 E2b · <b>一元二次方程根的分布</b>：绿带是参照区间 (1,3)、金点是两根 r₁ r₂、灰点是顶点。① 顶点滑动：拖 t 看两根经历「左外 → 一内一外 → 都在内 → 右外」；② 顶点固定在左端点 x=1 上：无实根（悬空）、c=1 双根压线、一内一外 —— 压线情形单独讨论；③ 开口向下 a=−1：同样的五态，但 a·f(k) 的符号跟着对调。判定徽章实时分类，k 检验徽章直接验证 a·f(1)、a·f(3)。</div>
     </div>
     <p>最常用的一条判据：<strong>一根小于 <Katex tex="k" />、一根大于 <Katex tex="k" /> <Katex tex="\iff" /> <Katex tex="a\cdot f(k)<0" /></strong>。推导只有一行 —— 设两根 <Katex tex="r_1\le r_2" />，把 <Katex tex="f" /> 写成因式分解形，代入 <Katex tex="k" />：</p>
     <Katex tex="f(k)=a(k-r_1)(k-r_2)\quad\Longrightarrow\quad a\cdot f(k)=a^2(k-r_1)(k-r_2)" display />

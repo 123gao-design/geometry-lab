@@ -5,7 +5,7 @@
     <div class="note good" id="s3-def"><strong>偶函数</strong>：设 f(x) 定义域为 D，若对任意 <Katex tex="x\in D" /> 都有 <Katex tex="-x\in D" /> 且 <Katex tex="f(-x)=f(x)" />，则 f 为偶函数，图象关于 <strong>y 轴对称</strong>；<strong>奇函数</strong>：把等号右边换成 <Katex tex="f(-x)=-f(x)" />，图象关于<strong>原点中心对称</strong>。两个前提固定口径：<strong>−x 也得在定义域里</strong>（D 必须关于原点对称），且是<strong>任意 x</strong> —— 和 S1 的「任取」同一含义。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFoldMirror" />
-      <div class="cap">图 S3 · <b>奇偶折叠机</b>：滑块 t 把 <Katex tex="x>0" /> 的半张图折过去 —— 金线是折叠过程，蓝线是左半的「对照组」；① <Katex tex="x^2" /> 沿 y 轴折拢完全重合（偶），② <Katex tex="x^3" /> 绕原点转半圈完全重合（奇），③ <Katex tex="1/x" /> 连渐近线都关于原点对称，④ <Katex tex="\sqrt{x}" /> 折过去对面空无一物 —— <strong>定义域不关于原点对称，前提就不满足</strong>；⑤ <Katex tex="x^2+x" /> 定义域对称却折不拢：非奇非偶。折毕徽章做逐点验收（最大偏差），折叠只是演示，验收才是定义。</div>
+      <div class="cap">图 S3 · <b>奇偶性的图象特征</b>：滑块 t 把 <Katex tex="x>0" /> 的半张图折过去 —— 金线是折叠过程，蓝线是左半的「对照组」；① <Katex tex="x^2" /> 沿 y 轴折拢完全重合（偶），② <Katex tex="x^3" /> 绕原点转半圈完全重合（奇），③ <Katex tex="1/x" /> 连渐近线都关于原点对称，④ <Katex tex="\sqrt{x}" /> 折过去对面空无一物 —— <strong>定义域不关于原点对称，前提就不满足</strong>；⑤ <Katex tex="x^2+x" /> 定义域对称却折不拢：非奇非偶。折毕徽章做逐点验收（最大偏差），折叠只是演示，验收才是定义。</div>
     </div>
 
     <h3 class="sec" id="s3-rule">判定三步与运算性质</h3>

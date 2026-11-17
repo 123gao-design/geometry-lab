@@ -7,7 +7,7 @@
       设回归方程为 <Katex tex="\hat y=\hat b x+\hat a" />，最小二乘法取使 <Katex tex="\sum(y_i-\hat y_i)^2" /> 最小的 <Katex tex="\hat a" /> 与 <Katex tex="\hat b" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRegress" />
-      <div class="cap">图 统3 · <b>一元线性回归机</b>：平面上 9 个点，金色点可以拖动，金色直线是回归直线，红色虚线是每个点的竖直残差。看点：拖动金色点，回归直线整体跟着转动，右侧的残差平方和随之改变 —— 无论怎么拖，直线总停在使这个和最小的位置。青色小点是样本中心 <Katex tex="(\bar x,\bar y)" />，回归直线始终经过它，这条性质在后面求系数时直接用到。</div>
+      <div class="cap">图 统3 · <b>一元线性回归</b>：平面上 9 个点，金色点可以拖动，金色直线是回归直线，红色虚线是每个点的竖直残差。看点：拖动金色点，回归直线整体跟着转动，右侧的残差平方和随之改变 —— 无论怎么拖，直线总停在使这个和最小的位置。青色小点是样本中心 <Katex tex="(\bar x,\bar y)" />，回归直线始终经过它，这条性质在后面求系数时直接用到。</div>
     </div>
 
     <h3 class="sec" id="t3-scatter">散点图与相关关系</h3>

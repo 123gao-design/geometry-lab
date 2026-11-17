@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createClosure" />
-      <div class="cap">图 拓3 · <b>内部与闭包机</b>：集合 <Katex tex="A" /> 是一块开圆盘再加一枚孤立点 <Katex tex="Q" />，拖动 <Katex tex="P" /> 到各处。看点：① 圆盘内部涂蓝，那是 <Katex tex="A" /> 的内部；圆周描绿，闭包由它兜住；② <Katex tex="P" /> 跨过圆周时判读依次是内点、边界点、外点，球始终半虚半实地贴着两侧；③ 把 <Katex tex="P" /> 拖到 <Katex tex="Q" /> 上：这枚点属于 <Katex tex="A" />，判定仍是边界点——孤立点也在边界里。</div>
+      <div class="cap">图 拓3 · <b>内部、闭包与边界</b>：集合 <Katex tex="A" /> 是一块开圆盘再加一枚孤立点 <Katex tex="Q" />，拖动 <Katex tex="P" /> 到各处。看点：① 圆盘内部涂蓝，那是 <Katex tex="A" /> 的内部；圆周描绿，闭包由它兜住；② <Katex tex="P" /> 跨过圆周时判读依次是内点、边界点、外点，球始终半虚半实地贴着两侧；③ 把 <Katex tex="P" /> 拖到 <Katex tex="Q" /> 上：这枚点属于 <Katex tex="A" />，判定仍是边界点——孤立点也在边界里。</div>
     </div>
 
     <h3 class="sec" id="s3-closed">闭集与对偶公理</h3>

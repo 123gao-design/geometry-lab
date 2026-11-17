@@ -10,7 +10,7 @@
     <p>正方体中每一条棱都与若干条棱异面。取棱 <Katex tex="A_1B" />，与它异面的有 <Katex tex="B_1C" />、<Katex tex="DD_1" />、<Katex tex="CC_1" /> 等；与它相交、平行的棱则与它共面。把每个顶点处的三条棱与面对角线标出来，异面关系一目了然。</p>
     <div class="board-wrap">
       <BoardMount :factory="createSkewLab" />
-      <div class="cap">图 位2 · <b>异面直线与角机</b>：单位正方体上三档。第一档取异面直线 <Katex tex="A_1B" /> 与 <Katex tex="B_1C" />，把 <Katex tex="B_1C" /> 平移到 <Katex tex="A_1D" />（绿色虚线），在 <Katex tex="A_1" /> 处量出 <Katex tex="60^\circ" />；第二档把斜线投到平面 <Katex tex="ABCD" /> 上，垂足与射影一起画出，读出 <Katex tex="45^\circ" />；第三档从 <Katex tex="A_1" /> 向平面 <Katex tex="BDC_1" /> 作垂线，垂足 <Katex tex="H" /> 恰是三角形的重心，垂线段长 <Katex tex="\tfrac{2\sqrt{3}}{3}\approx1.15" />。拖动画面旋转，箭头所指的角始终张在同一个顶点上。</div>
+      <div class="cap">图 位2 · <b>异面直线与角</b>：单位正方体上三档。第一档取异面直线 <Katex tex="A_1B" /> 与 <Katex tex="B_1C" />，把 <Katex tex="B_1C" /> 平移到 <Katex tex="A_1D" />（绿色虚线），在 <Katex tex="A_1" /> 处量出 <Katex tex="60^\circ" />；第二档把斜线投到平面 <Katex tex="ABCD" /> 上，垂足与射影一起画出，读出 <Katex tex="45^\circ" />；第三档从 <Katex tex="A_1" /> 向平面 <Katex tex="BDC_1" /> 作垂线，垂足 <Katex tex="H" /> 恰是三角形的重心，垂线段长 <Katex tex="\tfrac{2\sqrt{3}}{3}\approx1.15" />。拖动画面旋转，箭头所指的角始终张在同一个顶点上。</div>
     </div>
 
     <h3 class="sec" id="w2-angle">平移法求所成角</h3>
@@ -34,7 +34,7 @@
     <p>定理的用处有两方面。求线面角时，它保证沿射影方向量出的角确实是所有可能角里最小的那个，选错直线只会得到偏大的角；证明不等式时，把 <Katex tex="\cos\theta" /> 写成两个余弦的乘积，<Katex tex="\cos\theta_2\le1" /> 一步就能放缩。</p>
     <div class="board-wrap">
       <BoardMount :factory="createMinAngle" id="minangle" />
-      <div class="cap">图 位2b · <b>最小角定理机</b>：<Katex tex="PO\perp\alpha" />，<Katex tex="AO" /> 是斜线 <Katex tex="PA" /> 的射影，绿色直线 <Katex tex="AB" /> 在平面内绕斜足 <Katex tex="A" /> 转动。三个角分色画出：线面角 <Katex tex="\theta_1" /> 为金色，射影与 <Katex tex="AB" /> 的夹角 <Katex tex="\theta_2" /> 为青色，斜线与 <Katex tex="AB" /> 的夹角 <Katex tex="\theta" /> 为紫色。看点：转动「方向」滑块，<Katex tex="\theta_2" /> 变大时 <Katex tex="\theta" /> 随之变大；<Katex tex="\theta_2=0" /> 处 <Katex tex="\theta" /> 落到最小值，与 <Katex tex="\theta_1" /> 相等；<Katex tex="\theta_2=90^\circ" /> 处 <Katex tex="\theta" /> 达到 <Katex tex="90^\circ" />。余弦关系徽章把 <Katex tex="\cos\theta_1\cos\theta_2" /> 的乘积与 <Katex tex="\cos\theta" /> 并列，拖动时两者始终一致。</div>
+      <div class="cap">图 位2b · <b>最小角定理</b>：<Katex tex="PO\perp\alpha" />，<Katex tex="AO" /> 是斜线 <Katex tex="PA" /> 的射影，绿色直线 <Katex tex="AB" /> 在平面内绕斜足 <Katex tex="A" /> 转动。三个角分色画出：线面角 <Katex tex="\theta_1" /> 为金色，射影与 <Katex tex="AB" /> 的夹角 <Katex tex="\theta_2" /> 为青色，斜线与 <Katex tex="AB" /> 的夹角 <Katex tex="\theta" /> 为紫色。看点：转动「方向」滑块，<Katex tex="\theta_2" /> 变大时 <Katex tex="\theta" /> 随之变大；<Katex tex="\theta_2=0" /> 处 <Katex tex="\theta" /> 落到最小值，与 <Katex tex="\theta_1" /> 相等；<Katex tex="\theta_2=90^\circ" /> 处 <Katex tex="\theta" /> 达到 <Katex tex="90^\circ" />。余弦关系徽章把 <Katex tex="\cos\theta_1\cos\theta_2" /> 的乘积与 <Katex tex="\cos\theta" /> 并列，拖动时两者始终一致。</div>
     </div>
 
     <h3 class="sec" id="w2-distance">点到平面的距离</h3>

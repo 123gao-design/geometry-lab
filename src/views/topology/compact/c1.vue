@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createConnected" />
-      <div class="cap">图 连1 · <b>分割机</b>：两块圆盘拼成空间 <Katex tex="X" />。看点：① 走廊关掉时，左盘 <Katex tex="U" /> 与右盘 <Katex tex="V" /> 各自成一块开集，互不相交，<Katex tex="X=U\cup V" /> 就是一份分割；② 打开走廊，任何一块开集都拆不开它，判读翻成连通；③ 滑块只挪间距，挪得再开也不改变判定，判定只认走廊在不在——连通与否是结构问题，不是远近问题。</div>
+      <div class="cap">图 连1 · <b>连通与分割</b>：两块圆盘拼成空间 <Katex tex="X" />。看点：① 走廊关掉时，左盘 <Katex tex="U" /> 与右盘 <Katex tex="V" /> 各自成一块开集，互不相交，<Katex tex="X=U\cup V" /> 就是一份分割；② 打开走廊，任何一块开集都拆不开它，判读翻成连通；③ 滑块只挪间距，挪得再开也不改变判定，判定只认走廊在不在——连通与否是结构问题，不是远近问题。</div>
     </div>
 
     <h3 class="sec" id="c1-def">定义：没有分割</h3>

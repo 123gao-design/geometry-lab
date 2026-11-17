@@ -5,7 +5,7 @@
     <div class="note good" id="w1-law"><strong>正弦函数</strong>：<Katex tex="y=\sin x" />，定义域 <Katex tex="\mathbb{R}" />，值域 <Katex tex="[-1,1]" />，周期 <Katex tex="T=2\pi" />；<strong>五点骨架</strong>：<Katex tex="(0,0),\ \Bigl(\tfrac{\pi}{2},1\Bigr),\ (\pi,0),\ \Bigl(\tfrac{3\pi}{2},-1\Bigr),\ (2\pi,0)" /> —— 升、峰、降、谷、升，一档走势尽在五点。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRoll" />
-      <div class="cap">图 W1 · <b>正弦滚动展开机</b>：左圆右纸<strong>共用同一比例尺</strong>（圆半径 = 坐标纸的单位长，圆心与纸的零线等高）—— 拖 P 或 ⏵ 滚动，纵坐标 <Katex tex="MP"/> 沿金色虚线被「摊」到右纸上，<Katex tex="(\alpha,\sin\alpha)"/> 逐点连成金色正弦波；五个金点即五点法骨架，「五点判读」徽章随档位换词。</div>
+      <div class="cap">图 W1 · <b>把正弦曲线摊到坐标纸上</b>：左圆右纸<strong>共用同一比例尺</strong>（圆半径 = 坐标纸的单位长，圆心与纸的零线等高）—— 拖 P 或 ⏵ 滚动，纵坐标 <Katex tex="MP"/> 沿金色虚线被「摊」到右纸上，<Katex tex="(\alpha,\sin\alpha)"/> 逐点连成金色正弦波；五个金点即五点法骨架，「五点判读」徽章随档位换词。</div>
     </div>
 
     <h3 class="sec" id="w1-roll">单位圆滚动展开</h3>

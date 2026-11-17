@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createMobius" />
-      <div class="cap">图 定5 · <b>莫比乌斯反演机</b>：左图是 <Katex tex="n" /> 的除数双曲线，曲线 <Katex tex="d\cdot e=n" /> 上的整点就是全部除数对，颜色按 <Katex tex="\mu(d)" /> 分成绿、红、灰三类；右图把同一个 <Katex tex="n" /> 的除数排成一列，柱高是 <Katex tex="\mu(d)" />，柱顶上方的数字是从第一个除数累到当前的部分和。看点：① 拖 <Katex tex="n" /> 从 <Katex tex="2" /> 走到 <Katex tex="48" />，「除数上的 <Katex tex="\mu" /> 和」始终是 <Katex tex="0" />，部分和一路上下摆，最后一定落回零；② 点 ① 号预设取 <Katex tex="n=1" />，除数列里只剩一个 <Katex tex="1" />，和才变成 <Katex tex="1" />；③ 切到 ③ 号预设 <Katex tex="n=36" />，凡带平方因子的除数一律涂灰，柱高为 <Katex tex="0" />。</div>
+      <div class="cap">图 定5 · <b>莫比乌斯反演</b>：左图是 <Katex tex="n" /> 的除数双曲线，曲线 <Katex tex="d\cdot e=n" /> 上的整点就是全部除数对，颜色按 <Katex tex="\mu(d)" /> 分成绿、红、灰三类；右图把同一个 <Katex tex="n" /> 的除数排成一列，柱高是 <Katex tex="\mu(d)" />，柱顶上方的数字是从第一个除数累到当前的部分和。看点：① 拖 <Katex tex="n" /> 从 <Katex tex="2" /> 走到 <Katex tex="48" />，「除数上的 <Katex tex="\mu" /> 和」始终是 <Katex tex="0" />，部分和一路上下摆，最后一定落回零；② 点 ① 号预设取 <Katex tex="n=1" />，除数列里只剩一个 <Katex tex="1" />，和才变成 <Katex tex="1" />；③ 切到 ③ 号预设 <Katex tex="n=36" />，凡带平方因子的除数一律涂灰，柱高为 <Katex tex="0" />。</div>
     </div>
 
     <h3 class="sec" id="d5-fn">数论函数与积性</h3>

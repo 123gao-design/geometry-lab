@@ -6,7 +6,7 @@
     <div class="note good">设 <Katex tex="P(n)" /> 是关于正整数 <Katex tex="n" /> 的命题。<strong>数学归纳法</strong>：① 证明 <Katex tex="P(1)" /> 成立；② 假设 <Katex tex="P(k)" /> 成立（<Katex tex="k" /> 为任意正整数），证明 <Katex tex="P(k+1)" /> 也成立。两步齐备，则 <Katex tex="P(n)" /> 对一切正整数 <Katex tex="n" /> 成立。</div>
     <div class="board-wrap">
       <BoardMount :factory="createDomino" />
-      <div class="cap">图 归1 · <b>递推链机</b>：每张卡片是一个命题 <Katex tex="P(n)" />。绿色是已经成立的，金色是正在推的下一张，箭头是「由 <Katex tex="P(k)" /> 推出 <Katex tex="P(k+1)" />」。拖动滑块或按「推进一步」，看已证的范围怎样一节一节延长。第一步保证链有起点，第二步保证每一节都能接上。</div>
+      <div class="cap">图 归1 · <b>递推与多米诺骨牌</b>：每张卡片是一个命题 <Katex tex="P(n)" />。绿色是已经成立的，金色是正在推的下一张，箭头是「由 <Katex tex="P(k)" /> 推出 <Katex tex="P(k+1)" />」。拖动滑块或按「推进一步」，看已证的范围怎样一节一节延长。第一步保证链有起点，第二步保证每一节都能接上。</div>
     </div>
 
     <h3 class="sec" id="i1-two">两步</h3>

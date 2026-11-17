@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createContMap" />
-      <div class="cap">图 拓4 · <b>开区间原像机</b>：蓝线是 <Katex tex="f(x)=x^2" />，橙色横带是值域里的一段开区间 <Katex tex="(a,b)" />。看点：① 绿色竖带是这段区间的原像，<Katex tex="a" />、<Katex tex="b" /> 一拖，竖带跟着伸缩；② 只要曲线连续，原像总是开区间的并，端点画空心；③ 按「跳断函数」把曲线换成 <Katex tex="y=x" /> 与 <Katex tex="y=x+1" /> 拼接，原像靠近断点的一端就变成实心，连续性在那里断掉。</div>
+      <div class="cap">图 拓4 · <b>连续映射与开集的原像</b>：蓝线是 <Katex tex="f(x)=x^2" />，橙色横带是值域里的一段开区间 <Katex tex="(a,b)" />。看点：① 绿色竖带是这段区间的原像，<Katex tex="a" />、<Katex tex="b" /> 一拖，竖带跟着伸缩；② 只要曲线连续，原像总是开区间的并，端点画空心；③ 按「跳断函数」把曲线换成 <Katex tex="y=x" /> 与 <Katex tex="y=x+1" /> 拼接，原像靠近断点的一端就变成实心，连续性在那里断掉。</div>
     </div>
 
     <h3 class="sec" id="s4-def">用开集定义连续</h3>

@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createGradField" />
-      <div class="cap">图 微4 · <b>方向导数与梯度机</b>：暖橙是高处、冷蓝是低处，灰线是等值线；蓝箭头是梯度 <Katex tex="\nabla f" />，橙箭头是任取的方向 <Katex tex="l" />，绿色是梯度在 <Katex tex="l" /> 上的投影，其长度就是 <Katex tex="\dfrac{\partial f}{\partial l}" />。看点：把方向角转到与梯度同向，绿段最长；转到与等值线相切，绿段缩成一点，读数为零；再转过去变负，说明沿这个方向函数在减小。第三档 <Katex tex="f=x^2+4y^2" /> 的等值线是压扁的椭圆，梯度与等值线垂直，但不再指向原点。</div>
+      <div class="cap">图 微4 · <b>方向导数与梯度</b>：暖橙是高处、冷蓝是低处，灰线是等值线；蓝箭头是梯度 <Katex tex="\nabla f" />，橙箭头是任取的方向 <Katex tex="l" />，绿色是梯度在 <Katex tex="l" /> 上的投影，其长度就是 <Katex tex="\dfrac{\partial f}{\partial l}" />。看点：把方向角转到与梯度同向，绿段最长；转到与等值线相切，绿段缩成一点，读数为零；再转过去变负，说明沿这个方向函数在减小。第三档 <Katex tex="f=x^2+4y^2" /> 的等值线是压扁的椭圆，梯度与等值线垂直，但不再指向原点。</div>
     </div>
 
     <h3 class="sec" id="m4-dir">方向导数</h3>

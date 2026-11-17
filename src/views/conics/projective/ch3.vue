@@ -7,7 +7,7 @@
 
     <div class="board-wrap" id="c3-quad">
       <BoardMount :factory="createBoard" />
-      <div class="cap">图 3 · <b>完全四点形实验台</b>：拖动四个白点 A, B, C, D —— 画布视野自动缩放，保证三个橙色对角点 <Katex tex="P_1" />、<Katex tex="P_2" />、<Katex tex="P_3" /> 与对角三角形始终完整可见（出界的点在边缘挂出方向徽章）。用按钮选择一条边（如 AB），图中实时标出调和点列 <Katex tex="A,\ B,\ P_1,\ S_1" /> 并显示交叉比 —— 无论顶点拖到哪里，数值恒为 <Katex tex="-1" />。</div>
+      <div class="cap">图 3 · <b>完全四点形与调和点列</b>：拖动四个白点 A, B, C, D —— 画布视野自动缩放，保证三个橙色对角点 <Katex tex="P_1" />、<Katex tex="P_2" />、<Katex tex="P_3" /> 与对角三角形始终完整可见（出界的点在边缘挂出方向徽章）。用按钮选择一条边（如 AB），图中实时标出调和点列 <Katex tex="A,\ B,\ P_1,\ S_1" /> 并显示交叉比 —— 无论顶点拖到哪里，数值恒为 <Katex tex="-1" />。</div>
     </div>
     <p>试试把某个顶点拖向远方：视野会自动拉远、一路跟踪移向远方的 P₁；与此同时 <Katex tex="S_1" /> 移向 AB 的中点 —— 当 <Katex tex="P_1" /> 趋于无穷远时，<Katex tex="S_1" /> 恰好落在 AB 的<strong>中点</strong>上。这一过程把 §2 的“中点 ⟷ 无穷远点”公式直接演示出来。</p>
 

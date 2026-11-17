@@ -11,7 +11,7 @@
     <p>点向式里出现的分母是方向向量的分量，可以同乘一个非零数换成任何一组成比例的数。把分母化成整数、让第一个非零分量为正，是常用的整理方式。与平面的一般式不同，直线没有「一般式」——空间里两个一次方程联立才表示曲线，一条直线要两张平面交出来。</p>
     <div class="board-wrap">
       <BoardMount :factory="createLine3d" />
-      <div class="cap">图 面2 · <b>空间直线的方程机</b>：三档同台。① 点向式——方向角 <Katex tex="\theta" />、方位角 <Katex tex="\varphi" /> 转动紫色方向向量 <Katex tex="\vec s" />，橙色定点 <Katex tex="P_0" /> 的横坐标可调，徽章用坐标写出对称式；② 参数式——参数 <Katex tex="t" /> 滑块让绿点 <Katex tex="P" /> 沿直线滑动，徽章读 <Katex tex="t" /> 与 P 的坐标，<Katex tex="|t|" /> 即 P 到 <Katex tex="P_0" /> 的距离；③ 两平面交线——蓝色与绿色两张半透明平面相交，金色交线的方向是 <Katex tex="\vec n_1\times\vec n_2" />。看点：把直线平行于某条坐标轴调出来，点向式里对应分量的分母就趋于零，那种写法要改成参数式或方程组；第二档把 <Katex tex="t" /> 从负拨到正，P 穿过 <Katex tex="P_0" /> 换到另一侧。</div>
+      <div class="cap">图 面2 · <b>空间直线的方程</b>：三档切换。① 点向式——方向角 <Katex tex="\theta" />、方位角 <Katex tex="\varphi" /> 转动紫色方向向量 <Katex tex="\vec s" />，橙色定点 <Katex tex="P_0" /> 的横坐标可调，徽章用坐标写出对称式；② 参数式——参数 <Katex tex="t" /> 滑块让绿点 <Katex tex="P" /> 沿直线滑动，徽章读 <Katex tex="t" /> 与 P 的坐标，<Katex tex="|t|" /> 即 P 到 <Katex tex="P_0" /> 的距离；③ 两平面交线——蓝色与绿色两张半透明平面相交，金色交线的方向是 <Katex tex="\vec n_1\times\vec n_2" />。看点：把直线平行于某条坐标轴调出来，点向式里对应分量的分母就趋于零，那种写法要改成参数式或方程组；第二档把 <Katex tex="t" /> 从负拨到正，P 穿过 <Katex tex="P_0" /> 换到另一侧。</div>
     </div>
 
     <h3 class="sec" id="p2-param">参数式</h3>

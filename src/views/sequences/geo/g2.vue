@@ -6,7 +6,7 @@
     <div class="note good">若 <Katex tex="m+n=p+q" />（<Katex tex="m,n,p,q\in\mathbb{N}^*" />），则 <Katex tex="a_ma_n=a_pa_q" />。特例是 <Katex tex="a_{n-k}a_{n+k}=a_n^2" />：以第 <Katex tex="n" /> 项为轴，左右等距的两项之积恒等于轴项的平方。这条性质与等差数列的下标和性质（等2）一一对应，只把「和」换成了「积」。</div>
     <div class="board-wrap">
       <BoardMount :factory="createIndexProd" />
-      <div class="cap">图 比2 · <b>下标积机</b>：上栏是各项，蓝色一对是 <Katex tex="a_{c-1}" /> 与 <Katex tex="a_{c+1}" />，橙色一对是 <Katex tex="a_{c-2}" /> 与 <Katex tex="a_{c+2}" />，金色是中心项 <Katex tex="a_c" />。下栏把两对的乘积与 <Katex tex="a_c^2" /> 画成三根条，三根始终等高。拖动 c 换中心，两条乘积随下标移动，等高线不动。</div>
+      <div class="cap">图 比2 · <b>下标积性质</b>：上栏是各项，蓝色一对是 <Katex tex="a_{c-1}" /> 与 <Katex tex="a_{c+1}" />，橙色一对是 <Katex tex="a_{c-2}" /> 与 <Katex tex="a_{c+2}" />，金色是中心项 <Katex tex="a_c" />。下栏把两对的乘积与 <Katex tex="a_c^2" /> 画成三根条，三根始终等高。拖动 c 换中心，两条乘积随下标移动，等高线不动。</div>
     </div>
 
     <h3 class="sec" id="g2-prop">下标和与项积</h3>
@@ -39,7 +39,7 @@
         <li><strong>提示五：两个数列之积的「项」不是两个项之积。</strong><Katex tex="\{(a_nb_n)\}" /> 的第 <Katex tex="n" /> 项是 <Katex tex="a_nb_n" />，不是 <Katex tex="a_pb_q" />。做下标运算时先明确每个数属于哪一列。</li>
       </ul>
     </div>
-    <p>回收与预告：下标和性质是 等2「下标和机」的乘法版本；等比数列前 <Katex tex="n" /> 项和见 比3，那里的错位相减正是把「相邻项相差一个 q 倍」这条性质用在了求和上。判定三法与 等1 的等差判定可以对照阅读。</p>
+    <p>回收与预告：下标和性质是 等2「下标和」的乘法版本；等比数列前 <Katex tex="n" /> 项和见 比3，那里的错位相减正是把「相邻项相差一个 q 倍」这条性质用在了求和上。判定三法与 等1 的等差判定可以对照阅读。</p>
   </ChPage>
 </template>
 <script setup>

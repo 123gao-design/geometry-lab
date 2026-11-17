@@ -6,7 +6,7 @@
     <div class="note good">对 <Katex tex="a_{n+1}=pa_n+q" />（<Katex tex="p\ne1" />），方程 <Katex tex="x=px+q" /> 的解 <Katex tex="x=\dfrac{q}{1-p}" /> 叫这个递推的<strong>不动点</strong>。令 <Katex tex="b_n=a_n-x" />，则 <Katex tex="b_{n+1}=pb_n" />，<Katex tex="\{b_n\}" /> 是公比为 <Katex tex="p" /> 的等比数列，于是 <Katex tex="a_n=x+(a_1-x)p^{n-1}" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createConstr" />
-      <div class="cap">图 递2 · <b>构造法机</b>：上栏是原数列 <Katex tex="a_n" />，金色虚线是平衡点 <Katex tex="x" />；下栏是平移后的 <Katex tex="b_n=a_n-x" />。两栏的点形状完全相同，只是整体差一个 <Katex tex="x" />，下栏的比恒为 <Katex tex="p" />。拖动 p：<Katex tex="|p|<1" /> 时下栏的点向 0 收缩，<Katex tex="|p|>1" /> 时向外散开，<Katex tex="p<0" /> 时正负交替；把 p 拖到 1 看退化情形。</div>
+      <div class="cap">图 递2 · <b>构造法</b>：上栏是原数列 <Katex tex="a_n" />，金色虚线是平衡点 <Katex tex="x" />；下栏是平移后的 <Katex tex="b_n=a_n-x" />。两栏的点形状完全相同，只是整体差一个 <Katex tex="x" />，下栏的比恒为 <Katex tex="p" />。拖动 p：<Katex tex="|p|<1" /> 时下栏的点向 0 收缩，<Katex tex="|p|>1" /> 时向外散开，<Katex tex="p<0" /> 时正负交替；把 p 拖到 1 看退化情形。</div>
     </div>
 
     <h3 class="sec" id="r2-fix">找平衡点</h3>

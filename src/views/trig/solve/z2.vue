@@ -5,7 +5,7 @@
     <div class="note good" id="z2-def"><strong>余弦定理</strong>：<Katex tex="c^2=a^2+b^2-2ab\cos\gamma" />；反过来 <Katex tex="\cos\gamma=\frac{a^2+b^2-c^2}{2ab}" />。任何三角形的对边平方 = 两邻边平方和 − 修正项；<Katex tex="\gamma=90^\circ"/> 时修正项归零，正是勾股定理。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 Z2 · <b>余弦定理投影分解机</b>：把角 γ 顶点摆到原点、b 沿横轴、a 仰角 γ —— 对边 AB 自动成为直角三角形的斜边：水平分量 <Katex tex="|b-a\cos\gamma|" />、竖直分量 <Katex tex="a\sin\gamma" />，勾股一勾即得 c²。拖 γ 从锐到钝：紫色投影 <Katex tex="a\cos\gamma" /> <strong>掉头反向</strong>，修正项从负过零变正；右栏两根横条对比 <Katex tex="a^2+b^2" /> 与 <Katex tex="c^2" />，缺口宽度就是修正项本身。</div>
+      <div class="cap">图 Z2 · <b>用投影分解证余弦定理</b>：把角 γ 顶点摆到原点、b 沿横轴、a 仰角 γ —— 对边 AB 自动成为直角三角形的斜边：水平分量 <Katex tex="|b-a\cos\gamma|" />、竖直分量 <Katex tex="a\sin\gamma" />，勾股一勾即得 c²。拖 γ 从锐到钝：紫色投影 <Katex tex="a\cos\gamma" /> <strong>掉头反向</strong>，修正项从负过零变正；右栏两根横条对比 <Katex tex="a^2+b^2" /> 与 <Katex tex="c^2" />，缺口宽度就是修正项本身。</div>
     </div>
 
     <h3 class="sec" id="z2-law">定理与投影分解</h3>

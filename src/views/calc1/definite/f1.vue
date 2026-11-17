@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createRiemannSum" />
-      <div class="cap">图 定1 · <b>分割求和机</b>：把区间切成 <Katex tex="n" /> 段，每段按左端点、右端点或中点取高，画出一个阶梯。看点：<Katex tex="n" /> 一拖大，台阶变细，和数与精确值之差随之缩小；三档取法里，中点那一档通常贴得最快。</div>
+      <div class="cap">图 定1 · <b>定积分的定义</b>：把区间切成 <Katex tex="n" /> 段，每段按左端点、右端点或中点取高，画出一个阶梯。看点：<Katex tex="n" /> 一拖大，台阶变细，和数与精确值之差随之缩小；三档取法里，中点那一档通常贴得最快。</div>
     </div>
 
     <h3 class="sec" id="f1-step">分割、近似、求和、取极限</h3>

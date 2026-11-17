@@ -28,7 +28,7 @@
     <p>在下面的实验台里拖动 P 巡视三个区域，右侧状态行会实时给出该区域的几何含义：</p>
     <div class="board-wrap">
       <BoardMount :factory="createPoleLab" />
-      <div class="cap">图 6 · <b>极点极线全景实验台</b>：P 在曲线<strong>外</strong>时，极线是两条真实切线的<strong>切点弦</strong>（这也是极线最常见的应用题型）；P 在曲线<strong>上</strong>时，极线退化为该点处的切线；P 在曲线<strong>内</strong>时切线不存在（方程无实根，即“虚切线”），但极线依然真实存在 —— 调和定义不依赖切线是否可见。顶部的方程读数即上面公式。</div>
+      <div class="cap">图 6 · <b>极点与极线</b>：P 在曲线<strong>外</strong>时，极线是两条真实切线的<strong>切点弦</strong>（这也是极线最常见的应用题型）；P 在曲线<strong>上</strong>时，极线退化为该点处的切线；P 在曲线<strong>内</strong>时切线不存在（方程无实根，即“虚切线”），但极线依然真实存在 —— 调和定义不依赖切线是否可见。顶部的方程读数即上面公式。</div>
     </div>
 
     <h3 class="sec" id="c4-lh">La Hire 定理：极点与极线互为镜像</h3>

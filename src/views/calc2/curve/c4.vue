@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createSurfInt1" />
-      <div class="cap">图 线4 · <b>第一类曲面积分机</b>：曲面是抛物面 <Katex tex="z=1-\frac{x^2+y^2}{2}" /> 在单位圆盘上方的那一片，淡灰虚线框是 <Katex tex="P" /> 处小片在 <Katex tex="xOy" /> 面上的投影。紫色箭头是曲面法向，淡蓝虚线是小片四角到投影的连线。看点：把 <Katex tex="r" /> 拖大，小片越来越斜，同样的投影面积摊出的曲面面积变大——放大因子正是 <Katex tex="\sqrt{1+x^2+y^2}" />。整片曲面的面积约 3.83。</div>
+      <div class="cap">图 线4 · <b>第一类曲面积分</b>：曲面是抛物面 <Katex tex="z=1-\frac{x^2+y^2}{2}" /> 在单位圆盘上方的那一片，淡灰虚线框是 <Katex tex="P" /> 处小片在 <Katex tex="xOy" /> 面上的投影。紫色箭头是曲面法向，淡蓝虚线是小片四角到投影的连线。看点：把 <Katex tex="r" /> 拖大，小片越来越斜，同样的投影面积摊出的曲面面积变大——放大因子正是 <Katex tex="\sqrt{1+x^2+y^2}" />。整片曲面的面积约 3.83。</div>
     </div>
 
     <h3 class="sec" id="c4-def">定义与面积元</h3>

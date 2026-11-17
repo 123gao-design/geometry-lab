@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createAccumLab" />
-      <div class="cap">图 定2 · <b>变上限积分机</b>：蓝线是被积函数，绿块是 <Katex tex="[a,x]" /> 上累计的那块面积，橙线就是这块面积随 <Katex tex="x" /> 变化的曲线。看点：橙线在 <Katex tex="x" /> 处的切线斜率恒等于蓝线在该处的高度。</div>
+      <div class="cap">图 定2 · <b>变上限积分与微积分基本定理</b>：蓝线是被积函数，绿块是 <Katex tex="[a,x]" /> 上累计的那块面积，橙线就是这块面积随 <Katex tex="x" /> 变化的曲线。看点：橙线在 <Katex tex="x" /> 处的切线斜率恒等于蓝线在该处的高度。</div>
     </div>
 
     <h3 class="sec" id="f2-accum">变上限积分</h3>

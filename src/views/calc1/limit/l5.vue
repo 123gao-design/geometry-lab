@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createTwoLim" />
-      <div class="cap">图 极5 · <b>两个重要极限机</b>：第一档画单位圆，<Katex tex="P=(\cos x,\sin x)" /> 在圆周上、<Katex tex="T=(1,\tan x)" /> 在 <Katex tex="A" /> 处的切线上，金色是 <Katex tex="\triangle OAP" />、蓝色是扇形 <Katex tex="OAP" />、绿色是 <Katex tex="\triangle OAT" />，三块面积从小到大依次是 <Katex tex="\dfrac12\sin x" />、<Katex tex="\dfrac12x" />、<Katex tex="\dfrac12\tan x" />；第二档画数列 <Katex tex="a_n=\left(1+\dfrac1n\right)^n" /> 的点与 <Katex tex="y=e" /> 的水平虚线。看点：第一档把 <Katex tex="x" /> 拖小，上下两个比值同时收到 <Katex tex="1" />；第二档把 <Katex tex="n" /> 拖大，点逐个抬高、始终压在虚线下方。</div>
+      <div class="cap">图 极5 · <b>两个重要极限</b>：第一档画单位圆，<Katex tex="P=(\cos x,\sin x)" /> 在圆周上、<Katex tex="T=(1,\tan x)" /> 在 <Katex tex="A" /> 处的切线上，金色是 <Katex tex="\triangle OAP" />、蓝色是扇形 <Katex tex="OAP" />、绿色是 <Katex tex="\triangle OAT" />，三块面积从小到大依次是 <Katex tex="\dfrac12\sin x" />、<Katex tex="\dfrac12x" />、<Katex tex="\dfrac12\tan x" />；第二档画数列 <Katex tex="a_n=\left(1+\dfrac1n\right)^n" /> 的点与 <Katex tex="y=e" /> 的水平虚线。看点：第一档把 <Katex tex="x" /> 拖小，上下两个比值同时收到 <Katex tex="1" />；第二档把 <Katex tex="n" /> 拖大，点逐个抬高、始终压在虚线下方。</div>
     </div>
 
     <h3 class="sec" id="l5-first">sin x / x 与面积夹逼</h3>

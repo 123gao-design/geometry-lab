@@ -11,7 +11,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createLinearCong" />
-      <div class="cap">图 整4 · <b>一次同余方程机</b>：表盘有 <Katex tex="m" /> 个刻度，金色刻度就是解。看点：① 把 <Katex tex="b" /> 调到 <Katex tex="\gcd(a,m)" /> 除不尽的值，金色刻度全部消失；② <Katex tex="d\mid b" /> 时金色刻度恰有 <Katex tex="d" /> 个，彼此等间隔排开；③ 把 <Katex tex="a" /> 换成与 <Katex tex="m" /> 互素的数，只剩一个解，此时翻遍表盘也只落一格。</div>
+      <div class="cap">图 整4 · <b>一次同余方程</b>：表盘有 <Katex tex="m" /> 个刻度，金色刻度就是解。看点：① 把 <Katex tex="b" /> 调到 <Katex tex="\gcd(a,m)" /> 除不尽的值，金色刻度全部消失；② <Katex tex="d\mid b" /> 时金色刻度恰有 <Katex tex="d" /> 个，彼此等间隔排开；③ 把 <Katex tex="a" /> 换成与 <Katex tex="m" /> 互素的数，只剩一个解，此时翻遍表盘也只落一格。</div>
     </div>
 
     <h3 class="sec" id="z4-exist">解的存在性</h3>

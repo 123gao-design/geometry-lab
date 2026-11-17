@@ -8,7 +8,7 @@
     <h3 class="sec" id="c1-build">三条轴与三张平面</h3>
     <div class="board-wrap">
       <BoardMount :factory="createSpaceLab" />
-      <div class="cap">图 标1 · <b>空间直角坐标系与坐标平面机</b>：三条坐标轴带箭头，三张坐标平面各一种颜色、半透明并铺上淡网格——<Katex tex="xOy" /> 平面是蓝色，<Katex tex="yOz" /> 平面是绿色，<Katex tex="zOx" /> 平面是紫色。橙点 <Katex tex="P" /> 可以在水平面内拖动，<Katex tex="z" /> 滑块抬高它。<b>看点</b>：按住画面拖动可以转动整个坐标系，转到侧面时能看到三张平面两两垂直；虚线把 <Katex tex="P" /> 拆成三个坐标读数，<Katex tex="P'" /> 是它到底面的投影。</div>
+      <div class="cap">图 标1 · <b>空间直角坐标系与坐标平面</b>：三条坐标轴带箭头，三张坐标平面各一种颜色、半透明并铺上淡网格——<Katex tex="xOy" /> 平面是蓝色，<Katex tex="yOz" /> 平面是绿色，<Katex tex="zOx" /> 平面是紫色。橙点 <Katex tex="P" /> 可以在水平面内拖动，<Katex tex="z" /> 滑块抬高它。<b>看点</b>：按住画面拖动可以转动整个坐标系，转到侧面时能看到三张平面两两垂直；虚线把 <Katex tex="P" /> 拆成三个坐标读数，<Katex tex="P'" /> 是它到底面的投影。</div>
     </div>
     <p>三条轴两两垂直，每两条确定一张平面，共得到三张<strong>坐标平面</strong>：<Katex tex="x" /> 轴与 <Katex tex="y" /> 轴确定的平面叫 <Katex tex="xOy" /> 平面，另外两张分别是 <Katex tex="yOz" /> 平面与 <Katex tex="zOx" /> 平面。三张平面互相垂直，把整个空间切成八块，每一块的内部叫做一个卦限。</p>
     <p>坐标平面的方程非常简洁：<Katex tex="xOy" /> 平面上所有点的竖坐标为零，方程是 <Katex tex="z=0" />；<Katex tex="yOz" /> 平面是 <Katex tex="x=0" />；<Katex tex="zOx" /> 平面是 <Katex tex="y=0" />。坐标轴则是两张平面的交线：<Katex tex="z" /> 轴是 <Katex tex="x=0" /> 与 <Katex tex="y=0" /> 的交线，因此 <Katex tex="z" /> 轴上点的坐标形如 <Katex tex="(0,0,z)" />。标2 会把这一观察推广成一般的平面方程。</p>

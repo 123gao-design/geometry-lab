@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createLinearlab" />
-      <div class="cap">图 方3 · <b>一阶线性方程机</b>：紫虚线是齐次解 <Katex tex="C\mathrm{e}^{-\int P}" />，橙虚线是方程的一个特解，蓝实线是两者相加的通解。<b>看点</b>：拖 <Katex tex="C" /> 时紫线与蓝线平移同一段距离，两者的差恒为那条橙线。</div>
+      <div class="cap">图 方3 · <b>一阶线性方程</b>：紫虚线是齐次解 <Katex tex="C\mathrm{e}^{-\int P}" />，橙虚线是方程的一个特解，蓝实线是两者相加的通解。<b>看点</b>：拖 <Katex tex="C" /> 时紫线与蓝线平移同一段距离，两者的差恒为那条橙线。</div>
     </div>
 
     <h3 class="sec" id="o3-mu">积分因子：把左边收成一个导数</h3>

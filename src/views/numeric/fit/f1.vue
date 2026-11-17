@@ -9,7 +9,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createLsFit" />
-      <div class="cap">图 拟1 · <b>最小二乘拟合机</b>：蓝点是样本，金色直线是拟合结果，青色十字交出样本中心 <Katex tex="(\bar x,\bar y)" />，红色竖线是各点的残差，旁边的小方块面积就是这一个残差的平方。看点：上下拖动任意一点，直线整体重新算一遍，右栏的 <Katex tex="S" /> 随之涨落；拖动幅度滑杆，看 <Katex tex="S" /> 与基准 <Katex tex="S_0" /> 的比值如何变化。</div>
+      <div class="cap">图 拟1 · <b>最小二乘拟合</b>：蓝点是样本，金色直线是拟合结果，青色十字交出样本中心 <Katex tex="(\bar x,\bar y)" />，红色竖线是各点的残差，旁边的小方块面积就是这一个残差的平方。看点：上下拖动任意一点，直线整体重新算一遍，右栏的 <Katex tex="S" /> 随之涨落；拖动幅度滑杆，看 <Katex tex="S" /> 与基准 <Katex tex="S_0" /> 的比值如何变化。</div>
     </div>
 
     <h3 class="sec" id="f1-idea">为什么平方和</h3>

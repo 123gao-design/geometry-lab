@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createTGroup" />
-      <div class="cap">图 换1 · <b>变换群机</b>：灰色是字母 F 的原位，蓝色是变换后的像，下方八个按钮对应正方形的八个对称变换。看点：① <Katex tex="e" /> 不动，<Katex tex="r" /> 转 <Katex tex="90^\circ" />，<Katex tex="s" /> 上下翻转；② 每点一次按钮，徽章读出元素、阶与逆元；③ 八个变换两两复合仍在其中，这正是「群」的意思。</div>
+      <div class="cap">图 换1 · <b>变换群</b>：灰色是字母 F 的原位，蓝色是变换后的像，下方八个按钮对应正方形的八个对称变换。看点：① <Katex tex="e" /> 不动，<Katex tex="r" /> 转 <Katex tex="90^\circ" />，<Katex tex="s" /> 上下翻转；② 每点一次按钮，徽章读出元素、阶与逆元；③ 八个变换两两复合仍在其中，这正是「群」的意思。</div>
     </div>
 
     <h3 class="sec" id="g1-group">变换群的四条要求</h3>

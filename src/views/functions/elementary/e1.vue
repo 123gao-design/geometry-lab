@@ -5,11 +5,11 @@
     <div class="note good" id="e1-k"><strong>一次函数</strong>：<Katex tex="y=kx+b\ (k\ne 0)" />，定义域、值域都是 <Katex tex="\mathbb{R}" />。<strong>斜率</strong> <Katex tex="k=\tan\alpha" />（<Katex tex="\alpha" /> 为倾斜角，<Katex tex="0\le\alpha<\pi" />）—— 它是每前进 1 个 x、y 的改变量，也就是「平均变化率」在直线上处处相等的值：任取两点 <Katex tex="k=\dfrac{y_2-y_1}{x_2-x_1}" />，答案与两点位置无关。这正是 S2 导数判据最平凡的情形：<strong><Katex tex="f'(x)\equiv k" /></strong>，一条水平线。</div>
     <div class="board-wrap">
       <BoardMount :factory="createScout" />
-      <div class="cap">图 E1 · <b>斜率巡逻机</b>：<Katex tex="y=kx+b" /> 单栏全景（导数不另占一栏，<Katex tex="f'\equiv k" /> 只在徽章里说）。探针拖到哪儿，斜率三角形（横 1 竖 k）都是同一个坡。金点 = y 截距 b；灰点 = 零点 <Katex tex="-b/k" />；<Katex tex="k=0" /> 预设演示常数函数的「排除」现场。</div>
+      <div class="cap">图 E1 · <b>一次函数的斜率</b>：<Katex tex="y=kx+b" /> 单栏全景（导数不另占一栏，<Katex tex="f'\equiv k" /> 只在徽章里说）。探针拖到哪儿，斜率三角形（横 1 竖 k）都是同一个坡。金点 = y 截距 b；灰点 = 零点 <Katex tex="-b/k" />；<Katex tex="k=0" /> 预设演示常数函数的「排除」现场。</div>
     </div>
 
     <h3 class="sec" id="e1-act">b 与零点：平移与落轴</h3>
-    <p><Katex tex="b" /> 是 <strong>y 截距</strong>：x=0 时的函数值，图象与 y 轴交点的纵坐标 —— 它只把直线<strong>上下平移</strong>，不改变坡向（C5 机器观：b 是输出端的升降机行程，f(x)+b 竖着走）。零点由 <Katex tex="kx+b=0" /> 解得 <Katex tex="x=-\dfrac{b}{k}" />（k≠0）—— 一次函数恰有一个零点，这也是 R1 三语言最简单的实例：f(c)=0、方程 kx+b=0 的根、直线与 x 轴交点的横坐标，说的是同一个数。</p>
+    <p><Katex tex="b" /> 是 <strong>y 截距</strong>：x=0 时的函数值，图象与 y 轴交点的纵坐标 —— 它只把直线<strong>上下平移</strong>，不改变坡向（C5：输出端加常数 b，图象整体上下平移）。零点由 <Katex tex="kx+b=0" /> 解得 <Katex tex="x=-\dfrac{b}{k}" />（k≠0）—— 一次函数恰有一个零点，这也是 R1 三语言最简单的实例：f(c)=0、方程 kx+b=0 的根、直线与 x 轴交点的横坐标，说的是同一个数。</p>
     <p>单调性完全由 k 的符号判定：<Katex tex="k>0" /> 时 R 上递增、<Katex tex="k<0" /> 递减 —— 与 f′≡k 的正负严格对应（S2 的染色规则）。比较 <Katex tex="k_1,\ k_2" /> 的大小不必算：倾角大者斜率大（在同一直观比例尺下，图 E1 的等单位取景让 45° 就真的是 k=1）。</p>
 
     <h3 class="sec" id="e1-edge">边界与易错点</h3>

@@ -6,7 +6,7 @@
     <div class="note good">递推式 <Katex tex="a_{n+1}=f(a_n)" /> 把「算下一项」写成「过一遍函数 <Katex tex="f" />」。若某个值 <Katex tex="x" /> 满足 <Katex tex="x=f(x)" />，则数列取到它以后一直不变，这样的 <Katex tex="x" /> 叫<strong>不动点</strong>。在图上，不动点是曲线 <Katex tex="y=f(x)" /> 与直线 <Katex tex="y=x" /> 的交点。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCobweb" />
-      <div class="cap">图 递3 · <b>蛛网图机</b>：蓝曲线是 <Katex tex="f(x)=1+\dfrac{c}{x}" />，金虚线是 <Katex tex="y=x" />，紫折线是数列的轨迹，橙点是曲线与直线的交点（不动点）。从蓝点 <Katex tex="(a_1,0)" /> 出发，竖直碰到曲线、水平走到 <Katex tex="y=x" />，再竖、再横。拖动 <Katex tex="a_1" />：起点在不动点下方时折线自下而上绕，在上方时自上而下绕，最终都卷向同一个交点。</div>
+      <div class="cap">图 递3 · <b>分式递推与蛛网图</b>：蓝曲线是 <Katex tex="f(x)=1+\dfrac{c}{x}" />，金虚线是 <Katex tex="y=x" />，紫折线是数列的轨迹，橙点是曲线与直线的交点（不动点）。从蓝点 <Katex tex="(a_1,0)" /> 出发，竖直碰到曲线、水平走到 <Katex tex="y=x" />，再竖、再横。拖动 <Katex tex="a_1" />：起点在不动点下方时折线自下而上绕，在上方时自上而下绕，最终都卷向同一个交点。</div>
     </div>
 
     <h3 class="sec" id="r3-map">递推就是反复用同一个函数</h3>

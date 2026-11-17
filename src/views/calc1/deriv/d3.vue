@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createDiffLab" />
-      <div class="cap">图 微3 · <b>微分机</b>：从 <Katex tex="P" /> 走横距 <Katex tex="dx" />，蓝段是沿切线量出的 <Katex tex="dy" />，橙段是沿曲线量出的真增量 <Katex tex="\Delta y" />，绿段是两者之差。右栏列出三个数值与 <Katex tex="f''(x_0)" />。看点：把 <Katex tex="dx" /> 拖小，绿段按平方缩，蓝橙两段几乎重合。</div>
+      <div class="cap">图 微3 · <b>微分</b>：从 <Katex tex="P" /> 走横距 <Katex tex="dx" />，蓝段是沿切线量出的 <Katex tex="dy" />，橙段是沿曲线量出的真增量 <Katex tex="\Delta y" />，绿段是两者之差。右栏列出三个数值与 <Katex tex="f''(x_0)" />。看点：把 <Katex tex="dx" /> 拖小，绿段按平方缩，蓝橙两段几乎重合。</div>
     </div>
 
     <h3 class="sec" id="d3-d2">二阶导数的意义</h3>

@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createCauchyInt" />
-      <div class="cap">图 解4 · <b>柯西积分公式机</b>：左图是 <Katex tex="z" /> 平面上的逆时针圆路与可拖的点 <Katex tex="z_0" />，右图是 <Katex tex="f" /> 在整条圆路上的取值所围成的曲线。看点：① <Katex tex="z_0" /> 在圆内时，框里的「边界积分」与 <Katex tex="f(z_0)" /> 差值为 <Katex tex="0" />；② 把 <Katex tex="z_0" /> 拖到圆外，边界积分立即归零，而 <Katex tex="f(z_0)" /> 本身仍不是零；③ 拖半径 <Katex tex="R" /> 从 <Katex tex="0.6" /> 到 <Katex tex="1.8" />，只要 <Katex tex="z_0" /> 一直在圆内，两栏读数就一起不动。</div>
+      <div class="cap">图 解4 · <b>柯西积分公式</b>：左图是 <Katex tex="z" /> 平面上的逆时针圆路与可拖的点 <Katex tex="z_0" />，右图是 <Katex tex="f" /> 在整条圆路上的取值所围成的曲线。看点：① <Katex tex="z_0" /> 在圆内时，框里的「边界积分」与 <Katex tex="f(z_0)" /> 差值为 <Katex tex="0" />；② 把 <Katex tex="z_0" /> 拖到圆外，边界积分立即归零，而 <Katex tex="f(z_0)" /> 本身仍不是零；③ 拖半径 <Katex tex="R" /> 从 <Katex tex="0.6" /> 到 <Katex tex="1.8" />，只要 <Katex tex="z_0" /> 一直在圆内，两栏读数就一起不动。</div>
     </div>
 
     <h3 class="sec" id="a4-form">公式与推导</h3>

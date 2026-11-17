@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createLineInt1" />
-      <div class="cap">图 线1 · <b>第一类曲线积分机</b>：曲线是四分之一圆弧 <Katex tex="x^2+y^2=R^2" />，线密度 <Katex tex="\rho=1+y" />，颜色越橙越重。金色小弧段是 <Katex tex="P" /> 附近的一段 <Katex tex="ds" />；右栏把 <Katex tex="\rho" /> 沿弧长 <Katex tex="s" /> 画出来，阴影面积就是这段曲线的总质量。看点：点一下「换走向」，左图的走向箭头反过来，而四个读数一个都不变。</div>
+      <div class="cap">图 线1 · <b>第一类曲线积分</b>：曲线是四分之一圆弧 <Katex tex="x^2+y^2=R^2" />，线密度 <Katex tex="\rho=1+y" />，颜色越橙越重。金色小弧段是 <Katex tex="P" /> 附近的一段 <Katex tex="ds" />；右栏把 <Katex tex="\rho" /> 沿弧长 <Katex tex="s" /> 画出来，阴影面积就是这段曲线的总质量。看点：点一下「换走向」，左图的走向箭头反过来，而四个读数一个都不变。</div>
     </div>
 
     <h3 class="sec" id="c1-def">弧长元与定义</h3>

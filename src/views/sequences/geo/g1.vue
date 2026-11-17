@@ -6,7 +6,7 @@
     <div class="note good">从第二项起，每一项与前一项的比都等于同一个常数 <Katex tex="q" />，这个数列叫<strong>等比数列</strong>，<Katex tex="q" /> 叫<strong>公比</strong>。定义写作 <Katex tex="\dfrac{a_{n+1}}{a_n}=q" />（<Katex tex="n\in\mathbb{N}^*" />），等价于 <Katex tex="a_{n+1}=qa_n" />。通项 <Katex tex="a_n=a_1q^{n-1}" />，其中 <Katex tex="a_1\ne0,\ q\ne0" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createGeoSeq" />
-      <div class="cap">图 比1 · <b>等比序列机</b>：蓝点是各项，金色虚线是通项曲线（<Katex tex="q>0" /> 时可连成实曲线，<Katex tex="q<0" /> 时正负交替、只连折线）。下栏把相邻两项的比画成一排绿点，全部停在 <Katex tex="y=q" /> 的水平线上——比恒为常数，正是定义。预设 ①②③④ 分别是增大、减小、正负交替、常数列四种走向，拖 q 越过 0 与 1 可以看到它们之间的过渡。</div>
+      <div class="cap">图 比1 · <b>等比数列的项</b>：蓝点是各项，金色虚线是通项曲线（<Katex tex="q>0" /> 时可连成实曲线，<Katex tex="q<0" /> 时正负交替、只连折线）。下栏把相邻两项的比画成一排绿点，全部停在 <Katex tex="y=q" /> 的水平线上——比恒为常数，正是定义。预设 ①②③④ 分别是增大、减小、正负交替、常数列四种走向，拖 q 越过 0 与 1 可以看到它们之间的过渡。</div>
     </div>
 
     <h3 class="sec" id="g1-def">定义与公比</h3>

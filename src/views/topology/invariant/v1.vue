@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createEuler" />
-      <div class="cap">图 不1 · <b>数顶点机</b>：四张曲面各给一种剖分。看点：① 四面体 <Katex tex="V=4" />、<Katex tex="E=6" />、<Katex tex="F=4" />，算得 <Katex tex="2" />；② 长方体的切法完全不同，<Katex tex="8-12+6" /> 仍是 <Katex tex="2" />——球面的切法换来换去，和不变；③ 环面用一张四边形粘边，四个角成一点、两条边各成一圈，<Katex tex="1-2+1=0" />；④ 双环面再减到 <Katex tex="-2" />，规律就一条 <Katex tex="\chi=2-2g" />。</div>
+      <div class="cap">图 不1 · <b>欧拉示性数</b>：四张曲面各给一种剖分。看点：① 四面体 <Katex tex="V=4" />、<Katex tex="E=6" />、<Katex tex="F=4" />，算得 <Katex tex="2" />；② 长方体的切法完全不同，<Katex tex="8-12+6" /> 仍是 <Katex tex="2" />——球面的切法换来换去，和不变；③ 环面用一张四边形粘边，四个角成一点、两条边各成一圈，<Katex tex="1-2+1=0" />；④ 双环面再减到 <Katex tex="-2" />，规律就一条 <Katex tex="\chi=2-2g" />。</div>
     </div>
 
     <h3 class="sec" id="v1-def">剖分与 V−E+F</h3>

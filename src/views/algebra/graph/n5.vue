@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createPlanar" />
-      <div class="cap">图 网5 · <b>面数核验机</b>：正 n 边形从一个顶点向其余顶点引对角线，剖成扇形三角块。看点：① 每加一个顶点，V 增 1、E 增 2、F 增 1；② 各块用浅色分开，外部区域就是那个无界的面；③ 底部 V−E+F 始终保持 2。</div>
+      <div class="cap">图 网5 · <b>面数与欧拉公式</b>：正 n 边形从一个顶点向其余顶点引对角线，剖成扇形三角块。看点：① 每加一个顶点，V 增 1、E 增 2、F 增 1；② 各块用浅色分开，外部区域就是那个无界的面；③ 底部 V−E+F 始终保持 2。</div>
     </div>
 
     <h3 class="sec" id="n5-planar">平面图与面</h3>

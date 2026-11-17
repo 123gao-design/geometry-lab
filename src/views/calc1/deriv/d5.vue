@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createHopital" />
-      <div class="cap">图 微5 · <b>洛必达法则机</b>：左图把 <Katex tex="f" />（蓝）与 <Katex tex="g" />（绿）画在一起，两者在 <Katex tex="x\to0" /> 时都趋于零；右图改画两条比值曲线，橙色是 <Katex tex="f/g" />，紫色是 <Katex tex="f'/g'" />，金虚线是它们的公共极限 <Katex tex="L" />。右栏列出当前 <Katex tex="x" /> 处的四个读数。看点：拖 <Katex tex="x" /> 靠近零，两条比值曲线一起贴向 <Katex tex="L" />。</div>
+      <div class="cap">图 微5 · <b>洛必达法则</b>：左图把 <Katex tex="f" />（蓝）与 <Katex tex="g" />（绿）画在一起，两者在 <Katex tex="x\to0" /> 时都趋于零；右图改画两条比值曲线，橙色是 <Katex tex="f/g" />，紫色是 <Katex tex="f'/g'" />，金虚线是它们的公共极限 <Katex tex="L" />。右栏列出当前 <Katex tex="x" /> 处的四个读数。看点：拖 <Katex tex="x" /> 靠近零，两条比值曲线一起贴向 <Katex tex="L" />。</div>
     </div>
 
     <h3 class="sec" id="d5-type">两种基本未定式</h3>

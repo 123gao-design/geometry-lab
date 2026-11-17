@@ -5,7 +5,7 @@
     <div class="note good" id="u1-law"><strong>坐标定义</strong>：角 α 的终边交单位圆于 <Katex tex="P(\cos\alpha,\sin\alpha)" />（横 cos、纵 sin），<Katex tex="\tan\alpha=\dfrac{\sin\alpha}{\cos\alpha}\ (\cos\alpha\neq0)" />。<strong>有界</strong>：<Katex tex="|\sin\alpha|\le1,\ |\cos\alpha|\le1" />（P 在圆上）。<strong>象限符号</strong>：一全正、二正弦、三正切、四余弦。</div>
     <div class="board-wrap">
       <BoardMount :factory="createUnit" />
-      <div class="cap">图 U1 · <b>单位圆坐标机</b>：拖 P 转圈 —— 蓝线 MP=sin、橙线 OM=cos、绿线 AT=tan 三条函数线实时读数；七个预设角给出精确值，⏩ 巡游看符号随象限翻转、转到 90° 看 tan 无定义。</div>
+      <div class="cap">图 U1 · <b>单位圆上的三条函数线</b>：拖 P 转圈 —— 蓝线 MP=sin、橙线 OM=cos、绿线 AT=tan 三条函数线实时读数；七个预设角给出精确值，⏩ 巡游看符号随象限翻转、转到 90° 看 tan 无定义。</div>
     </div>
 
     <h3 class="sec" id="u1-def">从直角三角形到单位圆</h3>

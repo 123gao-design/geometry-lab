@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createFixPointLab" />
-      <div class="cap">图 迭3 · <b>不动点迭代机</b>：蓝色直线是 y=φ(x)，灰色虚线是 y=x，金色折线是从 <Katex tex="x_0" /> 出发的蛛网，红点在不动点。看点：拖动斜率 <Katex tex="a" />，蛛网从贴着不动点收拢（<Katex tex="|a|&lt;1" />）变成向外张开（<Katex tex="|a|&gt;1" />）；<Katex tex="a=-1" /> 时折线绕着不动点打转，既不进也不出。</div>
+      <div class="cap">图 迭3 · <b>不动点迭代与压缩映射</b>：蓝色直线是 y=φ(x)，灰色虚线是 y=x，金色折线是从 <Katex tex="x_0" /> 出发的蛛网，红点在不动点。看点：拖动斜率 <Katex tex="a" />，蛛网从贴着不动点收拢（<Katex tex="|a|&lt;1" />）变成向外张开（<Katex tex="|a|&gt;1" />）；<Katex tex="a=-1" /> 时折线绕着不动点打转，既不进也不出。</div>
     </div>
 
     <h3 class="sec" id="i3-fix">不动点与等价变形</h3>

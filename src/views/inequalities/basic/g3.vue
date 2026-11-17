@@ -5,7 +5,7 @@
     <div class="note good" id="g3-law">对 <Katex tex="a,b>0" />：<Katex tex="H=\frac{2ab}{a+b}\le G=\sqrt{ab}\le A=\frac{a+b}{2}\le Q=\sqrt{\frac{a^2+b^2}{2}}" />，等号四处全在 <Katex tex="a=b" />。几何与算术两环已经在基1 的半圆里证明过；补上 Q 与 H 两环，链条两端接齐。</div>
     <div class="board-wrap">
       <BoardMount :factory="createGT" />
-      <div class="cap">图 基3 · <b>均值链机</b>：拖 a、b 或点预设，主轴上四条彩色均值从左到右排开，放大镜聚焦它们所在的窄窗口，一眼认出先后。看点：悬殊时 H 与 Q 相距很远、A、G 居中；a、b 收拢时四个点向 A 挤拢，「趋向相等」按钮把 a、b 同时滑向中点，四条均值叠成一点——链条两头到中点的收缩，正是「a=b」的几何读法。</div>
+      <div class="cap">图 基3 · <b>均值不等式链</b>：拖 a、b 或点预设，主轴上四条彩色均值从左到右排开，右侧放大视图聚焦它们所在的窄窗口，一眼认出先后。看点：悬殊时 H 与 Q 相距很远、A、G 居中；a、b 收拢时四个点向 A 挤拢，「趋向相等」按钮把 a、b 同时滑向中点，四条均值叠成一点——链条两头到中点的收缩，正是「a=b」的几何读法。</div>
     </div>
 
     <h3 class="sec" id="g3-four">四条均值</h3>

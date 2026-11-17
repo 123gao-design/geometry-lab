@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createCoset" />
-      <div class="cap">图 群2 · <b>陪集机</b>：<Katex tex="\mathbb{Z}_{12}" /> 的表盘，生成元 k 由滑块选择。看点：① 由 k 生成的子群 <Katex tex="H" /> 用金圈标出；② 同色的点构成一个陪集，各陪集大小都等于 <Katex tex="|H|" />；③ k 换成与 12 互素的值，只剩一个陪集，占满整圈。</div>
+      <div class="cap">图 群2 · <b>陪集</b>：<Katex tex="\mathbb{Z}_{12}" /> 的表盘，生成元 k 由滑块选择。看点：① 由 k 生成的子群 <Katex tex="H" /> 用金圈标出；② 同色的点构成一个陪集，各陪集大小都等于 <Katex tex="|H|" />；③ k 换成与 12 互素的值，只剩一个陪集，占满整圈。</div>
     </div>
 
     <h3 class="sec" id="g2-sub">子群的判定</h3>

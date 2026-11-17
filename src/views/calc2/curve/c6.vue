@@ -7,12 +7,12 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createGauss" />
-      <div class="cap">图 线6a · <b>高斯公式机</b>：闭合球面上画出外法向（紫箭）与场（橙箭）。场 <Katex tex="F=(x,y,z)" /> 从原点向外辐射，处处与法向同向，散度恒为 3。拖半径，通量按 <Katex tex="4\pi R^3" /> 变化，与 <Katex tex="\iiint_\Omega3\,dV" /> 逐位相同。</div>
+      <div class="cap">图 线6a · <b>高斯公式</b>：闭合球面上画出外法向（紫箭）与场（橙箭）。场 <Katex tex="F=(x,y,z)" /> 从原点向外辐射，处处与法向同向，散度恒为 3。拖半径，通量按 <Katex tex="4\pi R^3" /> 变化，与 <Katex tex="\iiint_\Omega3\,dV" /> 逐位相同。</div>
     </div>
 
     <div class="board-wrap">
       <BoardMount :factory="createStokes" />
-      <div class="cap">图 线6b · <b>斯托克斯公式机</b>：曲面是上半球面，绿色圆环是它的边界（方向与朝上的法向成右手关系），紫箭是旋度 <Katex tex="\nabla\times F=(0,0,2)" />。场 <Katex tex="F=(-y,x,0)" /> 绕 <Katex tex="z" /> 轴打转。沿绿环的环量与旋度穿过曲面的通量都是 <Katex tex="2\pi R^2" />。看点是：紫箭全是竖直的，而曲面鼓起来这件事不改变它们的总量——只要边界不变，换成任何张在这条环上的曲面，结果都一样。</div>
+      <div class="cap">图 线6b · <b>斯托克斯公式</b>：曲面是上半球面，绿色圆环是它的边界（方向与朝上的法向成右手关系），紫箭是旋度 <Katex tex="\nabla\times F=(0,0,2)" />。场 <Katex tex="F=(-y,x,0)" /> 绕 <Katex tex="z" /> 轴打转。沿绿环的环量与旋度穿过曲面的通量都是 <Katex tex="2\pi R^2" />。看点是：紫箭全是竖直的，而曲面鼓起来这件事不改变它们的总量——只要边界不变，换成任何张在这条环上的曲面，结果都一样。</div>
     </div>
 
     <h3 class="sec" id="c6-gauss">高斯公式：散度与通量</h3>

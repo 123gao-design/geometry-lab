@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createMatMul" />
-      <div class="cap">图 矩2 · <b>矩阵乘法机</b>：上方算 <Katex tex="AB" />，被选中的行染蓝、被选中的列染橙，落点在 <Katex tex="C" /> 里被绿框圈出；下方对同一对矩阵算出 <Katex tex="BA" />。看点：拖 <Katex tex="k" /> 扫过四个元素，每次只看一行一列，乘加两步就得到一个格子；切到「单位阵」档，<Katex tex="AE=EA=A" />；切回「一般」档，<Katex tex="BA" /> 与 <Katex tex="AB" /> 的同一个位置一般不同。</div>
+      <div class="cap">图 矩2 · <b>矩阵乘法</b>：上方算 <Katex tex="AB" />，被选中的行染蓝、被选中的列染橙，落点在 <Katex tex="C" /> 里被绿框圈出；下方对同一对矩阵算出 <Katex tex="BA" />。看点：拖 <Katex tex="k" /> 扫过四个元素，每次只看一行一列，乘加两步就得到一个格子；切到「单位阵」档，<Katex tex="AE=EA=A" />；切回「一般」档，<Katex tex="BA" /> 与 <Katex tex="AB" /> 的同一个位置一般不同。</div>
     </div>
 
     <h3 class="sec" id="m2-def">乘法的定义</h3>

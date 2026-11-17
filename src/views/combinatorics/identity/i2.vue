@@ -6,7 +6,7 @@
     <div class="note good" id="i2-layer"><Katex tex="(1+a)^n=1+na+\mathrm{C}_n^2a^2+\cdots+a^n" />，从第三项起每项都含 <Katex tex="a^2" />，后 <Katex tex="n-1" /> 项之和可以写成 <Katex tex="a^2\cdot M" />，其中 <Katex tex="M" /> 是整数（<Katex tex="a" /> 为整数时）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createBinomApp" />
-      <div class="cap">图 恒2 · <b>近似与整除机</b>：各项画成柱，金色几根是保留的部分，其余淡色，柱高按平方根压缩到同一比例尺。看点：① 档 <Katex tex="a" /> 取小数，第三项以后迅速变矮，右上方另开一格把整段余项单独放大并读出量级，徽章给出截断值与真值；② 档 <Katex tex="a" /> 取整数，柱子一根比一根高、吃满画框，舍去的部分是 <Katex tex="a^2" /> 的整数倍，数值徽章把它拆成「前两项 + <Katex tex="a^2" /> 乘一个整数」。指数可取到 12。</div>
+      <div class="cap">图 恒2 · <b>近似计算与整除性</b>：各项画成柱，金色几根是保留的部分，其余淡色，柱高按平方根压缩到同一比例尺。看点：① 档 <Katex tex="a" /> 取小数，第三项以后迅速变矮，右上方另开一格把整段余项单独放大并读出量级，徽章给出截断值与真值；② 档 <Katex tex="a" /> 取整数，柱子一根比一根高、吃满画框，舍去的部分是 <Katex tex="a^2" /> 的整数倍，数值徽章把它拆成「前两项 + <Katex tex="a^2" /> 乘一个整数」。指数可取到 12。</div>
     </div>
 
     <h3 class="sec" id="i2-layer">展开式按次数分层</h3>

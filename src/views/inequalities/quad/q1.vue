@@ -5,7 +5,7 @@
     <div class="note good" id="q1-law"><Katex tex="a>0" /> 时：<Katex tex="f(x)>0\iff x<x_1\ \text{或}\ x>x_2" />（根外），<Katex tex="f(x)<0\iff x_1<x<x_2" />（根内）；<Katex tex="a<0" /> 时全部反转。<Katex tex="\Delta=0" />：解集退化为一点（≤）或除一点外的全体（&gt;）。<Katex tex="\Delta<0" />：解集只有 <Katex tex="\mathbb{R}" /> 与 <Katex tex="\varnothing" /> 两态。</div>
     <div class="board-wrap">
       <BoardMount :factory="createQS" />
-      <div class="cap">图 次1 · <b>二次解集机</b>：拖 a、b、c 或点四个预设（<Katex tex="\Delta"/> 三态 + 开口向下），四个不等号方向即时切换。看点：金色解集带压在 x 轴上；严格不等号下根画成空心（不可取）；开口向上时「大于取根外、小于取根内」，开口向下全部反转；<Katex tex="\Delta\le 0"/> 时解集只剩两态。</div>
+      <div class="cap">图 次1 · <b>二次不等式的解集</b>：拖 a、b、c 或点四个预设（<Katex tex="\Delta"/> 三态 + 开口向下），四个不等号方向即时切换。看点：金色解集带压在 x 轴上；严格不等号下根画成空心（不可取）；开口向上时「大于取根外、小于取根内」，开口向下全部反转；<Katex tex="\Delta\le 0"/> 时解集只剩两态。</div>
     </div>
 
     <h3 class="sec" id="q1-delta">Δ 三态与根</h3>

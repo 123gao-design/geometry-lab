@@ -7,7 +7,7 @@
     <h3 class="sec" id="l4-lab">曲线系机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createPencil" />
-      <div class="cap">图 L4 · <b>曲线系机</b>（三模式）：「过交点族」里全族曲线（实线+虚影）被固定在椭圆与直线的两个交点上，拖 <Katex tex="P_0" /> 看 <Katex tex="\lambda" /> 法一步定出金色成员；「共渐近线族」里 <Katex tex="\lambda" /> 扫过 0 时横竖开口对调（L1 第四态正是 <Katex tex="\lambda\to 0" /> 的极限）；「共焦点族」里 t 穿过 0 时椭圆连续变形为双曲线，两个红焦点纹丝不动。</div>
+      <div class="cap">图 L4 · <b>曲线系</b>（三模式）：「过交点族」里全族曲线（实线+虚影）被固定在椭圆与直线的两个交点上，拖 <Katex tex="P_0" /> 看 <Katex tex="\lambda" /> 法一步定出金色成员；「共渐近线族」里 <Katex tex="\lambda" /> 扫过 0 时横竖开口对调（L1 第四态正是 <Katex tex="\lambda\to 0" /> 的极限）；「共焦点族」里 t 穿过 0 时椭圆连续变形为双曲线，两个红焦点纹丝不动。</div>
     </div>
 
     <h3 class="sec" id="l4-def">原理与 λ 法</h3>

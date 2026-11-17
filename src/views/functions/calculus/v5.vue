@@ -5,7 +5,7 @@
     <div class="note good" id="v5-law"><strong>参数大题工作流</strong>：① 求参数范围内的 f′ 并解零点 → ② 按零点个数<strong>分类</strong>（临界值单独成档）→ ③ 每档列单调表、定极值 → ④ 结论回验（端点、排除态、闭区间）。流程与 E2 动轴最值、E2 根分布同源：参数动了，就按「档」说话。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCase" />
-      <div class="cap">图 V5 · <b>参数诊疗机</b>：<Katex tex="f=x^3-3tx"/>，t 扫过 0 —— 两个金点相遇成红空圈（<Katex tex="t=0"/> 驻点不变号）再消失（<Katex tex="t<0"/> 全程单增）；零点计数同步显示：<Katex tex="t>0"/> 三个（含 <Katex tex="x=0"/>）、<Katex tex="t=0"/> 三重、<Katex tex="t<0"/> 只剩一个。分类讨论对应曲线形态随参数的切换。</div>
+      <div class="cap">图 V5 · <b>含参函数的分类讨论</b>：<Katex tex="f=x^3-3tx"/>，t 扫过 0 —— 两个金点相遇成红空圈（<Katex tex="t=0"/> 驻点不变号）再消失（<Katex tex="t<0"/> 全程单增）；零点计数同步显示：<Katex tex="t>0"/> 三个（含 <Katex tex="x=0"/>）、<Katex tex="t=0"/> 三重、<Katex tex="t<0"/> 只剩一个。分类讨论对应曲线形态随参数的切换。</div>
     </div>
 
     <h3 class="sec" id="v5-flow">分类讨论四步走</h3>

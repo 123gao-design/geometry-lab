@@ -6,7 +6,7 @@
     <div class="note good" id="b2-build">第 <Katex tex="n" /> 行依次是 <Katex tex="\mathrm{C}_n^0,\mathrm{C}_n^1,\cdots,\mathrm{C}_n^n" />，两端为 1，中间满足 <Katex tex="\mathrm{C}_n^k=\mathrm{C}_{n-1}^{k-1}+\mathrm{C}_{n-1}^k" />；这一行共 <Katex tex="n+1" /> 项，各项之和为 <Katex tex="2^n" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createPascalTri" />
-      <div class="cap">图 项2 · <b>杨辉三角机</b>：0 到 6 行铺开，金色是选中的一项，蓝色是它的对称项。看点：拖 <Katex tex="k" /> 沿本行移动，金色与蓝色同时向两侧对走，两数始终相等；拖 <Katex tex="n" /> 换行，行和翻倍；<Katex tex="n" /> 取偶数时最大项落在正中间，取奇数时正中间两项并列。</div>
+      <div class="cap">图 项2 · <b>杨辉三角与系数性质</b>：0 到 6 行铺开，金色是选中的一项，蓝色是它的对称项。看点：拖 <Katex tex="k" /> 沿本行移动，金色与蓝色同时向两侧对走，两数始终相等；拖 <Katex tex="n" /> 换行，行和翻倍；<Katex tex="n" /> 取偶数时最大项落在正中间，取奇数时正中间两项并列。</div>
     </div>
 
     <h3 class="sec" id="b2-build">三角形的生成</h3>

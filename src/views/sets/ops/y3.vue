@@ -5,7 +5,7 @@
     <div class="note good" id="y3-law"><strong>德摩根律</strong>：<Katex tex="\complement_U(A\cap B)=\complement_UA\cup\complement_UB" />、<Katex tex="\complement_U(A\cup B)=\complement_UA\cap\complement_UB" /> —— 补集穿过括号，∩∪ 互换。<strong>分配律</strong>：<Katex tex="A\cap(B\cup C)=(A\cap B)\cup(A\cap C)" />、<Katex tex="A\cup(B\cap C)=(A\cup B)\cap(A\cup C)" />（交对并、并对交都成立）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createDM" />
-      <div class="cap">图 Y3 · <b>德摩根验证机</b>：左面板按定义直译搭区域、右面板按恒等式右端搭 —— 八个元素各自判属，两式同时命中、同时落空；四组恒等式（德摩根两式 + 分配律两式）逐组验收，🎲 随机撒点也拆不散这对双胞胎。</div>
+      <div class="cap">图 Y3 · <b>德摩根律与分配律</b>：左面板按定义直译搭区域、右面板按恒等式右端搭 —— 八个元素各自判属，两式同时命中、同时落空；四组恒等式（德摩根两式 + 分配律两式）逐组验收，🎲 随机撒点也拆不散这两种写法。</div>
     </div>
 
     <h3 class="sec" id="y3-elem">元素观点：逐个核验</h3>

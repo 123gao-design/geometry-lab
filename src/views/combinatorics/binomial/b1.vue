@@ -6,7 +6,7 @@
     <div class="note good" id="b1-thm">对任意正整数 <Katex tex="n" />，<Katex tex="(a+b)^n=\mathrm{C}_n^0a^n+\mathrm{C}_n^1a^{n-1}b+\cdots+\mathrm{C}_n^kb^{\,k}a^{n-k}+\cdots+\mathrm{C}_n^nb^n" />，共 <Katex tex="n+1" /> 项；其中第 <Katex tex="k+1" /> 项即通项 <Katex tex="T_{k+1}=\mathrm{C}_n^ka^{n-k}b^k" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createBinomialLab" />
-      <div class="cap">图 项1 · <b>展开式与通项机</b>：n 对括号并排，每对各取一个字母，金色是真正取走的那一个。看点：拖 <Katex tex="k" /> 改取到的 b 的个数，金色随之从左向右蔓延，通项下标与系数同步改写；拖 <Katex tex="n" /> 加减括号对数；③ 档取 <Katex tex="k=0" />，全部取 a，首项系数为 1。</div>
+      <div class="cap">图 项1 · <b>二项式定理与通项</b>：n 对括号并排，每对各取一个字母，金色是真正取走的那一个。看点：拖 <Katex tex="k" /> 改取到的 b 的个数，金色随之从左向右蔓延，通项下标与系数同步改写；拖 <Katex tex="n" /> 加减括号对数；③ 档取 <Katex tex="k=0" />，全部取 a，首项系数为 1。</div>
     </div>
 
     <h3 class="sec" id="b1-thm">定理的内容</h3>

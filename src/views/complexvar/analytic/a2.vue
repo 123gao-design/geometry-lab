@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createCRLab" />
-      <div class="cap">图 解2 · <b>柯西-黎曼方程机</b>：蓝线是 <Katex tex="u" /> 的等值线，橙线是 <Katex tex="v" /> 的等值线，蓝、橙两支箭头分别是 <Katex tex="\nabla u" /> 与 <Katex tex="\nabla v" />，两支用同一比例尺。看点：① <Katex tex="f=z^2" /> 处两支箭头等长且互相垂直，两族等值线正交；② <Katex tex="f=\bar z" /> 的两支梯度都只有一处分量，长度也不等，等值线虽然也是两族直线，却不再正交；③ 拖点走遍平面，<Katex tex="f=e^z" /> 的两支箭头始终等长垂直，长度随 <Katex tex="e^x" /> 一起变。</div>
+      <div class="cap">图 解2 · <b>柯西-黎曼方程</b>：蓝线是 <Katex tex="u" /> 的等值线，橙线是 <Katex tex="v" /> 的等值线，蓝、橙两支箭头分别是 <Katex tex="\nabla u" /> 与 <Katex tex="\nabla v" />，两支用同一比例尺。看点：① <Katex tex="f=z^2" /> 处两支箭头等长且互相垂直，两族等值线正交；② <Katex tex="f=\bar z" /> 的两支梯度都只有一处分量，长度也不等，等值线虽然也是两族直线，却不再正交；③ 拖点走遍平面，<Katex tex="f=e^z" /> 的两支箭头始终等长垂直，长度随 <Katex tex="e^x" /> 一起变。</div>
     </div>
 
     <h3 class="sec" id="a2-eq">方程的来历</h3>

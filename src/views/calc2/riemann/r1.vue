@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createDblInt" />
-      <div class="cap">图 重1 · <b>二重积分的定义机</b>：矩形区域被分成 <Katex tex="n\times n" /> 个小块，越靠右上角的小块函数值越大、颜色越橙；右侧把和 <Katex tex="S_n" /> 随 <Katex tex="n" /> 的变化画成蓝点，绿色虚线是精确值。看点：<Katex tex="n" /> 从 2 推到 16，蓝点迅速贴到绿线上；每加细一次，误差大约是上一次的四分之一——分块细一倍，每块面积变成四分之一，误差也按这个速度缩小。</div>
+      <div class="cap">图 重1 · <b>二重积分的定义</b>：矩形区域被分成 <Katex tex="n\times n" /> 个小块，越靠右上角的小块函数值越大、颜色越橙；右侧把和 <Katex tex="S_n" /> 随 <Katex tex="n" /> 的变化画成蓝点，绿色虚线是精确值。看点：<Katex tex="n" /> 从 2 推到 16，蓝点迅速贴到绿线上；每加细一次，误差大约是上一次的四分之一——分块细一倍，每块面积变成四分之一，误差也按这个速度缩小。</div>
     </div>
 
     <h3 class="sec" id="r1-def">分割、近似、求和、取极限</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="b2-law"><strong>弧度制定义</strong>：<Katex tex="|\alpha|=\dfrac{s}{r}" />（弧长比半径，与半径无关）；<strong>换算</strong>：<Katex tex="180^\circ=\pi" />（周角 <Katex tex="2\pi" />）。弧度制的便利：<Katex tex="s=\alpha r" />、<Katex tex="S=\dfrac{1}{2}\alpha r^2=\dfrac{1}{2}sr" /> —— 公式里不再出现 <Katex tex="\tfrac{\pi}{180}" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSector" />
-      <div class="cap">图 B2 · <b>弧长展开机</b>：拖 α 与 r 实时记录弧长与面积；⏩ 把弧摊平成直尺 —— 尺上每格恰一个半径，格数正是弧度数；r×2 看弧长加倍而弧度纹丝不动。</div>
+      <div class="cap">图 B2 · <b>弧长、扇形面积与弧度制</b>：拖 α 与 r 实时记录弧长与面积；⏩ 把弧摊平成直尺 —— 尺上每格恰一个半径，格数正是弧度数；r×2 看弧长加倍而弧度纹丝不动。</div>
     </div>
 
     <h3 class="sec" id="b2-why">弧度是什么</h3>

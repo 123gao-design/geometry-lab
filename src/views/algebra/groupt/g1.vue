@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createExample" />
-      <div class="cap">图 群1 · <b>运算表机</b>：<Katex tex="\mathbb{Z}_4" />、<Katex tex="V_4" />、<Katex tex="S_3" /> 三张运算表轮流显示。看点：① 金格是结果为幺元的位置，每行每列恰有一个；② <Katex tex="V_4" /> 与 <Katex tex="S_3" /> 都非循环，阶与结构却不同；③ <Katex tex="S_3" /> 的表不关于对角线对称，是最小的非交换群。</div>
+      <div class="cap">图 群1 · <b>运算表</b>：<Katex tex="\mathbb{Z}_4" />、<Katex tex="V_4" />、<Katex tex="S_3" /> 三张运算表轮流显示。看点：① 金格是结果为幺元的位置，每行每列恰有一个；② <Katex tex="V_4" /> 与 <Katex tex="S_3" /> 都非循环，阶与结构却不同；③ <Katex tex="S_3" /> 的表不关于对角线对称，是最小的非交换群。</div>
     </div>
 
     <h3 class="sec" id="g1-def">四条公理</h3>

@@ -9,7 +9,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createRSA" />
-      <div class="cap">图 剩4 · <b>RSA 加密与解密机</b>：报文先进黄色框、再进紫色框，最后在绿色框里被还原。看点：① 公钥里的 e 与私钥 d 由 <Katex tex="ed\equiv1\ (\mathrm{mod}\ \varphi(n))" /> 绑定，两者各自做一次模幂就回到原数；② 用到的模运算只有快速幂与求逆元，与前面几章的方法一致；③ 拖动报文或换一对素数，绿色框里的数始终与黄色框相同——只要 <Katex tex="\varphi(n)" /> 算对了。</div>
+      <div class="cap">图 剩4 · <b>RSA 加密与解密</b>：报文先进黄色框、再进紫色框，最后在绿色框里被还原。看点：① 公钥里的 e 与私钥 d 由 <Katex tex="ed\equiv1\ (\mathrm{mod}\ \varphi(n))" /> 绑定，两者各自做一次模幂就回到原数；② 用到的模运算只有快速幂与求逆元，与前面几章的方法一致；③ 拖动报文或换一对素数，绿色框里的数始终与黄色框相同——只要 <Katex tex="\varphi(n)" /> 算对了。</div>
     </div>
 
     <h3 class="sec" id="s4-rsa">RSA 的三步</h3>

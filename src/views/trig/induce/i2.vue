@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="2" no="I2" base="/trig/i" :chapters="I_CHAPTERS"
-    title="互配两组与奇变偶不变" sub="$\pi/2\pm\alpha$ 是诱导公式里唯一换名的两组：$\pi/2-\alpha$ 的终边与 $\alpha$ 关于 $y=x$ 对称 —— 坐标对调，$\sin$ 与 $\cos$ 互换名称；$\pi/2+\alpha$ 则是 $\alpha$ 逆时针转 $90^\circ$ —— 坐标轮换。把 $k\cdot\pi/2\pm\alpha$ 各组公式归纳成一台总机，一句口诀概括：奇变偶不变，符号看象限。"
+    title="互配两组与奇变偶不变" sub="$\pi/2\pm\alpha$ 是诱导公式里唯一换名的两组：$\pi/2-\alpha$ 的终边与 $\alpha$ 关于 $y=x$ 对称 —— 坐标对调，$\sin$ 与 $\cos$ 互换名称；$\pi/2+\alpha$ 则是 $\alpha$ 逆时针转 $90^\circ$ —— 坐标轮换。把 $k\cdot\pi/2\pm\alpha$ 各组公式归纳下来只用一句口诀：奇变偶不变，符号看象限。"
     :toc="[{ id: 'i2-mirror', t: '互余的镜像：y=x' }, { id: 'i2-rot', t: 'π/2+α：直角旋转' }, { id: 'i2-rule', t: '奇变偶不变与完整总表' }, { id: 'i2-pit', t: '换名与链式' }]">
     <div class="note good" id="i2-law"><strong>互配两组</strong>：<Katex tex="\sin\Bigl(\frac{\pi}{2}-\alpha\Bigr)=\cos\alpha,\quad \cos\Bigl(\frac{\pi}{2}-\alpha\Bigr)=\sin\alpha" />；<Katex tex="\sin\Bigl(\frac{\pi}{2}+\alpha\Bigr)=\cos\alpha,\quad \cos\Bigl(\frac{\pi}{2}+\alpha\Bigr)=-\sin\alpha" />。<strong>总口诀（<Katex tex="k\cdot\pi/2\pm\alpha"/> 全部公式）：奇变偶不变，符号看象限。</strong></div>
     <div class="board-wrap">
       <BoardMount :factory="createMutual" />
-      <div class="cap">图 I2 · <b>诱导总机</b>：拨 k 滑块、切 ±、拖 P —— <Katex tex="-\alpha"/> 族亮出倾斜 <Katex tex="k\cdot\pi/4"/> 的金色镜面（<Katex tex="k=1"/> 正是 <Katex tex="y=x"/>），<Katex tex="+\alpha"/> 族沿圆周画出 k 个直角的转程；<Katex tex="\sin\beta"/>、<Katex tex="\cos\beta"/> 的名字与符号由口诀现场判定，数值核验永绿。</div>
+      <div class="cap">图 I2 · <b>诱导公式一览</b>：拨 k 滑块、切 ±、拖 P —— <Katex tex="-\alpha"/> 族亮出倾斜 <Katex tex="k\cdot\pi/4"/> 的金色镜面（<Katex tex="k=1"/> 正是 <Katex tex="y=x"/>），<Katex tex="+\alpha"/> 族沿圆周画出 k 个直角的转程；<Katex tex="\sin\beta"/>、<Katex tex="\cos\beta"/> 的名字与符号由口诀现场判定，数值核验永绿。</div>
     </div>
 
     <h3 class="sec" id="i2-mirror">互余的镜像：y=x</h3>
@@ -37,7 +37,7 @@
         <tr><td><Katex tex="\frac{3\pi}{2}+\alpha" /></td><td><Katex tex="-\cos\alpha" /></td><td><Katex tex="\sin\alpha" /></td><td><Katex tex="-\cot\alpha" /></td><td><Katex tex="-\tan\alpha" /></td><td><Katex tex="\csc\alpha" /></td><td><Katex tex="-\sec\alpha" /></td></tr>
       </tbody>
     </table>
-    <p>读表三步：① 判断 β 中 k 的奇偶（定换不换名）；② 按 α 锐角默认全正写名；③ 按 β 的真实象限定号 —— 每格都能在总机上拨出来核验。后两行（<Katex tex="\frac{3\pi}{2}\pm\alpha" />）是 k=3 的<strong>链式推论</strong>，不入记忆集：现场拼 <Katex tex="\pi+\Bigl(\frac{\pi}{2}\pm\alpha\Bigr)" /> 两步得到即可。</p>
+    <p>读表三步：① 判断 β 中 k 的奇偶（定换不换名）；② 按 α 锐角默认全正写名；③ 按 β 的真实象限定号 —— 每格都能在画板上拨出来核验。后两行（<Katex tex="\frac{3\pi}{2}\pm\alpha" />）是 k=3 的<strong>链式推论</strong>，不入记忆集：现场拼 <Katex tex="\pi+\Bigl(\frac{\pi}{2}\pm\alpha\Bigr)" /> 两步得到即可。</p>
 
     <h3 class="sec" id="i2-pit">换名与链式</h3>
     <div class="note warn tip">

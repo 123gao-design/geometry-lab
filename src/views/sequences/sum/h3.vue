@@ -6,7 +6,7 @@
     <div class="note good">若对一切 <Katex tex="k" /> 都有 <Katex tex="a_k+a_{n+1-k}=C" />（常数），则 <Katex tex="2S_n=nC" />，<Katex tex="S_n=\dfrac{nC}{2}" />。若相邻两项之和恒为常数，则把它们括成对求和。若通项含 <Katex tex="(-1)^n" /> 或分段给出，先按 <Katex tex="n" /> 的奇偶分别求，再合成。</div>
     <div class="board-wrap">
       <BoardMount :factory="createPairParity" />
-      <div class="cap">图 和3 · <b>并项奇偶机</b>：正项画在基线上方（蓝），负项画在下方（橙），相邻两项用绿色括号括成一对，每对的和都是 <Katex tex="-1" />。n 为偶数时正好配完，<Katex tex="S_n=-\dfrac n2" />；n 为奇数时最末一个正项没有配对，要单独加上。拖动 n 看最后一项的处理。</div>
+      <div class="cap">图 和3 · <b>并项求和与奇偶分论</b>：正项画在基线上方（蓝），负项画在下方（橙），相邻两项用绿色括号括成一对，每对的和都是 <Katex tex="-1" />。n 为偶数时正好配完，<Katex tex="S_n=-\dfrac n2" />；n 为奇数时最末一个正项没有配对，要单独加上。拖动 n 看最后一项的处理。</div>
     </div>
 
     <h3 class="sec" id="h3-rev">倒序相加的条件</h3>

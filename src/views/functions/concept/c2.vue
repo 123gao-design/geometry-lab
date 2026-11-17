@@ -6,7 +6,7 @@
     <div class="note good" id="c2-elm"><strong>同一函数判据</strong>：两个函数是同一函数 <span class="term">(identical functions)</span>，当且仅当<strong>定义域相同</strong>且<strong>对应法则（化简后）相同</strong>。记变量的字母无关紧要 —— <Katex tex="f(x)=x^2" /> 与 <Katex tex="g(t)=t^2" /> 是同一个函数，字母只是占位符。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSameFn" />
-      <div class="cap">图 C2 · <b>同一函数判定机</b>：六对函数逐一检验。实线 f 与虚线 g 完全重合 ⇔ 逐点相同 ⇔ 同一函数；一旦定义域不同（②④⑤），图象立刻出现差异 —— 短一截、缺一点、只剩半边。拖"探针 x"：探针走到 f 未定义、g 有定义的地方，f(x) 徽章直接翻红 —— 那个空心点就是被定义域挖去的点。①③⑥ 是同一函数：字母无关（①）、化简后同（③）、展开恒等（⑥）。</div>
+      <div class="cap">图 C2 · <b>同一函数的判定</b>：六对函数逐一检验。实线 f 与虚线 g 完全重合 ⇔ 逐点相同 ⇔ 同一函数；一旦定义域不同（②④⑤），图象立刻出现差异 —— 短一截、缺一点、只剩半边。拖"探针 x"：探针走到 f 未定义、g 有定义的地方，f(x) 徽章直接翻红 —— 那个空心点就是被定义域挖去的点。①③⑥ 是同一函数：字母无关（①）、化简后同（③）、展开恒等（⑥）。</div>
     </div>
 
     <h3 class="sec" id="c2-same">三大伪装陷阱</h3>

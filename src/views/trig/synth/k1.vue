@@ -5,7 +5,7 @@
     <div class="note good" id="k1-def"><strong>三角方程的通解族</strong>：<Katex tex="\sin x=t\ (|t|\le1) \Rightarrow x=\alpha+2k\pi \text{ 或 } x=\pi-\alpha+2k\pi" />（<Katex tex="\alpha=\arcsin t" />）；<Katex tex="\cos x=t \Rightarrow x=\pm\alpha+2k\pi" />（<Katex tex="\alpha=\arccos t" />）；<Katex tex="\tan x=t \Rightarrow x=\alpha+k\pi" />（<Katex tex="\alpha=\arctan t" />，<Katex tex="k\in\mathbb{Z}" />）。图象直译：水平线 <Katex tex="y=t" /> 与曲线相交，每个交点领一支「特解 + 周期·k」的解族。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 K1 · <b>方程解机</b>：<strong>三模式拨 sin/cos/tan</strong>，左栏金色水平线 <Katex tex="y=t"/> 与曲线相交出窗 <Katex tex="[0,2\pi)"/> 全部特解；<strong><Katex tex="|t|>1"/> 超出范围</strong>（红线标出 <Katex tex="\pm1"/>，界外无解）、<strong><Katex tex="|t|=1"/> 切线重根</strong>两支并一；右栏特解列表（<Katex tex="\pi/12"/> 约分）与通解两条通解表达式实时列出。</div>
+      <div class="cap">图 K1 · <b>三角方程的特解与通解</b>：<strong>三模式拨 sin/cos/tan</strong>，左栏金色水平线 <Katex tex="y=t"/> 与曲线相交出窗 <Katex tex="[0,2\pi)"/> 全部特解；<strong><Katex tex="|t|>1"/> 超出范围</strong>（红线标出 <Katex tex="\pm1"/>，界外无解）、<strong><Katex tex="|t|=1"/> 切线重根</strong>两支并一；右栏特解列表（<Katex tex="\pi/12"/> 约分）与通解两条通解表达式实时列出。</div>
     </div>
 
     <h3 class="sec" id="k1-steps">三步法：参考角·象限·写族</h3>

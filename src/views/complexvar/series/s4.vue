@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createMobius" />
-      <div class="cap">图 级4 · <b>保角映射机</b>：左图 z 平面画同心圆（青）与过原点的射线（金），两族曲线处处正交，点 <Katex tex="z" /> 可拖，两枚小箭头沿射线与圆的切线方向；右图是它们在 <Katex tex="w=f(z)" /> 下的像，同一个点分成两枚箭头。看点：① <Katex tex="w=z^2" /> 把角度放大一倍，原点处箭头挤成一条，读数不再是直角；② <Katex tex="w=e^z" /> 把圆映成竖直带里的圆、射线映成水平射线，夹角处处仍为直角；③ <Katex tex="w=\dfrac{z-1}{z+1}" /> 把圆映成圆，<Katex tex="z=-1" /> 是它的极点。</div>
+      <div class="cap">图 级4 · <b>保角映射</b>：左图 z 平面画同心圆（青）与过原点的射线（金），两族曲线处处正交，点 <Katex tex="z" /> 可拖，两枚小箭头沿射线与圆的切线方向；右图是它们在 <Katex tex="w=f(z)" /> 下的像，同一个点分成两枚箭头。看点：① <Katex tex="w=z^2" /> 把角度放大一倍，原点处箭头挤成一条，读数不再是直角；② <Katex tex="w=e^z" /> 把圆映成竖直带里的圆、射线映成水平射线，夹角处处仍为直角；③ <Katex tex="w=\dfrac{z-1}{z+1}" /> 把圆映成圆，<Katex tex="z=-1" /> 是它的极点。</div>
     </div>
 
     <h3 class="sec" id="s4-der">导数的几何意义</h3>

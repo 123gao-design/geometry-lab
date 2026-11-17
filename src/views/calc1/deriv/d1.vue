@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createTanLine" />
-      <div class="cap">图 微1 · <b>切线斜率机</b>：蓝线是曲线，<Katex tex="P" /> 固定、<Katex tex="Q" /> 随 <Katex tex="h" /> 移动，橙色是割线 <Katex tex="PQ" />，金色虚线是该点的切线。右栏列出 <Katex tex="f(x_0+h)" />、<Katex tex="f(x_0)" />、差商与 <Katex tex="f'(x_0)" /> 的数值。看点：把 <Katex tex="h" /> 一路拖小，割线绕 <Katex tex="P" /> 转动，最后一差归零。</div>
+      <div class="cap">图 微1 · <b>导数与切线斜率</b>：蓝线是曲线，<Katex tex="P" /> 固定、<Katex tex="Q" /> 随 <Katex tex="h" /> 移动，橙色是割线 <Katex tex="PQ" />，金色虚线是该点的切线。右栏列出 <Katex tex="f(x_0+h)" />、<Katex tex="f(x_0)" />、差商与 <Katex tex="f'(x_0)" /> 的数值。看点：把 <Katex tex="h" /> 一路拖小，割线绕 <Katex tex="P" /> 转动，最后一差归零。</div>
     </div>
 
     <h3 class="sec" id="d1-quot">差商与割线</h3>

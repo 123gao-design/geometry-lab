@@ -5,7 +5,7 @@
     <div class="note good" id="f1-law"><strong>三旋钮一览</strong>：在 <Katex tex="y=A\sin(\omega x+\varphi)" /> 中 —— <strong>A</strong> 定<strong>振幅</strong>，值域 <Katex tex="[-A,\ A]" />；<strong>ω</strong> 定<strong>周期</strong> <Katex tex="T=\tfrac{2\pi}{\omega}" />；<strong>φ</strong> 定<strong>起点</strong>（升段过零点）<Katex tex="x_0=-\tfrac{\varphi}{\omega}" />。三个旋钮各管一件事、互不替代。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLab" />
-      <div class="cap">图 F1 · <b>三旋钮变波机</b>：拖 A、ω、φ 三个滑块 —— <strong>值域带</strong>（y 轴金带）随 A 变宽、<strong>周期段</strong>（x 轴上金虚线）随 ω 伸缩、<strong>五点整体</strong>随 φ 平移；母波 sin x 的灰虚线是「加工前」的对照，三个读数徽章与三件实物一一对应。</div>
+      <div class="cap">图 F1 · <b>A、ω、φ 对波形的影响</b>：拖 A、ω、φ 三个滑块 —— <strong>值域带</strong>（y 轴金带）随 A 变宽、<strong>周期段</strong>（x 轴上金虚线）随 ω 伸缩、<strong>五点整体</strong>随 φ 平移；母波 sin x 的灰虚线是「加工前」的对照，三个读数徽章与三件实物一一对应。</div>
     </div>
 
     <h3 class="sec" id="f1-knobs">三旋钮各管一件事</h3>

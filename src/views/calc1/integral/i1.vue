@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createAntideriv" />
-      <div class="cap">图 积1 · <b>原函数族机</b>：蓝线是 <Katex tex="f" />，橙色一族是各个 <Katex tex="F(x)+C" />。看点：<Katex tex="C" /> 一拖，整族曲线一起上下平移，而每条曲线在 <Katex tex="x_0" /> 处的切线斜率始终等于蓝色的高度。</div>
+      <div class="cap">图 积1 · <b>原函数族与不定积分</b>：蓝线是 <Katex tex="f" />，橙色一族是各个 <Katex tex="F(x)+C" />。看点：<Katex tex="C" /> 一拖，整族曲线一起上下平移，而每条曲线在 <Katex tex="x_0" /> 处的切线斜率始终等于蓝色的高度。</div>
     </div>
 
     <h3 class="sec" id="i1-def">从求导倒着问</h3>

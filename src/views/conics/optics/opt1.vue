@@ -7,7 +7,7 @@
     <h3 class="sec" id="t1-lab">切线实验台</h3>
     <div class="board-wrap">
       <BoardMount :factory="createTangentLab" />
-      <div class="cap">图 T1 · <b>切线实验台</b>：切换椭圆 / 双曲线 / 抛物线三种曲线，拖动 P —— 白色切线、紫色法线实时跟随，读数区给出局部坐标下的切线方程与斜率；打开「梯度 ∇F」开关后，金色箭头标出偏导数给出的法向量 <Katex tex="\nabla F" />，它永远与切线垂直。</div>
+      <div class="cap">图 T1 · <b>圆锥曲线的切线</b>：切换椭圆 / 双曲线 / 抛物线三种曲线，拖动 P —— 白色切线、紫色法线实时跟随，读数区给出局部坐标下的切线方程与斜率；打开「梯度 ∇F」开关后，金色箭头标出偏导数给出的法向量 <Katex tex="\nabla F" />，它永远与切线垂直。</div>
     </div>
 
     <h3 class="sec" id="t1-d1">求法一：判别式法（最"初等"）</h3>

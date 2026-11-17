@@ -6,7 +6,7 @@
     <div class="note good" id="c2-def">从 <Katex tex="n" /> 个不同元素中取出 <Katex tex="m" /> 个（<Katex tex="m\leq n" />），按照一定的顺序排成一列，叫做从 <Katex tex="n" /> 个不同元素中取出 <Katex tex="m" /> 个元素的一个<b>排列</b>；所有排列的个数记作 <Katex tex="\mathrm{A}_n^m" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createPermLab" />
-      <div class="cap">图 计2 · <b>排列数机</b>：上方格子按位编号，格下写着这一位还剩几个元素可选；下方圆片是元素池，金色虚线连出其中一种排法。看点：拖 <Katex tex="m" /> 增减格子，每位可选数从 <Katex tex="n" /> 起逐位减 1；拖 <Katex tex="n" /> 改元素池大小，徽章里排列数与阶乘式同步改写；取满 <Katex tex="m=n" /> 时判读改成全排列，结果是 <Katex tex="n!" />。</div>
+      <div class="cap">图 计2 · <b>排列数与排列</b>：上方格子按位编号，格下写着这一位还剩几个元素可选；下方圆片是元素池，金色虚线连出其中一种排法。看点：拖 <Katex tex="m" /> 增减格子，每位可选数从 <Katex tex="n" /> 起逐位减 1；拖 <Katex tex="n" /> 改元素池大小，徽章里排列数与阶乘式同步改写；取满 <Katex tex="m=n" /> 时判读改成全排列，结果是 <Katex tex="n!" />。</div>
     </div>
 
     <h3 class="sec" id="c2-def">排列的定义</h3>

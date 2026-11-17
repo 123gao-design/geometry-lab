@@ -5,7 +5,7 @@
     <div class="note good" id="o3-law">原命题 <Katex tex="p\Rightarrow q" />、逆命题 <Katex tex="q\Rightarrow p" />、否命题 <Katex tex="\neg p\Rightarrow\neg q" />、逆否命题 <Katex tex="\neg q\Rightarrow\neg p" />。等价关系：<Katex tex="p\Rightarrow q\iff\neg q\Rightarrow\neg p" />、<Katex tex="q\Rightarrow p\iff\neg p\Rightarrow\neg q" /> —— 互为逆否，同真同假。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCT" />
-      <div class="cap">图 O3 · <b>逆否等价机</b>：左侧四种命题随预设即时判定真假、标出反例；右侧 2×2 组合格把「p、q 真假」的四种世界摆开，p→q 与逆否命题共享「p 真而 q 假」这一格。看点：拖探针换世界 —— 高亮格落进红格时，原命题与逆否命题同时为假；落不进，两式同时为真，无一例外。</div>
+      <div class="cap">图 O3 · <b>原命题与逆否命题</b>：左侧四种命题随预设即时判定真假、标出反例；右侧 2×2 组合格把「p、q 真假」的四种世界摆开，p→q 与逆否命题共享「p 真而 q 假」这一格。看点：拖探针换世界 —— 高亮格落进红格时，原命题与逆否命题同时为假；落不进，两式同时为真，无一例外。</div>
     </div>
 
     <h3 class="sec" id="o3-four">四种命题</h3>

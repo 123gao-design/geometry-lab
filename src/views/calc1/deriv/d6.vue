@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createTaylorLab" />
-      <div class="cap">图 微6 · <b>泰勒公式机</b>：蓝线是原函数，金线是它在 <Katex tex="0" /> 处的 <Katex tex="n" /> 阶泰勒多项式，绿色竖段是所选点处的余项 <Katex tex="R_n" />。右栏列出该点的函数值、多项式值与余项。看点：把 <Katex tex="n" /> 一阶一阶加大，金线贴合蓝线的范围随之变宽；把点移近 <Katex tex="0" />，余项迅速变小。</div>
+      <div class="cap">图 微6 · <b>泰勒公式</b>：蓝线是原函数，金线是它在 <Katex tex="0" /> 处的 <Katex tex="n" /> 阶泰勒多项式，绿色竖段是所选点处的余项 <Katex tex="R_n" />。右栏列出该点的函数值、多项式值与余项。看点：把 <Katex tex="n" /> 一阶一阶加大，金线贴合蓝线的范围随之变宽；把点移近 <Katex tex="0" />，余项迅速变小。</div>
     </div>
 
     <h3 class="sec" id="d6-poly">从切线到多项式</h3>

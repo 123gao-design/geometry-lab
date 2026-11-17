@@ -7,7 +7,7 @@
       <Katex tex="a_n=S_n-S_{n-1}" />；实际书写时分成两段：<Katex tex="a_1=S_1" />，<Katex tex="n\ge2" /> 时 <Katex tex="a_n=S_n-S_{n-1}" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSn" />
-      <div class="cap">图 数3 · <b>前 n 项和机</b>：上栏是每一项 <Katex tex="a_k" /> 的条，下栏是前 k 项和 <Katex tex="S_k" /> 的折线，两栏的 n 严格对齐。拖动 n，金色虚线贯通两栏；下栏的橙色竖段是 <Katex tex="S_n" /> 比 <Katex tex="S_{n-1}" /> 高出的一段，与上栏第 n 条等高。看点：切到 ②，每一项都翻倍，折线的增量随 <Katex tex="a_n" /> 一起翻倍，<Katex tex="S_n" /> 始终比它多 1。</div>
+      <div class="cap">图 数3 · <b>前 n 项和与通项</b>：上栏是每一项 <Katex tex="a_k" /> 的条，下栏是前 k 项和 <Katex tex="S_k" /> 的折线，两栏的 n 严格对齐。拖动 n，金色虚线贯通两栏；下栏的橙色竖段是 <Katex tex="S_n" /> 比 <Katex tex="S_{n-1}" /> 高出的一段，与上栏第 n 条等高。看点：切到 ②，每一项都翻倍，折线的增量随 <Katex tex="a_n" /> 一起翻倍，<Katex tex="S_n" /> 始终比它多 1。</div>
     </div>
 
     <h3 class="sec" id="s3-def">前 n 项和</h3>

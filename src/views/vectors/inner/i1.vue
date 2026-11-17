@@ -6,7 +6,7 @@
     <div class="note good" id="i1-def">已知两个非零向量 <Katex tex="\vec a" /> 与 <Katex tex="\vec b" />，它们的夹角为 <Katex tex="\theta" />，则 <Katex tex="|\vec a||\vec b|\cos\theta" /> 叫做 <Katex tex="\vec a" /> 与 <Katex tex="\vec b" /> 的<strong>数量积</strong>（内积），记作 <Katex tex="\vec a\cdot\vec b" />。规定零向量与任一非零向量的数量积为 <Katex tex="0" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createDotProj" />
-      <div class="cap">图 积1 · <b>数量积与投影机</b>：蓝色、橙色两支的夹角标注在徽章里，金色线段是 <Katex tex="\vec b" /> 在 <Katex tex="\vec a" /> 方向上的投影，紫色虚线是 <Katex tex="\vec b" /> 的终点到这条投影的垂线。看点：② 把 <Katex tex="\vec b" /> 拖成与 <Katex tex="\vec a" /> 垂直，投影缩成一点、数量积归零；③ 拖到钝角一侧，金色线段翻到原点另一侧，投影带负号，数量积也变负。</div>
+      <div class="cap">图 积1 · <b>数量积与投影</b>：蓝色、橙色两支的夹角标注在徽章里，金色线段是 <Katex tex="\vec b" /> 在 <Katex tex="\vec a" /> 方向上的投影，紫色虚线是 <Katex tex="\vec b" /> 的终点到这条投影的垂线。看点：② 把 <Katex tex="\vec b" /> 拖成与 <Katex tex="\vec a" /> 垂直，投影缩成一点、数量积归零；③ 拖到钝角一侧，金色线段翻到原点另一侧，投影带负号，数量积也变负。</div>
     </div>
 
     <h3 class="sec" id="i1-def">定义与夹角</h3>

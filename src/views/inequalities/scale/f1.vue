@@ -6,7 +6,7 @@
     <div class="note good" id="f1-law">对任意实数 <Katex tex="a,b" />，<Katex tex="|a+b|\le|a|+|b|" />，等号当且仅当 <Katex tex="ab\ge0" />（两数同号或其一为零）。这是绝对值运算中最常用的一条，也是复数与向量模长的三角形不等式的实轴版本。</div>
     <div class="board-wrap">
       <BoardMount :factory="createTI" />
-      <div class="cap">图 放1 · <b>三角不等式机</b>：数轴模式把 a、b 看作从 0 出发的两段位移，「折返」路径 <Katex tex="|a|+|b|" />（蓝带 |a| + 红带 |b| 折回原点）与「直达」<Katex tex="|a+b|" />（金带）同轴比长；向量模式固定 u 沿 x 轴长 3、v 可转可伸缩，折线 O→U→W 与闭合边 O→W 同台。看点：θ=0° 或 a、b 同号时折返与直达重合（取等），θ=180° 或异号时直达最短。</div>
+      <div class="cap">图 放1 · <b>三角不等式</b>：数轴模式把 a、b 看作从 0 出发的两段位移，「折返」路径 <Katex tex="|a|+|b|" />（蓝带 |a| + 红带 |b| 折回原点）与「直达」<Katex tex="|a+b|" />（金带）同轴比长；向量模式固定 u 沿 x 轴长 3、v 可转可伸缩，折线 O→U→W 与闭合边 O→W 同台。看点：θ=0° 或 a、b 同号时折返与直达重合（取等），θ=180° 或异号时直达最短。</div>
     </div>
 
     <h3 class="sec" id="f1-plan">数轴模式：折返与直达</h3>

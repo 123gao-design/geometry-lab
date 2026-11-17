@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createPolarDbl" />
-      <div class="cap">图 重3 · <b>极坐标下的二重积分机</b>：淡蓝是积分区域，浅灰是极坐标网格（同心圆与等分射线），橙色小格是 <Katex tex="(r,\theta)" /> 附近的一小块，两条边长分别是 <Katex tex="\Delta r" /> 与 <Katex tex="r\,\Delta\theta" />。三个预设：① 圆 <Katex tex="r\le2\cos\theta" />，面积 <Katex tex="\pi" />；② 半圆环 <Katex tex="1\le r\le2" />、<Katex tex="0\le\theta\le\pi" />，面积 <Katex tex="1.5\pi" />；③ 心形线 <Katex tex="r\le1+\cos\theta" />，面积 <Katex tex="1.5\pi" />。拖 <Katex tex="r" /> 让橙色小格向外移，看它的弧边长如何变长。</div>
+      <div class="cap">图 重3 · <b>极坐标下的二重积分</b>：淡蓝是积分区域，浅灰是极坐标网格（同心圆与等分射线），橙色小格是 <Katex tex="(r,\theta)" /> 附近的一小块，两条边长分别是 <Katex tex="\Delta r" /> 与 <Katex tex="r\,\Delta\theta" />。三个预设：① 圆 <Katex tex="r\le2\cos\theta" />，面积 <Katex tex="\pi" />；② 半圆环 <Katex tex="1\le r\le2" />、<Katex tex="0\le\theta\le\pi" />，面积 <Katex tex="1.5\pi" />；③ 心形线 <Katex tex="r\le1+\cos\theta" />，面积 <Katex tex="1.5\pi" />。拖 <Katex tex="r" /> 让橙色小格向外移，看它的弧边长如何变长。</div>
     </div>
 
     <h3 class="sec" id="r3-elem">面积元为什么多一个 r</h3>

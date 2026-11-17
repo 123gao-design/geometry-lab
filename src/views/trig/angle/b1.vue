@@ -5,7 +5,7 @@
     <div class="note good" id="b1-law"><strong>任意角</strong>：射线绕端点旋转所成的角，<strong>始边</strong>、<strong>终边</strong>与<strong>旋转方向</strong>三要素齐 —— 逆时针转为正角、顺时针转为负角、转过的圈数照单全收。<strong>终边相同</strong>：<Katex tex="\beta=\alpha+2k\pi\ (k\in\mathbb{Z})" /> —— 终边重合的角相差周角的整数倍，一差就是一整族。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRotor" />
-      <div class="cap">图 B1 · <b>终边转针机</b>：拖动圆上把手旋转，转过一圈读数继续累加，金色螺旋扫痕把走过的角度记录下来；①..④ 四个预设把「30° 的相关角」一次摆齐 —— 终边重合、角度不同。</div>
+      <div class="cap">图 B1 · <b>角的终边与累计旋转</b>：拖动圆上把手旋转，转过一圈读数继续累加，金色螺旋扫痕把走过的角度记录下来；①..④ 四个预设把「30° 的相关角」一次摆齐 —— 终边重合、角度不同。</div>
     </div>
 
     <h3 class="sec" id="b1-why">角为什么要推广</h3>

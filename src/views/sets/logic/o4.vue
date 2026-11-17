@@ -5,7 +5,7 @@
     <div class="note good" id="o4-law">若 <Katex tex="p\Rightarrow q" />：p 是 q 的<strong>充分条件</strong>，q 是 p 的<strong>必要条件</strong>。四类：<strong>充分不必要</strong>（p⇒q 且 q⇏p）、<strong>必要不充分</strong>（q⇒p 且 p⇏q）、<strong>充要</strong>（<Katex tex="p\iff q" />）、<strong>既不充分也不必要</strong>（互推都不成立）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCD" />
-      <div class="cap">图 O4 · <b>充要判定机</b>：蓝带画 p 的真值集 A、橙带画 q 的真值集 B，四个预设即四类条件各一例；拖探针到 A∖B 或 B∖A 的位置，对应方向的「反例元素」当场读出。看点：小范围推出大范围 —— 两条带谁含住谁，箭头就指向谁，判定四类型只须比较包含关系。</div>
+      <div class="cap">图 O4 · <b>充分条件与必要条件</b>：蓝带画 p 的真值集 A、橙带画 q 的真值集 B，四个预设即四类条件各一例；拖探针到 A∖B 或 B∖A 的位置，对应方向的「反例元素」当场读出。看点：小范围推出大范围 —— 两条带谁含住谁，箭头就指向谁，判定四类型只须比较包含关系。</div>
     </div>
 
     <h3 class="sec" id="o4-def">定义与四类</h3>

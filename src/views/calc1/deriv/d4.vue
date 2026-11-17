@@ -8,12 +8,12 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createMeanValue" />
-      <div class="cap">图 微4 · <b>中值定理机</b>：蓝线是区间上的曲线，金色虚线连两端 <Katex tex="P" />、<Katex tex="Q" />，橙色是区间内与弦平行的切线。右栏列出两端函数值、弦斜率与切点处的导数。看点：无论换哪条曲线，平行切线总能在区间内部找到；罗尔定理是弦水平的那一档。</div>
+      <div class="cap">图 微4 · <b>罗尔定理与拉格朗日中值定理</b>：蓝线是区间上的曲线，金色虚线连两端 <Katex tex="P" />、<Katex tex="Q" />，橙色是区间内与弦平行的切线。右栏列出两端函数值、弦斜率与切点处的导数。看点：无论换哪条曲线，平行切线总能在区间内部找到；罗尔定理是弦水平的那一档。</div>
     </div>
 
     <div class="board-wrap">
       <BoardMount :factory="createCauchyLab" />
-      <div class="cap">图 微4b · <b>柯西中值定理机</b>：把 <Katex tex="x=g(t)" />、<Katex tex="y=f(t)" /> 看成平面上的参数曲线，<Katex tex="t" /> 从 <Katex tex="1" /> 走到 <Katex tex="3" /> 时点沿蓝线从一端走到另一端。金线是弦 <Katex tex="AB" />，橙线是 <Katex tex="t^*" /> 处的切线。看点：切线方向与弦方向相同的时刻落在区间内部，两个变化率之比就等于弦斜率。</div>
+      <div class="cap">图 微4b · <b>柯西中值定理</b>：把 <Katex tex="x=g(t)" />、<Katex tex="y=f(t)" /> 看成平面上的参数曲线，<Katex tex="t" /> 从 <Katex tex="1" /> 走到 <Katex tex="3" /> 时点沿蓝线从一端走到另一端。金线是弦 <Katex tex="AB" />，橙线是 <Katex tex="t^*" /> 处的切线。看点：切线方向与弦方向相同的时刻落在区间内部，两个变化率之比就等于弦斜率。</div>
     </div>
 
     <h3 class="sec" id="d4-fermat">费马引理</h3>

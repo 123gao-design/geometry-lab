@@ -6,7 +6,7 @@
     <div class="note good">若 <Katex tex="a_{n+1}-a_n=f(n)" />，把 <Katex tex="n=1,2,\dots,n" /> 的 <Katex tex="n" /> 个式子相加，得 <Katex tex="a_{n+1}-a_1=\sum_{k=1}^{n}f(k)" />，这一方法叫<strong>累加法</strong>。若 <Katex tex="a_{n+1}/a_n=g(n)" />（各项不为零），把这些式子相乘，得 <Katex tex="a_{n+1}=a_1\prod_{k=1}^{n}g(k)" />，叫<strong>累乘法</strong>。</div>
     <div class="board-wrap">
       <BoardMount :factory="createAddMul" />
-      <div class="cap">图 递1 · <b>累加累乘机</b>：蓝点是数列各项，金色虚线把它们连起来，绿色竖段是每一步的差（或比值）。预设 ①② 的差分别是 <Katex tex="k" /> 与 <Katex tex="2k-1" />，所有绿段首尾相接正好补齐首项到第 n+1 项的高度差；预设 ③ 把加换成乘，各步的比逐一相乘后分子分母错位相消。拖动 n 看右侧求和式与通项同步改写。</div>
+      <div class="cap">图 递1 · <b>累加法与累乘法</b>：蓝点是数列各项，金色虚线把它们连起来，绿色竖段是每一步的差（或比值）。预设 ①② 的差分别是 <Katex tex="k" /> 与 <Katex tex="2k-1" />，所有绿段首尾相接正好补齐首项到第 n+1 项的高度差；预设 ③ 把加换成乘，各步的比逐一相乘后分子分母错位相消。拖动 n 看右侧求和式与通项同步改写。</div>
     </div>
 
     <h3 class="sec" id="r1-add">累加法</h3>

@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createSimDim" />
-      <div class="cap">图 维2 · <b>相似维数机</b>：每边分成 <Katex tex="m" /> 份，保留 <Katex tex="N" /> 格。看点：① 徽章 <Katex tex="D" /> 随 <Katex tex="N" /> 与 <Katex tex="m" /> 实时变化；② 校验徽章 <Katex tex="N r^{D}" /> 恒等于 1，公式不是拟合出来的；③ 四个预设按钮对应四种常见自相似集，读数与教科书的数值一致。</div>
+      <div class="cap">图 维2 · <b>相似维数</b>：每边分成 <Katex tex="m" /> 份，保留 <Katex tex="N" /> 格。看点：① 徽章 <Katex tex="D" /> 随 <Katex tex="N" /> 与 <Katex tex="m" /> 实时变化；② 校验徽章 <Katex tex="N r^{D}" /> 恒等于 1，公式不是拟合出来的；③ 四个预设按钮对应四种常见自相似集，读数与教科书的数值一致。</div>
     </div>
 
     <h3 class="sec" id="d2-law">幂律与维数公式</h3>

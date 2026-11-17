@@ -22,7 +22,7 @@
     <p>这条判据是平面几何「三向量共面」与立体几何「四点共面」之间的桥：把四点写成三组差向量，共面问题就变成一个数是否为零。</p>
     <div class="board-wrap">
       <BoardMount :factory="createSpaceMix" />
-      <div class="cap">图 向4 · <b>混合积与平行六面体机</b>：底面由金色 <Katex tex="\vec a" /> 与蓝色 <Katex tex="\vec b" /> 张成，紫色 <Katex tex="\vec c" /> 由棱长与倾角 <Katex tex="\theta" /> 两个滑块给出，六个面各自半透明着色，前后棱互相叠压。徽章读混合积、体积与底面积。看点：把 <Katex tex="\theta" /> 从 <Katex tex="0^\circ" /> 推到 <Katex tex="90^\circ" />，紫色棱逐渐倒向底面，体积按余弦规律缩到零，混合积同时归零；把底面夹角 <Katex tex="\varphi" /> 收小，底面积随之缩小，体积与它同比例变化；拖动画面旋转，六个面按深度自然叠压，靠后的面先画。</div>
+      <div class="cap">图 向4 · <b>混合积与平行六面体的体积</b>：底面由金色 <Katex tex="\vec a" /> 与蓝色 <Katex tex="\vec b" /> 张成，紫色 <Katex tex="\vec c" /> 由棱长与倾角 <Katex tex="\theta" /> 两个滑块给出，六个面各自半透明着色，前后棱互相叠压。徽章读混合积、体积与底面积。看点：把 <Katex tex="\theta" /> 从 <Katex tex="0^\circ" /> 推到 <Katex tex="90^\circ" />，紫色棱逐渐倒向底面，体积按余弦规律缩到零，混合积同时归零；把底面夹角 <Katex tex="\varphi" /> 收小，底面积随之缩小，体积与它同比例变化；拖动画面旋转，六个面按深度自然叠压，靠后的面先画。</div>
     </div>
 
     <h3 class="sec" id="v4-det">行列式写法</h3>

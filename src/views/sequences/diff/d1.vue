@@ -6,7 +6,7 @@
     <div class="note good">如果一个数列从第 2 项起，每一项与它的前一项的差都等于同一个常数，这个数列叫做<strong>等差数列</strong>，这个常数叫做<strong>公差</strong>，通常记作 <Katex tex="d" />。用式子写就是 <Katex tex="a_{n+1}-a_n=d" />（<Katex tex="n\in\mathbb{N}^*" />），等价于 <Katex tex="a_{n+1}=a_n+d" />。由首项与公差可以逐项写出整列数：<Katex tex="a_n=a_1+(n-1)d" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createDiffSeq" />
-      <div class="cap">图 等1 · <b>等差序列机</b>：上栏是各项在坐标平面上的位置，金色虚线把通项放宽到实数，所成的直线斜率就是公差；下栏把相邻两项的差逐对画成点，全部落在同一条水平线上。拖动「公差 d」：d 的正负改变直线的升降，d=0 时全部项重合为一条水平线。拖动「n」用投影线读出第 n 项。</div>
+      <div class="cap">图 等1 · <b>等差数列的项与差分</b>：上栏是各项在坐标平面上的位置，金色虚线把通项放宽到实数，所成的直线斜率就是公差；下栏把相邻两项的差逐对画成点，全部落在同一条水平线上。拖动「公差 d」：d 的正负改变直线的升降，d=0 时全部项重合为一条水平线。拖动「n」用投影线读出第 n 项。</div>
     </div>
 
     <h3 class="sec" id="d1-def">定义与公差</h3>

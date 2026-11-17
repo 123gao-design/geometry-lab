@@ -6,7 +6,7 @@
     <div class="note good" id="i1-path">从 <Katex tex="(0,0)" /> 走到 <Katex tex="(m,n)" />，每步只向右或向上，共 <Katex tex="m+n" /> 步，其中 <Katex tex="m" /> 步向右。选定哪几步向右即确定一条路径，故路径数为 <Katex tex="\mathrm{C}_{m+n}^{\,m}" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createPascalId" />
-      <div class="cap">图 恒1 · <b>网格路径机</b>：格点上的数是从原点走到该点的路径条数，金色折线是其中一条具体走法。看点：到终点前的一个格点标蓝，终点的数由这两个蓝数相加得到；拖 <Katex tex="m" />、<Katex tex="n" /> 改变网格大小，加法关系一直成立。</div>
+      <div class="cap">图 恒1 · <b>帕斯卡恒等式与网格路径</b>：格点上的数是从原点走到该点的路径条数，金色折线是其中一条具体走法。看点：到终点前的一个格点标蓝，终点的数由这两个蓝数相加得到；拖 <Katex tex="m" />、<Katex tex="n" /> 改变网格大小，加法关系一直成立。</div>
     </div>
 
     <h3 class="sec" id="i1-path">路径与组合数</h3>

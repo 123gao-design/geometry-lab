@@ -6,7 +6,7 @@
     <Katex tex="x_{n+1}\ =\ x_n-\dfrac{f(x_n)}{f'(x_n)}" display />
     <div class="board-wrap">
       <BoardMount :factory="createNewton" />
-      <div class="cap">图 R4 · <b>切线下山机</b>：金线 = 牛顿切线台阶（落轴后竖虚线弹回曲线再切），橙线 = 弦截连线台阶（两点连线落轴，免导数）。① 从 <Katex tex="x_0=2"/> 出发三步贴近 <Katex tex="\sqrt{2}"/> —— 二分同精度要十几步；② 从 <Katex tex="x_0=1.6"/> 贴向无理根 1.53…；③ 从 <Katex tex="x_0=0"/> 出发的循环反例：<Katex tex="0\to 1\to 0\to 1"/> 原地往复 —— 初值选取不当，牛顿法不收敛（弦截法同样失效）。徽章实时记误差，并折算二分需要几步才有同误差。</div>
+      <div class="cap">图 R4 · <b>牛顿法与弦截法</b>：金线 = 牛顿切线台阶（落轴后竖虚线弹回曲线再切），橙线 = 弦截连线台阶（两点连线落轴，免导数）。① 从 <Katex tex="x_0=2"/> 出发三步贴近 <Katex tex="\sqrt{2}"/> —— 二分同精度要十几步；② 从 <Katex tex="x_0=1.6"/> 贴向无理根 1.53…；③ 从 <Katex tex="x_0=0"/> 出发的循环反例：<Katex tex="0\to 1\to 0\to 1"/> 原地往复 —— 初值选取不当，牛顿法不收敛（弦截法同样失效）。徽章实时记误差，并折算二分需要几步才有同误差。</div>
     </div>
 
     <h3 class="sec" id="r4-sp">速度：对数 vs 平方</h3>

@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createRatiotest" />
-      <div class="cap">图 级2 · <b>比值判别机</b>：蓝点是相邻两项之比的数列，红线 <Katex tex="\rho=1" /> 是分界，绿虚线是它的极限。<b>看点</b>：比值极限落在红线左侧必收敛，落在右侧必发散，正落在红线上时判别法失效——四档里有一档就是这种情形。</div>
+      <div class="cap">图 级2 · <b>比值判别法</b>：蓝点是相邻两项之比的数列，红线 <Katex tex="\rho=1" /> 是分界，绿虚线是它的极限。<b>看点</b>：比值极限落在红线左侧必收敛，落在右侧必发散，正落在红线上时判别法失效——四档里有一档就是这种情形。</div>
     </div>
 
     <h3 class="sec" id="s2-comp">比较判别法</h3>

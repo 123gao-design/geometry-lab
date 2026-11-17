@@ -7,7 +7,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createCoast" />
-      <div class="cap">图 生3 · <b>海岸线量尺机</b>：左图用橙色折线尺沿海岸走，右图是双对数散点与拟合直线。看点：① 尺长 <Katex tex="\varepsilon" /> 每减半，量出的 <Katex tex="L" /> 就往上跳一截；② 斜率稳定在 0.26 附近，加 1 得维数 1.26；③ 尺长缩到最小时，测得长度逼近科赫曲线的总长，曲线本身却还在无限加密。</div>
+      <div class="cap">图 生3 · <b>海岸线与尺长</b>：左图用橙色折线尺沿海岸走，右图是双对数散点与拟合直线。看点：① 尺长 <Katex tex="\varepsilon" /> 每减半，量出的 <Katex tex="L" /> 就往上跳一截；② 斜率稳定在 0.26 附近，加 1 得维数 1.26；③ 尺长缩到最小时，测得长度逼近科赫曲线的总长，曲线本身却还在无限加密。</div>
     </div>
 
     <h3 class="sec" id="g3-coast">海岸线悖论</h3>

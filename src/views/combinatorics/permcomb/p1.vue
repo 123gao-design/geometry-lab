@@ -6,7 +6,7 @@
     <div class="note good" id="p1-def">从 <Katex tex="n" /> 个不同元素中取出 <Katex tex="m" /> 个（<Katex tex="m\leq n" />）合成一组，叫做一个<b>组合</b>；所有组合的个数记作 <Katex tex="\mathrm{C}_n^m" />，并且 <Katex tex="\mathrm{C}_n^m=\dfrac{\mathrm{A}_n^m}{m!}=\dfrac{n!}{m!\,(n-m)!}" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createCombLab" />
-      <div class="cap">图 排1 · <b>组合数机</b>：每个小格是一种排列，同一列的 <Katex tex="m!" /> 格只差元素顺序，算同一种取法，列数才是组合数。看点：拖 <Katex tex="m" /> 看一列的格数从 1 涨到 6、列数随之减少；徽章里组合数与排列数并列，两数之比恒为 <Katex tex="m!" />。取 1 个时两者相等。</div>
+      <div class="cap">图 排1 · <b>组合数与组合数公式</b>：每个小格是一种排列，同一列的 <Katex tex="m!" /> 格只差元素顺序，算同一种取法，列数才是组合数。看点：拖 <Katex tex="m" /> 看一列的格数从 1 涨到 6、列数随之减少；徽章里组合数与排列数并列，两数之比恒为 <Katex tex="m!" />。取 1 个时两者相等。</div>
     </div>
 
     <h3 class="sec" id="p1-def">组合的定义</h3>

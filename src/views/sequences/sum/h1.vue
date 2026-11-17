@@ -6,11 +6,11 @@
     <div class="note good">求和之前先看通项的结构。若 <Katex tex="a_n=b_n+c_n" />，而 <Katex tex="\{b_n\},\{c_n\}" /> 都能直接求和，则 <Katex tex="S_n=\sum b_k+\sum c_k" />，这叫<strong>分组求和</strong>。若 <Katex tex="a_n=f(n)-f(n+1)" />，则 <Katex tex="S_n=f(1)-f(n+1)" />，中间项两两抵消，这叫<strong>裂项相消</strong>。</div>
     <div class="board-wrap">
       <BoardMount :factory="createGroupBar" />
-      <div class="cap">图 和1a · <b>分组求和机</b>：每根柱子分两段，蓝段是等差部分 <Katex tex="k" />，橙段是等比部分 <Katex tex="2^{k-1}" />。左图逐列相加得到原数列的和，右栏把两组分别求和再合并，两条路径给出同一个 <Katex tex="S_n" />。拖动 n 看两段的比重此消彼长。</div>
+      <div class="cap">图 和1a · <b>分组求和</b>：每根柱子分两段，蓝段是等差部分 <Katex tex="k" />，橙段是等比部分 <Katex tex="2^{k-1}" />。左图逐列相加得到原数列的和，右栏把两组分别求和再合并，两条路径给出同一个 <Katex tex="S_n" />。拖动 n 看两段的比重此消彼长。</div>
     </div>
     <div class="board-wrap">
       <BoardMount :factory="createCrackLine" />
-      <div class="cap">图 和1b · <b>裂项相消机</b>：数轴上依次标出 <Katex tex="1,\dfrac12,\dfrac13,\dots" />，相邻两个刻度之间的那一段长度恰好是 <Katex tex="\dfrac{1}{k(k+1)}" />。这些段首尾相接，从 1 一路排到 <Katex tex="\dfrac{1}{n+1}" />，只有两端的分数留下来。</div>
+      <div class="cap">图 和1b · <b>裂项相消</b>：数轴上依次标出 <Katex tex="1,\dfrac12,\dfrac13,\dots" />，相邻两个刻度之间的那一段长度恰好是 <Katex tex="\dfrac{1}{k(k+1)}" />。这些段首尾相接，从 1 一路排到 <Katex tex="\dfrac{1}{n+1}" />，只有两端的分数留下来。</div>
     </div>
 
     <h3 class="sec" id="h1-group">分组求和</h3>

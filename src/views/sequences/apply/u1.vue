@@ -6,7 +6,7 @@
     <div class="note good">设本金为 <Katex tex="P" />，年利率为 <Katex tex="r" />。复利：<Katex tex="B_k=B_{k-1}(1+r)" />，<Katex tex="B_k=P(1+r)^k" />；单利：<Katex tex="B_k=B_{k-1}+Pr" />，<Katex tex="B_k=P(1+kr)" />；折损：<Katex tex="B_k=B_{k-1}(1-r)" />，<Katex tex="B_k=P(1-r)^k" />。三者都是等比或等差数列。</div>
     <div class="board-wrap">
       <BoardMount :factory="createGrowth" />
-      <div class="cap">图 用1 · <b>增长与折损机</b>：蓝柱是当年余额，金虚线是对照模式（复利与单利互相参照）。三种模式只差一个运算：复利每年乘 <Katex tex="1+r" />，单利每年加 <Katex tex="Pr" />，折损每年乘 <Katex tex="1-r" />。拖年数看两种增长方式的差距怎样逐年拉大。</div>
+      <div class="cap">图 用1 · <b>复利、单利与折损</b>：蓝柱是当年余额，金虚线是对照模式（复利与单利互相参照）。三种模式只差一个运算：复利每年乘 <Katex tex="1+r" />，单利每年加 <Katex tex="Pr" />，折损每年乘 <Katex tex="1-r" />。拖年数看两种增长方式的差距怎样逐年拉大。</div>
     </div>
 
     <h3 class="sec" id="u1-recur">逐年写递推</h3>

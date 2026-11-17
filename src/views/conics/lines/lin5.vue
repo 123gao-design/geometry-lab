@@ -7,7 +7,7 @@
     <h3 class="sec" id="l5-lab">定点机实验</h3>
     <div class="board-wrap">
       <BoardMount :factory="createFixedPt" />
-      <div class="cap">图 L5 · <b>定点机</b>：橙色弦绕椭圆转（「扫弦」或拖 u），但所有弦都过金色定点 T，理论与实测读数同步变绿。滑 K：<strong>定点沿 x 轴滑过左顶点（<Katex tex="K\to 0^-" />）、中心（<Katex tex="K=-\tfrac{b^2}{a^2}" />，弦全是直径）、右焦点（<Katex tex="K=K^*" />）</strong>，右下角标签实时显示。</div>
+      <div class="cap">图 L5 · <b>定点与定值</b>：橙色弦绕椭圆转（「扫弦」或拖 u），但所有弦都过金色定点 T，理论与实测读数同步变绿。滑 K：<strong>定点沿 x 轴滑过左顶点（<Katex tex="K\to 0^-" />）、中心（<Katex tex="K=-\tfrac{b^2}{a^2}" />，弦全是直径）、右焦点（<Katex tex="K=K^*" />）</strong>，右下角标签实时显示。</div>
     </div>
 
     <h3 class="sec" id="l5-fix">定点：完整解法</h3>

@@ -5,7 +5,7 @@
     <div class="note good" id="v1-law"><strong>导数定义</strong>：函数 <Katex tex="y=f(x)"/> 在 <Katex tex="x_0"/> 处的导数 <Katex tex="f'(x_0)=\lim_{\Delta x\to 0}\dfrac{f(x_0+\Delta x)-f(x_0)}{\Delta x}" /> —— 当极限存在时，称 f 在 <Katex tex="x_0"/> 处<strong>可导</strong>。平均变化率的极限 = 瞬时变化率；割线斜率的极限 = 切线斜率。</div>
     <div class="board-wrap">
       <BoardMount :factory="createTan" />
-      <div class="cap">图 V1 · <b>割线逼近机</b>：橙线与金线各自挂名牌 —— <b>橙=割线</b>（P、Q 两点的连线，跟着 Q 转）、<b>金=切线</b>（P 处，割线的极限位置，预先画出作为对照）。拖 <Katex tex="\Delta x"/> 从正负两侧缩向 0，橙割线贴合到金切线，割线斜率读数随之一路逼近 <Katex tex="f'(x_0)"/>。「⏩ Q 滑向 P」动画把极限过程直接演出来；<Katex tex="\Delta x=0"/> 割线直接排除 —— 极限管趋近不管抵达。</div>
+      <div class="cap">图 V1 · <b>割线趋于切线</b>：橙线与金线各自挂名牌 —— <b>橙=割线</b>（P、Q 两点的连线，跟着 Q 转）、<b>金=切线</b>（P 处，割线的极限位置，预先画出作为对照）。拖 <Katex tex="\Delta x"/> 从正负两侧缩向 0，橙割线贴合到金切线，割线斜率读数随之一路逼近 <Katex tex="f'(x_0)"/>。「⏩ Q 滑向 P」动画把极限过程直接演出来；<Katex tex="\Delta x=0"/> 割线直接排除 —— 极限管趋近不管抵达。</div>
     </div>
 
     <h3 class="sec" id="v1-def">定义与记号：一切由极限定义</h3>

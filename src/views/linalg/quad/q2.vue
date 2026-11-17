@@ -8,7 +8,7 @@
 
     <div class="board-wrap">
       <BoardMount :factory="createStdForm" />
-      <div class="cap">图 型2 · <b>转轴机</b>：蓝色曲线不变，金色 <Katex tex="x'" /> 轴与青色 <Katex tex="y'" /> 轴是新坐标系，橙色小弧标出转轴角 <Katex tex="\theta" />，金青两色圆点是半轴端点。看点：无论怎么拖 <Katex tex="a,b,c" />，两根新轴总与曲线的对称轴重合，而 <Katex tex="\theta" /> 随交叉项增大而增大；切到「轴已对齐」档，<Katex tex="\theta=0" />、方程本来就没有交叉项；切到「圆」档，两条轴等长，<Katex tex="\theta" /> 不再唯一。</div>
+      <div class="cap">图 型2 · <b>转轴化标准形</b>：蓝色曲线不变，金色 <Katex tex="x'" /> 轴与青色 <Katex tex="y'" /> 轴是新坐标系，橙色小弧标出转轴角 <Katex tex="\theta" />，金青两色圆点是半轴端点。看点：无论怎么拖 <Katex tex="a,b,c" />，两根新轴总与曲线的对称轴重合，而 <Katex tex="\theta" /> 随交叉项增大而增大；切到「轴已对齐」档，<Katex tex="\theta=0" />、方程本来就没有交叉项；切到「圆」档，两条轴等长，<Katex tex="\theta" /> 不再唯一。</div>
     </div>
 
     <h3 class="sec" id="q2-rot">转轴公式</h3>

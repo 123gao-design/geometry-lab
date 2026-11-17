@@ -6,7 +6,7 @@
     <div class="note good" id="d3-def"><strong>抛物线的定义</strong>：平面内到一个定点 F 与一条定直线 l（F 不在 l 上）距离相等的点的轨迹，称为<strong>抛物线</strong> <span class="term">(parabola)</span>。F 称为<strong>焦点</strong>，l 称为<strong>准线</strong> <span class="term">(directrix)</span>；F 到 l 的距离记为 p（焦参数），焦点与顶点的距离为 p/2。</div>
     <div class="board-wrap">
       <BoardMount :factory="createParaDef" />
-      <div class="cap">图 D3 · <b>抛物线定义实验台</b>：拖动 P，橙线 |PF| 与蓝线 |PQ|（P 到准线的垂距）永远一样长，差值读数恒为 0。滑块 p 控制开口大小；打开「显示通径」可看过焦点垂直于轴的那条弦 —— 它的长度恰为 2p。</div>
+      <div class="cap">图 D3 · <b>抛物线的定义</b>：拖动 P，橙线 |PF| 与蓝线 |PQ|（P 到准线的垂距）永远一样长，差值读数恒为 0。滑块 p 控制开口大小；打开「显示通径」可看过焦点垂直于轴的那条弦 —— 它的长度恰为 2p。</div>
     </div>
 
     <h3 class="sec" id="d3-deriv">标准方程的推导：只需平方一次</h3>

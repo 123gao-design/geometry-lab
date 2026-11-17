@@ -6,7 +6,7 @@
     <div class="note good" id="s1-def">按一定顺序排列的一列数 <Katex tex="a_1,a_2,\dots,a_n,\dots" /> 叫做<strong>数列</strong>，其中第 <Katex tex="n" /> 项 <Katex tex="a_n" /> 叫做<strong>通项</strong>。若通项与序号的关系能用一个式子 <Katex tex="a_n=f(n)" />（<Katex tex="n\in\mathbb{N}^*" />）表示，这个式子叫做<strong>通项公式</strong>。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSeqFunc" />
-      <div class="cap">图 数1 · <b>数列散点机</b>：五种通项各成一列点，横轴是序号 <Katex tex="n" />。金色虚线把通项放宽到实数后连成曲线，拖动 n 用投影线读出第 n 项。看点：④ 的一列点越来越贴近 x 轴，始终不超过 <Katex tex="y=1" />；⑤ 随 n 的奇偶在 x 轴上下交替，通项里的 <Katex tex="(-1)^n" /> 只有整数序号才有定义，这列点连不成一条实曲线。</div>
+      <div class="cap">图 数1 · <b>数列是定义在正整数集上的函数</b>：五种通项各成一列点，横轴是序号 <Katex tex="n" />。金色虚线把通项放宽到实数后连成曲线，拖动 n 用投影线读出第 n 项。看点：④ 的一列点越来越贴近 x 轴，始终不超过 <Katex tex="y=1" />；⑤ 随 n 的奇偶在 x 轴上下交替，通项里的 <Katex tex="(-1)^n" /> 只有整数序号才有定义，这列点连不成一条实曲线。</div>
     </div>
 
     <h3 class="sec" id="s1-what">从排队说起</h3>

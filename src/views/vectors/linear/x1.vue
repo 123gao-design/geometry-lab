@@ -6,7 +6,7 @@
     <div class="note good" id="x1-def">既有大小又有方向的量叫做<strong>向量</strong>。向量用<strong>有向线段</strong>表示：线段的长度表示向量的大小，箭头所指的方向表示向量的方向。以 <Katex tex="A" /> 为起点、<Katex tex="B" /> 为终点的向量记作 <Katex tex="\overrightarrow{AB}" />；向量的大小叫做<strong>模</strong>，记作 <Katex tex="|\overrightarrow{AB}|" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createVecBasic" />
-      <div class="cap">图 向1 · <b>向量表示机</b>：拖动黄色终点 P，蓝色有向线段随方向与长度一起改变；绿色虚线一支是把起点平移过去的相等向量，方向与长度全不变。看点：② 的终点落在 <Katex tex="y" /> 轴上，判读给出与 <Katex tex="y" /> 轴平行；④ 把终点拖回原点，箭头缩成一个点，这就是零向量，模读数为 0。</div>
+      <div class="cap">图 向1 · <b>向量的表示</b>：拖动黄色终点 P，蓝色有向线段随方向与长度一起改变；绿色虚线一支是把起点平移过去的相等向量，方向与长度全不变。看点：② 的终点落在 <Katex tex="y" /> 轴上，判读给出与 <Katex tex="y" /> 轴平行；④ 把终点拖回原点，箭头缩成一个点，这就是零向量，模读数为 0。</div>
     </div>
 
     <h3 class="sec" id="x1-what">从位移说起</h3>

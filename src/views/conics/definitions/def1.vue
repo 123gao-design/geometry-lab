@@ -6,7 +6,7 @@
     <div class="note good" id="d1-def"><strong>椭圆的第一定义</strong>：平面内到两个定点 <Katex tex="F_1" />、<Katex tex="F_2" /> 的距离之和为常数 <Katex tex="2a" />（要求 <Katex tex="2a>|F_1F_2|" />）的点 P 的轨迹，称为<strong>椭圆</strong> <span class="term">(ellipse)</span>。<Katex tex="F_1" />、<Katex tex="F_2" /> 称为<strong>焦点</strong>，<Katex tex="|F_1F_2| = 2c" /> 称为<strong>焦距</strong>；比值 <Katex tex="e = c/a" /> 称为<strong>离心率</strong>。</div>
     <div class="board-wrap">
       <BoardMount :factory="createEllDef" />
-      <div class="cap">图 D1 · <b>椭圆第一定义实验台</b>：拖动 P 沿椭圆滑动，蓝橙两段绳子长度此消彼长，底部长度条把它们首尾相接 —— 总长纹丝不动地等于 2a。滑块 a、c 重塑椭圆形状；点「绳尺作图」可看笔尖绷紧绳子扫出整条曲线的过程。c 越小椭圆越圆，c → a 时椭圆被拉成一根"针"。</div>
+      <div class="cap">图 D1 · <b>椭圆的第一定义</b>：拖动 P 沿椭圆滑动，蓝橙两段绳子长度此消彼长，底部长度条把它们首尾相接 —— 总长纹丝不动地等于 2a。滑块 a、c 重塑椭圆形状；点「绳尺作图」可看笔尖绷紧绳子扫出整条曲线的过程。c 越小椭圆越圆，c → a 时椭圆被拉成一根"针"。</div>
     </div>
 
     <h3 class="sec" id="d1-deriv">标准方程的推导：两次平方，一次改名</h3>

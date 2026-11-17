@@ -7,7 +7,7 @@
       使结果落入拒绝域的最大概率称为<b>显著性水平</b> <Katex tex="\alpha" />，常取 0.05 或 0.01。</div>
     <div class="board-wrap">
       <BoardMount :factory="createErrTest" />
-      <div class="cap">图 检1 · <b>两类错误机</b>：蓝曲线是 <Katex tex="H_0" /> 成立时统计量的分布，绿曲线是 <Katex tex="H_1" /> 成立时的分布，橙色竖线是临界值 <Katex tex="c" />，右侧为拒绝域。红色面积 <Katex tex="\alpha" /> 是 <Katex tex="H_0" /> 为真却落进拒绝域的概率，青色面积 <Katex tex="\beta" /> 是 <Katex tex="H_1" /> 为真却没落进拒绝域的概率。看点：把 <Katex tex="c" /> 往右移，红色面积缩小、青色面积增大；往左移则相反。两条曲线的距离由偏移 <Katex tex="\delta" /> 控制，<Katex tex="\delta" /> 变大时两条曲线几乎分开，两类错误可以同时压小。</div>
+      <div class="cap">图 检1 · <b>假设检验与两类错误</b>：蓝曲线是 <Katex tex="H_0" /> 成立时统计量的分布，绿曲线是 <Katex tex="H_1" /> 成立时的分布，橙色竖线是临界值 <Katex tex="c" />，右侧为拒绝域。红色面积 <Katex tex="\alpha" /> 是 <Katex tex="H_0" /> 为真却落进拒绝域的概率，青色面积 <Katex tex="\beta" /> 是 <Katex tex="H_1" /> 为真却没落进拒绝域的概率。看点：把 <Katex tex="c" /> 往右移，红色面积缩小、青色面积增大；往左移则相反。两条曲线的距离由偏移 <Katex tex="\delta" /> 控制，<Katex tex="\delta" /> 变大时两条曲线几乎分开，两类错误可以同时压小。</div>
     </div>
 
     <h3 class="sec" id="j1-idea">小概率原理</h3>

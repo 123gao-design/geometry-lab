@@ -5,7 +5,7 @@
     <div class="note good" id="y1-law"><strong>交集</strong>：<Katex tex="A\cap B=\{x\mid x\in A\wedge x\in B\}" />（同时属于两边）；<strong>并集</strong>：<Katex tex="A\cup B=\{x\mid x\in A\vee x\in B\}" />（至少属于一边）。<strong>包含链</strong>：<Katex tex="A\cap B\subseteq A\subseteq A\cup B" />，计数上 <Katex tex="n(A\cap B)\le n(A)\le n(A\cup B)\le n(A)+n(B)" />。<strong>差集</strong>：<Katex tex="A\setminus B=\{x\mid x\in A\wedge x\notin B\}" />，且 <Katex tex="A\setminus B\ne B\setminus A" />（差集不交换）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createVenn" />
-      <div class="cap">图 Y1 · <b>交并演示台</b>：九个元素点随手拖，四挡模式 ∩、∪、A∖B、B∖A 实时切换 —— 区域着色、成员清单与包含链计数同步重算；⏩ 让 5 号元素绕「A only → 两边 → B only → 圈外」跑一圈，四种归属逐一显示。</div>
+      <div class="cap">图 Y1 · <b>交集与并集</b>：九个元素点随手拖，四挡模式 ∩、∪、A∖B、B∖A 实时切换 —— 区域着色、成员清单与包含链计数同步重算；⏩ 让 5 号元素绕「A only → 两边 → B only → 圈外」跑一圈，四种归属逐一显示。</div>
     </div>
 
     <h3 class="sec" id="y1-and">∩ 与 ∪：且与或的集合实现</h3>

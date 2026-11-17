@@ -6,7 +6,7 @@
     <div class="note good" id="f3-law">求不出和的式子，常用三类放缩。<strong>裂项放大</strong>——把难求和的项换成差的形式：<Katex tex="\frac1{k^2}<\frac1{k(k-1)}=\frac1{k-1}-\frac1k" />，错位相消后整列可求和；<strong>逐项夹逼</strong>——每项 <Katex tex="m_k\le x_k\le M_k" />，对 k 求和得 <Katex tex="\sum m_k\le S_n\le\sum M_k" />，夹逼出极限；<strong>舍非负项</strong>——<Katex tex="t_k\ge0" /> 时 <Katex tex="\sum_{k=0}^{n}t_k\ge\sum_{k=0}^{m}t_k\ (m\le n)" /> 恒真，少算几项得到下界。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSQ" />
-      <div class="cap">图 放3 · <b>夹逼放缩机</b>：三模式同台。裂项：金柱 <Katex tex="1/k^2"/> 被蓝柱 <Katex tex="1/(k(k-1))"/> 逐项包住，红虚线上界 <Katex tex="2-1/n"/>、紫虚线极限 2；夹逼：金条长 <Katex tex="S_n"/> 被绿下界 <Katex tex="\tfrac12"/> 与红上界 <Katex tex="\tfrac12+1/(2n)"/> 夹住，n 增大时两线靠拢；舍项：橙柱 <Katex tex="k=0,1"/>（和 2）即绿下界，蓝柱 <Katex tex="k\ge2"/> 的非负项舍去，紫线是完整展开和。看点：拖 n，夹逼的两条界随 n 收缩，舍项的多余项缩成小尾巴——三处取等都只在退化位置。</div>
+      <div class="cap">图 放3 · <b>常用放缩与夹逼</b>：三模式同台。裂项：金柱 <Katex tex="1/k^2"/> 被蓝柱 <Katex tex="1/(k(k-1))"/> 逐项包住，红虚线上界 <Katex tex="2-1/n"/>、紫虚线极限 2；夹逼：金条长 <Katex tex="S_n"/> 被绿下界 <Katex tex="\tfrac12"/> 与红上界 <Katex tex="\tfrac12+1/(2n)"/> 夹住，n 增大时两线靠拢；舍项：橙柱 <Katex tex="k=0,1"/>（和 2）即绿下界，蓝柱 <Katex tex="k\ge2"/> 的非负项舍去，紫线是完整展开和。看点：拖 n，夹逼的两条界随 n 收缩，舍项的多余项缩成小尾巴——三处取等都只在退化位置。</div>
     </div>
 
     <h3 class="sec" id="f3-tel">裂项放大：<Katex tex="1/k^2\to 1/(k-1)k"/></h3>
