@@ -35,7 +35,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { applyTheme, currentTheme, mountThemeButton } from './lib/board.js';
+import { applyTheme, currentTheme, mountThemeButton } from './lib/theme.js';
 import GeoGebraDock from './components/GeoGebraDock.vue';
 import CalcDock from './components/CalcDock.vue';
 import ChapterDrawer from './components/ChapterDrawer.vue';

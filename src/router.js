@@ -1,515 +1,515 @@
 import Home from './views/Home.vue';
 // 模块一 · 集合与常用逻辑
-import SetsHome from './views/sets/SetsHome.vue';
+const SetsHome = () => import('./views/sets/SetsHome.vue');
 // 子专题一 · 集合的语言
-import J1 from './views/sets/lang/j1.vue';
-import J2 from './views/sets/lang/j2.vue';
+const J1 = () => import('./views/sets/lang/j1.vue');
+const J2 = () => import('./views/sets/lang/j2.vue');
 // 子专题二 · 集合间的关系
-import X1 from './views/sets/rel/x1.vue';
-import X2 from './views/sets/rel/x2.vue';
+const X1 = () => import('./views/sets/rel/x1.vue');
+const X2 = () => import('./views/sets/rel/x2.vue');
 // 子专题三 · 集合的运算
-import Y1 from './views/sets/ops/y1.vue';
-import Y2 from './views/sets/ops/y2.vue';
-import Y3 from './views/sets/ops/y3.vue';
-import Y4 from './views/sets/ops/y4.vue';
-import O1 from './views/sets/logic/o1.vue';
-import O2 from './views/sets/logic/o2.vue';
-import O3 from './views/sets/logic/o3.vue';
-import O4 from './views/sets/logic/o4.vue';
+const Y1 = () => import('./views/sets/ops/y1.vue');
+const Y2 = () => import('./views/sets/ops/y2.vue');
+const Y3 = () => import('./views/sets/ops/y3.vue');
+const Y4 = () => import('./views/sets/ops/y4.vue');
+const O1 = () => import('./views/sets/logic/o1.vue');
+const O2 = () => import('./views/sets/logic/o2.vue');
+const O3 = () => import('./views/sets/logic/o3.vue');
+const O4 = () => import('./views/sets/logic/o4.vue');
 // 模块 · 三角函数与三角形（阶段一：任意角与弧度制 B、任意角的三角函数 U）
-import TrigHome from './views/trig/TrigHome.vue';
+const TrigHome = () => import('./views/trig/TrigHome.vue');
 // 子专题一 · 任意角与弧度制
-import TB1 from './views/trig/angle/b1.vue';
-import TB2 from './views/trig/angle/b2.vue';
+const TB1 = () => import('./views/trig/angle/b1.vue');
+const TB2 = () => import('./views/trig/angle/b2.vue');
 // 子专题二 · 任意角的三角函数
-import TU1 from './views/trig/unit/u1.vue';
-import TU2 from './views/trig/unit/u2.vue';
+const TU1 = () => import('./views/trig/unit/u1.vue');
+const TU2 = () => import('./views/trig/unit/u2.vue');
 // 子专题三 · 诱导公式
-import TI1 from './views/trig/induce/i1.vue';
-import TI2 from './views/trig/induce/i2.vue';
-import TW1 from './views/trig/graph/w1.vue';
-import TW2 from './views/trig/graph/w2.vue';
-import TW3 from './views/trig/graph/w3.vue';
-import TF1 from './views/trig/trans/f1.vue';
-import TF2 from './views/trig/trans/f2.vue';
+const TI1 = () => import('./views/trig/induce/i1.vue');
+const TI2 = () => import('./views/trig/induce/i2.vue');
+const TW1 = () => import('./views/trig/graph/w1.vue');
+const TW2 = () => import('./views/trig/graph/w2.vue');
+const TW3 = () => import('./views/trig/graph/w3.vue');
+const TF1 = () => import('./views/trig/trans/f1.vue');
+const TF2 = () => import('./views/trig/trans/f2.vue');
 // 子专题六 · 和差公式
-import TM1 from './views/trig/sumdiff/m1.vue';
+const TM1 = () => import('./views/trig/sumdiff/m1.vue');
 // 子专题七 · 倍角与升降幂
-import TN1 from './views/trig/double/n1.vue';
-import TN2 from './views/trig/double/n2.vue';
+const TN1 = () => import('./views/trig/double/n1.vue');
+const TN2 = () => import('./views/trig/double/n2.vue');
 // 子专题八 · 积化和差与辅助角
-import TQ1 from './views/trig/prodsum/q1.vue';
-import TQ2 from './views/trig/prodsum/q2.vue';
-import TH1 from './views/trig/inverse/h1.vue';
-import TH2 from './views/trig/inverse/h2.vue';
+const TQ1 = () => import('./views/trig/prodsum/q1.vue');
+const TQ2 = () => import('./views/trig/prodsum/q2.vue');
+const TH1 = () => import('./views/trig/inverse/h1.vue');
+const TH2 = () => import('./views/trig/inverse/h2.vue');
 // 子专题十 · 解三角形
-import TZ1 from './views/trig/solve/z1.vue';
-import TZ2 from './views/trig/solve/z2.vue';
-import TZ3 from './views/trig/solve/z3.vue';
+const TZ1 = () => import('./views/trig/solve/z1.vue');
+const TZ2 = () => import('./views/trig/solve/z2.vue');
+const TZ3 = () => import('./views/trig/solve/z3.vue');
 // 子专题十一 · 综合应用
-import TK1 from './views/trig/synth/k1.vue';
-import TK2 from './views/trig/synth/k2.vue';
-import ConicsHome from './views/conics/ConicsHome.vue';
+const TK1 = () => import('./views/trig/synth/k1.vue');
+const TK2 = () => import('./views/trig/synth/k2.vue');
+const ConicsHome = () => import('./views/conics/ConicsHome.vue');
 // 子专题一 · 极点极线与配极理论
-import Ch1 from './views/conics/projective/ch1.vue';
-import Ch2 from './views/conics/projective/ch2.vue';
-import Ch3 from './views/conics/projective/ch3.vue';
-import Ch4 from './views/conics/projective/ch4.vue';
-import Ch5 from './views/conics/projective/ch5.vue';
-import Ch6 from './views/conics/projective/ch6.vue';
-import Ch7 from './views/conics/projective/ch7.vue';
+const Ch1 = () => import('./views/conics/projective/ch1.vue');
+const Ch2 = () => import('./views/conics/projective/ch2.vue');
+const Ch3 = () => import('./views/conics/projective/ch3.vue');
+const Ch4 = () => import('./views/conics/projective/ch4.vue');
+const Ch5 = () => import('./views/conics/projective/ch5.vue');
+const Ch6 = () => import('./views/conics/projective/ch6.vue');
+const Ch7 = () => import('./views/conics/projective/ch7.vue');
 // 子专题二 · 圆锥曲线的定义与标准方程
-import Def1 from './views/conics/definitions/def1.vue';
-import Def2 from './views/conics/definitions/def2.vue';
-import Def3 from './views/conics/definitions/def3.vue';
-import Def4 from './views/conics/definitions/def4.vue';
-import Def5 from './views/conics/definitions/def5.vue';
+const Def1 = () => import('./views/conics/definitions/def1.vue');
+const Def2 = () => import('./views/conics/definitions/def2.vue');
+const Def3 = () => import('./views/conics/definitions/def3.vue');
+const Def4 = () => import('./views/conics/definitions/def4.vue');
+const Def5 = () => import('./views/conics/definitions/def5.vue');
 // 子专题三 · 光学性质与切线
-import Opt1 from './views/conics/optics/opt1.vue';
-import Opt2 from './views/conics/optics/opt2.vue';
-import Opt3 from './views/conics/optics/opt3.vue';
-import Opt4 from './views/conics/optics/opt4.vue';
+const Opt1 = () => import('./views/conics/optics/opt1.vue');
+const Opt2 = () => import('./views/conics/optics/opt2.vue');
+const Opt3 = () => import('./views/conics/optics/opt3.vue');
+const Opt4 = () => import('./views/conics/optics/opt4.vue');
 // 子专题四 · 仿射变换看圆锥曲线
-import Aff1 from './views/conics/affine/aff1.vue';
-import Aff2 from './views/conics/affine/aff2.vue';
-import Aff3 from './views/conics/affine/aff3.vue';
-import Aff4 from './views/conics/affine/aff4.vue';
-import Aff5 from './views/conics/affine/aff5.vue';
-import Aff6 from './views/conics/affine/aff6.vue';
+const Aff1 = () => import('./views/conics/affine/aff1.vue');
+const Aff2 = () => import('./views/conics/affine/aff2.vue');
+const Aff3 = () => import('./views/conics/affine/aff3.vue');
+const Aff4 = () => import('./views/conics/affine/aff4.vue');
+const Aff5 = () => import('./views/conics/affine/aff5.vue');
+const Aff6 = () => import('./views/conics/affine/aff6.vue');
 // 子专题五 · 参数方程与轨迹
-import Par1 from './views/conics/locus/par1.vue';
-import Par2 from './views/conics/locus/par2.vue';
-import Par3 from './views/conics/locus/par3.vue';
-import Par4 from './views/conics/locus/par4.vue';
-import Par5 from './views/conics/locus/par5.vue';
+const Par1 = () => import('./views/conics/locus/par1.vue');
+const Par2 = () => import('./views/conics/locus/par2.vue');
+const Par3 = () => import('./views/conics/locus/par3.vue');
+const Par4 = () => import('./views/conics/locus/par4.vue');
+const Par5 = () => import('./views/conics/locus/par5.vue');
 // 子专题六 · 直线与圆锥曲线
-import Lin1 from './views/conics/lines/lin1.vue';
-import Lin2 from './views/conics/lines/lin2.vue';
-import Lin3 from './views/conics/lines/lin3.vue';
-import Lin4 from './views/conics/lines/lin4.vue';
-import Lin5 from './views/conics/lines/lin5.vue';
+const Lin1 = () => import('./views/conics/lines/lin1.vue');
+const Lin2 = () => import('./views/conics/lines/lin2.vue');
+const Lin3 = () => import('./views/conics/lines/lin3.vue');
+const Lin4 = () => import('./views/conics/lines/lin4.vue');
+const Lin5 = () => import('./views/conics/lines/lin5.vue');
 // 模块二 · 函数与微积分初步（原「函数与导数」，2026-11-05 更名；路由 /functions 不变）
-import FunctionsHome from './views/functions/FunctionsHome.vue';
+const FunctionsHome = () => import('./views/functions/FunctionsHome.vue');
 // 子专题一 · 从映射到函数
-import C1 from './views/functions/concept/c1.vue';
-import C2 from './views/functions/concept/c2.vue';
-import C3 from './views/functions/concept/c3.vue';
-import C4 from './views/functions/concept/c4.vue';
-import C5 from './views/functions/concept/c5.vue';
+const C1 = () => import('./views/functions/concept/c1.vue');
+const C2 = () => import('./views/functions/concept/c2.vue');
+const C3 = () => import('./views/functions/concept/c3.vue');
+const C4 = () => import('./views/functions/concept/c4.vue');
+const C5 = () => import('./views/functions/concept/c5.vue');
 // 子专题二 · 函数的基本性质
-import S1 from './views/functions/properties/s1.vue';
-import S2 from './views/functions/properties/s2.vue';
-import S3 from './views/functions/properties/s3.vue';
-import S4 from './views/functions/properties/s4.vue';
-import S5 from './views/functions/properties/s5.vue';
-import S6 from './views/functions/properties/s6.vue';
-import S7 from './views/functions/properties/s7.vue';
+const S1 = () => import('./views/functions/properties/s1.vue');
+const S2 = () => import('./views/functions/properties/s2.vue');
+const S3 = () => import('./views/functions/properties/s3.vue');
+const S4 = () => import('./views/functions/properties/s4.vue');
+const S5 = () => import('./views/functions/properties/s5.vue');
+const S6 = () => import('./views/functions/properties/s6.vue');
+const S7 = () => import('./views/functions/properties/s7.vue');
 // 子专题三 · 零点与存在性定理
-import R1 from './views/functions/zeros/r1.vue';
-import R2 from './views/functions/zeros/r2.vue';
-import R3 from './views/functions/zeros/r3.vue';
-import R4 from './views/functions/zeros/r4.vue';
+const R1 = () => import('./views/functions/zeros/r1.vue');
+const R2 = () => import('./views/functions/zeros/r2.vue');
+const R3 = () => import('./views/functions/zeros/r3.vue');
+const R4 = () => import('./views/functions/zeros/r4.vue');
 // 根分布已并入 E2（基本初等函数），R 系列止于 R4
 // 子专题四 · 基本初等函数
-import E1 from './views/functions/elementary/e1.vue';
-import E2 from './views/functions/elementary/e2.vue';
-import E3 from './views/functions/elementary/e3.vue';
-import E4 from './views/functions/elementary/e4.vue';
-import E5 from './views/functions/elementary/e5.vue';
-import E6 from './views/functions/elementary/e6.vue';
-import E7 from './views/functions/elementary/e7.vue';
-import E8 from './views/functions/elementary/e8.vue';
+const E1 = () => import('./views/functions/elementary/e1.vue');
+const E2 = () => import('./views/functions/elementary/e2.vue');
+const E3 = () => import('./views/functions/elementary/e3.vue');
+const E4 = () => import('./views/functions/elementary/e4.vue');
+const E5 = () => import('./views/functions/elementary/e5.vue');
+const E6 = () => import('./views/functions/elementary/e6.vue');
+const E7 = () => import('./views/functions/elementary/e7.vue');
+const E8 = () => import('./views/functions/elementary/e8.vue');
 // 子专题五 · 图象变换
-import G1 from './views/functions/transforms/g1.vue';
-import G2 from './views/functions/transforms/g2.vue';
-import G3 from './views/functions/transforms/g3.vue';
+const G1 = () => import('./views/functions/transforms/g1.vue');
+const G2 = () => import('./views/functions/transforms/g2.vue');
+const G3 = () => import('./views/functions/transforms/g3.vue');
 // 子专题六 · 变化率与导数
-import V1 from './views/functions/calculus/v1.vue';
-import V2 from './views/functions/calculus/v2.vue';
-import V3 from './views/functions/calculus/v3.vue';
-import V4 from './views/functions/calculus/v4.vue';
-import V5 from './views/functions/calculus/v5.vue';
-import V6 from './views/functions/calculus/v6.vue';
-import V7 from './views/functions/calculus/v7.vue';
-import V8 from './views/functions/calculus/v8.vue';
+const V1 = () => import('./views/functions/calculus/v1.vue');
+const V2 = () => import('./views/functions/calculus/v2.vue');
+const V3 = () => import('./views/functions/calculus/v3.vue');
+const V4 = () => import('./views/functions/calculus/v4.vue');
+const V5 = () => import('./views/functions/calculus/v5.vue');
+const V6 = () => import('./views/functions/calculus/v6.vue');
+const V7 = () => import('./views/functions/calculus/v7.vue');
+const V8 = () => import('./views/functions/calculus/v8.vue');
 // 模块 · 不等式
-import IneqHome from './views/inequalities/IneqHome.vue';
+const IneqHome = () => import('./views/inequalities/IneqHome.vue');
 // 子专题一 · 性质与比较
-import IP1 from './views/inequalities/prop/p1.vue';
-import IP2 from './views/inequalities/prop/p2.vue';
+const IP1 = () => import('./views/inequalities/prop/p1.vue');
+const IP2 = () => import('./views/inequalities/prop/p2.vue');
 // 子专题二 · 一元二次不等式
-import IQ1 from './views/inequalities/quad/q1.vue';
-import IQ2 from './views/inequalities/quad/q2.vue';
-import IQ3 from './views/inequalities/quad/q3.vue';
+const IQ1 = () => import('./views/inequalities/quad/q1.vue');
+const IQ2 = () => import('./views/inequalities/quad/q2.vue');
+const IQ3 = () => import('./views/inequalities/quad/q3.vue');
 // 子专题三 · 基本不等式
-import IG1 from './views/inequalities/basic/g1.vue';
-import IG2 from './views/inequalities/basic/g2.vue';
-import IG3 from './views/inequalities/basic/g3.vue';
+const IG1 = () => import('./views/inequalities/basic/g1.vue');
+const IG2 = () => import('./views/inequalities/basic/g2.vue');
+const IG3 = () => import('./views/inequalities/basic/g3.vue');
 // 子专题四 · 放缩与常用不等式
-import IF1 from './views/inequalities/scale/f1.vue';
-import IF2 from './views/inequalities/scale/f2.vue';
-import IF3 from './views/inequalities/scale/f3.vue';
+const IF1 = () => import('./views/inequalities/scale/f1.vue');
+const IF2 = () => import('./views/inequalities/scale/f2.vue');
+const IF3 = () => import('./views/inequalities/scale/f3.vue');
 // 子专题五 · 简单线性规划
-import IL1 from './views/inequalities/plan/l1.vue';
-import IL2 from './views/inequalities/plan/l2.vue';
-import IL3 from './views/inequalities/plan/l3.vue';
-import IL4 from './views/inequalities/plan/l4.vue';
+const IL1 = () => import('./views/inequalities/plan/l1.vue');
+const IL2 = () => import('./views/inequalities/plan/l2.vue');
+const IL3 = () => import('./views/inequalities/plan/l3.vue');
+const IL4 = () => import('./views/inequalities/plan/l4.vue');
 // 模块 · 向量与复数
-import VectorsHome from './views/vectors/VectorsHome.vue';
+const VectorsHome = () => import('./views/vectors/VectorsHome.vue');
 // 子专题一 · 平面向量的概念与线性运算
-import VX1 from './views/vectors/linear/x1.vue';
-import VX2 from './views/vectors/linear/x2.vue';
-import VX3 from './views/vectors/linear/x3.vue';
+const VX1 = () => import('./views/vectors/linear/x1.vue');
+const VX2 = () => import('./views/vectors/linear/x2.vue');
+const VX3 = () => import('./views/vectors/linear/x3.vue');
 // 子专题二 · 平面向量基本定理与坐标运算
-import VB1 from './views/vectors/basis/b1.vue';
-import VB2 from './views/vectors/basis/b2.vue';
-import VB3 from './views/vectors/basis/b3.vue';
+const VB1 = () => import('./views/vectors/basis/b1.vue');
+const VB2 = () => import('./views/vectors/basis/b2.vue');
+const VB3 = () => import('./views/vectors/basis/b3.vue');
 // 子专题三 · 数量积与度量
-import VI1 from './views/vectors/inner/i1.vue';
-import VI2 from './views/vectors/inner/i2.vue';
-import VI3 from './views/vectors/inner/i3.vue';
-import VI4 from './views/vectors/inner/i4.vue';
+const VI1 = () => import('./views/vectors/inner/i1.vue');
+const VI2 = () => import('./views/vectors/inner/i2.vue');
+const VI3 = () => import('./views/vectors/inner/i3.vue');
+const VI4 = () => import('./views/vectors/inner/i4.vue');
 // 子专题四 · 向量的应用
-import VY1 from './views/vectors/apply/a1.vue';
-import VY2 from './views/vectors/apply/a2.vue';
+const VY1 = () => import('./views/vectors/apply/a1.vue');
+const VY2 = () => import('./views/vectors/apply/a2.vue');
 // 子专题五 · 复数
-import VC1 from './views/vectors/complex/c1.vue';
-import VC2 from './views/vectors/complex/c2.vue';
-import VC3 from './views/vectors/complex/c3.vue';
+const VC1 = () => import('./views/vectors/complex/c1.vue');
+const VC2 = () => import('./views/vectors/complex/c2.vue');
+const VC3 = () => import('./views/vectors/complex/c3.vue');
 // 子专题六 · 三角形式与欧拉公式
-import VE1 from './views/vectors/euler/o1.vue';
-import VE2 from './views/vectors/euler/o2.vue';
+const VE1 = () => import('./views/vectors/euler/o1.vue');
+const VE2 = () => import('./views/vectors/euler/o2.vue');
 // 模块 · 直线与圆
-import LineCircleHome from './views/linecircle/LineCircleHome.vue';
-import LCL1 from './views/linecircle/line/l1.vue';
-import LCL2 from './views/linecircle/line/l2.vue';
-import LCL3 from './views/linecircle/line/l3.vue';
-import LCL4 from './views/linecircle/line/l4.vue';
+const LineCircleHome = () => import('./views/linecircle/LineCircleHome.vue');
+const LCL1 = () => import('./views/linecircle/line/l1.vue');
+const LCL2 = () => import('./views/linecircle/line/l2.vue');
+const LCL3 = () => import('./views/linecircle/line/l3.vue');
+const LCL4 = () => import('./views/linecircle/line/l4.vue');
 // 子专题二 · 圆的方程
-import LCC1 from './views/linecircle/circle/c1.vue';
-import LCC2 from './views/linecircle/circle/c2.vue';
-import LCC3 from './views/linecircle/circle/c3.vue';
+const LCC1 = () => import('./views/linecircle/circle/c1.vue');
+const LCC2 = () => import('./views/linecircle/circle/c2.vue');
+const LCC3 = () => import('./views/linecircle/circle/c3.vue');
 // 子专题三 · 圆的性质与定理
-import LCT1 from './views/linecircle/theorem/t1.vue';
-import LCT2 from './views/linecircle/theorem/t2.vue';
-import LCT3 from './views/linecircle/theorem/t3.vue';
-import LCT4 from './views/linecircle/theorem/t4.vue';
+const LCT1 = () => import('./views/linecircle/theorem/t1.vue');
+const LCT2 = () => import('./views/linecircle/theorem/t2.vue');
+const LCT3 = () => import('./views/linecircle/theorem/t3.vue');
+const LCT4 = () => import('./views/linecircle/theorem/t4.vue');
 // 子专题四 · 综合应用
-import LCA1 from './views/linecircle/apply/z1.vue';
-import LCA2 from './views/linecircle/apply/z2.vue';
-import PolarHome from './views/polar/PolarHome.vue';
+const LCA1 = () => import('./views/linecircle/apply/z1.vue');
+const LCA2 = () => import('./views/linecircle/apply/z2.vue');
+const PolarHome = () => import('./views/polar/PolarHome.vue');
 // 子专题一 · 极坐标系与互化
-import PJ1 from './views/polar/coords/j1.vue';
-import PJ2 from './views/polar/coords/j2.vue';
+const PJ1 = () => import('./views/polar/coords/j1.vue');
+const PJ2 = () => import('./views/polar/coords/j2.vue');
 // 子专题二 · 曲线的极坐标方程
-import PQ1 from './views/polar/curves/q1.vue';
-import PQ2 from './views/polar/curves/q2.vue';
+const PQ1 = () => import('./views/polar/curves/q1.vue');
+const PQ2 = () => import('./views/polar/curves/q2.vue');
 // 子专题三 · 参数方程
-import PS1 from './views/polar/param/s1.vue';
-import PS2 from './views/polar/param/s2.vue';
-import PS3 from './views/polar/param/s3.vue';
-import PG1 from './views/polar/apply/g1.vue';
-import PG2 from './views/polar/apply/g2.vue';
+const PS1 = () => import('./views/polar/param/s1.vue');
+const PS2 = () => import('./views/polar/param/s2.vue');
+const PS3 = () => import('./views/polar/param/s3.vue');
+const PG1 = () => import('./views/polar/apply/g1.vue');
+const PG2 = () => import('./views/polar/apply/g2.vue');
 // 模块 · 立体几何（子专题一、二、三与标1 已上线）
-import SolidHome from './views/solid/SolidHome.vue';
+const SolidHome = () => import('./views/solid/SolidHome.vue');
 // 子专题一 · 认识空间几何体
-import SR1 from './views/solid/recog/r1.vue';
-import SR2 from './views/solid/recog/r2.vue';
+const SR1 = () => import('./views/solid/recog/r1.vue');
+const SR2 = () => import('./views/solid/recog/r2.vue');
 // 子专题二 · 体积与表面积
-import SM1 from './views/solid/measure/m1.vue';
-import SM2 from './views/solid/measure/m2.vue';
-import SM3 from './views/solid/measure/m3.vue';
+const SM1 = () => import('./views/solid/measure/m1.vue');
+const SM2 = () => import('./views/solid/measure/m2.vue');
+const SM3 = () => import('./views/solid/measure/m3.vue');
 // 子专题三 · 空间中的位置关系
-import SW1 from './views/solid/relation/p1.vue';
-import SW2 from './views/solid/relation/p2.vue';
+const SW1 = () => import('./views/solid/relation/p1.vue');
+const SW2 = () => import('./views/solid/relation/p2.vue');
 // 子专题四 · 空间直角坐标系
-import SC1 from './views/solid/coords/c1.vue';
-import SC2 from './views/solid/coords/c2.vue';
-import SC3 from './views/solid/coords/c3.vue';
+const SC1 = () => import('./views/solid/coords/c1.vue');
+const SC2 = () => import('./views/solid/coords/c2.vue');
+const SC3 = () => import('./views/solid/coords/c3.vue');
 // 模块 · 数列
-import SequencesHome from './views/sequences/SequencesHome.vue';
+const SequencesHome = () => import('./views/sequences/SequencesHome.vue');
 // 子专题一 · 数列的概念与表示
-import SQ1 from './views/sequences/concept/s1.vue';
-import SQ2 from './views/sequences/concept/s2.vue';
-import SQ3 from './views/sequences/concept/s3.vue';
+const SQ1 = () => import('./views/sequences/concept/s1.vue');
+const SQ2 = () => import('./views/sequences/concept/s2.vue');
+const SQ3 = () => import('./views/sequences/concept/s3.vue');
 // 子专题二 · 等差数列
-import DQ1 from './views/sequences/diff/d1.vue';
-import DQ2 from './views/sequences/diff/d2.vue';
-import DQ3 from './views/sequences/diff/d3.vue';
+const DQ1 = () => import('./views/sequences/diff/d1.vue');
+const DQ2 = () => import('./views/sequences/diff/d2.vue');
+const DQ3 = () => import('./views/sequences/diff/d3.vue');
 // 子专题三 · 等比数列
-import GQ1 from './views/sequences/geo/g1.vue';
-import GQ2 from './views/sequences/geo/g2.vue';
-import GQ3 from './views/sequences/geo/g3.vue';
+const GQ1 = () => import('./views/sequences/geo/g1.vue');
+const GQ2 = () => import('./views/sequences/geo/g2.vue');
+const GQ3 = () => import('./views/sequences/geo/g3.vue');
 // 子专题四 · 数列求和的方法
-import HQ1 from './views/sequences/sum/h1.vue';
-import HQ2 from './views/sequences/sum/h2.vue';
-import HQ3 from './views/sequences/sum/h3.vue';
+const HQ1 = () => import('./views/sequences/sum/h1.vue');
+const HQ2 = () => import('./views/sequences/sum/h2.vue');
+const HQ3 = () => import('./views/sequences/sum/h3.vue');
 // 子专题五 · 递推与构造
-import RQ1 from './views/sequences/recur/r1.vue';
-import RQ2 from './views/sequences/recur/r2.vue';
-import RQ3 from './views/sequences/recur/r3.vue';
-import RQ4 from './views/sequences/recur/r4.vue';
+const RQ1 = () => import('./views/sequences/recur/r1.vue');
+const RQ2 = () => import('./views/sequences/recur/r2.vue');
+const RQ3 = () => import('./views/sequences/recur/r3.vue');
+const RQ4 = () => import('./views/sequences/recur/r4.vue');
 // 子专题六 · 数学归纳法
-import IN1 from './views/sequences/induct/i1.vue';
-import IN2 from './views/sequences/induct/i2.vue';
+const IN1 = () => import('./views/sequences/induct/i1.vue');
+const IN2 = () => import('./views/sequences/induct/i2.vue');
 // 子专题七 · 数列的应用
-import UQ1 from './views/sequences/apply/u1.vue';
-import UQ2 from './views/sequences/apply/u2.vue';
+const UQ1 = () => import('./views/sequences/apply/u1.vue');
+const UQ2 = () => import('./views/sequences/apply/u2.vue');
 // 模块 · 组合学与二项式定理
-import CombinatoricsHome from './views/combinatorics/CombinatoricsHome.vue';
+const CombinatoricsHome = () => import('./views/combinatorics/CombinatoricsHome.vue');
 // 子专题一 · 计数原理
-import CC1 from './views/combinatorics/counting/c1.vue';
-import CC2 from './views/combinatorics/counting/c2.vue';
+const CC1 = () => import('./views/combinatorics/counting/c1.vue');
+const CC2 = () => import('./views/combinatorics/counting/c2.vue');
 // 子专题二 · 排列与组合
-import CP1 from './views/combinatorics/permcomb/p1.vue';
-import CP2 from './views/combinatorics/permcomb/p2.vue';
+const CP1 = () => import('./views/combinatorics/permcomb/p1.vue');
+const CP2 = () => import('./views/combinatorics/permcomb/p2.vue');
 // 子专题三 · 二项式定理
-import CB1 from './views/combinatorics/binomial/b1.vue';
-import CB2 from './views/combinatorics/binomial/b2.vue';
-import CB3 from './views/combinatorics/binomial/b3.vue';
+const CB1 = () => import('./views/combinatorics/binomial/b1.vue');
+const CB2 = () => import('./views/combinatorics/binomial/b2.vue');
+const CB3 = () => import('./views/combinatorics/binomial/b3.vue');
 // 子专题四 · 组合恒等式与应用
-import CI1 from './views/combinatorics/identity/i1.vue';
-import CI2 from './views/combinatorics/identity/i2.vue';
+const CI1 = () => import('./views/combinatorics/identity/i1.vue');
+const CI2 = () => import('./views/combinatorics/identity/i2.vue');
 // 模块 · 概率与统计
-import ProbabilityHome from './views/probability/ProbabilityHome.vue';
+const ProbabilityHome = () => import('./views/probability/ProbabilityHome.vue');
 // 子专题一 · 随机事件与概率
-import PB1 from './views/probability/sample/g1.vue';
-import PB2 from './views/probability/sample/g2.vue';
+const PB1 = () => import('./views/probability/sample/g1.vue');
+const PB2 = () => import('./views/probability/sample/g2.vue');
 // 子专题二 · 条件概率与独立性
-import PC1 from './views/probability/cond/c1.vue';
-import PC2 from './views/probability/cond/c2.vue';
-import PC3 from './views/probability/cond/c3.vue';
+const PC1 = () => import('./views/probability/cond/c1.vue');
+const PC2 = () => import('./views/probability/cond/c2.vue');
+const PC3 = () => import('./views/probability/cond/c3.vue');
 // 子专题三 · 随机变量及其分布
-import PR1 from './views/probability/rv/r1.vue';
-import PR2 from './views/probability/rv/r2.vue';
-import PR3 from './views/probability/rv/r3.vue';
-import PR4 from './views/probability/rv/r4.vue';
+const PR1 = () => import('./views/probability/rv/r1.vue');
+const PR2 = () => import('./views/probability/rv/r2.vue');
+const PR3 = () => import('./views/probability/rv/r3.vue');
+const PR4 = () => import('./views/probability/rv/r4.vue');
 // 子专题四 · 数字特征
-import PN1 from './views/probability/num/n1.vue';
-import PN2 from './views/probability/num/n2.vue';
-import PN3 from './views/probability/num/n3.vue';
+const PN1 = () => import('./views/probability/num/n1.vue');
+const PN2 = () => import('./views/probability/num/n2.vue');
+const PN3 = () => import('./views/probability/num/n3.vue');
 // 子专题五 · 统计
-import PT1 from './views/probability/stat/t1.vue';
-import PT2 from './views/probability/stat/t2.vue';
-import PT3 from './views/probability/stat/t3.vue';
+const PT1 = () => import('./views/probability/stat/t1.vue');
+const PT2 = () => import('./views/probability/stat/t2.vue');
+const PT3 = () => import('./views/probability/stat/t3.vue');
 // 子专题六 · 统计检验
-import PTJ1 from './views/probability/test/j1.vue';
-import PTJ2 from './views/probability/test/j2.vue';
-import PTJ3 from './views/probability/test/j3.vue';
+const PTJ1 = () => import('./views/probability/test/j1.vue');
+const PTJ2 = () => import('./views/probability/test/j2.vue');
+const PTJ3 = () => import('./views/probability/test/j3.vue');
 // 模块 · 数值计算
-import NumericHome from './views/numeric/NumericHome.vue';
+const NumericHome = () => import('./views/numeric/NumericHome.vue');
 // 子专题一 · 误差
-import NE1 from './views/numeric/error/e1.vue';
-import NE2 from './views/numeric/error/e2.vue';
+const NE1 = () => import('./views/numeric/error/e1.vue');
+const NE2 = () => import('./views/numeric/error/e2.vue');
 // 子专题二 · 方程求根
-import NI1 from './views/numeric/root/i1.vue';
-import NI2 from './views/numeric/root/i2.vue';
-import NI3 from './views/numeric/root/i3.vue';
+const NI1 = () => import('./views/numeric/root/i1.vue');
+const NI2 = () => import('./views/numeric/root/i2.vue');
+const NI3 = () => import('./views/numeric/root/i3.vue');
 // 子专题三 · 数据拟合
-import NF1 from './views/numeric/fit/f1.vue';
-import NF2 from './views/numeric/fit/f2.vue';
+const NF1 = () => import('./views/numeric/fit/f1.vue');
+const NF2 = () => import('./views/numeric/fit/f2.vue');
 // 子专题四 · 函数逼近
-import NA1 from './views/numeric/approx/a1.vue';
-import NA2 from './views/numeric/approx/a2.vue';
-import NA3 from './views/numeric/approx/a3.vue';
+const NA1 = () => import('./views/numeric/approx/a1.vue');
+const NA2 = () => import('./views/numeric/approx/a2.vue');
+const NA3 = () => import('./views/numeric/approx/a3.vue');
 // 模块 · 线性代数初步
-import LinalgHome from './views/linalg/LinalgHome.vue';
+const LinalgHome = () => import('./views/linalg/LinalgHome.vue');
 // 子专题一 · 行列式
-import LD1 from './views/linalg/det/d1.vue';
-import LD2 from './views/linalg/det/d2.vue';
+const LD1 = () => import('./views/linalg/det/d1.vue');
+const LD2 = () => import('./views/linalg/det/d2.vue');
 // 子专题二 · 矩阵
-import LM1 from './views/linalg/matrix/m1.vue';
-import LM2 from './views/linalg/matrix/m2.vue';
-import LM3 from './views/linalg/matrix/m3.vue';
+const LM1 = () => import('./views/linalg/matrix/m1.vue');
+const LM2 = () => import('./views/linalg/matrix/m2.vue');
+const LM3 = () => import('./views/linalg/matrix/m3.vue');
 // 子专题三 · 矩阵与空间
-import LS1 from './views/linalg/space/s1.vue';
-import LS2 from './views/linalg/space/s2.vue';
-import LS3 from './views/linalg/space/s3.vue';
+const LS1 = () => import('./views/linalg/space/s1.vue');
+const LS2 = () => import('./views/linalg/space/s2.vue');
+const LS3 = () => import('./views/linalg/space/s3.vue');
 // 子专题四 · 特征值
-import LE1 from './views/linalg/eigen/e1.vue';
-import LE2 from './views/linalg/eigen/e2.vue';
-import LE3 from './views/linalg/eigen/e3.vue';
+const LE1 = () => import('./views/linalg/eigen/e1.vue');
+const LE2 = () => import('./views/linalg/eigen/e2.vue');
+const LE3 = () => import('./views/linalg/eigen/e3.vue');
 // 子专题五 · 二次型
-import LQ1 from './views/linalg/quad/q1.vue';
-import LQ2 from './views/linalg/quad/q2.vue';
-import LQ3 from './views/linalg/quad/q3.vue';
+const LQ1 = () => import('./views/linalg/quad/q1.vue');
+const LQ2 = () => import('./views/linalg/quad/q2.vue');
+const LQ3 = () => import('./views/linalg/quad/q3.vue');
 // 定理速查总览
-import CheatSheet from './views/CheatSheet.vue';
-import Playground from './views/Playground.vue';
-import PlaygroundAbout from './views/PlaygroundAbout.vue';
-import PlaygroundGuide from './views/PlaygroundGuide.vue';
-import Settings from './views/Settings.vue';
-import Notes from './views/Notes.vue';
+const CheatSheet = () => import('./views/CheatSheet.vue');
+const Playground = () => import('./views/Playground.vue');
+const PlaygroundAbout = () => import('./views/PlaygroundAbout.vue');
+const PlaygroundGuide = () => import('./views/PlaygroundGuide.vue');
+const Settings = () => import('./views/Settings.vue');
+const Notes = () => import('./views/Notes.vue');
 // 数字游戏（24 点 / 数字华容道 / 60 秒速算 / 猜数字），入口在左侧竖排圆按钮
-import Games from './views/Games.vue';
+const Games = () => import('./views/Games.vue');
 // 游戏子页：2048（边长可选）与数独，入口是游戏页顶部的页签
-import Games2048 from './views/Games2048.vue';
-import GamesSudoku from './views/GamesSudoku.vue';
+const Games2048 = () => import('./views/Games2048.vue');
+const GamesSudoku = () => import('./views/GamesSudoku.vue');
 // 高等数学 · 一元函数微积分（已开写）
-import Calc1Home from './views/calc1/Calc1Home.vue';
-import SpacegeomHome from './views/spacegeom/SpacegeomHome.vue';
+const Calc1Home = () => import('./views/calc1/Calc1Home.vue');
+const SpacegeomHome = () => import('./views/spacegeom/SpacegeomHome.vue');
 // 高等数学 · 多元函数微积分
-import Calc2Home from './views/calc2/Calc2Home.vue';
-import CM1 from './views/calc2/mul/m1.vue';
-import CM2 from './views/calc2/mul/m2.vue';
-import CM3 from './views/calc2/mul/m3.vue';
-import CM4 from './views/calc2/mul/m4.vue';
-import CM5 from './views/calc2/mul/m5.vue';
-import CM6 from './views/calc2/mul/m6.vue';
-import CR1 from './views/calc2/riemann/r1.vue';
-import CR2 from './views/calc2/riemann/r2.vue';
-import CR3 from './views/calc2/riemann/r3.vue';
-import CR4 from './views/calc2/riemann/r4.vue';
-import CR5 from './views/calc2/riemann/r5.vue';
-import CR6 from './views/calc2/riemann/r6.vue';
-import MC1 from './views/calc2/curve/c1.vue';
-import MC2 from './views/calc2/curve/c2.vue';
-import MC3 from './views/calc2/curve/c3.vue';
-import MC4 from './views/calc2/curve/c4.vue';
-import MC5 from './views/calc2/curve/c5.vue';
-import MC6 from './views/calc2/curve/c6.vue';
-import ComplexvarHome from './views/complexvar/ComplexvarHome.vue';
-import CV1 from './views/complexvar/cplx/c1.vue';
-import CV2 from './views/complexvar/cplx/c2.vue';
-import CV3 from './views/complexvar/cplx/c3.vue';
-import CW1 from './views/complexvar/analytic/a1.vue';
-import CW2 from './views/complexvar/analytic/a2.vue';
-import CW3 from './views/complexvar/analytic/a3.vue';
-import CW4 from './views/complexvar/analytic/a4.vue';
-import CY1 from './views/complexvar/series/s1.vue';
-import CY2 from './views/complexvar/series/s2.vue';
-import CY3 from './views/complexvar/series/s3.vue';
-import CY4 from './views/complexvar/series/s4.vue';
-import CY5 from './views/complexvar/series/s5.vue';
-import NumtheoryHome from './views/numtheory/NumtheoryHome.vue';
-import NZ1 from './views/numtheory/basic/z1.vue';
-import NZ2 from './views/numtheory/basic/z2.vue';
-import NZ3 from './views/numtheory/basic/z3.vue';
-import NZ4 from './views/numtheory/basic/z4.vue';
-import ND1 from './views/numtheory/theorem/d1.vue';
-import ND2 from './views/numtheory/theorem/d2.vue';
-import ND3 from './views/numtheory/theorem/d3.vue';
-import ND4 from './views/numtheory/theorem/d4.vue';
-import ND5 from './views/numtheory/theorem/d5.vue';
-import NS1 from './views/numtheory/residue/s1.vue';
-import NS2 from './views/numtheory/residue/s2.vue';
-import NS3 from './views/numtheory/residue/s3.vue';
-import NS4 from './views/numtheory/residue/s4.vue';
+const Calc2Home = () => import('./views/calc2/Calc2Home.vue');
+const CM1 = () => import('./views/calc2/mul/m1.vue');
+const CM2 = () => import('./views/calc2/mul/m2.vue');
+const CM3 = () => import('./views/calc2/mul/m3.vue');
+const CM4 = () => import('./views/calc2/mul/m4.vue');
+const CM5 = () => import('./views/calc2/mul/m5.vue');
+const CM6 = () => import('./views/calc2/mul/m6.vue');
+const CR1 = () => import('./views/calc2/riemann/r1.vue');
+const CR2 = () => import('./views/calc2/riemann/r2.vue');
+const CR3 = () => import('./views/calc2/riemann/r3.vue');
+const CR4 = () => import('./views/calc2/riemann/r4.vue');
+const CR5 = () => import('./views/calc2/riemann/r5.vue');
+const CR6 = () => import('./views/calc2/riemann/r6.vue');
+const MC1 = () => import('./views/calc2/curve/c1.vue');
+const MC2 = () => import('./views/calc2/curve/c2.vue');
+const MC3 = () => import('./views/calc2/curve/c3.vue');
+const MC4 = () => import('./views/calc2/curve/c4.vue');
+const MC5 = () => import('./views/calc2/curve/c5.vue');
+const MC6 = () => import('./views/calc2/curve/c6.vue');
+const ComplexvarHome = () => import('./views/complexvar/ComplexvarHome.vue');
+const CV1 = () => import('./views/complexvar/cplx/c1.vue');
+const CV2 = () => import('./views/complexvar/cplx/c2.vue');
+const CV3 = () => import('./views/complexvar/cplx/c3.vue');
+const CW1 = () => import('./views/complexvar/analytic/a1.vue');
+const CW2 = () => import('./views/complexvar/analytic/a2.vue');
+const CW3 = () => import('./views/complexvar/analytic/a3.vue');
+const CW4 = () => import('./views/complexvar/analytic/a4.vue');
+const CY1 = () => import('./views/complexvar/series/s1.vue');
+const CY2 = () => import('./views/complexvar/series/s2.vue');
+const CY3 = () => import('./views/complexvar/series/s3.vue');
+const CY4 = () => import('./views/complexvar/series/s4.vue');
+const CY5 = () => import('./views/complexvar/series/s5.vue');
+const NumtheoryHome = () => import('./views/numtheory/NumtheoryHome.vue');
+const NZ1 = () => import('./views/numtheory/basic/z1.vue');
+const NZ2 = () => import('./views/numtheory/basic/z2.vue');
+const NZ3 = () => import('./views/numtheory/basic/z3.vue');
+const NZ4 = () => import('./views/numtheory/basic/z4.vue');
+const ND1 = () => import('./views/numtheory/theorem/d1.vue');
+const ND2 = () => import('./views/numtheory/theorem/d2.vue');
+const ND3 = () => import('./views/numtheory/theorem/d3.vue');
+const ND4 = () => import('./views/numtheory/theorem/d4.vue');
+const ND5 = () => import('./views/numtheory/theorem/d5.vue');
+const NS1 = () => import('./views/numtheory/residue/s1.vue');
+const NS2 = () => import('./views/numtheory/residue/s2.vue');
+const NS3 = () => import('./views/numtheory/residue/s3.vue');
+const NS4 = () => import('./views/numtheory/residue/s4.vue');
 // 高等数学 · 拓扑学基础（已开写）
-import TopologyHome from './views/topology/TopologyHome.vue';
+const TopologyHome = () => import('./views/topology/TopologyHome.vue');
 // 子专题一 · 拓扑空间（5 章）
-import TS1 from './views/topology/space/s1.vue';
-import TS2 from './views/topology/space/s2.vue';
-import TS3 from './views/topology/space/s3.vue';
-import TS4 from './views/topology/space/s4.vue';
-import TS5 from './views/topology/space/s5.vue';
+const TS1 = () => import('./views/topology/space/s1.vue');
+const TS2 = () => import('./views/topology/space/s2.vue');
+const TS3 = () => import('./views/topology/space/s3.vue');
+const TS4 = () => import('./views/topology/space/s4.vue');
+const TS5 = () => import('./views/topology/space/s5.vue');
 // 子专题二 · 连通与紧致（4 章）
-import TC1 from './views/topology/compact/c1.vue';
-import TC2 from './views/topology/compact/c2.vue';
-import TC3 from './views/topology/compact/c3.vue';
-import TC4 from './views/topology/compact/c4.vue';
+const TC1 = () => import('./views/topology/compact/c1.vue');
+const TC2 = () => import('./views/topology/compact/c2.vue');
+const TC3 = () => import('./views/topology/compact/c3.vue');
+const TC4 = () => import('./views/topology/compact/c4.vue');
 // 子专题三 · 不变量初步（3 章）
-import TV1 from './views/topology/invariant/v1.vue';
-import TV2 from './views/topology/invariant/v2.vue';
-import TV3 from './views/topology/invariant/v3.vue';
+const TV1 = () => import('./views/topology/invariant/v1.vue');
+const TV2 = () => import('./views/topology/invariant/v2.vue');
+const TV3 = () => import('./views/topology/invariant/v3.vue');
 // 高等数学 · 分形几何
-import FractalHome from './views/fractal/FractalHome.vue';
-import FRD1 from './views/fractal/dim/d1.vue';
-import FRD2 from './views/fractal/dim/d2.vue';
-import FRD3 from './views/fractal/dim/d3.vue';
-import FRD4 from './views/fractal/dim/d4.vue';
-import FRS1 from './views/fractal/shape/s1.vue';
-import FRS2 from './views/fractal/shape/s2.vue';
-import FRS3 from './views/fractal/shape/s3.vue';
-import FRS4 from './views/fractal/shape/s4.vue';
-import FRG1 from './views/fractal/gen/g1.vue';
-import FRG2 from './views/fractal/gen/g2.vue';
-import FRG3 from './views/fractal/gen/g3.vue';
+const FractalHome = () => import('./views/fractal/FractalHome.vue');
+const FRD1 = () => import('./views/fractal/dim/d1.vue');
+const FRD2 = () => import('./views/fractal/dim/d2.vue');
+const FRD3 = () => import('./views/fractal/dim/d3.vue');
+const FRD4 = () => import('./views/fractal/dim/d4.vue');
+const FRS1 = () => import('./views/fractal/shape/s1.vue');
+const FRS2 = () => import('./views/fractal/shape/s2.vue');
+const FRS3 = () => import('./views/fractal/shape/s3.vue');
+const FRS4 = () => import('./views/fractal/shape/s4.vue');
+const FRG1 = () => import('./views/fractal/gen/g1.vue');
+const FRG2 = () => import('./views/fractal/gen/g2.vue');
+const FRG3 = () => import('./views/fractal/gen/g3.vue');
 // 高等数学 · 高等几何（射影几何）
-import ProjgeomHome from './views/projgeom/ProjgeomHome.vue';
-import PJP1 from './views/projgeom/plane/p1.vue';
-import PJP2 from './views/projgeom/plane/p2.vue';
-import PJP3 from './views/projgeom/plane/p3.vue';
-import PJP4 from './views/projgeom/plane/p4.vue';
-import PJP5 from './views/projgeom/plane/p5.vue';
-import PJC1 from './views/projgeom/conic/c1.vue';
-import PJC2 from './views/projgeom/conic/c2.vue';
-import PJC3 from './views/projgeom/conic/c3.vue';
-import PJG1 from './views/projgeom/group/g1.vue';
-import PJG2 from './views/projgeom/group/g2.vue';
-import PJG3 from './views/projgeom/group/g3.vue';
+const ProjgeomHome = () => import('./views/projgeom/ProjgeomHome.vue');
+const PJP1 = () => import('./views/projgeom/plane/p1.vue');
+const PJP2 = () => import('./views/projgeom/plane/p2.vue');
+const PJP3 = () => import('./views/projgeom/plane/p3.vue');
+const PJP4 = () => import('./views/projgeom/plane/p4.vue');
+const PJP5 = () => import('./views/projgeom/plane/p5.vue');
+const PJC1 = () => import('./views/projgeom/conic/c1.vue');
+const PJC2 = () => import('./views/projgeom/conic/c2.vue');
+const PJC3 = () => import('./views/projgeom/conic/c3.vue');
+const PJG1 = () => import('./views/projgeom/group/g1.vue');
+const PJG2 = () => import('./views/projgeom/group/g2.vue');
+const PJG3 = () => import('./views/projgeom/group/g3.vue');
 // 高等数学 · 抽象代数
-import AlgebraHome from './views/algebra/AlgebraHome.vue';
-import ALS1 from './views/algebra/struct/s1.vue';
-import ALS2 from './views/algebra/struct/s2.vue';
-import ALS3 from './views/algebra/struct/s3.vue';
-import ALS4 from './views/algebra/struct/s4.vue';
-import ALG1 from './views/algebra/groupt/g1.vue';
-import ALG2 from './views/algebra/groupt/g2.vue';
-import ALG3 from './views/algebra/groupt/g3.vue';
-import ALG4 from './views/algebra/groupt/g4.vue';
-import ALG5 from './views/algebra/groupt/g5.vue';
-import ALG6 from './views/algebra/groupt/g6.vue';
-import ALG7 from './views/algebra/groupt/g7.vue';
-import ALN1 from './views/algebra/graph/n1.vue';
-import ALN2 from './views/algebra/graph/n2.vue';
-import ALN3 from './views/algebra/graph/n3.vue';
-import ALN4 from './views/algebra/graph/n4.vue';
-import ALN5 from './views/algebra/graph/n5.vue';
-import ALN6 from './views/algebra/graph/n6.vue';
-import CL1 from './views/calc1/limit/l1.vue';
-import CL2 from './views/calc1/limit/l2.vue';
-import CL3 from './views/calc1/limit/l3.vue';
-import CL4 from './views/calc1/limit/l4.vue';
-import CL5 from './views/calc1/limit/l5.vue';
+const AlgebraHome = () => import('./views/algebra/AlgebraHome.vue');
+const ALS1 = () => import('./views/algebra/struct/s1.vue');
+const ALS2 = () => import('./views/algebra/struct/s2.vue');
+const ALS3 = () => import('./views/algebra/struct/s3.vue');
+const ALS4 = () => import('./views/algebra/struct/s4.vue');
+const ALG1 = () => import('./views/algebra/groupt/g1.vue');
+const ALG2 = () => import('./views/algebra/groupt/g2.vue');
+const ALG3 = () => import('./views/algebra/groupt/g3.vue');
+const ALG4 = () => import('./views/algebra/groupt/g4.vue');
+const ALG5 = () => import('./views/algebra/groupt/g5.vue');
+const ALG6 = () => import('./views/algebra/groupt/g6.vue');
+const ALG7 = () => import('./views/algebra/groupt/g7.vue');
+const ALN1 = () => import('./views/algebra/graph/n1.vue');
+const ALN2 = () => import('./views/algebra/graph/n2.vue');
+const ALN3 = () => import('./views/algebra/graph/n3.vue');
+const ALN4 = () => import('./views/algebra/graph/n4.vue');
+const ALN5 = () => import('./views/algebra/graph/n5.vue');
+const ALN6 = () => import('./views/algebra/graph/n6.vue');
+const CL1 = () => import('./views/calc1/limit/l1.vue');
+const CL2 = () => import('./views/calc1/limit/l2.vue');
+const CL3 = () => import('./views/calc1/limit/l3.vue');
+const CL4 = () => import('./views/calc1/limit/l4.vue');
+const CL5 = () => import('./views/calc1/limit/l5.vue');
 // 子专题二 · 导数与微分（8 章）
-import CD1 from './views/calc1/deriv/d1.vue';
-import CD2 from './views/calc1/deriv/d2.vue';
-import CD3 from './views/calc1/deriv/d3.vue';
-import CD4 from './views/calc1/deriv/d4.vue';
-import CD5 from './views/calc1/deriv/d5.vue';
-import CD6 from './views/calc1/deriv/d6.vue';
-import CD7 from './views/calc1/deriv/d7.vue';
-import CD8 from './views/calc1/deriv/d8.vue';
+const CD1 = () => import('./views/calc1/deriv/d1.vue');
+const CD2 = () => import('./views/calc1/deriv/d2.vue');
+const CD3 = () => import('./views/calc1/deriv/d3.vue');
+const CD4 = () => import('./views/calc1/deriv/d4.vue');
+const CD5 = () => import('./views/calc1/deriv/d5.vue');
+const CD6 = () => import('./views/calc1/deriv/d6.vue');
+const CD7 = () => import('./views/calc1/deriv/d7.vue');
+const CD8 = () => import('./views/calc1/deriv/d8.vue');
 // 子专题三 · 不定积分（4 章）
-import CU1 from './views/calc1/integral/i1.vue';
-import CU2 from './views/calc1/integral/i2.vue';
-import CU3 from './views/calc1/integral/i3.vue';
-import CU4 from './views/calc1/integral/i4.vue';
+const CU1 = () => import('./views/calc1/integral/i1.vue');
+const CU2 = () => import('./views/calc1/integral/i2.vue');
+const CU3 = () => import('./views/calc1/integral/i3.vue');
+const CU4 = () => import('./views/calc1/integral/i4.vue');
 // 子专题四 · 定积分（5 章）
-import CF1 from './views/calc1/definite/f1.vue';
-import CF2 from './views/calc1/definite/f2.vue';
-import CF3 from './views/calc1/definite/f3.vue';
-import CF4 from './views/calc1/definite/f4.vue';
-import CF5 from './views/calc1/definite/f5.vue';
+const CF1 = () => import('./views/calc1/definite/f1.vue');
+const CF2 = () => import('./views/calc1/definite/f2.vue');
+const CF3 = () => import('./views/calc1/definite/f3.vue');
+const CF4 = () => import('./views/calc1/definite/f4.vue');
+const CF5 = () => import('./views/calc1/definite/f5.vue');
 
-import CZ1 from './views/calc1/ode/o1.vue';
-import CZ2 from './views/calc1/ode/o2.vue';
-import CZ3 from './views/calc1/ode/o3.vue';
-import CZ4 from './views/calc1/ode/o4.vue';
-import CZ5 from './views/calc1/ode/o5.vue';
-import CZ6 from './views/calc1/ode/o6.vue';
+const CZ1 = () => import('./views/calc1/ode/o1.vue');
+const CZ2 = () => import('./views/calc1/ode/o2.vue');
+const CZ3 = () => import('./views/calc1/ode/o3.vue');
+const CZ4 = () => import('./views/calc1/ode/o4.vue');
+const CZ5 = () => import('./views/calc1/ode/o5.vue');
+const CZ6 = () => import('./views/calc1/ode/o6.vue');
 
-import CS1 from './views/calc1/series/s1.vue';
-import CS2 from './views/calc1/series/s2.vue';
-import CS3 from './views/calc1/series/s3.vue';
-import CS4 from './views/calc1/series/s4.vue';
-import CS5 from './views/calc1/series/s5.vue';
+const CS1 = () => import('./views/calc1/series/s1.vue');
+const CS2 = () => import('./views/calc1/series/s2.vue');
+const CS3 = () => import('./views/calc1/series/s3.vue');
+const CS4 = () => import('./views/calc1/series/s4.vue');
+const CS5 = () => import('./views/calc1/series/s5.vue');
 // 高等数学 · 空间解析几何（已开写）
-import SV1 from './views/spacegeom/vector/v1.vue';
-import SV2 from './views/spacegeom/vector/v2.vue';
-import SV3 from './views/spacegeom/vector/v3.vue';
-import SV4 from './views/spacegeom/vector/v4.vue';
+const SV1 = () => import('./views/spacegeom/vector/v1.vue');
+const SV2 = () => import('./views/spacegeom/vector/v2.vue');
+const SV3 = () => import('./views/spacegeom/vector/v3.vue');
+const SV4 = () => import('./views/spacegeom/vector/v4.vue');
 // 子专题二 · 平面与直线（4 章）
-import SP1 from './views/spacegeom/plane/p1.vue';
-import SP2 from './views/spacegeom/plane/p2.vue';
-import SP3 from './views/spacegeom/plane/p3.vue';
-import SP4 from './views/spacegeom/plane/p4.vue';
+const SP1 = () => import('./views/spacegeom/plane/p1.vue');
+const SP2 = () => import('./views/spacegeom/plane/p2.vue');
+const SP3 = () => import('./views/spacegeom/plane/p3.vue');
+const SP4 = () => import('./views/spacegeom/plane/p4.vue');
 // 子专题三 · 曲面与曲线（4 章）
-import SS1 from './views/spacegeom/surface/s1.vue';
-import SS2 from './views/spacegeom/surface/s2.vue';
-import SS3 from './views/spacegeom/surface/s3.vue';
-import SS4 from './views/spacegeom/surface/s4.vue';
+const SS1 = () => import('./views/spacegeom/surface/s1.vue');
+const SS2 = () => import('./views/spacegeom/surface/s2.vue');
+const SS3 = () => import('./views/spacegeom/surface/s3.vue');
+const SS4 = () => import('./views/spacegeom/surface/s4.vue');
 
 export default [
   { path: '/', name: 'home', component: Home },

@@ -41,7 +41,7 @@
       <div v-for="(m, i) in msgs" :key="i" class="cd-row" :class="m.role">
         <div v-if="m.role === 'assistant'" class="cd-ava" aria-hidden="true">AI</div>
         <div class="cd-bubble" :class="{ err: !!m.err }">
-          <div v-if="m.role === 'assistant'" class="cd-md" v-html="m.content ? renderRich(m.content) : typingHtml"></div>
+          <div v-if="m.role === 'assistant'" class="cd-md" v-html="m.content ? rich(m.content) : typingHtml"></div>
           <div v-else class="cd-text">{{ m.content }}</div>
           <div v-if="m.err" class="cd-err">{{ m.err }}</div>
           <div v-if="m.role === 'assistant' && m.content" class="cd-acts">
@@ -78,7 +78,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { PREFS, setPref } from '../lib/settings.js';
 import { MODELS, setActiveModel, activeModel } from '../lib/models.js';
 import { CHATS, getChat, newChat, pushMessage, removeChat, renameChat, streamReply, chatToMarkdown, persistChats } from '../lib/chat.js';
-import { renderRich, plain } from '../lib/mdmini.js';
+import { renderRich, plain, preloadKatex } from '../lib/mdmini.js';
 import { writeInto, getHandle, downloadText } from '../lib/fsdir.js';
 import { NOTES, createNote, updateNote } from '../lib/notes.js';
 
@@ -90,6 +90,12 @@ const router = useRouter();
 const side = computed(() => PREFS.chatSide);
 const size = computed(() => PREFS.chatSize);
 const SUGGEST = ['这一页在讲什么', '这里的式子为什么成立', '出一道同类型的题'];
+
+/* KaTeX 是按需取的（见 lib/mdmini.js）：取到之前 renderRich 会把公式退成源码，
+   取到后靠 mdTick 触发一次重渲染，手上这轮对话才看得见公式。 */
+const mdTick = ref(0);
+const rich = s => { mdTick.value; return renderRich(s); };
+onMounted(() => { preloadKatex().then(() => { mdTick.value++; }); });
 
 const bodyEl = ref(null);
 const inputEl = ref(null);

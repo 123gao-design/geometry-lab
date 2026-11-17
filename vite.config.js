@@ -49,4 +49,18 @@ function lblWritePlugin() {
 export default defineConfig({
   plugins: [vue(), lblWritePlugin()],
   base: './', // 构建产物可用 file:// 直接打开（配合 hash 路由，完全离线）
+  build: {
+    rollupOptions: {
+      output: {
+        /* 三块几乎不变的大依赖单独成文件：
+           - vue/vue-router 与 katex 各自一个 chunk，浏览器缓存能一直用着，改业务代码不必重下；
+           - katex 单列还顺带解决另一件事：首屏只有 lib/mdmini.js 用动态 import 摸它，
+             其余都是懒路由里的静态 import，分出来后入口不再静态背着它，首页不必等公式引擎。 */
+        manualChunks: {
+          'vendor-vue': ['vue', 'vue-router'],
+          katex: ['katex'],
+        },
+      },
+    },
+  },
 });

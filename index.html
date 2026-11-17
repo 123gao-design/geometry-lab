@@ -5,9 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   <title>几何演示实验室 · Geometry Lab</title>
+  <script>
+    /* 首屏底色先定下来：JS 与样式表到位之前，按上次选的配色把 html 的 data-theme / light 类挂上，
+       避免暗色站先闪一下白底。规则与 lib/theme.js 的 initTheme 一致（没存过就看系统偏好）。 */
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('gl-theme'); } catch (e) { /* 隐私模式 */ }
+      if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      document.documentElement.dataset.theme = t;
+      if (t !== 'dark' && t !== 'dusk') document.documentElement.classList.add('light');
+    })();
+  </script>
+  <style>
+    /* 开屏骨架：等 public/lbl-default.json 与首包 JS 到位前先给人一块和主题同色的底，不放白屏 */
+    html, body { margin: 0; background: #0a0d14; }
+    html.light, html.light body { background: #f4f1e8; }
+    #boot {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 18px;
+      font: 14px/1.6 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #8b98ad; letter-spacing: .08em;
+    }
+    html.light #boot { color: #6b7280; }
+    #boot i {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 2px solid currentColor; border-top-color: transparent; opacity: .55;
+      animation: boot-spin .9s linear infinite;
+    }
+    @keyframes boot-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { #boot i { animation: none; } }
+  </style>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app"><div id="boot"><i></i><span>几何演示实验室</span></div></div>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

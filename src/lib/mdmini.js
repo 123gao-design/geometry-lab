@@ -1,11 +1,26 @@
 // 轻量 Markdown 渲染：聊天与笔记共用。支持标题、列表、引用、代码块、表格、分割线、链接、粗斜体、删除线，
 // 以及 $…$ / $$…$$ 的 KaTeX 公式（与站内 texMix 同一个 katex 实例）。不做 HTML 透传，全部先转义。
-import katex from 'katex';
+//
+// KaTeX 改成按需取：它是首屏最大的一块依赖，而首屏并不画公式。挂载后由 preloadKatex() 预取，
+// 取到之前公式先退成等宽源码，取到后由调用方重渲染一次（见 ChatDock 的 mdTick）。
+let katex = null;
+let loading = null;
+export function katexReady() { return !!katex; }
+export function preloadKatex() {
+  if (katex) return Promise.resolve(katex);
+  if (!loading) {
+    loading = import('katex')
+      .then(m => { katex = m.default || m; return katex; })
+      .catch(() => null); // 取不到就一直是源码形态，别让聊天整体挂掉
+  }
+  return loading;
+}
 
 const esc = s => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 function tex(tex, display) {
+  if (!katex) return '<code>' + esc(tex) + '</code>';
   try {
     return katex.renderToString(tex, { displayMode: display, throwOnError: false });
   } catch (e) {
