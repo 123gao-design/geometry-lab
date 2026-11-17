@@ -175,6 +175,7 @@ export function orbit(B, cam, redraw, o = {}) {
     cam.yaw -= dx * sp;
     cam.pitch = Math.max(-1.35, Math.min(1.35, cam.pitch + dy * sp));
     redraw();
+    if (B._camChanged) B._camChanged(); // 视角也是实验状态：交给画板防抖写进分享链接
   };
   const up = () => { cur = null; if (svg.style) svg.style.cursor = 'grab'; };
   svg.addEventListener('pointerdown', down);
@@ -182,6 +183,14 @@ export function orbit(B, cam, redraw, o = {}) {
   svg.addEventListener('pointerup', up);
   svg.addEventListener('pointerleave', up);
   if (svg.style) svg.style.cursor = 'grab';
+  // 视角进出 URL：分享链接里带 cam=yaw,pitch，打开时 applyQuery 调 camSet 还原
+  B.camGet = () => ({ yaw: cam.yaw, pitch: cam.pitch });
+  B.camSet = st => {
+    if (!st) return;
+    if (isFinite(st.yaw)) cam.yaw = st.yaw;
+    if (isFinite(st.pitch)) cam.pitch = Math.max(-1.35, Math.min(1.35, st.pitch));
+    redraw();
+  };
   return { stop() {
     svg.removeEventListener && svg.removeEventListener('pointerdown', down);
     svg.removeEventListener && svg.removeEventListener('pointermove', move);

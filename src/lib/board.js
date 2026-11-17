@@ -5,6 +5,7 @@ import { V, extSeg, fmt } from './math.js';
 import { openGGB, setActiveOutlet, clearActiveOutlet } from './ggb.js';
 import { recordBoard } from './record.js';
 import { readLabels, writeLabels, defaultBoard } from './labelstore.js';
+import { setBoardContextProvider } from './boardctx.js';
 export * from './math.js'; // 画板模块统一从 board.js 导入数学工具
 // 主题与光影的实现已挪到 theme.js（首屏不该为它拖整个引擎），这里转出去，老路子的 import 照旧可用
 export { THEMES, themeOf, currentTheme, isLight, applyTheme, initTheme, mountThemeButton, animEnabled, setAnim, initAnim, onThemeChange } from './theme.js';
@@ -155,6 +156,31 @@ function sliderKey(label, idx) {
 let qTimer = null;
 export function scheduleQuerySync() { clearTimeout(qTimer); qTimer = setTimeout(writeQuery, 300); }
 function nowHash() { try { return location.hash || ''; } catch (_) { return ''; } } // 无浏览器测试环境安全取值
+
+/** 复制文本：优先异步剪贴板；file:// 或没权限时退回临时 textarea + execCommand，仍失败交回 false */
+function copyText(text, done) {
+  const back = ok => { try { done(!!ok); } catch (_) { /* 回调里出错不影响复制本身 */ } };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => back(true), () => back(legacyCopy(text)));
+      return;
+    }
+  } catch (_) { /* 落到下面 */ }
+  back(legacyCopy(text));
+}
+function legacyCopy(text) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-1000px;left:-1000px;opacity:0';
+    (document.body || document.documentElement).appendChild(ta);
+    if (ta.select) ta.select();
+    const ok = document.execCommand ? document.execCommand('copy') : false;
+    ta.parentNode && ta.parentNode.removeChild(ta);
+    return !!ok;
+  } catch (_) { return false; }
+}
 /* 文字拖动的落盘开关：设置页「记住板内文字位置」存进 gl-prefs，默认开。
    这里直接读 localStorage，画板不依赖设置模块；改完设置后新开的画板按新值走。 */
 function lblPinOn() {
@@ -177,6 +203,11 @@ function writeQuery() {
   for (const b of BOARDS) {
     if (b.pagePath !== path) continue; // 防抖窗口内换了页：旧页画板不再写入
     for (const { s, key } of b.sliders) parts.push(b.qid + '.' + key + '=' + encodeURIComponent(s.value));
+    for (const { key, get } of b.toggles || []) parts.push(b.qid + '.' + key + '=' + get());
+    if (b.camGet) {                       // 三维视角：yaw,pitch 都留三位小数，够还原来着
+      const c = b.camGet();
+      if (c && isFinite(c.yaw) && isFinite(c.pitch)) parts.push(b.qid + '.cam=' + c.yaw.toFixed(3) + ',' + c.pitch.toFixed(3));
+    }
   }
   try { history.replaceState(null, '', path + (parts.length ? '?' + parts.join('&') : '')); } catch (_) { /* 受限环境忽略 */ }
 }
@@ -203,6 +234,10 @@ export class Board {
     root.appendChild(this.chipRow);
     // 实验参数进 URL：滑块注册表 + 命名空间（默认 b1/b2…，BoardMount 的 id 属性可覆盖）+ 挂载时的页面路径
     this.sliders = []; this._keys = new Set();
+    // 开关按钮（toggleBtn）与三维视角也进 URL：t1/t2… 记状态，cam=yaw,pitch 记视角
+    this.toggles = [];
+    this._camChanged = () => scheduleQuerySync();
+    this.camGet = null; this.camSet = null;
     this.qid = 'b' + (BOARDS.length + 1);
     this.pagePath = nowHash().split('?')[0];
     // 画板操作条：默认悬浮画板右上角，hover 才现身（CSS 见 global.css .dlbar / .dl）。
@@ -249,6 +284,17 @@ export class Board {
     vb.addEventListener('click', () => this.exportVideo());
     this.dlBar.appendChild(vb);
     this._vidBtn = vb;
+    // 分享这一现场：先把当前滑块 / 开关 / 视角立刻写进 hash（不等 300ms 防抖），再把整条链接复制走
+    const share = hEl('button', { class: 'dl share', title: '复制当前实验状态的链接：滑块、开关、三维视角都带上' });
+    share.textContent = '🔗 分享';
+    share.addEventListener('click', () => {
+      writeQuery();
+      copyText(typeof location !== 'undefined' ? location.href : '', ok => {
+        share.textContent = ok ? '✓ 已复制' : '✗ 复制失败';
+        setTimeout(() => { share.textContent = '🔗 分享'; }, 1600);
+      });
+    });
+    this.dlBar.appendChild(share);
     // 画板底色：只改这一块板（同一亮/暗家族里的几档 + 调色板自选色，切主题时自动换成对应家族的那一档）
     this._tint = -1;
     this._bgCol = '';
@@ -747,19 +793,23 @@ export class Board {
     b.textContent = label; b.innerHTML = texMix(label); b.addEventListener('click', fn); this.ctrl.appendChild(b);
     return b;
   }
-  toggleBtn(label, init, fn) {
-    const b = hEl('button', { class: 'btn' }); b.textContent = label;
-    let on = init; const sync = () => b.classList.toggle('on', on); sync();
-    b.addEventListener('click', () => { on = !on; sync(); fn(on); }); this.ctrl.appendChild(b);
-    return { set(v) { on = v; sync(); fn(on); } };
-  }
+  toggleBtn(label, init, fn) { return this._toggle(label, init, fn, false); }
   /** 公式版开关按钮：label 里 '$…$' 段走 KaTeX 混排（含根号/上标的预设名用它）；
    *  先写 textContent 再写 innerHTML（源串镜像，同 chipM/btnM） */
-  toggleBtnM(label, init, fn) {
-    const b = hEl('button', { class: 'btn' }); b.textContent = label; b.innerHTML = texMix(label);
-    let on = init; const sync = () => b.classList.toggle('on', on); sync();
-    b.addEventListener('click', () => { on = !on; sync(); fn(on); }); this.ctrl.appendChild(b);
-    return { set(v) { on = v; sync(); fn(on); } };
+  toggleBtnM(label, init, fn) { return this._toggle(label, init, fn, true); }
+  /** 开关按钮的公共实现：状态同时登记进 this.toggles，分享链接才能把「开/关」一起带过去 */
+  _toggle(label, init, fn, math) {
+    const b = hEl('button', { class: 'btn' });
+    b.textContent = label;
+    if (math) b.innerHTML = texMix(label);
+    let on = init;
+    const sync = () => b.classList.toggle('on', on);
+    sync();
+    const set = v => { on = !!v; sync(); fn(on); };
+    b.addEventListener('click', () => { set(!on); scheduleQuerySync(); }); this.ctrl.appendChild(b);
+    const key = 't' + (this.toggles.length + 1);
+    this.toggles.push({ key, label, get: () => (on ? 1 : 0), set });
+    return { set };
   }
   slider(label, min, max, step, val, fn, key) {
     const w = hEl('label', { class: 'slider' });
@@ -770,7 +820,7 @@ export class Board {
     let k = base();
     for (let n = 2; this._keys.has(k); n++) k = base() + n;
     this._keys.add(k);
-    this.sliders.push({ s, key: k, min, max });
+    this.sliders.push({ s, key: k, min, max, label });
     s.addEventListener('input', () => {
       t.textContent = `${label} ${fmt(+s.value, 1)}`;
       fn(+s.value);
@@ -785,7 +835,15 @@ export class Board {
     const lab = hEl('b', {}, c); const val = hEl('span', {}, c);
     lab.textContent = label + ' ';
     this.chipRow.appendChild(c);
-    return (t, cls = '') => { val.textContent = t; c.className = 'chip ' + cls; };
+    const rec = this._chipRec(label);
+    return (t, cls = '') => { rec.text = String(t); val.textContent = t; c.className = 'chip ' + cls; };
+  }
+  /** 徽章的登记：AI 助手要看得见这一刻的读数（「测得 e ≈ 1.0003」比「e 是个滑块」有用得多） */
+  _chipRec(label) {
+    if (!this.chips) this.chips = [];
+    const rec = { label, text: '' };
+    this.chips.push(rec);
+    return rec;
   }
   /** 公式版徽章：update 的 text 同样支持 '$公式$' 混排（有缓存，拖动每帧刷新也不卡） */
   chipM(label) {
@@ -797,7 +855,11 @@ export class Board {
     if (label.includes('$')) { lab.textContent = label + ' '; lab.innerHTML = texMix(label) + ' '; }
     else lab.textContent = label + ' ';
     this.chipRow.appendChild(c);
-    return (t, cls = '') => { val.textContent = t; val.innerHTML = texMix(t); c.className = 'chip ' + cls; };
+    const rec = this._chipRec(label);
+    return (t, cls = '') => {
+      rec.text = String(t);
+      val.textContent = t; val.innerHTML = texMix(t); c.className = 'chip ' + cls;
+    };
   }
   /** 「在 GeoGebra 中验证」出口：getCmds() 返回命令数组，点击后带着当前参数打开 /playground。
    *  mode 取 'graphing' 或 '3d'；按钮复用 .dl 的定位与主题配色，挂进右上角导出条（CSS order 排在最左）。 */
@@ -1052,6 +1114,15 @@ export class Board {
         hit = true;
       }
     }
+    for (const t of this.toggles || []) {   // 开关状态：t.set 会重画，不必再兜底
+      const v = map.get(this.qid + '.' + t.key);
+      if (v != null && v !== '' && isFinite(+v)) { t.set(+v ? 1 : 0); hit = true; }
+    }
+    const cv = map.get(this.qid + '.cam');
+    if (cv && this.camSet) {
+      const [y, p] = cv.split(',').map(Number);
+      if (isFinite(y) && isFinite(p)) { this.camSet({ yaw: y, pitch: p }); hit = true; }
+    }
     if (hit) this.render(); // 个别滑块回调不重渲染，兜底再画一次
   }
   handle(st) { // st:{get,set,drag,color,r,label,lo,clamp,thin}
@@ -1082,3 +1153,24 @@ export class Board {
   }
   render() { this.syncTint(); this._lblSyncId(); if (this.renderFn) { this.clear(); this.renderFn(); this.sync(); this._applyLblOffsets(); } }
 }
+
+/* ---------- 给 AI 助手的画板快照 ----------
+   助手窗（ChatDock）常驻首屏，不能反过来 import 本文件；所以由这里把取值函数登记进 boardctx.js。
+   只报这一页的板，最多三块：滑块现值、亮着的开关、徽章读数（「测得 e ≈ 1.0003」比「e 是个滑块」有用）、三维视角。 */
+setBoardContextProvider(() => {
+  const path = nowHash().split('?')[0];
+  const rows = [];
+  for (const b of BOARDS) {
+    if (b.pagePath !== path) continue;
+    const bits = [];
+    for (const c of b.chips || []) if (c.text) bits.push(c.label + ' ' + c.text);
+    for (const s of b.sliders || []) bits.push(s.label + ' = ' + s.s.value);
+    for (const t of b.toggles || []) if (t.get()) bits.push(t.label + '：开');
+    if (b.camGet) {
+      const c = b.camGet();
+      if (c && isFinite(c.yaw) && isFinite(c.pitch)) bits.push('三维视角 yaw ' + c.yaw.toFixed(2) + '、pitch ' + c.pitch.toFixed(2));
+    }
+    if (bits.length) rows.push(b.qid + '：' + bits.join('；'));
+  }
+  return rows.slice(0, 3).join('\n');
+});

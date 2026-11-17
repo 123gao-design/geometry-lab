@@ -32,7 +32,9 @@
         <p class="cd-empty-s">当前这一页的内容会自动带上，可以直接问「这里为什么成立」。</p>
         <div class="cd-chips">
           <button v-for="s in SUGGEST" :key="s" class="cd-chip" type="button" @click="draft = s; focusInput()">{{ s }}</button>
+          <button v-if="hasBoard" class="cd-chip" type="button" @click="askBoard">解释这个图形</button>
         </div>
+        <p v-if="hasBoard" class="cd-empty-s">这一页画板的滑块、开关与实时读数会一起交给模型。</p>
         <p v-if="!MODELS.list.length" class="cd-empty-warn">
           还没有模型。去 <router-link to="/settings">设置 → 模型与 API</router-link> 填一个接口地址和密钥，就能开始对话。
         </p>
@@ -81,6 +83,7 @@ import { CHATS, getChat, newChat, pushMessage, removeChat, renameChat, streamRep
 import { renderRich, plain, preloadKatex } from '../lib/mdmini.js';
 import { writeInto, getHandle, downloadText } from '../lib/fsdir.js';
 import { NOTES, createNote, updateNote } from '../lib/notes.js';
+import { boardContext } from '../lib/boardctx.js';
 
 const props = defineProps({ open: { type: Boolean, default: false } });
 const emit = defineEmits(['update:open']);
@@ -90,6 +93,15 @@ const router = useRouter();
 const side = computed(() => PREFS.chatSide);
 const size = computed(() => PREFS.chatSize);
 const SUGGEST = ['这一页在讲什么', '这里的式子为什么成立', '出一道同类型的题'];
+
+/* 这一页有没有画板：决定要不要出「解释这个图形」那颗钮。画板在路由切换后挂载，
+   所以要等一次 nextTick 再问，否则读到的是上一页的板。 */
+const hasBoard = ref(false);
+function refreshBoardFlag() { hasBoard.value = !!boardContext(); }
+function askBoard() {
+  draft.value = '解释这个图形：它在演示什么，各个参数怎么影响结果，这一组取值能看出什么结论。';
+  send();
+}
 
 /* KaTeX 是按需取的（见 lib/mdmini.js）：取到之前 renderRich 会把公式退成源码，
    取到后靠 mdTick 触发一次重渲染，手上这轮对话才看得见公式。 */
@@ -144,12 +156,14 @@ function scrollBottom() {
   nextTick(() => { const b = bodyEl.value; if (b) b.scrollTop = b.scrollHeight; });
 }
 
-// 把当前页面的标题交给模型当背景，问「这里为什么」时不用再贴一遍
+// 把当前页面与画板现场交给模型当背景，问「这里为什么」时不用再贴一遍
 function sysPrompt() {
   const h1 = document.querySelector('.chapter-head h1, main h1');
   const title = h1 ? h1.textContent.replace(/\s+/g, ' ').trim() : '';
+  const ctx = boardContext();
   return '你是「几何演示实验室」里的高中数学助教。' +
     (title ? '用户正在看「' + title + '」这一页（' + route.path + '）。' : '') +
+    (ctx ? '\n页面上画板此刻的状态（实时读数，用来解释「现在这个图形」）：\n' + ctx + '\n' : '') +
     '用中文回答，公式一律用 $…$（行内）或 $$…$$（独立成行）书写；讲解分步骤、句子短，先给结论再给理由，不要客套话。';
 }
 
@@ -244,7 +258,8 @@ onBeforeUnmount(() => { window.removeEventListener('keydown', onKey); if (ac) ac
 
 // 复用同一个组件时换对话要滚到底
 watch(() => CHATS.cur, () => scrollBottom());
-watch(() => props.open, o => { if (o) { scrollBottom(); focusInput(); histOpen.value = false; } });
+watch(() => props.open, o => { if (o) { scrollBottom(); focusInput(); histOpen.value = false; nextTick(refreshBoardFlag); } });
+watch(() => route.fullPath, () => { if (props.open) nextTick(refreshBoardFlag); });
 </script>
 
 <style scoped>

@@ -204,11 +204,12 @@ circle.hnd.drag{stroke-width:3}
 .dl{position:absolute;top:8px;right:8px;z-index:6;background:rgba(11,15,23,.72);border:1px solid var(--line);color:var(--mut);
   border-radius:99px;padding:2px 11px;font-size:11.5px;cursor:pointer;font-family:inherit;opacity:0;transition:opacity .15s}
 /* 条内按钮交给 flex 排布，不再各自定位；从左到右固定为
-   ＋ － ｜ ◧ ⛶ ｜ GeoGebra ｜ 视频 ｜ ▤ 底色 ｜ Aa 底注 ｜ PNG */
+   ＋ － ｜ ◧ ⛶ 🔗 ｜ GeoGebra ｜ 视频 ｜ ▤ 底色 ｜ Aa 底注 ｜ PNG */
 .dlbar .dl{position:static;top:auto;right:auto}
 .dlbar .zoom{order:-2;padding:2px 9px;font-size:12.5px}
 .dlbar .fs{order:-1}
 .dlbar .ggb-open{order:-1}
+.dlbar .share{order:-1}
 .dlbar .foot{order:1}
 .dlbar .png{order:2}
 /* 录像钮：计时数字用等宽数字，秒数跳动时按钮宽度不抖 */
