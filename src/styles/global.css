@@ -32,8 +32,8 @@ main.page-in[data-anim=none]{animation:none}
 main.chat-split,footer.chat-split{max-width:none;margin:0;padding-right:calc(50vw + 22px);transition:padding .18s ease}
 main.chat-split.chat-left,footer.chat-split.chat-left{padding-left:calc(50vw + 22px);padding-right:22px}
 /* 让出一半后正文只剩半屏：右栏「本讲结构」先撤，左栏收窄，别把正文挤成一条 */
-main.chat-split .toc,main.dock-split .toc{display:none}
-main.chat-split .chap3,main.dock-split .chap3{grid-template-columns:220px minmax(0,1fr);gap:18px}
+main.chat-split .toc,main.dock-split .toc,main.draw-split .toc{display:none}
+main.chat-split .chap3,main.dock-split .chap3,main.draw-split .chap3{grid-template-columns:220px minmax(0,1fr);gap:18px}
 @media (max-width:900px){main.chat-split,footer.chat-split{padding-right:22px}
   main.chat-split.chat-left,footer.chat-split.chat-left{padding-right:22px;padding-left:22px}}
 /* 右侧半屏画板开着时，正文与页脚让出右半边（画板本身 fixed 贴在右边，见 GeoGebraDock.vue） */
@@ -43,6 +43,12 @@ main.dock-split,footer.dock-split{max-width:none;margin:0;padding-right:calc(var
 main.dock-split.dock-left,footer.dock-split.dock-left{padding-left:calc(var(--dock-w) + 22px);padding-right:22px}
 @media (max-width:900px){main.dock-split,footer.dock-split{padding-right:22px}
   main.dock-split.dock-left,footer.dock-split.dock-left{padding-right:22px;padding-left:22px}}
+/* 画布半屏模式（DrawPad，右下铅笔圆钮）：与画板小窗同一套让位规则，可以换到左边 */
+main.draw-split,footer.draw-split{max-width:none;margin:0;padding-right:calc(var(--dock-w) + 22px);
+  transition:padding .18s ease}
+main.draw-split.draw-left,footer.draw-split.draw-left{padding-left:calc(var(--dock-w) + 22px);padding-right:22px}
+@media (max-width:900px){main.draw-split,footer.draw-split{padding-right:22px}
+  main.draw-split.draw-left,footer.draw-split.draw-left{padding-right:22px;padding-left:22px}}
 /* 背景光影：三团主题色柔光大幅漂移 + 明暗呼吸（默认开；主题选单底部「背景光影」可关；打印与减弱动效偏好自动关） */
 .bg-fx{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;--dim:1}
 html.light .bg-fx{--dim:.5}
@@ -111,6 +117,13 @@ em{font-style:normal;color:var(--yellow)}
 .topnav .navdir.on{color:var(--blue);border-color:var(--blue)}
 .navdir-ic{font-size:12px;line-height:1}
 .topnav .nav-sp{flex:1}
+/* 顶栏中段：全站搜索压在导航条正中（左右两组都不参与它的定位）；窄屏放不下时退回常规流 */
+.topnav .in{position:relative}
+.nav-center{display:flex;align-items:center;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+@media (max-width:1500px){
+  .topnav .nav-sp{display:none}
+  .nav-center{position:static;transform:none;flex:0 1 auto;min-width:0;margin:0 auto}
+}
 .topnav a{color:var(--mut);text-decoration:none;font-size:13.5px;padding:4px 10px;border-radius:99px;white-space:nowrap}
 .topnav a:hover{color:var(--ink);background:rgba(255,255,255,.06)}
 .topnav a.router-link-active{color:var(--blue)}
@@ -159,12 +172,10 @@ em{font-style:normal;color:var(--yellow)}
 /* 章节导航：已改为讲解页左栏的竖排目录（.chapnav） */
 .chapter-head{margin:6px 0 4px}
 .chapter-head h1{font-size:clamp(23px,3.6vw,32px);line-height:1.35;margin:10px 0 2px;letter-spacing:.5px}
-/* 左上角的面包屑圆钮（left16 / top58 / 44px）会压住首屏左上的标题首字：
-   模块主页这类整页开头的 .chapter-head 让开 56px；讲解页的章名在栏内（x≈322），不受影响，
-   那一页改由 .chap3 的下边距让开（见下方 .chap3 规则）。
-   宽屏上 main 居中、圆钮整个落在左侧留白里，这 56 / 64px 就白让了，
-   收回到 10 / 18px —— 见文件末尾的 @media (min-width:1820px) */
-main > * > .chapter-head:first-child{margin-top:56px}
+/* 首屏顶部只留一点呼吸。原先左上角浮着一枚面包屑圆钮（left16 / top58 / 44px），整页开头的
+   .chapter-head 与讲解页的 .chap3 都得让开 56 / 64px；2026-11-17 那枚钮收进了顶栏（见 Breadcrumb.vue），
+   正文不再被它压住，两处让位一起撤掉，统一按 18px 落 */
+main > * > .chapter-head:first-child{margin-top:18px}
 .chapmain > .chapter-head:first-child{margin-top:6px}
 .chapter-head .no{font-size:.55em;color:var(--blue);border:1px solid #274b76;border-radius:8px;
   padding:2px 9px;margin-right:12px;vertical-align:middle;letter-spacing:1px;font-family:ui-monospace,Menlo,monospace}
@@ -227,6 +238,157 @@ circle.hnd.drag{stroke-width:3}
 .dl.on{opacity:1;color:var(--red,#ff7b8a);border-color:var(--red,#ff7b8a)}
 /* 到头了的那一颗（0.4 倍时的「－」、6 倍时的「＋」）淡下去且不响应 hover；写在 .dl:hover 之后才压得住 */
 .dlbar .dl:disabled{opacity:.3;cursor:default;color:var(--mut);border-color:var(--line)}
+/* 批注（手绘墨迹）：操作条上的「✎ 批注」入口 + 板内左上的工具条，只在批注模式现身（根上加 .ink-on）。
+   工具一排按图标排；粗细 / 颜色 / 虚实 / 笔种四类参数各收成一枚按钮，点开才展开选项 */
+.dlbar .ink{order:-1}
+.dlbar .ink.bad{color:var(--red,#ff7b8a);border-color:var(--red,#ff7b8a);opacity:1}
+.inkbar{position:absolute;left:8px;top:8px;z-index:7;display:none;align-items:center;gap:5px;flex-wrap:wrap;
+  max-width:calc(100% - 16px);padding:6px 7px;border:1px solid var(--line);border-radius:12px;background:var(--card);
+  box-shadow:0 10px 26px rgba(0,0,0,.3)}
+.board.ink-on .inkbar{display:flex}
+.board.bd-float .inkbar{top:46px}
+.inkbar .dl{position:static;top:auto;right:auto;opacity:1;background:transparent;padding:0 10px;height:30px;
+  display:inline-flex;align-items:center;justify-content:center}
+.inkbar .dl.on{color:var(--blue);border-color:var(--blue)}
+.inkbar .dl.ask{color:var(--red,#ff7b8a);border-color:var(--red,#ff7b8a)}
+.ink-sep{width:1px;height:20px;background:var(--line);margin:0 2px}
+/* 工具：图标按钮（工具 / 四类参数 / 动作三类按钮一律 30px 高，一行排齐） */
+.ink-t{width:32px;height:30px;display:inline-flex;align-items:center;justify-content:center;padding:0;
+  border:1px solid transparent;border-radius:8px;background:transparent;color:var(--mut);cursor:pointer;
+  transition:color .14s ease,border-color .14s ease,background .14s ease}
+.ink-t svg{width:20px;height:20px}
+.ink-t:hover{color:var(--ink);border-color:var(--line)}
+.ink-t.on{color:var(--blue);border-color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent)}
+/* 四类参数：一枚按钮 + 弹出的选项面板 */
+.ink-g{position:relative;display:inline-flex}
+.ink-gb{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border:1px solid var(--line);
+  border-radius:8px;background:transparent;color:var(--mut);font:inherit;font-size:12px;cursor:pointer;white-space:nowrap;
+  transition:color .14s ease,border-color .14s ease}
+.ink-gb:hover{color:var(--ink);border-color:var(--mut)}
+.ink-g.open .ink-gb{color:var(--blue);border-color:var(--blue)}
+.ink-glbl{font-size:12px;line-height:1}
+.ink-wbar{display:inline-block;width:16px;height:3px;background:currentColor;border-radius:2px}
+.ink-cdot{display:inline-block;width:13px;height:13px;border-radius:50%;border:1px solid var(--line);background:#ff5a6e}
+.ink-dbar{display:inline-block;width:16px;height:0;border-top:2px solid currentColor}
+.ink-d-dash{border-top-style:dashed}
+.ink-d-dot{border-top-style:dotted}
+/* 线点 / 长短线：border-style 表达不了，改用重复渐变画一段样例线 */
+.ink-d-dashdot{border-top:0;height:2px;background:repeating-linear-gradient(90deg,currentColor 0 6px,transparent 6px 8px,currentColor 8px 9.6px,transparent 9.6px 12px)}
+.ink-d-longdash{border-top:0;height:2px;background:repeating-linear-gradient(90deg,currentColor 0 11px,transparent 11px 14px)}
+.ink-pop{position:absolute;top:calc(100% + 6px);left:0;z-index:8;display:none;flex-direction:column;gap:4px;
+  min-width:116px;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--card);
+  box-shadow:0 14px 36px rgba(0,0,0,.32)}
+.ink-g.open .ink-pop{display:flex}
+.ink-o{display:flex;align-items:center;gap:9px;padding:7px 10px;border:1px solid transparent;border-radius:8px;
+  background:transparent;color:var(--ink);font:inherit;font-size:12.5px;cursor:pointer;text-align:left;white-space:nowrap}
+.ink-o:hover{background:color-mix(in srgb,var(--blue) 10%,transparent)}
+.ink-o.on{color:var(--blue);border-color:var(--blue)}
+/* 颜色面板：常用色 + 最近用过 + 取色器 + 手输 rgb/hex */
+.ink-pop-col{min-width:244px;gap:8px}
+.ink-sw{width:22px;height:22px;padding:0;border:1px solid var(--line);border-radius:50%;cursor:pointer;background:var(--bg2)}
+.ink-sw.ink-auto{background:var(--bd-ink,var(--ink))}
+.ink-sw:hover{border-color:var(--blue)}
+.ink-sw.on{outline:2px solid var(--blue);outline-offset:2px}
+/* 自选颜色：原生取色器做圆点，跟底色面板同一个做法 */
+.ink-pick{width:22px;height:22px;padding:0;border:1px solid var(--line);border-radius:50%;background:none;cursor:pointer;
+  flex:none;appearance:none;-webkit-appearance:none}
+.ink-pick::-webkit-color-swatch-wrapper{padding:0}
+.ink-pick::-webkit-color-swatch{border:none;border-radius:50%}
+.ink-pick::-moz-color-swatch{border:none;border-radius:50%}
+.ink-pick:hover{border-color:var(--blue)}
+.ink-pal-t{font-size:11.5px;color:var(--mut);letter-spacing:.5px}
+.ink-pal-grid{display:flex;flex-wrap:wrap;gap:6px;min-height:22px}
+.ink-pal-sw{width:22px;height:22px;padding:0;border:1px solid var(--line);border-radius:6px;cursor:pointer}
+.ink-pal-sw:hover{border-color:var(--blue);transform:scale(1.1)}
+.ink-pal-empty{font-size:11.5px;color:var(--mut);opacity:.85}
+.ink-pal-row{display:flex;align-items:center;gap:7px}
+.ink-pal-txt{flex:1;min-width:0;font:inherit;font-size:12px;color:var(--ink);background:var(--bg2);
+  border:1px solid var(--line);border-radius:8px;padding:4px 8px;outline:none}
+.ink-pal-txt:focus{border-color:var(--blue)}
+.ink-pal-txt.bad{border-color:var(--red,#ff7b8a)}
+.ink-pal-tip{font-size:11px;color:var(--mut);opacity:.85;line-height:1.5}
+/* 填充：按钮上的方块与面板里的圆圈（「无」是一道斜杠，表示空心） */
+.ink-fdot{display:inline-block;width:13px;height:13px;border-radius:3px;border:1px solid var(--line);
+  background:linear-gradient(135deg,transparent 45%,var(--line) 45%,var(--line) 55%,transparent 55%)}
+.ink-fsw{display:inline-block;width:16px;height:16px;border-radius:50%;border:1px solid var(--line)}
+.ink-fsw.none{background:linear-gradient(135deg,transparent 44%,var(--mut) 44%,var(--mut) 56%,transparent 56%)}
+/* 填充面板：一排圆圈，颜色自己就是名字，不写汉字；最后一个彩虹圈自选任意颜色 */
+.ink-ofill{padding:5px 7px;justify-content:center}
+.ink-ofill .ink-fsw{width:20px;height:20px}
+.ink-ofnone .ink-fsw{opacity:.75}
+.ink-fpick{width:22px;height:22px;padding:0;border:1px solid var(--line);border-radius:50%;cursor:pointer;
+  flex:none;appearance:none;-webkit-appearance:none;background:conic-gradient(#ff5a6e,#ffd166,#4ade80,#5cadff,#a78bfa,#ff5a6e)}
+.ink-fpick::-webkit-color-swatch-wrapper{padding:0}
+.ink-fpick::-webkit-color-swatch{border:none;border-radius:50%;opacity:.85}
+.ink-fpick::-moz-color-swatch{border:none;border-radius:50%;opacity:.85}
+.ink-fpick:hover{border-color:var(--blue)}
+/* 参数面板横向排：一行放不下就换行，不竖着拉长（用户 2026-11-17：线型 / 笔型 / 图形 / 填充都要矩阵式排） */
+.ink-pop.ink-pop-grid{flex-direction:row;flex-wrap:wrap;align-items:center;gap:5px;width:max-content;max-width:250px}
+.ink-pop-grid .ink-o{padding:6px 9px}
+.ink-pop-grid.ink-pop-fill{max-width:210px;gap:7px;padding:8px}
+/* 自定笔宽：面板里一行小输入 */
+.ink-wrow{display:flex;align-items:center;gap:6px;padding:3px 4px}
+.ink-winp{width:56px;font:inherit;font-size:12px;color:var(--ink);background:var(--bg2);
+  border:1px solid var(--line);border-radius:7px;padding:3px 6px;outline:none}
+.ink-winp:focus{border-color:var(--blue)}
+/* 画布上加字时浮出来的输入框：贴着原字的位置，看着就是那行字本身在编辑 */
+.ink-text-in{position:fixed;z-index:200;min-width:120px;padding:2px 6px;margin:0;resize:both;
+  font-family:inherit;background:color-mix(in srgb,var(--card,#141b26) 88%,transparent);
+  border:1px solid var(--blue,#5cadff);border-radius:6px;outline:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);white-space:pre;overflow:hidden}
+/* 没选中任何笔画时「删除所选」收起来 */
+.inkbar .dl.hide{display:none}
+/* 动作钮：图标 + 名字（站内画板两者都显示；画布只留图标，见 DrawPad.vue） */
+.ink-aic{font-size:13px;line-height:1}
+.ink-albl{margin-left:5px}
+/* 套索方式（剪选 / 整条）：工具条上的小切换钮，和设置页的 inkSelMode 同一项 */
+.ink-mode{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 7px;border:1px solid var(--line);
+  border-radius:8px;background:transparent;color:var(--mut);font:inherit;font-size:12px;line-height:1;cursor:pointer;
+  white-space:nowrap;transition:color .14s ease,border-color .14s ease,background .14s ease}
+.ink-mode svg{width:15px;height:15px}
+.ink-mode:hover{color:var(--ink);border-color:var(--mut)}
+.ink-mode.on{color:var(--blue);border-color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent)}
+/* 撤销：没有可回退的操作时变暗（仍可点，会提示一句） */
+.inkbar .dl.off{opacity:.45}
+/* 参数钮里的小图标（笔种、图形、方向）
+   必须写成 `.inkbar .ink-gic`：全局那条 `.board svg{width:100%;height:auto}` 的权重是 (0,1,1)，
+   光秃秃的 `.ink-gic` (0,1,0) 压不住它 —— 钢笔 / 图形 / 方向三枚按钮的图标会撑成整个按钮那么大 */
+.inkbar .ink-gic{width:16px;height:16px;flex:none;display:block}
+/* 收起钮（只有画布有）：收起来后整条只剩这一枚，点一下展开、点画布空白处自动收回 */
+.ink-fold{display:inline-flex;align-items:center;justify-content:center;width:28px;height:30px;padding:0;
+  border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--mut);cursor:pointer;
+  font:inherit;transition:color .14s ease,border-color .14s ease}
+.ink-fold svg{width:18px;height:18px;transition:transform .16s ease}
+.ink-fold:hover{color:var(--ink);border-color:var(--mut)}
+.inkbar.min{flex-wrap:nowrap;gap:4px;padding:4px}
+.inkbar.min > :not(.ink-fold){display:none}
+.inkbar.min .ink-fold{width:34px;height:30px;border-color:transparent}
+/* 收起后的箭头指向：展开时箭头朝「要收到哪一边」，收起后箭头朝「从哪一边放出来」。
+   顶上那条（画布公共槽）朝上下；贴在板里靠左 / 靠右就朝左右（.fold-l / .fold-r，由 _inkFoldTo 现算） */
+.ink-fold svg{transform:none}                       /* 朝左（也是 .fold-l 展开时的样子） */
+.inkbar.min .ink-fold svg{transform:rotate(180deg)} /* 默认收起朝右 */
+.inkbar.fold-u .ink-fold svg{transform:rotate(90deg)}
+.inkbar.fold-u.min .ink-fold svg{transform:rotate(-90deg)}
+.inkbar.fold-l.min .ink-fold svg{transform:rotate(180deg)}
+.inkbar.fold-r .ink-fold svg{transform:rotate(180deg)}
+.inkbar.fold-r.min .ink-fold svg{transform:none}
+/* 图钉：挨着收起钮，常驻时点亮 */
+.ink-pin{display:inline-flex;align-items:center;justify-content:center;width:28px;height:30px;padding:0;
+  border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--mut);cursor:pointer;
+  font:inherit;transition:color .14s ease,border-color .14s ease}
+.ink-pin svg{width:16px;height:16px}
+.ink-pin:hover{color:var(--ink);border-color:var(--mut)}
+.ink-pin.on{color:var(--blue);border-color:var(--blue)}
+/* 操作提示的小条：贴在**画板**下方正中，1.8 秒自隐（早先写在工具条里会被撑宽，挂到页面中间又离得远） */
+.ink-toast{position:absolute;left:50%;bottom:12px;transform:translate(-50%,8px);z-index:30;
+  max-width:calc(100% - 24px);padding:7px 14px;border-radius:10px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);font-size:12.5px;line-height:1.6;text-align:center;
+  box-shadow:0 12px 32px rgba(0,0,0,.28);opacity:0;pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease}
+.ink-toast.on{opacity:1;transform:translate(-50%,0)}
+/* 批注模式：整块板都是画布。样式写在 svg 的内联 style 上（跟着工具与悬停换：十字 / 箭头 / 橡皮 / 文本 / 缩放），
+   子元素用 inherit 接住它——写死 crosshair 会把选择、橡皮这些工具的样式盖掉 */
+.board.ink-on svg,.board.ink-on svg text,.board.ink-on svg foreignObject{cursor:inherit}
 @media (hover:none){.dl{opacity:1}}
 /* 底色面板：挂在板根上，点「▤ 底色」在操作条下方展开一排色卡（「沿用主题」在最前） */
 .tint-pop{position:absolute;top:38px;right:8px;z-index:7;display:flex;flex-direction:column;gap:8px;
@@ -361,8 +523,8 @@ td{border-bottom:1px solid var(--line);padding:7px 10px;vertical-align:top}
 td:first-child{white-space:nowrap;color:var(--cyan);font-family:ui-monospace,Menlo,monospace;font-size:13px}
 footer{color:var(--faint);text-align:center;font-size:13px;padding:30px 0 50px}
 /* ============ 讲解页三栏：左模块大纲（子专题可折叠，章全列）/ 中正文 / 右本讲结构 ============ */
-/* margin-top 让开左上圆钮（58..102）：第 46 行是顶栏高，再留 64 才落到 110 */
-.chap3{display:grid;grid-template-columns:280px minmax(0,1fr) 224px;gap:22px;align-items:start;margin-top:64px}
+/* 顶栏 46px + 一截呼吸就是正文顶边（原先要再让开左上角那枚 44px 圆钮，2026-11-17 起不用了） */
+.chap3{display:grid;grid-template-columns:280px minmax(0,1fr) 224px;gap:22px;align-items:start;margin-top:18px}
 .chap3.no-toc{grid-template-columns:280px minmax(0,1fr)}
 .chapmain{min-width:0}
 .chapmain article{min-width:0}
@@ -472,23 +634,13 @@ html.light .toc a.on{background:rgba(33,102,176,.11)}
   .toc{display:none}
 }
 @media (max-width:980px){
-  /* 窄屏圆钮缩成 40px（left10 / top54），一样要让开 */
-  .chap3,.chap3.no-toc{display:block;margin-top:52px}
+  .chap3,.chap3.no-toc{display:block}
   .chapnav{position:static;max-height:none;overflow:visible;padding:8px;margin-bottom:14px;border-radius:14px}
   .cn-body{overflow:visible;padding-right:0}
   .chapnav-t{display:none}
   .cn-g{font-size:13.5px;padding:5px 8px}
   .chapnav .cn-pg{display:none}
   .chaptabs{margin-bottom:12px}
-}
-/* 宽屏拉近正文：窗口 ≥1820px 时 main 居中，正文左缘退到 70px 开外，左上角面包屑圆钮
-   整个落在留白里、压不到首屏标题。这时把上面为让开圆钮留的 56 / 64px 收回来，
-   正文顶边回到顶栏之下 10 / 18px；左栏 sticky 顶边 64 = 顶栏 46 + 18，跟着对齐。
-   助手或画板让出半屏时 main 恢复满宽（max-width:none，左内边距 20），正文又贴回左边，
-   这时不收回，保持原来的让位。 */
-@media (min-width:1820px){
-  main:not(.chat-split):not(.dock-split) > * > .chapter-head:first-child{margin-top:10px}
-  main:not(.chat-split):not(.dock-split) .chap3{margin-top:18px}
 }
 /* ============ 亮色主题（学术纸面风） ============ */
 html.light{

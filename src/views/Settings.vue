@@ -49,12 +49,32 @@
       </div>
       <div class="set-row">
         <div class="set-label">
+          <strong>画布半屏方向</strong>
+          <span>画布（右下铅笔钮）开成半屏时贴哪一边，正文自动让出那一半；顶栏「✏ 画布」打开的始终是整屏。</span>
+        </div>
+        <div class="seg" role="group" aria-label="画布半屏方向">
+          <button v-for="o in SIDES" :key="o.v" type="button" :class="{ on: PREFS.canvasSide === o.v }"
+            @click="setPref('canvasSide', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
           <strong>章节导航默认折叠</strong>
           <span>讲解页左栏进页时的状态：只展开当前子专题、全部展开、全部收起。栏顶两枚按钮随时可改。</span>
         </div>
         <div class="seg" role="group" aria-label="章节导航默认折叠">
           <button v-for="o in NAVOPTS" :key="o.v" type="button" :class="{ on: PREFS.navOpen === o.v }"
             @click="setPref('navOpen', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>搜索框样式</strong>
+          <span>顶栏右上角的全站搜索（Ctrl K）怎么出现：顶栏展开时搜索框直接长在导航条里，结果从下面浮出；居中弹窗是原来那种盖住页面的大框。改完马生效。</span>
+        </div>
+        <div class="seg" role="group" aria-label="搜索框样式">
+          <button v-for="o in SEARCH" :key="o.v" type="button" :class="{ on: PREFS.searchBox === o.v }"
+            @click="setPref('searchBox', o.v)">{{ o.t }}</button>
         </div>
       </div>
       <div class="set-row">
@@ -166,6 +186,36 @@
         <div class="seg" role="group" aria-label="画板操作条位置">
           <button v-for="o in DL_POS" :key="o.v" type="button" :class="{ on: PREFS.dlPos === o.v }"
             @click="setPref('dlPos', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>画布工具条</strong>
+          <span>自动收回：在画布空白处点一下，工具条收成一个小钮（工具条右侧的图钉可以随手切换）；常驻：一直留在原位，点空白也不会收。</span>
+        </div>
+        <div class="seg" role="group" aria-label="画布工具条">
+          <button v-for="o in BAR_MODES" :key="o.v" type="button" :class="{ on: PREFS.inkBar === o.v }"
+            @click="setPref('inkBar', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>套索选择方式</strong>
+          <span>按形状剪选：圈到哪一段就选哪一段，跨过边界的笔画在边界处剪开，外面剩下的仍留在板上（框也跟着套索走，不再是外接矩形）；整条选：碰到就用整条，和以前一样。画布工具条上套索右边那枚「剪选 / 整条」钮可以直接切。</span>
+        </div>
+        <div class="seg" role="group" aria-label="套索选择方式">
+          <button v-for="o in SEL_MODES" :key="o.v" type="button" :class="{ on: PREFS.inkSelMode === o.v }"
+            @click="setPref('inkSelMode', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>操作提示</strong>
+          <span>批注时的短提示（吸附成功、搬到画布、截图失败之类）在这块画板的底部弹一条，一会儿自己消失；不想看就选「不提示」。</span>
+        </div>
+        <div class="seg" role="group" aria-label="操作提示">
+          <button v-for="o in TIP_MODES" :key="o.v" type="button" :class="{ on: PREFS.inkTip === o.v }"
+            @click="setPref('inkTip', o.v)">{{ o.t }}</button>
         </div>
       </div>
       <div class="set-row">
@@ -297,7 +347,7 @@
     <div class="read-row">
       <button class="readmark" type="button" @click="resetAll">恢复默认</button>
       <router-link class="readmark" to="/">回到目录</router-link>
-      <span class="readtip">默认：目录靠左，画板与助手靠右，半屏，只展开当前子专题，画板操作条排在板上方靠左，卡片悬停亮线跟随主题，背景是三团呼吸光影（混沌场景的线条默认冷蓝、浓度 30%），右下角一枚旋转多面体，拖过的板内文字自动记在本机，笔记停手后自动写进所选文件夹</span>
+      <span class="readtip">默认：目录靠左，画板与助手靠右，半屏，只展开当前子专题，画板操作条排在板上方靠左，画布半屏靠右、工具条贴顶部，卡片悬停亮线跟随主题，背景是三团呼吸光影（混沌场景的线条默认冷蓝、浓度 30%），右下角一枚旋转多面体，拖过的板内文字自动记在本机，笔记停手后自动写进所选文件夹</span>
     </div>
   </div>
 </template>
@@ -315,6 +365,8 @@ import { playPageAnim } from '../lib/pagetransition.js';
 const SIDES = [{ v: 'left', t: '靠左' }, { v: 'right', t: '靠右' }];
 const SIZES = [{ v: 'half', t: '半屏' }, { v: 'full', t: '整屏' }];
 const NAVOPTS = [{ v: 'cur', t: '当前子专题' }, { v: 'all', t: '全部展开' }, { v: 'none', t: '全部收起' }];
+// 全站搜索的呈现：顶栏直接展开 / 屏幕中间弹窗（见 components/SearchPalette.vue 的 mode）
+const SEARCH = [{ v: 'inline', t: '顶栏展开' }, { v: 'popup', t: '居中弹窗' }];
 // 旋转多面体摆哪儿（见 components/BgPoly.vue 的 pos 属性）
 const SOLID_POS = [{ v: 'br', t: '右下角' }, { v: 'left', t: '左侧留白' }, { v: 'right', t: '右侧留白' }];
 // 面包屑缓存条数：硬上限 20（见 lib/visits.js 的 MAX_VISITS）
@@ -330,6 +382,12 @@ const ANIMS = [
 const ONS = [{ v: 'on', t: '开' }, { v: 'off', t: '关' }];
 // 画板操作条放哪儿（见 lib/board.js 的 _placeBar）：
 const DL_POS = [{ v: 'left', t: '板上靠左' }, { v: 'right', t: '板上靠右' }, { v: 'in', t: '板内右上' }];
+// 画布批注工具条：点空白自动收回 / 常驻（见 lib/board.js 的 _inkFoldTo 与 pointerup 判空白）
+const BAR_MODES = [{ v: 'auto', t: '自动收回' }, { v: 'pin', t: '常驻' }];
+// 套索选择：圈到哪段选哪段 / 整条选（见 lib/board.js 的 _inkEndSel → _inkCutByPoly）
+const SEL_MODES = [{ v: 'cut', t: '按形状剪选' }, { v: 'whole', t: '整条选' }];
+// 批注操作提示：画板底部弹一条 / 不提示（见 lib/board.js 的 _inkTipSay）
+const TIP_MODES = [{ v: 'toast', t: '弹出提示' }, { v: 'off', t: '不提示' }];
 // 卡片悬停亮线颜色：默认跟主题走（'theme'），选自定义就存一个 '#rrggbb'（见 lib/settings.js 的 cardInk）
 const inkHex = computed(() => (PREFS.cardInk === 'theme' ? '#5cadff' : PREFS.cardInk));
 const pickInk = () => setPref('cardInk', inkHex.value);

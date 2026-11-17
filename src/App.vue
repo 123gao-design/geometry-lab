@@ -7,12 +7,14 @@
     <button class="navdir" type="button" :class="{ on: drawerOpen }" @click="drawerOpen = !drawerOpen">
       <span class="navdir-ic" aria-hidden="true">☰</span>章节目录
     </button>
+    <Breadcrumb />
     <span class="nav-sp" />
-    <button class="pin pin-btn" type="button" title="全站搜索（Ctrl K）" @click="searchEl && searchEl.toggle()">
-      <span aria-hidden="true">⌕</span> 搜索
-    </button>
+    <div class="nav-center"><SearchPalette ref="searchEl" :mode="PREFS.searchBox" /></div>
     <router-link to="/cheatsheet" class="pin">速查</router-link>
     <router-link to="/playground" class="pin">画板</router-link>
+    <button class="pin pin-btn" type="button" title="画布：整屏空白画布，随手写画（可保存成 PNG）" @click="openCanvas">
+      <span aria-hidden="true">✏</span> 画布
+    </button>
     <router-link to="/notes" class="pin">笔记</router-link>
     <button class="pin pin-btn" type="button" :class="{ on: chatOpen }" @click="chatOpen = !chatOpen">
       <span aria-hidden="true">💬</span> 助手
@@ -24,17 +26,19 @@
   <main ref="mainEl" :data-anim="PREFS.pageAnim"
     :class="{ 'dock-split': dockOpen, 'dock-left': (dockOpen && PREFS.dockSide === 'left'),
               'chat-split': chatOpen && PREFS.chatSize === 'half',
-              'chat-left': chatOpen && PREFS.chatSize === 'half' && PREFS.chatSide === 'left' }"><router-view /></main>
+              'chat-left': chatOpen && PREFS.chatSize === 'half' && PREFS.chatSide === 'left',
+              'draw-split': drawOpen && drawMode === 'side',
+              'draw-left': drawOpen && drawMode === 'side' && drawSide === 'left' }"><router-view /></main>
   <ChapterDrawer v-model:open="drawerOpen" :side="PREFS.drawerSide" />
   <GeoGebraDock v-model:open="dockOpen" :side="PREFS.dockSide" />
   <CalcDock />
   <ChatDock v-model:open="chatOpen" />
   <NotesDock v-model:open="notesOpen" />
-  <SearchPalette ref="searchEl" />
   <FloatRail v-model:chat-open="chatOpen" v-model:notes-open="notesOpen" />
-  <Breadcrumb />
+  <DrawPad v-model:open="drawOpen" v-model:mode="drawMode" v-model:side="drawSide" />
   <footer v-if="!isPlayground" :class="{ 'dock-split': dockOpen, 'dock-left': dockOpen && PREFS.dockSide === 'left',
-    'chat-split': chatOpen && PREFS.chatSize === 'half', 'chat-left': chatOpen && PREFS.chatSize === 'half' && PREFS.chatSide === 'left' }">Geometry Lab · 单机离线运行 · Vue 3 + Vite + KaTeX · 画板引擎为框架无关的纯 SVG/JS，可独立复用</footer>
+    'chat-split': chatOpen && PREFS.chatSize === 'half', 'chat-left': chatOpen && PREFS.chatSize === 'half' && PREFS.chatSide === 'left',
+    'draw-split': drawOpen && drawMode === 'side', 'draw-left': drawOpen && drawMode === 'side' && drawSide === 'left' }">Geometry Lab · 单机离线运行 · Vue 3 + Vite + KaTeX · 画板引擎为框架无关的纯 SVG/JS，可独立复用</footer>
 </template>
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
@@ -48,6 +52,7 @@ import NotesDock from './components/NotesDock.vue';
 import SearchPalette from './components/SearchPalette.vue';
 import Breadcrumb from './components/Breadcrumb.vue';
 import FloatRail from './components/FloatRail.vue';
+import DrawPad from './components/DrawPad.vue';
 import BgMotion from './components/BgMotion.vue';
 import BgPoly from './components/BgPoly.vue';
 import { PREFS } from './lib/settings.js';
@@ -63,9 +68,22 @@ const dockOpen = ref(false);
 const chatOpen = ref(false);
 const notesOpen = ref(false);
 const searchEl = ref(null);   // SearchPalette 实例：顶栏「搜索」钮与 Ctrl K 走同一个 toggle
-watch(dockOpen, v => { if (v) { chatOpen.value = false; notesOpen.value = false; } });
-watch(chatOpen, v => { if (v) { dockOpen.value = false; notesOpen.value = false; } });
-watch(notesOpen, v => { if (v) { dockOpen.value = false; chatOpen.value = false; } });
+// 空白画布（顶栏「✏ 画布」与右下铅笔钮）：侧栏时正文同样让出一半，整页时铺满屏幕。
+// 半屏贴哪边在设置页里选（PREFS.canvasSide）。
+const drawOpen = ref(false);
+const drawMode = ref('side');    // side | full
+const drawSide = ref(PREFS.canvasSide);   // right | left
+// 顶栏按钮：一律整屏打开
+function openCanvas() {
+  drawMode.value = 'full';
+  drawOpen.value = true;
+}
+// 设置里换了半屏方向，画布没开着就跟着换（开着的时候不硬拽，免得上了一半跑掉）
+watch(() => PREFS.canvasSide, v => { if (!drawOpen.value) drawSide.value = v; });
+watch(dockOpen, v => { if (v) { chatOpen.value = false; notesOpen.value = false; drawOpen.value = false; } });
+watch(chatOpen, v => { if (v) { dockOpen.value = false; notesOpen.value = false; drawOpen.value = false; } });
+watch(notesOpen, v => { if (v) { dockOpen.value = false; chatOpen.value = false; drawOpen.value = false; } });
+watch(drawOpen, v => { if (v) { dockOpen.value = false; chatOpen.value = false; notesOpen.value = false; } });
 
 // 画板页是整页画板：页脚会顶出竖向滚动条，故只在非画板页显示
 const route = useRoute();

@@ -3,7 +3,7 @@
     <div class="chapter-head">
       <h1>拓扑学基础</h1>
       <p class="sub">只保留远近与连续，不管长度角度。开集公理把「挨得近」写成三条规则，连续映射与同胚随之定义；连通与紧致回答空间整不整块、能不能被有限盖住；商空间把正方形粘成环面与克莱因瓶。最后两样东西用来分辨形状：欧拉示性数数顶点、棱、面，基本群看闭环路怎么绕洞。</p>
-      <div class="readall">已上线 {{ built }} / {{ total }} 章：拓扑空间 5/5，连通与紧致 4/4，不变量初步 3/3</div>
+      <div class="readall">学习进度：已读 {{ readAll }} / {{ total }} 章</div>
     </div>
 
     <h3 class="sec">子专题一 · 拓扑空间<span class="prog">已读 {{ cnt(spn) }}/{{ spn.length }} · 5 章</span></h3>
@@ -33,7 +33,7 @@
       </router-link>
     </div>
 
-    <div class="note good">十二块画板各管一件事。拓扑空间五台：开集与开球机让球在圆盘里进出，判读只认「整颗球在不在集合里」；基与子空间机用网格基球铺满 L 形开集，切到子空间视角后球与直线的交成了相对开集；内部与闭包机拖动一点，内点、边界点、外点依次翻牌，孤立点也在边界上；开区间原像机画出 <Katex tex="f(x)=x^2" /> 在值域开区间下的原像，换成跳断函数，原像端点立刻由空心变实心；度量球机把 <Katex tex="p" />-范数的单位球与 <Katex tex="\varepsilon" /> 邻域并排，点列的尾巴进圈与否由不等式读出。连通与紧致四台：分割机用一条走廊决定空间能否拆成两块开集；道路机把哑铃形空间里的路径一段段画出，切到正弦曲线，整体连通却走不到原点；有限子覆盖机让闭区间与开区间的开覆盖并排，红色缺口永远贴着开区间的端点；粘边机按箭头方向把正方形粘成环面、克莱因瓶与莫比乌斯带。不变量三台：数顶点机在四面体、长方体、环面、双环面之间切换，<Katex tex="V-E+F" /> 从 <Katex tex="2" /> 掉到 <Katex tex="0" /> 再掉到 <Katex tex="-2" />；绕数机把 <Katex tex="\pi_1(S^1)=\mathbb Z" /> 画成层层外扩的螺旋；展开机把实数轴缠到圆周上，直线上的整点全部落进同一枚基点，二次覆叠模式下原像变成两个。</div>
+    <div class="note good">拓展阅读：① 商空间把「粘合」写成映射，环面、克莱因瓶与射影平面都由正方形的粘边方式决定；② 基本群记录闭环路绕洞的方式，<Katex tex="\pi_1(S^1)=\mathbb Z" /> 是最简单的一例；③ 闭曲面分类给出「可定向按亏格、不可定向按交叉帽数」的完整清单，欧拉示性数是判别量；④ 布劳威尔不动点定理与压缩映射原理说明连续本身就能保证存在性；⑤ 海涅—博雷尔定理把「紧致」与「有界闭」在欧氏空间里等同起来。全站定理总表见顶栏<strong>速查</strong>。</div>
   </div>
 </template>
 <script setup>
@@ -63,7 +63,7 @@ const inv = [
 const cnt = arr => arr.filter(c => READ.set.has(c.to)).length;
 const higher = higherOf('topology');
 const total = higher.groups.reduce((s, g) => s + g.items.length, 0);
-const built = spn.length + con.length + inv.length;
+const readAll = cnt(spn) + cnt(con) + cnt(inv);
 </script>
 <style scoped>
 .note.good { margin-top: 26px; }

@@ -3,7 +3,7 @@
     <div class="chapter-head">
       <h1>分形几何</h1>
       <p class="sub">有些集合放大后与原来相似，维数不再是整数。康托集、科赫曲线与谢尔宾斯基三角各有生成规则，相似维数与盒维数量出它们占空间的多少；迭代函数系统与 L 系统把生成规则写成压缩映射与字符串替换，最后回到自然界，用一把会变的尺子去量海岸线。</p>
-      <div class="readall">已上线 {{ built }} / {{ total }} 章：自相似与维数 4/4，典型分形 4/4，生成与应用 3/3</div>
+      <div class="readall">学习进度：已读 {{ readAll }} / {{ total }} 章</div>
     </div>
 
     <h3 class="sec">子专题一 · 自相似与维数<span class="prog">已读 {{ cnt(dim) }}/{{ dim.length }} · 4 章</span></h3>
@@ -33,7 +33,7 @@
       </router-link>
     </div>
 
-    <div class="note good">十一块画板各管一件事。维数四台：自相似机逐层替换线段与正方形，颜色按顶层副本分配；相似维数机拖动 <Katex tex="N" /> 与 <Katex tex="m" /> 实时算出 <Katex tex="\ln N/\ln m" />，校验徽章恒等于 1；盒维数机让方格网逐层变细，康托、科赫、谢尔宾斯基的相交格数分别按 2、4、3 倍增长；豪斯多夫机把康托集逐层塔与 <Katex tex="F_k(s)=\sum\delta^{s}" /> 的对数直线并排，拖指数越过 <Katex tex="\log2/\log3" /> 看测度由无穷翻成零。典型分形四台：逐层挖空机把康托集的每一层平铺成行，红色虚线标出新挖掉的中段；科赫折线机拖动层数看折角细化，切到雪花看闭合版本；谢尔宾斯基挖空机在三角与地毯之间切换；复迭代机拖动参数 <Katex tex="c" />，朱利亚图与曼德博图互为切片。生成三台：混沌游戏用固定种子随机落点，三种吸引子与手画的一致；L 系统龟行机把字符串读成枝条；海岸线量尺机用不同尺长去量同一条科赫海岸，双对数图拟合出维数。</div>
+    <div class="note good">拓展阅读：① 自相似维数由生成规则直接读出（<Katex tex="\ln N/\ln s" />），盒维数对一般集合适用，严格自相似时两者相等；② 迭代函数系与拼贴定理给出「用压缩映射生成图形」的一般办法；③ 曼德博集与朱利亚集把参数平面画出来，边界附近的周期点与连通性相关；④ L 系统以字符串替换描述植物分枝，分形压缩与地形生成是它在工程上的用法；⑤ 多重分形把维数从一个数推广为一串指数，用来描述疏密不均的测度。全站定理总表见顶栏<strong>速查</strong>。</div>
   </div>
 </template>
 <script setup>
@@ -62,7 +62,7 @@ const gen = [
 const cnt = arr => arr.filter(c => READ.set.has(c.to)).length;
 const higher = higherOf('fractal');
 const total = higher.groups.reduce((s, g) => s + g.items.length, 0);
-const built = dim.length + shape.length + gen.length;
+const readAll = cnt(dim) + cnt(shape) + cnt(gen);
 </script>
 <style scoped>
 .note.good { margin-top: 26px; }

@@ -7,7 +7,7 @@
 - 本机**无系统 node、无 sudo**：每次 Bash 先 `export PATH="$HOME/apps/node/bin:$PATH"`（已装 v22）。registry 用 npmmirror。
 - dev 服务器通常已在后台运行（localhost:5173）；改完代码 HMR 生效，**不要重启**。唯一例外：页面报 `does not provide an export named 'createBoard'` 而磁盘文件与 `npm run build` 均完好 —— watcher 在批量写入（先截断后落盘）的空档取到文件，把空模块缓存在 dev 内存且不自愈；curl 该模块只回一行 sourcemap 即确诊，先 TaskStop 再重启即愈（2026-11-06 踩过）。校验用 `npm run build`（约 13 s；按 vite 打印口径，入口 `index` ~194 kB / gzip ~75 kB，另有 `vendor-vue` ~106 kB、`katex` ~258 kB、`three` ~753 kB 三个固定块，其余 400 多个章节块按路由懒加载）。产物纯静态（hash 路由），可 file:// 打开。
 - **网页版部署（GitHub Pages，2026-11-17）**：`.github/workflows/pages.yml`——推 `main`（或手动 dispatch）→ `npm ci` + `npm run build` → `upload-pages-artifact`（`path: dist`）→ `deploy-pages`；permissions 只要 `contents:read / pages:write / id-token:write`，concurrency 组 `pages` 只发最后一次。**首次要在仓库 Settings → Pages → Source 选「GitHub Actions」**（选分支那种方式不认 Actions 产物）。站点是纯静态：`base:'./'` + hash 路由，部署在 `/geometry-lab/` 子路径下不用改配置，刷新任何页都落回 `index.html`，不需要 404 兜底。`public/ggb` 约 70 MB 会一起进站点，首次发布慢。**换域名等于换 origin**：localStorage（笔记 `gl-notes`、偏好 `gl-prefs`、文字位置 `gl-lbl`、进度、对话）按 origin 分开存，localhost 的不会跟到线上——搬家走笔记页侧栏「备份 / 导入」。桌面端与网页端互不影响，两套 CI 文件分开。
-- **首屏瘦身（2026-11-17）**：`router.js` 除 `Home` 外**全部改成 `const X = () => import('./views/…vue')`**——新增章节必须照这个写法，写成 `import X from …` 会把整章并回入口包。`vite.config.js` 里 `manualChunks` 固定三块：`vendor-vue`（vue + vue-router）、`katex`、`three`（gl3d 本就走动态 import）。结果：入口 590 → 194 kB（gzip 75），首屏合计约 194 kB gzip（改前单包 2938 kB / 1168 kB）。**主题系统已从 board.js 拆到 `src/lib/theme.js`**（THEMES / applyTheme / initTheme / 光影 / 🎨 选单）——main.js 与 App.vue 只引 theme.js，board.js 再 `export … from './theme.js'` 转出，老路子的 import 照旧；换主题要重画所有板，走 `onThemeChange(fn)` 钩子（board.js 里登记 `BOARDS.forEach(b => b.render())`）。**KaTeX 在 `lib/mdmini.js` 改成按需取**（`preloadKatex()`，取到前公式退成等宽源码，ChatDock 靠 `mdTick` 重渲染一次）；但 `Home.vue` 的章节卡与 board 的 `texMix` 是同步用，所以首屏仍会带 katex 块，别以为能省掉。`index.html` 里有一段内联脚本 + 内联 CSS：挂载前先按 localStorage 设 `data-theme`/`light` 类（防暗色站闪白），并放一个 `#boot` 骨架；main.js 读默认文字位置档最多等 1.2 s（`Promise.race`），超时照常挂载。
+- **首屏瘦身（2026-11-17）**：`router.js` 除 `Home` 外**全部改成 `const X = () => import('./views/…vue')`**——新增章节必须照这个写法，写成 `import X from …` 会把整章并回入口包。`vite.config.js` 里 `manualChunks` 固定三块：`vendor-vue`（vue + vue-router）、`katex`、`three`（gl3d 本就走动态 import）。结果：入口 590 → 194 kB（gzip 75），首屏合计约 194 kB gzip（改前单包 2938 kB / 1168 kB）。**主题系统已从 board.js 拆到 `src/lib/theme.js`**（THEMES / applyTheme / initTheme / 光影 / 🎨 选单）——main.js 与 App.vue 只引 theme.js，board.js 再 `export … from './theme.js'` 转出，老路子的 import 照旧；换主题要重画所有板，走 `onThemeChange(fn)` 钩子（board.js 里登记 `BOARDS.forEach(b => b.render())`）。**KaTeX 在 `lib/mdmini.js` 改成按需取**（`preloadKatex()`，取到前公式退成等宽源码，ChatDock 靠 `mdTick` 重渲染一次）；但 `Home.vue` 的章节卡与 board 的 `texMix` 是同步用，所以首屏仍会带 katex 块，别以为能省掉。`index.html` 里有一段内联脚本 + 内联 CSS：挂载前先按 localStorage 设 `data-theme`/`light` 类（防暗色站闪白），并放一个 `#boot` 骨架；main.js 读默认文字位置档最多等 1.2 s（`Promise.race`），超时照常挂载。**骨架底色只许写在 `#boot` 上，绝不给 `html`/`body` 加 `background`**：html 一旦有背景，body 的 `background:var(--bg)` 就不再传播到画布，而是自己画成一层不透明底，正好盖住 `z-index:-1` 的 `.bg-fx`/`.bg-motion`/`.bg-poly`——症状是换主题背景不变、背景光影与混沌动画全部消失（2026-11-17 踩过；`.bg-fx` 靠的就是 body 背景上浮到 canvas 之后仍位于负 z 层之上）。
 - **桌面端打包（Tauri 2，2026-11-16 立项）**：`src-tauri/` 是桌面壳——界面就是 Vite 产物（`frontendDist: '../dist'`，dev 时走 `devUrl: :5173`），壳里只挂 dialog / fs 两个插件（给后续统一保存入口 `src/lib/save.js` 桥系统文件对话框，浏览器端仍走 fsdir.js 的 FSA，两轨并存）。`productName` 用 ASCII「GeometryLab」（NSIS 对中文包名挑剔），窗口标题仍是中文；identifier `design.gao123.geometrylab`。命令：`npm run icon`（一次性生成 `src-tauri/icons/`，零依赖脚本 `scripts/gen-icon.mjs`，SDF 抗锯齿照 favicon 构图；**不跑这步 icons 目录是空的，`tauri build` 会因找不到图标失败**）、`npm run tauri dev` / `npm run tauri build`（本机需 Rust 工具链，当前未装）。**发版走 CI**：`.github/workflows/release.yml`，推 `v*` 标签（或 Actions 页手动触发）→ windows / macos(arm+x64 双 target) / ubuntu 矩阵各出安装包挂到 draft Release——Windows NSIS `-setup.exe`（每用户安装、WebView2 `embedBootstrapper` 引导）、macOS 按芯片 `.dmg`、Linux `.deb` + `.AppImage`。已知边界：macOS WKWebView 里 MediaRecorder 不可靠、无 FSA（录像与存目录以浏览器端为准）；Linux WebKitGTK 偶发 WebGL 黑屏，`WEBKIT_DISABLE_DMABUF_RENDERER=1` 可解；未签名，macOS 首开右键→打开、Windows SmartScreen 选仍要运行。capabilities 目前只放 `core:default + dialog:default + fs:default`，fs 的写范围等 save.js 落地再补。
 
 ## 目录结构（模块 → 子专题 两级，views 与 boards 同构）
@@ -57,13 +57,13 @@ scripts/gen-icon.mjs  图标生成器（零依赖：SDF 抗锯齿 + 手写 PNG/I
 - `/<模块>` 模块主页；`/<模块>/<子段><n>` 章节，如 `/conics/def4`、`/conics/opt2`。
 - 子专题的 nav 文件（`defnav.js` 等）导出 `XXX_CHAPTERS`（章节名数组）与 `XXX_BASE`（路由前缀），放在 views 的分组目录里；`ChPage` 传 `:cur :no :base :chapters :toc`，`no` 用子专题字母（如 `no="D4"`）覆盖默认的 '§'+cur 标签。
 - 章节页内锚点不能走 href（hash 被路由占用）：toc 的 id 由 ChPage 程序化滚动。
-- **讲解页三栏版式（用户 2026-11-12 拍板，三轮定型）**：`ChPage` 输出 `.chap3` 网格（**顶边距两档**：窗口 ≥1820px 时 `margin-top:18px`——此时 `main` 居中、正文左缘退到 70px 开外，左上角面包屑圆钮落在留白里压不到正文，正文与左右栏顶边齐在顶栏之下 18px 处；窄屏 `margin-top:64px`、≤980px 再改 52px，为的是让开 `left:16px; top:58px` 的 44px 圆钮。模块主页这类整页开头的 `.chapter-head:first-child` 同理：宽屏 10px、其余 56px。助手/画板让出半屏时 `main` 恢复满宽（`max-width:none; padding:0 20px`），正文又贴回左边，故宽屏那档用 `main:not(.chat-split):not(.dock-split)` 排除）—— 左 `.chapnav` 章节导航（280px，sticky）｜中 `.chapmain` 正文｜右 `.toc` 本讲结构（224px，sticky，滚动高亮）。左栏**列整模块的章，按子专题折叠、一章不省**（`lib/modnav.js` 的 `moduleOf(route.path)`）：组头是按钮（`.cn-g` + ▸/▾ + 右端「已读/章数」，整组读完转绿），当前子专题在组头留一道左侧色条，可同时展开多组；组内 `.cn-list` 用一道竖线收拢层级，章条目带两位序号与已读 ✓；栏底上一章/下一章按整模块顺序。**子专题内部的几章横排成 `.chaptabs` 小号胶囊（13px、`padding:2px 10px`，高度与文字相当）压在 h1 上方**，只有一个章的子专题不铺。`main` 最大宽度 1720px、左右内边距 20px，正文在 1920 屏宽 1132px。断点：≤1340px 收右栏、左栏 262px；≤980px 左栏变静态块（`max-height:none;overflow:visible`，不做栏内滚动，免得工具条被内部滚动挤到视口外）、`.chaptabs` 与标题单列。**左栏顶部的折叠控制（用户 2026-11-12 追加）**：`.chapnav` 是 flex 竖列——`.chapnav-hd`（模块名 + 控制）与 `.cn-pg`（翻章）固定，只有中间 `.cn-body` 滚动，所以工具条不会被内部滚动挤走；`.cn-tools` 里「展开全部 / 合并全部」两枚互斥按钮，高亮由 `allOpen`/`allShut` 两个 computed 现算（所有组全开 / 全合才亮，手动点组头即离开两态）。三种**进页默认**「当前子专题 / 全展开 / 全收起」不放在栏里，**在设置页「章节导航默认折叠」里选**（用户 2026-11-12 要求：设置统一进设置页，栏里不要再单独加按钮），值走 `PREFS.navOpen`（`gl-prefs`，取值 `cur|all|none`，默认 `cur`），`ChPage` 进页时直接读它。翻到别的子专题时只把新组打开、不动用户手动开合的其它组；换模块（`watch(mod)`）按默认模式重建折叠表。进页滚动用最小位移（只把当前章带进视野、留 10px 余量），不要居中——居中会把组头切掉半行。栏底的「← 上一章 / 下一章 →」是两枚等宽描边按钮（`.cn-pg a`，flex:1、10px 圆角、悬停转蓝）；左栏与右栏的滚动条走自定义样式（`::-webkit-scrollbar` 8px 宽、透明轨道、圆角拇指 `background-clip:content-box`，平时 22% 透明度、悬停 45%，Firefox 用 `scrollbar-color` 同步）。打印时三栏与胶囊条都隐藏、正文单列（`@media print` 里 `.chap3{display:block}`）。
+- **讲解页三栏版式（用户 2026-11-12 拍板，三轮定型）**：`ChPage` 输出 `.chap3` 网格（**顶边距一档到底 `margin-top:18px`**（2026-11-17 起）：原先左上角钉着一枚 44px 的面包屑圆钮（`left:16px; top:58px`），会压住首屏标题，窄屏要让到 64px、≤980px 再改 52px，宽屏再收回到 18px；圆钮收进顶栏之后整段让位一起撤掉，文件末尾那档 `@media (min-width:1820px)` 也删了。模块主页这类整页开头的 `.chapter-head:first-child` 同样 18px。助手/画板让出半屏时 `main` 恢复满宽（`max-width:none; padding:0 20px`），正文贴回左边——原先那条要用 `main:not(.chat-split):not(.dock-split)` 排除的宽屏特例也随圆钮一起没了）—— 左 `.chapnav` 章节导航（280px，sticky）｜中 `.chapmain` 正文｜右 `.toc` 本讲结构（224px，sticky，滚动高亮）。左栏**列整模块的章，按子专题折叠、一章不省**（`lib/modnav.js` 的 `moduleOf(route.path)`）：组头是按钮（`.cn-g` + ▸/▾ + 右端「已读/章数」，整组读完转绿），当前子专题在组头留一道左侧色条，可同时展开多组；组内 `.cn-list` 用一道竖线收拢层级，章条目带两位序号与已读 ✓；栏底上一章/下一章按整模块顺序。**子专题内部的几章横排成 `.chaptabs` 小号胶囊（13px、`padding:2px 10px`，高度与文字相当）压在 h1 上方**，只有一个章的子专题不铺。`main` 最大宽度 1720px、左右内边距 20px，正文在 1920 屏宽 1132px。断点：≤1340px 收右栏、左栏 262px；≤980px 左栏变静态块（`max-height:none;overflow:visible`，不做栏内滚动，免得工具条被内部滚动挤到视口外）、`.chaptabs` 与标题单列。**左栏顶部的折叠控制（用户 2026-11-12 追加）**：`.chapnav` 是 flex 竖列——`.chapnav-hd`（模块名 + 控制）与 `.cn-pg`（翻章）固定，只有中间 `.cn-body` 滚动，所以工具条不会被内部滚动挤走；`.cn-tools` 里「展开全部 / 合并全部」两枚互斥按钮，高亮由 `allOpen`/`allShut` 两个 computed 现算（所有组全开 / 全合才亮，手动点组头即离开两态）。三种**进页默认**「当前子专题 / 全展开 / 全收起」不放在栏里，**在设置页「章节导航默认折叠」里选**（用户 2026-11-12 要求：设置统一进设置页，栏里不要再单独加按钮），值走 `PREFS.navOpen`（`gl-prefs`，取值 `cur|all|none`，默认 `cur`），`ChPage` 进页时直接读它。翻到别的子专题时只把新组打开、不动用户手动开合的其它组；换模块（`watch(mod)`）按默认模式重建折叠表。进页滚动用最小位移（只把当前章带进视野、留 10px 余量），不要居中——居中会把组头切掉半行。栏底的「← 上一章 / 下一章 →」是两枚等宽描边按钮（`.cn-pg a`，flex:1、10px 圆角、悬停转蓝）；左栏与右栏的滚动条走自定义样式（`::-webkit-scrollbar` 8px 宽、透明轨道、圆角拇指 `background-clip:content-box`，平时 22% 透明度、悬停 45%，Firefox 用 `scrollbar-color` 同步）。打印时三栏与胶囊条都隐藏、正文单列（`@media print` 里 `.chap3{display:block}`）。
 
 ## 站点外壳：设置 / 助手 / 笔记 / 浮钮 / 切页（2026-11-12 用户拍板）
 
 - **设置统一进 `/settings`**（用户原话「导航栏的设置放在设置页面，不要单独增加设置按钮」）：章节导航的进页默认折叠不再是栏里的齿轮，改在设置页选。偏好全走 `lib/settings.js` 的 `PREFS`（`gl-prefs`）——`drawerSide`、`dockSide`、`chatSide`、`chatSize`（half/full）、`navOpen`（cur/all/none）、`pageAnim`（fade/up/zoom/slide/blur/none）、`noteFormat`、`visitCap`（面包屑缓存条数，字符串 '5'/'8'/'12'/'20'）、`bgMotionOn` / `bgScene`（背景动画）、`bgSolidOn` / `bgSolidPos`（旋转多面体的开关与位置）、`lblPin`（板内拖过的文字位置记在本机，默认开）、`lblPath`（默认文字位置文件，public/ 下的相对路径）、`dlPos`（画板操作条位置：left 默认，板上靠左；right 板上靠右；in 板内悬浮）、`cardInk`（卡片悬停亮线颜色：theme 默认跟主题，或 `#rrggbb` 自定义）、`bgInk`（背景混沌线条颜色：auto 默认冷蓝，或 `#rrggbb`）、`bgAlpha`（背景线条浓度倍数，默认 0.3 = 30%）、`noteAuto`（笔记停手后自动写进所选文件夹，on 默认 / off），见本节末两条。`setPref` 用 `CHOICES` 白名单挡非法值，新增偏好要同时补 `DEFAULTS` 与（可选的）`CHOICES`；放行 `#rrggbb` 这类值的项写进 `FREE` 校验表（`ok(k,v)` 统一走三道）。
 - **首页章节卡版式（2026-11-16）**：`Home.vue` 两个 `.topic-grid` 加 `home-grid` 类，`global.css` 里 `.home-grid .topic-card` 改 grid 两列（`minmax(0,1fr) auto`）—— 标题占左列、「已上线 / 规划中」状态框排到同一行的右端（`grid-column:2; justify-self:end; margin:0`），提要 `p` 跨两列占第二行；「已读 n / N」小框仍绝对定位在右下角不动。**标签统一写「已上线」（用户 2026-11-16：「已上线就行，不需要些多少章」），不再拼「N 章」**——章数由右下角「已读 n / N」和模块主页交代。悬停除了整卡 `translateY(-3px)` 与投影，标题转蓝、状态框描边提亮，圆角边框上再跑一段亮线：`.topic-card::after` 用 `conic-gradient` + `padding:2px` + `mask-composite:exclude` 只在 2px 边框环里显影，`@property --gl-sweep` 让角度（`0deg → 360deg`，1.9s 一轮）可动画，亮段就沿圆角矩形走一圈；**亮段取近白收尾 + `drop-shadow` 辉光**（第一版 1px 纯蓝，压在悬停后转蓝的边框上几乎看不见，用户当天就回「跑亮线好像不明显」）；`prefers-reduced-motion` 下不转、也不上移。**颜色可换（同日用户「线条颜色可以跟随主题，或者自定义，放在设置中」）**：亮线读 `--gl-sweep-ink`，`:root` 里默认 `var(--blue)` 随主题换；设置页「界面布局 · 卡片悬停亮线」选「自定义」后，`lib/settings.js` 的 `applyCardInk()` 往 `documentElement` 写一条同名内联变量盖掉它（`PREFS.cardInk`：`'theme'` 或 `#rrggbb`，白名单表达不了，由 `FREE` 校验器单独放行），选回跟随主题即 `removeProperty`。**子页面也用同一套色（同日用户「子页面的框也可以做类似的修改……增加框内颜色渐变填充，从左到右，颜色也渐变，淡一点」）**：`global.css` 给所有 `.topic-card` 加 `::before` —— `inset:0` 的 `linear-gradient(90deg, ink 15%, ink 5% 55%, transparent 88%)`，hover 时 opacity 0→1（0.3s），扫边只在 `home-grid` 下有；卡片加 `isolation:isolate`，正文 / 标签 / 进度框 `z-index:1` 压在填充之上（`.prog-box` 原本就是 absolute，只补 z-index，别改成 relative）。
-- **左侧浮钮 `FloatRail`**：返回上一页（2026-11-16 新增：排在栏顶；只有 `history.state.back` 是站内路径时才渲染，读的就是 vue-router 每次导航写进去的上一页完整路径，直接打开链接或从站外进来时为 null，按下去不会跳出本站；`watch(route.fullPath)` 同步，点击 `router.back()`）、回首页（`route.path === '/'` 时整枚不渲染）、回顶部（`scrollY > 320` 才 `v-show`，平滑滚动）、数字游戏（紫色骰子，`route.path.startsWith('/games')` 时不渲染）、随页笔记开关（绿色，`/` 与 `/notes` 上不渲染）、助手开关（蓝色，`v-model:chat-open` 与顶栏「💬 助手」共用）。`position:fixed; left:16px; bottom:96px`，打印时藏；六枚 44px 圆钮加 10px 间隙通高最多 314px，仍在面包屑圆钮（`top:58px`）之下。
+- **左侧浮钮 `FloatRail`**：返回上一页（2026-11-16 新增：排在栏顶；只有 `history.state.back` 是站内路径时才渲染，读的就是 vue-router 每次导航写进去的上一页完整路径，直接打开链接或从站外进来时为 null，按下去不会跳出本站；`watch(route.fullPath)` 同步，点击 `router.back()`）、回首页（`route.path === '/'` 时整枚不渲染）、回顶部（`scrollY > 320` 才 `v-show`，平滑滚动）、数字游戏（紫色骰子，`route.path.startsWith('/games')` 时不渲染）、随页笔记开关（绿色，`/` 与 `/notes` 上不渲染）、助手开关（蓝色，`v-model:chat-open` 与顶栏「💬 助手」共用）。`position:fixed; left:16px; bottom:96px`，打印时藏；六枚 44px 圆钮加 10px 间隙通高最多 314px（原先要留意别顶到左上角那枚面包屑圆钮，2026-11-17 那枚收进顶栏后不用再管）。
 - **数字游戏 `/games`（2026-11-13，入口是左侧紫色骰子圆钮）**：`views/Games.vue` 单页四台小游戏，全部在本机跑、不联网、无第三方库。① 24 点——四张牌各自只用一次、中间结果按分数精确算：`step24` 递归两两配对（加减乘除都试，减与除连减、连除两个方向），`mk` 约分并统一分母，命中 `n === 24*d` 才算解；`eval24` 是手写递归下降解析（数字/括号/一元负号/四则），只接受 `[0-9+\-*/()]`，中文全角括号先归一成半角；校验时把写法里出现的整数排序与四张牌排序比对，确保四张全用且各一次；换一组时随机试最多 80 手，解不出就退回 `[3,3,8,8]`（`8 ÷ (3 − 8 ÷ 3)`），不会出现无解牌面。② 数字华容道——3×3 / 4×4 两档，`pzShuffle` 只走合法相邻交换并在最后一步防回退，保证一定可解；`.pz-board` 用 `--n` 变量铺格子，空格 `disabled`，计步与计时（首次滑动才起表），拼齐即停表。③ 60 秒速算——加减乘除四类题（两位数加减、2..12 乘 4..19、整除），倒计时归零收卷，最佳成绩存 `localStorage 'gl-rush-best'`。④ 猜数字——四位数、数字互不相同、首位不为 0，A 为位对、B 为数字对位不对，历史逐条列出。`onBeforeUnmount` 里停掉两个定时器；输入框焦点用 `nextTick` 收回，连答不用重新点。样式全在组件 scoped CSS 里，浅色主题靠 `var(--card)/var(--line)/var(--ink)` 自适应。**2048 与数独各占一页（2026-11-13 用户先要求「另起一页」，随后又要求「俩个挤在一块太小了，分开」）**：`views/Games2048.vue` 与 `views/GamesSudoku.vue` 各一张占满宽度的卡片，三页共用 `components/GameTabs.vue` 页签（数字游戏 / 2048 / 数独，按 `route.path` 精确匹配高亮）；旧地址 `/games/classic` 直接 `redirect` 到 `/games/2048`。页面卡片沿用 flex 竖列 + `.gm-tip` 44px 最小高 + `.gm-note` `margin-top:auto` 的写法，四张卡并排时内容与底注对齐。**2048 棋盘边长可选 4 / 5 / 6**：合并算法全部按 `g2.n` 参数化——`lineIndexes(dir, line)` 按边长算一条线的下标（左右上下四个方向只在这里分叉），`move2048` 一趟跑完 `n` 条线（取行 → 去零 → 相邻合并 → 补零到 `n` → 写回），`canMove` 用 `i±1 / i±n` 判邻，撤销只留 8 步；棋盘宽度与字号走计算属性写进 CSS 变量（`--n` 铺列、`--fs` 定字号，4/5/6 依次 288/320/352px 与 24/19/16px），三位数以上再按倍率缩字号。**最高分按边长分开存**（`gl-2048-best` 留给 4×4 老档，其余 `gl-2048-best-5`、`-6`），换尺寸会重开一局。键盘挂在棋盘 `div` 上（`tabindex=0`，点击时显式 `focus()`，方向键 / WASD），手机上用 touchstart/touchend 判 24px 位移滑屏。数独先 `fillGrid` 回溯填满一张完整解，再随机挖洞、每挖一格用 `countSol(..., 2)` 验唯一解（数到 2 就停；700ms 上限，慢机器上宁可多留几个数），难度只改目标已填格数（简单 46 / 普通 36 / 较难 30）；红字冲突由 `conflicts` computed 现算（行、列、宫三组），「检查」把与解不符的格子标红底，「提示」补一格；键盘同样挂在棋盘上，数字键填、方向键移、退格擦。两页的摸屏/键盘按键都 `preventDefault`，计算器的全局按键会先看 `e.defaultPrevented` 再决定要不要接管。
 - **计算器 `CalcDock`（2026-11-13，用户要「跟呼出画板一样可拖动的入口、不需要整页、功能全一点」）**：右侧紫色圆钮（`position:fixed`，默认 `right:20px; bottom:152px`，在 GeoGebra 画板钮正上方 10px；**没拖过计算器时默认位置从画板的 `gl-fab` 现算**——`alignWithBoardFab()` 读画板圆钮存下的 `{r,b}`，把计算器摆到同一竖线、正中上方 10px，用户拖过画板钮也仍然对齐），圆钮自身可拖（位置存 `gl-calc-fab`，位移不足 5px 仍算点击）。点开是 328px 的小窗，压在正文上、不占版面（**不参与 `main.dock-split` 那套让位，也不与助手/画板/笔记互斥**）；窗口标题栏可拖，位置存 `gl-calc-pos`，`resize` 时夹回视口，`max-height: calc(100vh - 100px)` 内部滚动。求值在 `lib/calc.js`：手写 tokenize + 递归下降（expr/term/unary/power/postfix/primary），**不用 eval**；认 `+ − × ÷ ^ ! % ( ) π e Ans` 与 `sin cos tan asin acos atan ln log sqrt abs exp`，`√` 当 sqrt，隐式乘法支持 `2π`、`3(4+5)`；DEG/RAD 由标题栏那枚开关切换（默认 DEG），`Ans` 取上一次结果，结果统一 `toPrecision(12)` 去浮点尾巴，`|v|<1e-13` 归零。按键 7 行 × 5 列：括号、退格、C、e；sin cos tan ln log；√ x² xʸ 1/x !；7 8 9 ÷ %；4 5 6 × ±；1 2 3 − Ans；0 . π + =。另有记忆行（MC / MR / M+ / M−）、历史（最多 24 条，点一条取回结果）、键盘接管（数字、四则、括号、回车算、退格删、Esc 收；焦点在 input/textarea 时不抢键，页面已 `preventDefault` 的按键也不抢——数独棋盘就是这样避开计算器的）。`onBeforeUnmount` 里摘掉 keydown / resize / 两个 pointermove。
 - **AI 助手接画板上下文（2026-11-17）**：空对话里多出一颗「解释这个图形」，只在当前页有画板时出现；发问时 `sysPrompt()` 除了页面标题，还拼上 `boardContext()`——这一页每块板的滑块现值、亮着的开关、徽章实时读数（`chip`/`chipM` 的当前值）、三维视角，最多三块、900 字符封顶。**取数走 `src/lib/boardctx.js` 的登记槽**：`setBoardContextProvider(fn)` 由 board.js 在模块末尾登记，ChatDock 只 import boardctx.js——ChatDock 是常驻组件，直接 import board.js 会把整个引擎和 katex 拖回首屏（首屏瘦身的红线，改这块前先看上面那条）。徽章要把值记进 `this.chips`（`_chipRec`），滑块记 `label`、开关记 `label`，否则助手只看得见「有个滑块」看不见数。
@@ -78,7 +78,7 @@ scripts/gen-icon.mjs  图标生成器（零依赖：SDF 抗锯齿 + 手写 PNG/I
   ④ 备份：侧栏「⇪ 备份」= `exportAll()` 下载 `笔记备份-YYYYMMDD-HHmm.json`（`{app, v:2, at, folders, list, cur}`），「⇩ 导入」= `importAll(text)` 按 id 合并（同 id 以文件为准，文件夹先补），返回 `{added, updated}` 报数。导入不会删本机多出来的笔记。
 - **随页笔记 `NotesDock`**：右侧 460px 窄窗（`v-model:open`），章节页边看边记。默认落在 `notesOfPage(route.path)` 的某一条上；新建的笔记带 `path` + `page`（页面 h1），所以在 `/notes` 里归到「随页笔记」组，也能被搜索/导出。正文与全局共用 `gl-notes`，自动保存同一套 300ms 防抖。
 - **切页即收窗**：`App.vue` 的 `route.path` watcher 里同时关掉 `chatOpen` / `notesOpen`——整屏助手盖着整页时点站名，路由其实已经切了，但不收窗就像「跳不过去」（用户报的就是这条）。
-- **面包屑 `Breadcrumb`（2026-11-12）**：**顶栏之下、与浮钮同一竖列的圆钮**（`position:fixed; left:16px; top:58px`，44px —— 用户原话「不用放在顶部栏，放在顶部栏下面，跟图跳转首页那些圆形按钮在竖直对齐就行」：x 与宽度同左下 `FloatRail` 的 `.fr-btn`，顶栏不再让内边距，`.topnav .in` 保持 `0 26px`；组件在 `App.vue` 里排在 `<FloatRail>` 之后、不在 `.topnav` 内；≤900px 收到 `left:10px; top:54px`、40px；外观与 `.fr-btn` 同一套：圆形、`color-mix(--card 82%)` 底、描边、模糊与投影）。点开是「当前位置」和最近打开过的页面。缓存存 `lib/visits.js`（`gl-visits`，只存 `{path,ts}`，标题一律回 `modnav` 的 `MODULES` 里查，章名改了不用迁档）；条数取 `PREFS.visitCap`，硬上限 `MAX_VISITS = 20`，默认 8。面包屑分四段「首页 › 模块 › 子专题 › 本章」——模块段可点回 `/polar` 这类模块首页，子专题没有页就只是文字（不能写成 `cur`：模板早年把无链接段一律挂 `cur`，会显示成当前页并被允许压缩）；组名要剥掉「一　」这样的汉字序号。**每一级都包成圆角胶囊**（`padding:2px 9px; border-radius:99px`，描边 + `--bg2` 底），整条 `flex-wrap:nowrap` 一行排开、`overflow-x:auto` 且藏滚动条；祖先胶囊 `flex:0 0 auto; max-width:150px`，只有当前页那枚 `flex:0 1 auto; min-width:84px` 先缩，超长一律 `text-overflow:ellipsis` 省略、不换行；窄屏排不下时开面板后把 trail 滚到右端，保证当前页先露面。面板挂在 body（`position:fixed`，开面板时按按钮 `getBoundingClientRect` 现算坐标，和主题选单同一个坑：`.topnav .in` 的 overflow 会裁掉面板），`z-index:121`，宽 440、贴按钮正下方 8px（`top = max(52, r.bottom + 8)`）；高度按左下角 `.float-rail` 的顶边现算（`maxH = railTop − 12 − top`），面板底边不压浮钮，列表在内部滚动。**固定**：`gl-crumb-pin='1'` 时切页、点外面都不收；不固定时点外面 / Esc / 切页都收。设置页「页面缓存」改条数后 `trimVisits()` 立即裁掉多的。**宽屏不占正文**：窗口 ≥1820px 时 `main` 居中、圆钮整个落在左侧留白里，`global.css` 末尾的 `@media (min-width:1820px)` 把为它让开的 56 / 64px 收回到 10 / 18px（2026-11-13 用户「正文部分离顶部栏有点远」）；助手或画板让出半屏时正文贴回左边，该档用 `main:not(.chat-split):not(.dock-split)` 排除。
+- **面包屑 `Breadcrumb`（2026-11-12，2026-11-17 改摆位）**：**顶栏里「章节目录」右边一枚 28px 小圆钮**（用户 2026-11-17「顺便考虑一下页面缓存那个按钮应该放在哪里合适，有时候按钮会盖住一部分内容」：原先是 `position:fixed; left:16px; top:58px`、44px 的浮钮，会压住首屏标题，正文还得为它让出 56 / 64px；现在组件挂进 `App.vue` 的 `.topnav .in`（「章节目录」之后），顶栏不盖正文，`global.css` 里那几处让位与 `@media (min-width:1820px)` 特例一并删掉。外观跟顶栏胶囊同一套调子，只是收成圆：描边 `--line`、悬停 `--ink`、`.on` 转蓝；≤900px 缩到 26px）。点开是「当前位置」和最近打开过的页面。缓存存 `lib/visits.js`（`gl-visits`，只存 `{path,ts}`，标题一律回 `modnav` 的 `MODULES` 里查，章名改了不用迁档）；条数取 `PREFS.visitCap`，硬上限 `MAX_VISITS = 20`，默认 8。面包屑分四段「首页 › 模块 › 子专题 › 本章」——模块段可点回 `/polar` 这类模块首页，子专题没有页就只是文字（不能写成 `cur`：模板早年把无链接段一律挂 `cur`，会显示成当前页并被允许压缩）；组名要剥掉「一　」这样的汉字序号。**每一级都包成圆角胶囊**（`padding:2px 9px; border-radius:99px`，描边 + `--bg2` 底），整条 `flex-wrap:nowrap` 一行排开、`overflow-x:auto` 且藏滚动条；祖先胶囊 `flex:0 0 auto; max-width:150px`，只有当前页那枚 `flex:0 1 auto; min-width:84px` 先缩，超长一律 `text-overflow:ellipsis` 省略、不换行；窄屏排不下时开面板后把 trail 滚到右端，保证当前页先露面。面板挂在 body（`position:fixed`，开面板时按按钮 `getBoundingClientRect` 现算坐标，和主题选单同一个坑：`.topnav .in` 的 overflow 会裁掉面板），`z-index:121`，宽 440、贴按钮正下方 8px（`top = max(52, r.bottom + 8)`）；高度按左下角 `.float-rail` 的顶边现算（`maxH = railTop − 12 − top`），面板底边不压浮钮，列表在内部滚动。**固定**：`gl-crumb-pin='1'` 时切页、点外面都不收；不固定时点外面 / Esc / 切页都收。设置页「页面缓存」改条数后 `trimVisits()` 立即裁掉多的。**宽屏不占正文**：窗口 ≥1820px 时 `main` 居中、圆钮整个落在左侧留白里，`global.css` 末尾的 `@media (min-width:1820px)` 把为它让开的 56 / 64px 收回到 10 / 18px（2026-11-13 用户「正文部分离顶部栏有点远」）；助手或画板让出半屏时正文贴回左边，该档用 `main:not(.chat-split):not(.dock-split)` 排除。
 - **保存位置**：`lib/fsdir.js` 用 File System Access API（`showDirectoryPicker`），目录句柄存 IndexedDB `gl-fs`；没有句柄或权限时回落到 `downloadText`。无头浏览器选不了目录，这条路径只能人工在真浏览器里验。
 - **切页动画**：`main` 上绑 `:data-anim="PREFS.pageAnim"`，`playPageAnim()` 在切路由时摘掉 `.page-in`、强制回流再挂回去；动画本体在 `global.css` 的 `main.page-in[data-anim=…]` 六个分支（fade/up/zoom/slide/blur/none），`prefers-reduced-motion` 下全部关掉。设置页里点某个动画会顺手 `playPageAnim()` 预览一次。
 - **打印相关**：`.note-print` 平时 `display:none`，只有 `body.printing-note` 时才出现；别把笔记打印规则写成全局 `body > *`，会把整站讲义打印一起吞掉。
@@ -193,7 +193,196 @@ B 记住文字（设置页，默认开）               // 2026-11-16 用户要�
                                             // 按新板号重读一次；render() / 指针按下时还有 _lblSyncId() 兜底。
 B 底注开关（引擎内置，无公开方法名）       // 2026-11-16 用户要求：操作条「Aa 底注」只隐藏 / 显示画板**内部**的底部说明文字（B.hint / B.hintM 提示行），
                                             // 板框外的图注 .cap 不动；hint/hintM 之后再被调用也不会把隐藏状态顶回来（方法里读 this._foot）；默认显示
+B 批注（引擎内置，操作条「✎ 批注」）       // 2026-11-17 P1：墨迹层 .bd-ink（g 挂在 dyn 之上、hd 之下，render() 只清 dyn，批注不被重画冲掉；
+                                            // 整层 pointer-events:none）。「✎ 批注」调 setInk(on) 进出批注模式，板根加 .ink-on
+                                            // 显示工具条（结构 2026-11-17 再改，见下方「工具条结构」一行）
+                                            // 墨迹 = { c, w, pts:[{x,y}] }，坐标存**板坐标**，缩放平移后仍贴原位；路径中间点走二次贝塞尔。
+                                            // 落盘 localStorage 'gl-ink'（{页面路径:{板号:[stroke]}}，lib/ink.js：Douglas–Peucker
+                                            // eps 0.6 抽稀 + 0.1 量化，序列化 > 3.2 M 字符拒写并把入口钮标红），每次抬笔写一次。
+                                            // 批注模式在 svg 捕获阶段先手接管按下并 stopPropagation：拖动平移 / orbit 转视角 / 把手都碰不到，
+                                            // 标签拖动也靠 _bindLabelDrag 与 _bindZoom 的 dblclick 里的 _inkOn 守卫让路（捕获监听同节点
+                                            // 不分先后，只靠 stopPropagation 拦不住）。PNG 与视频导出天然带上墨迹（墨迹就在 svg 里）。
+                                            // <BoardMount id="…"> 改板号后 refreshLabels() 里另有 _inkSyncId() 按新板号重读。
+                                            // 2026-11-17 P2（用户同一次要求）：工具扩成 笔 / 橡皮 / ▭ 框选 / ◌ 套索，颜色加自选取色器
+                                            // （.ink-pick），线型 实/虚/点（stroke-dasharray），笔种 铅笔（细一点 0.8×、stroke-opacity .72、
+                                            // 折线不做贝塞尔）/ 钢笔（等宽）/ 毛笔（按 t 切 ≤40 段，宽 w*(0.42+1.15*sin(πt)^0.65)，两头细）。
+                                            // 形状吸附：停手 420ms（_inkSnapSoon）或抬笔（up 里最后再试一次）走 ink.js 的 recognizeShape，
+                                            // 直线看「离首尾弦的最大偏离」，圆/椭圆要闭环（首尾相近）+ 绕质心转过 π*1.4 圈 + PCA 归一化半径
+                                            // RMS ≤ 0.1，认出的圆/椭圆另画中心实心小点（stroke.ctr）；认不出就原样留着（手写字不能被硬拉成圆）。
+                                            // 2026-11-17 加开口曲线：没闭合、点数 ≥14、笔迹长 >90 的，先试双曲线（一般二次曲线
+                                            // a u²+b uv+c v²+d u+e v=1 的 5×5 最小二乘，判别式够大才认，化成 (X/a)²−(Y/b)²=1 沿一支取样，
+                                            // 中心/特征方向用 2×2 对称阵的特征分解，分支按笔迹 X 的均值正负选），再试抛物线
+                                            // （主轴系里 v=A w²+B w+C，w 以 u 中点为原点防病态；要求弯曲量 > 0.09D、RMS ≤ 0.04D，
+                                            // 且**曲率沿笔迹变化 > 1.5 倍**——圆弧曲率几乎不变，不能被硬拉成抛物线）；拟合前按 ≤240 点抽稀。
+                                            // 抛物线记顶点、双曲线记顶点（stroke.ctr），吸附提示写「已吸附：抛物线 / 双曲线」。
+                                            // 吸附后 s.snapped=true，pointermove 不再改点。选区 = { idx, bbox }，选区框与预览都画在
+                                            // .bd-ink-sel（inkLayer 之上、hd 之下，pointer-events:none）；框选命中含「横穿而过」的笔画
+                                            // （segCross 判线段与框边相交），套索用 pointInPolygon + 包围盒中心兜底；选中后按在框里拖动
+                                            // （元素加 transform 实时跟手，抬笔把位移烘进 pts 与 ctr 再整层重绘 + 落盘），或点「⌫ 删除所选」。
+                                            // stroke 存档字段随之扩展：k=笔种 / d=线型 / s=吸附形状 / ct=中心点（缺省即钢笔、实线、未吸附）。
+                                            // 工具条结构（2026-11-17 再改）：工具（笔/橡皮/框选/套索）一排图标按钮（内联 SVG，.ink-t），
+                                            // 粗细 / 颜色 / 虚实 / 笔种四类参数各收成一枚 .ink-gb 按钮，点开 .ink-pop 才展开选项
+                                            // （同一时刻只开一块，_inkPopToggle / _inkPopClose）；按钮上写着当前值（粗细那道杠的粗细跟着笔宽走）。
+                                            // 画布（inkPad:true）在这四枚后面多一枚「图形」：直线/箭头/矩形/圆/椭圆/三角形/五角星/
+                                            // 抛物线/双曲线/正弦线，_inkInsertShape(kind) 用当前颜色粗细线型画在当前视野中心并落盘。
+                                            // 动作钮（.ink-act）统一成「图标 + 名字」两个 span；站内画板两个都显示，画布只留图标（名字在 title）。
+                                            // 画布（inkFold:true）末尾另有一枚 .ink-fold：收起后整条只剩这一枚（.inkbar.min 隐藏其余子元素），
+                                            // 贴回它原来那一侧的角上；在画布上点一下空白（pointerdown→pointerup 没拖动，
+                                            // 位移 <6 板单位、<400ms）自动收回——真在拖笔画线时不收，免得一落笔条就没了。
+                                            // 颜色面板（原「🎨 调色板」并进来）：常用色 + 最近用过的颜色（localStorage 'gl-ink-colors'，最多 12 个，全站共用）
+                                            // + 系统取色器 + 手输框；`parseInkColor()` 把 #rgb / #rrggbb / rgb() / rgba() / hsl() / hsla()
+                                            // 一律规整成 #rrggbb 再存（SVG stroke 只写这一种），认不出就把输入框描红、原值留着。
+                                            // 上一次选的颜色另存 'gl-ink-color'，重开页面还是它（_initInk 里读）。
+                                            // 点面板外面收起：document 上监听 pointerdown（捕获）——**不能用 click**：点「最近用过」的色块会重建那一格，
+                                            // click 到 document 时目标已从 DOM 上摘下来，contains 判假、面板被误收；色块底色一律走 style 属性，
+                                            // 面板只在展开时重排（_inkSetColor 里看 _inkPalOpen）。destroy() 摘监听（_offInkPalDoc）。
+                                            // 动作行末尾「⤓ 保存」= exportPNG()，图形与批注一起导出（站在讲解页板上批注时导出的就是整张板书）。
+                                            // 2026-11-17 P3（用户一次提七项：截图/贴图/缩放、文字、画板→画布、填充、多边形、向量+平行四边形）：
+                                            // **墨迹模型扩成统一元素**——stroke 多了 t（元素种类，缺省即手写 path）+ f 填充 + cl 闭合 +
+                                            // tx/fs 文字与字号 + im 图片 dataURL + mk/ob 矢量块标记与原包围盒。图片 / 文字 / 矢量块 / 多边形 /
+                                            // 向量全走同一套选区、拖动、删除、橡皮、落盘，**不另立对象表**。ink.js 的 packStroke 对
+                                            // `s.cl || (s.t && s.t !== 'path')` 一律跳过抽稀（两点就是包围盒的两个角，多边形少一个顶点就不是那个形），
+                                            // 字段压成 k/d/s/ct/t/f/cl/tx/fs/im/mk/ob 八个短键。
+                                            // ①截图：动作行「▣ 截图」→ _inkShot() 走 getDisplayMedia({video})，抓一帧放进 canvas、长边缩到 ≤1600px、
+                                            //   toDataURL('image/jpeg',0.9)，交 _inkAddImage 贴在视野中央（占 72%）、自动切回框选并选中它。
+                                            //   画布开着时 Ctrl+V 也直接贴（DrawPad 上的 window paste 监听，剪贴板里有图片才 preventDefault，
+                                            //   目标在 textarea/input/contenteditable 里就放行），文件走 ingestImage(file)（拒 svg 与非图片）。
+                                            // ②放缩：单选一张 img/svg 时选区左下角画一枚 8–16px 把手，_inkHandleHit/_inkResizeStart/_inkResizeTo
+                                            //   按对角固定、默认等比（按住 Shift 才自由拉伸）；img 改 pts[1]，svg 走 _inkSvgFit 重算
+                                            //   translate/scale（矢量块外层 g 不带 transform，内层才带，_inkMoveTo 的平移不会把它冲掉）。
+                                            // ③文字：工具「T」点一下建一条 t:'txt'、fs = max(14, min(w,h)*0.03)，_inkTextStart 在字上盖一个
+                                            //   position:fixed 的 <textarea class="ink-text-in">；Enter 落笔、Shift+Enter 换行、Esc 取消、失焦落笔，
+                                            //   空内容就把这条 splice 掉。**提交走 this._inkTextCommit 闭包 + inp.__done 闸**：外部任何动作（点别处、
+                                            //   换工具、setInk）都调 _inkTextStop(true) 提交，不能只把输入框摘掉（摘掉后 blur 的守卫会让内容悄悄丢掉）。
+                                            //   再次点（或双击，笔/向量工具下不接管双击）已有的字就改它；pts[1] 由 _inkMeasureTexts 在每次 render 后用
+                                            //   getBBox 刷新，选区和命中都靠它。
+                                            // ④多边形：工具「⬟」一下一下点顶点，点回起点（容差 max(9,min(w,h)*0.018)）或双击收口，
+                                            //   换工具时凑够三个顶点也算画好（不足就丢掉）；存 t:'poly' + cl:1，命中走 pointInPolygon 内点判定。
+                                            // ⑤向量：工具「↗」拖一条带箭头的线（只留首尾两点），箭头长 hd = min(L*0.3, max(9, w*4.2))。
+                                            //   **平行四边形不落盘**：_inkPairRender 每次 render 现算——两条向量的起点相距 < max(9,min(w,h)*0.022)、
+                                            //   且叉积 |a×b| ≥ 0.10·|a||b|（近平行不算），就向 g.ink-pairs 画两条虚线（各向量的终点 → 对角点 A.e+v），
+                                            //   按端点对去重；拖动时 _inkMoveTo 先清掉这层（跟着走的假线比没有更糟）。
+                                            // ⑥填充：`inkPad` 才有，工具组后面一枚「填充」——无/蓝/红/绿/黄/白六档 rgba，
+                                            //   只作用在闭合元素（cl 或 poly）上，_inkApplyFill 给选中的那几条写/清 s.fill；图形插入
+                                            //   （_inkInsertShape 的 CLOSED 表：矩形/圆/椭圆/三角形/五角星）也顺手带上当前填充色；
+                                            //   _inkStyle 里 `fill = s.fill || 'none'`。选择状态进 inkState()（fill 字段），换页跟着走。
+                                            // ⑦画板 → 画布：板操作条多了「→ 画布」（window.__glBoardToPad 由 DrawPad 挂，App 之外的板调它），
+                                            //   DrawPad.boardToPad(src) 没开就先 emit update:open、等 mount 好再调 src.importFrom(板)。
+                                            //   坐标走两边的 getScreenCTM().inverse()（屏幕矩形 → 源用户坐标 → 目标用户坐标），缩放/平移/浮层
+                                            //   自动对齐；<g> 只在**自身没有 transform** 时拆开（拆带 transform 的组会让子节点的 outerHTML 丢掉
+                                            //   祖先变换而 ob 又是在变换后量的，贴过去就错位）；<text> 转成可改的 txt 元素（fs 乘 kUser），
+                                            //   其余节点原样 outerHTML 存成 svg 元素；源板自己的墨迹按 sm→toT 矩阵逐点搬过来（字号按 kUser 换算）。
+                                            //   搬过来整体出画时平移回视野内。上限 MAXN = 240 个节点。
+                                            // 画布见下方 DrawPad 一条。
+                                            // 2026-11-17 P4（用户第二轮六条）：①选择工具 `sel`（光标图标）点谁选谁（_inkHitTop
+                                            //   从最上面一条往下找），选中直接拖；Delete / Backspace 删所选（document keydown，
+                                            //   输入框里打字不抢，destroy 里 _offInkKey 注销）。②荧光笔笔种 `marker`：_inkStyle 里
+                                            //   宽 ×3.4、stroke-opacity .34、方头、mix-blend-mode:multiply（叠在字上也透得出来）。
+                                            //   ③选区缩放：_inkHandlePos 对任何非空选区都给右下角把手，_inkResizeStart/To/End 分两路——
+                                            //   单选 img/svg 还按框缩放，多选（框选 / 套索 / 选择工具）拍一份点位快照、以选区左上角为锚
+                                            //   整片等比缩放（Shift 自由），拖动时只给元素套 transform，抬笔才烘回 pts / ctr / fs。
+                                            //   ④参数面板改横向矩阵：`.ink-pop.ink-pop-grid`（粗细 / 线型 / 笔种 / 图形 / 填充），
+                                            //   一行放不下自动换行，不再竖着拉长。⑤自定笔宽：粗细面板末尾 `.ink-wrow` + `.ink-winp`
+                                            //   （0.6–24，回车 / 失焦生效；_inkSyncTools 在输入框有焦点时不改它的值）。
+                                            //   ⑥填充面板改成圆圈（`.ink-ofill` + `.ink-fsw`，不写汉字），末尾 `.ink-fpick` 原生取色器
+                                            //   取任意颜色、按 28% 透明度存成 rgba。⑦「▤ 本页」截图：不用挑屏幕，直接
+                                            //   snapshotDataURL() 走 _svgXML() → Image → canvas → JPEG 0.9（长边 ≤1600），再 _inkAddImage。
+                                            //   ⑧工具条收起：min 状态进 inkState()/setInkState（换页跟着走，不再一滑页就自己弹开）；
+                                            //   _inkFoldTo 按条所在容器现算 `.fold-u/.fold-l/.fold-r`，CSS 里箭头展开朝「收到哪边」、
+                                            //   收起朝「从哪边放出来」。⑨importFrom 重做：**不再照屏幕坐标搬**（源板在屏幕上的位置和
+                                            //   画布不是一回事，半屏时一半落到画外），改成量内容外接框 → 等比缩到本页视野九成（最多原大）
+                                            //   → 摆正中；横线 / 竖线 / 坐标轴是零厚度矩形，先撑到 2px 再量（否则会被当空节点丢掉，
+                                            //   用户报过「坐标轴横线没搬过去」）；源板 defs 里的 marker / 渐变 / 滤镜同 id 没有就抄一份
+                                            //   （不抄箭头会变秃线）；上限 MAXN 400，子节点太多的组整组当一个搬。
+                                            //   ⑩选区 + 橡皮：已有选区（框选 / 套索 / 选择工具）时点橡皮工具，先 _inkDeleteSel()
+                                            //   把选区里那一块整片擦掉再留在橡皮上（工具按钮共用的 click 里判 t === 'eraser'）。
+                                            //   ⑪鼠标样式跟着工具与悬停换（_inkCursor / _inkApplyCursor / _inkHoverCursor，写在 svg
+                                            //   内联 style 上）：选择=箭头、文字=text、橡皮=自绘 SVG data-URI 斜橡皮（热点 7,21）、
+                                            //   其余=crosshair；悬停右下把手=nwse-resize、悬停选区里=move、悬停到文字=text。CSS 那条
+                                            //   `.board.ink-on svg,text,foreignObject` 由写死 crosshair 改成 cursor:inherit，否则子元素
+                                            //   会把选择 / 橡皮的样式盖掉；_syncVB、setInk、板内标签拖动结束都改走 _inkCursor()。
+                                            //   ⑫工具条常驻 / 自动收回：PREFS.inkBar（'auto' | 'pin'，设置页「画布工具条」）。
+                                            //   pin 时 pointerup 的「点空白收条」直接跳过；条右侧 `.ink-pin` 图钉一键切换
+                                            //   （setPref 落盘，_inkSyncTools 同步点亮与 title，收起钮的 title 也跟着改）。
+                                            //   ⑬操作提示改浮层：**不再往工具条末尾塞 `.ink-tip`**（会把条撑宽、收起时还挂着它，
+                                            //   用户报过 bug）。_inkTipSay 在**这块画板自己身上**挂一条 `.ink-toast`（host = this.root，
+                                            //   `.board` 本来就是 position:relative；不挂 document.body——用户第三轮指出「提示应该在画板中，
+                                            //   不应该在整个页面中间」），absolute 贴底居中、1.8s 自隐、pointer-events:none；
+                                            //   PREFS.inkTip = 'off' 时整项静音（设置页「操作提示」）。`.inkbar.min` 的显隐选择器
+                                            //   相应改成 `> :not(.ink-fold)`。
+                                            //   ⑭选区换色：有选区时点色块 / 取色器 / 输入色号 → _inkSetColor 顺手调 _inkRecolorSel，
+                                            //   把选中元素的线色（文字色）改成新色，填充色不动，图片（t==='img'）跳过；落盘走
+                                            //   _inkSaveSoon（攒 320ms，防取色器拖动时每帧写 localStorage）。色块点击此时**不再强切回笔**。
+                                            //   ⑮套索「按形状剪选」（PREFS.inkSelMode = 'cut' 默认 | 'whole' 整条选）：
+                                            //   _inkCutByPoly 把每条手写笔画按套索多边形剪开（_splitByPoly：segT 求交点 + 中点判内外），
+                                            //   圈里的段各自成一条并选中、圈外的原样留在板上（_inkPiece 只带线色/笔宽/笔型，不带
+                                            //   cl/fill/snap/ctr），一张图被圈去一半就真的分两截；图片/文字/矢量块/多边形这些「整件」
+                                            //   不剪，落进圈里整件选中。⑯选区框用套索本身那条不规则折线（_inkSel.poly），不再拿外接
+                                            //   矩形冒充；拖动按 dx/dy 平移、缩放（_inkResizeStart 拍 poly0，_inkResizeTo 每帧现算，
+                                            //   不再在 _inkResizeEnd 二次换算）都贴着内容走。
+                                            //   ⑰套索方式上工具条：工具排末尾一枚 `.ink-mode` 小钮（`_inkSelModeBtn` + `_inkSelModeLbl`），
+                                            //   点一下 cut ⇄ whole（setPref 落盘），亮灭与文字由 _inkSyncTools 同步；设置页那一项照旧。
+                                            //   ⑱撤销改成整步回退（原来的「↶ 撤销」只 pop 最后一笔）：`_inkUndoStack` 存笔画快照
+                                            //   （`_inkSnapshot` 深拷 pts/ctr/ob，图片 dataURL 等大字串按引用共享，上限 60 步；
+                                            //   `_inkDropSnap` 撤掉「其实没改动」的空步）。落快照的时机：落笔提交、橡皮一次拖动里第一次
+                                            //   真擦到（`_inkEraseTook`）、删选区、清空、插图形 / 文字 / 多边形 / 贴图 / importFrom、
+                                            //   拖动与多选缩放（阈值后才记）、换线色（1.2s 合并窗口 `_inkRecolorSnapAt`）、填充、套索剪选。
+                                            //   `_inkUndoStep` 先落手上文字 / 放掉各手势再 pop，按钮 `.off` 变暗、title 报剩余步数；
+                                            //   Ctrl/⌘+Z 同效（输入框里让给浏览器）。换板 / 换页 `_inkLoad` 把栈清空。
+                                            //   ⑲粗细 / 线型也作用于选区：`_inkApplyWidth(w)` 改选中元素（跳过 img/txt）的 `s.w`，
+                                            //   `_inkApplyDash(d)` 改 `s.dash`；两者各自 1.2s 合并窗口（`_inkSelPropSnap`），效果同换色。
+                                            //   线型新增 `dashdot`（线点，dash-dot）与 `longdash`（长短线，长划+短空），`_inkStyle` 里
+                                            //   多两条 stroke-dasharray；工具条线型面板从 3 项变 5 项，图标走 `.ink-d-dashdot` /
+                                            //   `.ink-d-longdash`（border-style 表达不了，改 repeating-linear-gradient 画样例线）。
+                                            //   ⑳方向：工具栏「方向」组（`_inkTG`，所有板都有）四档 flipH / flipV / rot90 / rot270，
+                                            //   走 `_inkTransformSel`：手写笔画 / 图形 / 多边形 / 向量的点位绕选区中心换算（真的写回 pts，
+                                            //   拖动缩放照旧）；图片 / 矢量块记 `fx` / `fy` / `rot` 标记，`_inkBoxTf` 按当前框现算
+                                            //   transform（`_inkDrawImage` / `_inkDrawSvg` / 缩放预览都套），旋转时框宽高对调；
+                                            //   文字旋转也记 `rot`（`_inkDrawText` 绕自身框中心转）。fx/fy/rot 已进 ink.js 的 pack/unpack。
+                                            //   ㉑任意角度旋转：选区上边中点外侧多一枚圆钮（`_inkRotPos/_inkRotHit`，画在 `_inkSelRender`），
+                                            //   按住拖 `_inkRotTo` 每帧给元素挂 `rotate(θ cx cy)`（接在原有 transform 前面），松手
+                                            //   `_inkRotEnd` 落回：手写笔画 / 图形 / 多边形 / 向量的点位绕选区中心真转、ctr 同步；
+                                            //   图片 / 矢量块 / 文字记 `rot`（累加，统一归一到 [0,360)），图片与矢量块另存内容尺寸
+                                            //   `cw/ch`（pts 从此只是转过之后的紧包围盒，`_inkContentDims` 取内容尺寸居中铺开再转；
+                                            //   老存档没 cw/ch 的按 rot%180==90 宽高对调推回来），缩放（单件 `cw0/ch0`、多选 `snap.cw/ch`）
+                                            //   按同一比例带 cw/ch。Shift 按 15° 吸。
+                                            //   ㉒直线 / 向量拖端点改方向：单选一条两点笔画时两端各挂一枚白心蓝圈钮，按住拖
+                                            //   `_inkEndDragTo`（另一端不动，Shift 相对另一端 15° 吸），第一次真动才拍撤销快照，
+                                            //   松手报倾角。端点钮与右下缩放钮冲突时端点优先。
+                                            //   ㉓直边图形走折线：`s.ang=1` 的笔画在 `_inkDrawStroke` 里走 `_inkD(pts,false,cl)`，不再过
+                                            //   二次贝塞尔（以前三角形 / 五角星 / 矩形 / 多边形 / 箭头尖全被磨圆，「不标准」就是这个）；
+                                            //   插图形时角形件（rect/tri/penta/star/箭头尖）与 `_inkPolyClose` 都打 ang。另加「正五边形」
+                                            //   （`penta`），五角星内圈改 1/φ²（0.382×外圈）。ang 已进 pack（`an`）/ unpack 与 importFrom。
+                                            //   ㉔Ctrl / ⌘ + 点选加减选：选择工具与框选 / 套索工具里按住 Ctrl 点一条，`_inkToggleSel(i)`
+                                            //   把它并进选区或拿掉（索引排序后 `_inkSetSel(idx)` 重量外接框，套索 poly 不留），不开始拖动，
+                                            //   可以连着点；减到空即取消选择。Ctrl 点空白不动选区；第一次给出提示（`_inkCtrlTipped`）。
+                                            //   ㉕搬画板进画布时外接框要夹进源板视野（`importFrom` 的 `clip` = 源板 `_vb` 外扩 24）：
+                                            //   `B.inf` 把「无限长」线两头各撑 4000 单位，`getBoundingClientRect` 量出来的框有几千宽，
+                                            //   不夹的话整片板书按 0.9/8000 缩成指甲盖（「交叉比与调和点列」就是这么缩没的）。夹完 ob/pts
+                                            //   都是视野内那块，`_inkSvgFit` 的 scale 仍等于统一 fit，视野外的内容照比例落在画布外。
+                                            //   ㉖把手层的圆点与标签也要搬：`B.handle` 的 `<circle class="hnd">` 和 `<text class="hndlbl">`
+                                            //   画在 `src.hd`（不裁剪、不进 dyn），`importFrom` 以前只走 dyn + 墨迹，凡是用带 label 的
+                                            //   把手画的板（「交叉比与调和点列」的 A/B/C/D/S 等）搬进画布后点全丢。现在 dyn 之后补一遍
+                                            //   `addNode(n, true)`：文字走 txt 分支（没写 fill 的用手把标签取 `getComputedStyle(n).fill`），
+                                            //   其余当静态矢量块并把 `class="hnd…"` 抹掉（否则搬过来的点心仍有抓手悬停与 grab 光标）。
+                                            //   搬的是**快照**，落位后不跟着源板把手走。
+                                            //   ㉗批注条图标尺寸：global.css 的 `.board svg{width:100%;height:auto}` 权重是 (0,1,1)，
+                                            //   单写 `.ink-gic{width:16px}` (0,1,0) 压不住它——钢笔 / 图形 / 方向三枚参数钮的图标会撑满整个
+                                            //   按钮（用户报「一开批注就有几个图标特别大」）。图标类规则一律带 `.inkbar ` 前缀（(0,2,0)）。
 ```
+
+- **画布（`src/components/DrawPad.vue`，原「空白画板」，2026-11-17 改名）**：两个入口——顶栏「✏ 画布」（`App.vue` 的 `openCanvas()`，一律整屏）与右下铅笔圆钮（半屏/整屏按上次用的样子）。
+  圆钮 `bottom:216px`，**没拖过时按计算器那枚（`gl-calc-fab`）往上对齐，没有计算器存档就跟 `gl-fab` 隔两格**——三枚圆钮任一被拖动后，后来者跟着走；自己的位移另存 `gl-fab-draw`。
+  两种摆法用「◧ 半屏 / ⛶ 整屏」切换：半屏 = fixed 右（或左，取 `PREFS.canvasSide`）半屏 + 正文让位（`main.draw-split` / `.draw-left`），整屏 = 铺满屏幕（圆钮自动收起，顶部「收起」退出）。
+  **工具条只有一条，钉在顶上**（2026-11-17，用户「工具栏只需要一个就行吧，不用跟画布走，弹出时一直置顶就可以」）：每块板的批注条照旧由 Board 造，但只把**当前页**那条搬进 `.dp-body` 顶上的 `.dp-dock`（`attachBar()`；换页时先把原来那条 `appendChild` 回它的 `bar.__bdRoot` 板根，再把新的搬进来）。槽是 `position:sticky; top:0; height:0` 的 flex 容器：页在它下面滑，条一直钉在顶上，也不占版面（`layoutSheets()` 不用扣它的高）。没轮到的那几页用自己的规则藏掉（`.dp-body :deep(.dp-sheet .inkbar){display:none}`，比 `.board.ink-on .inkbar` 多一级才压得住）。搬进槽里的条已经不在 `.board` 里，`.board.ink-on .inkbar{display:flex}` 不再命中，得由 `.dp-dock :deep(.inkbar){display:flex}` 自己亮出来。`clearSheets()` **逐页摘页框、再清槽**——host 里住着槽，不能再一把 `innerHTML=''`；板销毁前条若还停在槽里，槽清空时一并没有。画布里的按钮高度统一成 **34px**（`.dp-body :deep(.inkbar ...)` 一组规则，站内画板那套是 30px），动作钮只留图标；**半屏那一档再把参数钮上的字也藏掉**（`.drawpad.side ... .ink-glbl`），保证半屏也排得下一行；收起后（`.inkbar.min`）缩成顶上居中的一枚。原先的「工具条贴哪一面」（`PREFS.canvasTools` + 板根 `pad-tools-*` 类）随这次一起废掉，设置页那一行也删了。
+  画布直接 `new Board(el, pageBox.w, pageBox.h, { …, fit:true, inkPad:true, inkFold:true })` 再 `setInk(true)`：工具条、吸附、选区、调色板、图形插入全是站内同一套；分页见下条。**铺满（半屏、整屏一样铺满）**（2026-11-17，用户先「画布是整屏的时候铺满就行，不用空出来俩边，四周增加一点边距就行」，再「半屏的画布只有一个页面的时候应该也是铺满那半个屏幕的，下面最好不要空出内容，可以在下面增加一个+的按钮，用于便捷增加按钮，但是不要占用太大空间」）：页框由 `layoutSheets()` 撑到滚动区内容宽（`.dp-body` 左右各 10px padding）与 `ch - 2*GAP` 高（上下各 18px，`GAP` 就是页间距），页的**逻辑尺寸（viewBox）跟着页框比例换**——`pageBox` 取 `ar ≥ 1000/700` 时 `{w: 700*ar, h: 700}`、否则 `{w: 1000, h: 1000/ar}`，即只往右 / 往下加、**从不缩**，标准页里的墨迹坐标一动不动、不会被重新裁掉（否则屏幕比 10:7 宽时 SVG 只按 viewBox 等比铺，两侧照旧留黑边）。改世界走引擎新增的 `Board.setWorld(w, h)`（同步 `_clipRect`、`_vb`、`_z=1` 与 svg 的 aspect-ratio，再 `_paperDraw()` 按新 w/h 重铺网格、`render()`、`_syncVB()`），`layoutSheets()` 对每块已建的板都调一次；`setWorld` 尺寸没变就早退，Ctrl+滚轮的缩放不会被 ResizeObserver 无谓重置。半屏底边另有一条 **34px 的 `.dp-foot`**（只半屏留，整屏 `v-if` 掉），中间一枚虚线小胶囊「＋ 新页」调同一个 `addPage()`——画到最下面不用再爬回顶栏加页；它是 `aside` 的第三段 flex 子项、**不在 `.dp-body` 里**，所以 `host.clientHeight` 量到的已经是扣掉它之后的高度，`layoutSheets()` 不用再管。末尾的 `.dp-body::after{height:18px}` 现在两种摆法都要（最后一页也滚得到「上下各 18px」）。**副作用**：页框比例两种摆法不一样（半屏约 1:1、整屏约 2:1），世界按「只加不减」跟着换，所以画在**超出去的那一带**（半屏世界高约 980 时是 `y > 700`，整屏是 `x > 1000`）的墨迹，切到另一种摆法会被 viewBox 裁在画外——没丢，切回去还在。
+  **分页**（2026-11-17，用户「新增之后在当前页面的下方，可以上下滑动」把翻页式改掉）：**一页一块板，竖着摞在 `.dp-body` 这个滚动区里**，滚轮上下滑就是换页，头部 `‹ 第n/N页 › ＋` 只是快捷跳转（`scrollToPage` 用 smooth 滚过去）。页的宽高由 `layoutSheets()` 现算写在内联样式上（两种摆法都铺满：宽 = 滚动区内容宽、高 = 滚动区高 − 上下两个 `GAP`），页的逻辑尺寸随之跟着页框比例走（见上条）；页间距 `GAP = 18px`，缝里放「第 n 页」小字（`.dp-pglbl`，`pointer-events:none`）。页数/当前页存 `gl-pad-pages` / `gl-pad-page`（上限 60），当前页由滚动位置反推（`syncPage()` 取**滚动区正中**落在哪一页——不能取离顶最近的一格：半屏时最后一页滚不到顶，会被判成上一页；rAF 节流）。**画板按需挂**：当前页连同前后各一页才 `mountBoard()` 建板（`ensureNear()`；墨迹本来就按页落盘，晚建不丢，滚到半路上也不会先空着一块）；顶上那条工具条跟着当前页换（`attachBar()`）；在哪一页按下鼠标哪一页就是「当前页」（页格子的 pointerdown），翻页时 `setAct()` 用 `B.inkState()` / `B.setInkState()` 把笔的颜色/粗细/线型/笔种带过去。第 1 页仍用 `page:'/pad', qid:'pad'`（老墨迹不丢），第 n 页用 `page:'/pad/n', qid:'padn'`。尺寸变化（半屏 ↔ 整屏、拖窗口）由 `.dp-body` 上的 ResizeObserver 重算并滚回当前页。
+  **删页**（2026-11-17，用户「顺便增加删除页面的功能」）：头部页码条里 `＋` 后面再加一枚 `－`（只有一页时 disabled，标题「至少留一页」）。**两下确认**（跟批注条「清空」同一套）：第一下只是把按钮变成 `删?` 并开始 3s 倒计时（`delArmed` / `delT`），3s 内再点才真删；翻页、滑页（`syncPage` 判出换页）、收起画布都会把「上膛」状态撤掉，免得隔了很久误触。墨迹存档按**页序号**挂键，所以删第 n 页要把 n+1..old 各往前挪一位（第 1 页仍用老键 `/pad` + `pad`，`inkKeys()`）：先 `clearInk` 掉被删那页，再逐页 `loadInk → saveInk` 到前一号键、写成功才 `clearInk` 原键——**写失败（配额满）就 `break` 整段停手**，旧键原样留着（不能只跳过这一格往下走：下一格正好要写回它，那份保底的旧墨迹会被盖掉）；宁可序号对不上，也别把画的东西弄丢。挪完 `rebuild()` 整套重搭（`clearSheets()` → 逐页 `addSheet` → `layoutSheets` → `ensureNear` → `setAct` → `scrollToPage`），因为页框、页面板、工具条、`page`/`qid` 全跟序号绑着，就地改不如重建；`Board.destroy()` 不回调 `_inkSave`（墨迹每次落笔就已落盘），所以重建不会把刚挪好的键写乱。
+  **纸面**（2026-11-17）：头部「▦ 纸面」弹面板选底色（跟随主题 / 深空 / 墨蓝 / 石板 / 纸白 / 米色 / 霜蓝）与网格（无 / 方格 / 点阵 / 横线），存 `gl-pad-paper`（各页共用）。底色走引擎原有的板底色机制（`B.setPaper({c,g})` 里把 `_custom`/`_tint` 设成自选色再 `syncTint()`，深底浅字自动换），网格画成 svg 最底层的 `g.bd-paper`（板坐标 1000×700、步长 50，按底色亮度取线色），跟着 viewBox 缩放平移、导出 PNG 一起带走。
+  **保存**：顶部「⤓ 保存」导出**当前这一页**那块板（`curBoard.exportPNG()`，工具条那枚导的是它自己所在页）；`saveBase` 进文件名（第 1 页 `画布-YYYYMMDD-HHmm.png`，其余页 `画布-第n页-…`），板上的图形与墨迹一起进图。
+  **贴图与画板导入**（2026-11-17 P3）：画布开着时 `window` 上的 `paste` 监听把剪贴板里的图片交给当前页板的 `ingestImage(file)`（长边缩到 ≤1600px、JPEG 0.9 落成 dataURL；`CAP` 3.2M 字符写不下时由 `_inkAddImage` 弹提示告知「没存下」）；讲解页板的 `.dlbar` 里「→ 画布」走 `window.__glBoardToPad`（本组件挂的全局钩子，卸载时若还是自己就置空），`boardToPad()` 在画布没开时先 `emit('update:open', true)` 再延时等页与板搭好，最后调板的 `importFrom()`。`onKey`/`paste` 都要避开输入框（textarea/input/contenteditable），文字工具正在打字时 Ctrl+V 是粘贴文字，不是贴图。
+  半屏那一档工具条钮多，`.drawpad.side .dp-body :deep(.inkbar …)` 一组规则把图标缩到 19px、高 32px、gap 3px，另把参数钮上的字（`.ink-glbl`）藏掉；窗口再窄仍会折行，可用「收起」（.ink-fold）兜底。
+  板内 `.dlbar`（缩放半屏导出那条）与空 `.ctrl` 行由 scoped `:deep()` 隐藏，缩放仍可 Ctrl+滚轮；与 GeoGebra 小窗 / 助手 / 笔记互斥（App.vue 四条 watch），换页与 Esc 自动收起。
 
 - **颜色必须写语义色号且在 COLOR 表里**（board.js 顶部的 hex 或 rgba 条目），亮色主题才会映射；新色要同时给暗/亮两版。
 - **函数图象画法规范（用户两批拍板，2026-11-05）**：① 图象板一律先画 `B.grid` 网格与坐标轴；网格用**实线但颜色淡**（低透明度）。② 曲线 `stroke-width` 与轴线同量级（≈2.2，不要 3+）。③ **x/y 单位长度尽量相同**（`B.isoFit`，真实比例；量纲不同的数据图如 C4 邮资/个税可各用比例尺）。④ 取景吃满画框、原点不必居中。⑤ 定义域/值域等集合信息用色带压在对应坐标轴上（值域投影压 y 轴）。⑥ **有渐近线的函数要把渐近线画出来**（`B.asym`）。⑦ 网格 / 轴标注（字母+刻度）/ 渐近线都做成**可隐藏开关**（toggleBtn）。⑧ 必要时标注**特殊点**（顶点、临界点、端点、分段点，实心=闭、空心=开）。⑨ **曲线采样用「网格 + 锚点」**：marks/端点/临界点/定义域边沿/分段点必须并进采样数组再排序（曲线精确踩过 (0,0)、顶点、空心/实心端点与接榫点，不与色带错位——用户报过 √x 不从 (0,0) 起笔的坑）；一律用引擎 `B.plot`（2026-11-09 起手写 plot 闭包全部收编）。⑩ **板内公式文本一律 LaTeX**（B.tex / btnM / chipM，根号带上横线、符号间距由 KaTeX 负责）；纯文字说明才用 B.text，set 记号与区间记号纯文本可接受。⑪ **版式（用户 2026-11-05 三批拍板）**：函数与其斜率的对应展示可用上下排布双栏、x 严格对齐（两栏共用 px，探针/扫描线贯通）；**但基本初等函数系列（E1..E8）不画导函数图像** —— 用户反馈「太挤」，f′ 走文字徽章呈现（S2 的 f/f′ 双面板是性质专题专属）；探针点用向两轴作的投影垂线直读坐标，不画斜切线（E4 用户指定，2026-11-06）。局部细节可用「全景缩小 + 放大镜」双面板（R3 显微镜先例；E3 曾用、后按用户要求撤回）。多曲线家族按参数**分色**：每条曲线一个身份色（E3 幂函数按 α 分色），色号须在 COLOR 表内。
@@ -212,6 +401,7 @@ B 底注开关（引擎内置，无公开方法名）       // 2026-11-16 用户
 4. 图编号前缀按子专题：sets 一 J、二 X、三 Y；trig 一 B、二 U、三 I、四 W、五 F、六 M、七 N、八 Q、九 H、十 Z、十一 K（全部已上线）；conics 一（无前缀 1..10）、二 D、三 T、四 A、五 P、六 L；functions 一 C、二 S、三 R、四 E、五 G、六 V（互不冲突）；**inequalities 起拉丁大写已全部占用（26 个字母用尽），改用汉字单字前缀**：inequalities 一 性、二 次、三 基、四 放、五 线，sequences 一 数、二 等、三 比、四 和、五 递、六 归、七 用（全部已上线，与子专题名直连）；vectors 一 向、二 基、三 积、四 应、五 复、六 欧（全部已上线）；polar 一 极、二 曲、三 参、四 轨（全部已上线）；solid 一 体、二 积、三 位、四 标（前缀与子专题名直连，10 章全部已上线）；combinatorics 一 计、二 排、三 项、四 恒（全部已上线）；**高等数学九模块沿用汉字单字**：calc1 极/微/积/定/方/级、spacegeom 向/面/曲、calc2 微/重/线、complexvar 复/解/级、numtheory 整/定/剩、topology 拓/连/不、fractal 维/形/生、projgeom 射/曲/换、algebra 结/群/网（跨模块重字不算冲突：polar 的 曲、calc2 的 微 都各在本模块内编号；新子专题自选新前缀并在 README 与模块主页标注）。
 5. 中文书面语，表述规范按第 6 条执行；结论互相回收，不写孤岛章节。
 6. **表述去味规范（用户 2026-11-06 拍板）**：正文、图注、卡片简介一律书面学术表述，禁止 AI 腔与拟人化比喻。**禁用词**：对账/账本/在册/签字/封顶/追平/报数/凑出来/老戏码/换基石、红牌/除名/失灵/爆缸/真身、审判/过堂/沙盘/闸机/天平/三兄弟/全家福、裁决机/侦探/破案/幽灵/验籍/国籍/入册/挂号/守门/踩/盖、分家/会师/变奏。**禁用句式**：「先看 X，再看 Y」式导览腔（解法步骤的「先…再…」不在此列）、营销形容（巧妙/优雅/完美）、排比堆砌。**替换惯例**：对账→核验/验证；出身→来源/求法；在场/接管→落在区间内/取得/定一头；名单→清单/候选点集；失灵→失效；砍/刀→步；跳档/临界档→个数改变/临界情形；象限裁决→由象限选定；爆缸→无定义；真身→真值。**保留**（功能性板名与教材术语，须能对应到具体机制）：换名（奇变偶不变）、母波、收口、围栏/护栏/界墙、现场排除/核验、殊途同归、显微镜、考古机、诊疗机、变波机、折叠机、铰链机、切线下山机（数值分析术语）、斜率巡逻机、「管」（A 管值域）类短谓语。
+7. **模块目录页（`views/**/XxxHome.vue`）不写建设进度**（用户 2026-11-17 拍板）：正文、页头一律不出现「全模块 x 章 y 块画板已上线」「建设进度 20/20」「模块完结」这类字样；`.readall` 只留「学习进度：已读 x / N 章」，高阶模块的读数用 `readAll = cnt(组) + …` 现算（`cnt` 已在各文件里），**不要再用 `built`**。页尾原本列画板清单的 `.note good` 改用**拓展阅读**，格式照 sets 模块：`拓展阅读：<一句总述> —— ① …；② …；③ …；④ …。全站定理总表见顶栏<strong>速查</strong>。`，条目取本模块之外、可继续成章的方向（跨到别的模块或大学课程时顺手内链）。
 
 ## SFC 坑（本仓库已踩过多次）
 
@@ -598,7 +788,7 @@ B 底注开关（引擎内置，无公开方法名）       // 2026-11-16 用户
 - **出口**：`src/lib/ggb.js` 的 `ggbUrl(cmds, mode)` / `openGGB(cmds, mode)`，命令数组以 JSON 塞进 hash 查询串（`#/playground?mode=…&cmds=…`）。画板侧调用 `B.ggbOutlet(getCmds, mode)`（`board.js`）——按钮复用 `.dl` 样式，挂进右上角操作条 `.dlbar`（`global.css`：flex 排布，`order:-1` 排在 ＋/－ 缩放与 ◧/⛶ 半屏全屏之后，紧挨 ● 视频、▤ 底色、Aa 底注与 ⤓ PNG），hover 才现身（设置页可把整条搬到板上方，见「B 操作条位置」）；`getCmds` 每次点击现算，拖动过参数也带得过去。
 - **已接出口的板**：quadform（二次型隐式方程 + 矩阵）、gridmap（矩阵 + `ApplyMatrix` 变换单位正方形）、sinlab（A、ω、φ 与 `f(x)=A sin(w x+p)`）、circleeq（圆心、半径、标准式与一般式）。新增板照这个写法加一行即可，命令用 GeoGebra 语法（`f(x)=sin(x)`、`Circle((1,2),3)`、`u=(1,2,3)`）。
 - **顶栏**：模块链接收进一枚「章节目录」按钮（`.navdir`），点开抽屉 `ChapterDrawer.vue`：十四个模块各一张圆角卡（标题 + 一句概述 + 已读/总数 + 浅色进度条，颜色按模块分，当前模块描边高亮），卡片即 `<router-link>`，点击跳转并收起；Esc / 点遮罩关闭。章节总数由 `router.js` 的路由表现算（只数 `/<模块>/<章节>` 两段式叶子路由），已读取 `progress.js` 的 `READ`。**弹出方向**由 `:side` 决定：左档面板贴左、右侧圆角 `0 16px 16px 0`、投影朝右；右档贴右、圆角 `16px 0 0 16px`、投影朝左。进出场用 `<Transition>`——遮罩 `cdm` 淡入淡出，面板 `cdl`/`cdr` 从各自一侧 `translateX(±102%)` 滑进（0.26s，`prefers-reduced-motion` 下关掉）。顶栏布局：logo + 「章节目录」靠左，右侧「速查」「画板」「⚙ 设置」与打印、主题按钮靠右，`.topnav .in` 左右各留 26px 不贴边（原 `max-width:1440px` 居中已撤，全局铺开）。Home 目录底部另有两张「工具」卡（自由画板、定理速查），**不是章节卡**——单独放在 `.tool-row` 里用虚线边的 `.tool-link`，不再混进 `.chapter-grid`。
-- **全站搜索（2026-11-17）**：顶栏「⌕ 搜索」或 **Ctrl+K / ⌘K** 呼出 `src/components/SearchPalette.vue`（Teleport 到 body、↑↓ 走位、Enter 进、Esc 关）。索引在 `src/lib/search.js`：章节/子专题/模块取自 `modnav.js` 的 `MODULES`（唯一来源，别另抄），定理速查取自 `src/lib/cheatindex.js`——**那份文件由 `npm run gen:cheat`（`scripts/gen-search.mjs`）从 `views/CheatSheet.vue` 的 `.topic-card` 抽出来，改完速查页必须重跑并把生成结果一起提交**，速查标题/正文/公式一并并进同路径的章节行当检索语料。索引按需加载（速查包约 69 kB / gzip 42 kB），首屏不背；打分顺序：标题完全 > 前缀 > 包含 > 速查原题 > 标签（J1）> 子专题 > 模块 > 正文 > 公式源码 > 字符顺序匹配（「集运」→「集合的运算」），多词按「全部命中」求和。
+- **全站搜索（2026-11-17）**：**顶栏正中的搜索框**（`App.vue` 里 `<div class="nav-center">` 包着，`position:absolute;left:50%` 压在导航条正中；≤1500px 退回常规流居中——再窄就会压住右侧那排入口）。搜索框 30px 高、输入框 220px 宽，底色用 `var(--card)` + `color-mix` 描边（顶栏是半透明深底，只用 `--line` 看不见）。或 **Ctrl+K / ⌘K** 呼出 `src/components/SearchPalette.vue`（结果用 Teleport 到 body、↑↓ 走位、Enter 进、Esc 关）。两种呈现由设置页「搜索框样式」`PREFS.searchBox` 决定：`inline`（默认，输入框在顶栏里，结果浮层 fixed 对着输入框右缘摆放——**顶栏有 `overflow-x:auto`，浮层绝不能挂在顶栏内部**，要 Teleport）与 `popup`（原来那种屏幕中间的对话框）。列表本体抽成 `src/components/SearchResults.vue`，两种外壳共用。索引在 `src/lib/search.js`：章节/子专题/模块取自 `modnav.js` 的 `MODULES`（唯一来源，别另抄），定理速查取自 `src/lib/cheatindex.js`——**那份文件由 `npm run gen:cheat`（`scripts/gen-search.mjs`）从 `views/CheatSheet.vue` 的 `.topic-card` 抽出来，改完速查页必须重跑并把生成结果一起提交**，速查标题/正文/公式一并并进同路径的章节行当检索语料。索引按需加载（速查包约 69 kB / gzip 42 kB），首屏不背；打分顺序：标题完全 > 前缀 > 包含 > 速查原题 > 标签（J1）> 子专题 > 模块 > 正文 > 公式源码 > 字符顺序匹配（「集运」→「集合的运算」），多词按「全部命中」求和。
 - **设置页**：`/settings`（`Settings.vue`）——「章节目录方向」「画板小窗方向」两行分段控件（靠左/靠右），外加边界说明与恢复默认。偏好存 `src/lib/settings.js`（`PREFS` 响应式对象 + `localStorage 'gl-prefs'`，`setPref(k,v)` / `resetPrefs()`），`App.vue` 直接读 `PREFS` 渲染，改完即刻生效、无需刷新。后续新设置项按同样一行加进去。
 - **章节页版式**：`ChPage.vue` 的「本讲结构」不再压在正文里，而是**贴正文左侧的粘性导航条**——`.layout` 用 `grid-template-columns:184px minmax(0,1fr)`，`.toc` 圆角卡片、`position:sticky; top:64px`、淡蓝渐变底，每条目录前带两位序号（`01`、`02`…），当前小节由 `IntersectionObserver`（`rootMargin:'-64px 0px -62% 0px'`）高亮：左边一条蓝色竖线 + 淡蓝底。正文因此拿到剩余全部宽度；`toc` 为空时 `.layout.full` 退回单栏。
 - **入口（三处）**：顶栏「画板」→ `/playground`；任意讲解页右下角的圆形按钮 → 右侧半屏小窗；章节画板右上角的「↗ GeoGebra」→ 新标签页整页画板（带当前参数）。圆形按钮**可拖动**（`pointerdown` 起拖、位移超过 5px 才算拖动，否则按点击开合；位置存 localStorage `gl-fab`，窗口缩放时夹回屏内）。

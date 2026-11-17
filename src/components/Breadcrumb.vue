@@ -50,7 +50,8 @@
 </template>
 
 <script setup>
-// 面包屑：左上角一枚圆按钮（与左侧浮钮同一套样式），点开是「当前位置」和最近打开过的页面缓存。
+// 面包屑：顶栏里「章节目录」右边一枚小圆钮（`App.vue` 的 `.topnav` 里挂着，不浮在正文上），
+// 点开是「当前位置」和最近打开过的页面缓存。
 // 面板挂 body、按下按钮现算坐标（顶栏 .topnav .in 的 overflow 会裁掉挂在里面的绝对定位层）。
 // 面板自按钮正下方展开、限高不会压到左下角的浮钮；可固定（切页不收起），不固定时点外面 / Esc / 切页都收。
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
@@ -186,19 +187,18 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* 圆钮与 FloatRail 的 .fr-btn 同一套外观：钉在顶栏下方、与左下角浮钮同一竖线（left 16） */
+/* 页面缓存（最近打开）钮：早先钉在左侧浮着，会压住正文一截；现在收进顶栏、挨着「章节目录」——
+   顶栏不盖内容，位置也更好找。外观跟顶栏那几枚胶囊同一套调子，只是收成 28px 的圆 */
 .crumb-fab {
-  position: fixed; left: 16px; top: 58px; z-index: 95;
-  width: 44px; height: 44px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--mut); background: color-mix(in srgb, var(--card) 82%, transparent);
-  border: 1px solid var(--line); backdrop-filter: blur(8px); cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
-  transition: transform .16s ease, color .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  flex: none; width: 28px; height: 28px; margin-left: 1px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--mut); background: transparent;
+  border: 1px solid var(--line); border-radius: 50%; cursor: pointer;
+  transition: color .16s ease, border-color .16s ease, background .16s ease;
 }
-.crumb-fab svg { width: 21px; height: 21px; }
-.crumb-fab:hover { color: var(--ink); border-color: var(--mut); transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0, 0, 0, .24); }
-.crumb-fab.on { color: #fff; background: var(--blue); border-color: var(--blue); }
+.crumb-fab svg { width: 17px; height: 17px; }
+.crumb-fab:hover { color: var(--ink); border-color: var(--mut); background: rgba(255, 255, 255, .06); }
+.crumb-fab.on { color: var(--blue); border-color: var(--blue); }
 
 .bc-panel {
   position: fixed; z-index: 121; width: 440px; max-width: calc(100vw - 20px);
@@ -247,8 +247,8 @@ a.bc-crumb:hover { color: var(--ink); border-color: var(--mut); background: var(
 .bc-ft { margin: 6px 2px 0; padding-top: 8px; border-top: 1px solid var(--line); font-size: 11px; color: var(--faint); line-height: 1.6; flex: none; }
 
 @media (max-width: 900px) {
-  .crumb-fab { left: 10px; top: 54px; width: 40px; height: 40px; }
-  .crumb-fab svg { width: 19px; height: 19px; }
+  .crumb-fab { width: 26px; height: 26px; }
+  .crumb-fab svg { width: 16px; height: 16px; }
 }
 @media print { .crumb-fab, .bc-panel { display: none !important; } }
 </style>

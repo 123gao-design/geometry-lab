@@ -3,7 +3,7 @@
     <div class="chapter-head">
       <h1>初等数论</h1>
       <p class="sub">整数是最熟悉的数，问题却常最不好答。带余除法把整除写成算式，同余把「差为 n 的倍数」归成一类；欧拉定理与中国剩余定理把模运算的周期性用足，二次剩余与不定方程则处理「哪些数能写成平方」这类判定。最后一章把这些工具接成一件事：公钥密码。</p>
-      <div class="readall">已上线 {{ built }} / {{ total }} 章：整除与同余 4/4，数论定理 5/5，二次剩余与应用 4/4</div>
+      <div class="readall">学习进度：已读 {{ readAll }} / {{ total }} 章</div>
     </div>
 
     <h3 class="sec">子专题一 · 整除与同余<span class="prog">已读 {{ cnt(bas) }}/{{ bas.length }} · 4 章</span></h3>
@@ -33,7 +33,7 @@
       </router-link>
     </div>
 
-    <div class="note good">十三块画板各管一件事。整除与同余四台：带余除法机把 <Katex tex="a=qm+r" /> 画成数轴上的分块，商与余数随手读；欧几里得算法机用正方形铺满矩形，最后一块的边长就是 <Katex tex="\gcd" />，右栏同时倒推出裴蜀等式；同余机把模 m 的余数摆成表盘，两个数落在同一格即同余，差值随指针读出；一次同余方程机在同一张表盘上把解集染金，<Katex tex="d=\gcd(a,m)" /> 与 <Katex tex="d\mid b" /> 的判读决定解有几个。数论定理五台：素数机用筛法给格阵染色，右栏拆出 n 的质因数连乘；欧拉函数机让互素的格子变绿，与 <Katex tex="n\prod(1-1/p)" /> 的算式逐项对照；费马与欧拉定理机从 1 出发反复乘 a，轨道回到 1 的步数就是阶；中国剩余定理机把两个模的余数排成行，交错表格里每一格写着对应的唯一 x；莫比乌斯机在除数双曲线上按 <Katex tex="\mu(d)" /> 上色，右图的柱与部分和把「除数和恒为零」摆出来。二次剩余四台：剩余机列出 1 到 p−1 的平方根，有根的金、无根的灰，欧拉判别式同屏给出；原根机看青线能否一次走遍表盘，指数表随底数改写；不定方程机让格点落在直线上，通解的步长直接读自两点之差；RSA 机把报文送进加密框再送回来，两段模幂与公私钥的绑定关系一目了然。</div>
+    <div class="note good">拓展阅读：① 欧拉定理与费马小定理是同余运算的核心，指数可按 <Katex tex="\varphi(n)" /> 化简，模为素数时降为 <Katex tex="a^{p-1}\equiv1" />；② 中国剩余定理把几个模数下的解合成一个，条件是模数两两互素，否则要先验相容；③ 原根与离散对数是另一套公钥体制的基础，与本章末尾的 RSA 互为参照；④ 连分数给出实数的有理逼近，佩尔方程 <Katex tex="x^2-Dy^2=1" /> 的解由它的渐近分数给出；⑤ 素数分布（素数定理、伯特兰假设）回答「素数有多密、下一个离多远」。全站定理总表见顶栏<strong>速查</strong>。</div>
   </div>
 </template>
 <script setup>
@@ -64,7 +64,7 @@ const res = [
 const cnt = arr => arr.filter(c => READ.set.has(c.to)).length;
 const higher = higherOf('numtheory');
 const total = higher.groups.reduce((s, g) => s + g.items.length, 0);
-const built = bas.length + thm.length + res.length;
+const readAll = cnt(bas) + cnt(thm) + cnt(res);
 </script>
 <style scoped>
 .note.good { margin-top: 26px; }
