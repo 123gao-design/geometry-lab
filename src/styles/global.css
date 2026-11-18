@@ -15,6 +15,8 @@ body{margin:0;background:var(--bg);color:var(--ink);
   -webkit-font-smoothing:antialiased}
 h1,h2,.sub{font-family:Georgia,'Times New Roman','Songti SC','SimSun',serif}
 main,nav .in{max-width:1720px;margin:0 auto;padding:0 20px}
+/* 物理实验页的画板按 100vw 铺满：100vw 含纵向滚动条的宽度，右边会溢出十几像素，铺满期间先按住横向滚动 */
+body.plab-full{overflow-x:hidden;overflow-x:clip}
 /* 路由切换过渡：App.vue 在切路由时给 main 挂 .page-in 重放动画；具体放哪种由设置页的 data-anim 决定 */
 main.page-in[data-anim=fade]{animation:pageFade .34s cubic-bezier(.2,.7,.3,1) both}
 main.page-in[data-anim=up]{animation:pageUp .36s cubic-bezier(.2,.7,.3,1) both}
@@ -522,6 +524,13 @@ table{border-collapse:collapse;width:100%;font-size:14.5px;margin:10px 0}
 td{border-bottom:1px solid var(--line);padding:7px 10px;vertical-align:top}
 td:first-child{white-space:nowrap;color:var(--cyan);font-family:ui-monospace,Menlo,monospace;font-size:13px}
 footer{color:var(--faint);text-align:center;font-size:13px;padding:30px 0 50px}
+/* 页脚第二行：关于 / 使用说明 / 更新日志（站务三页，路由见 router.js） */
+.foot-links{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:9px;font-size:12.5px}
+.foot-links i{font-style:normal;opacity:.5}
+.foot-links a{color:var(--faint);text-decoration:none;padding:2px 4px;border-radius:6px;
+  transition:color .15s ease,background .15s ease}
+.foot-links a:hover{color:var(--blue);background:rgba(92,173,255,.08)}
+.foot-links a.router-link-active{color:var(--blue)}
 /* ============ 讲解页三栏：左模块大纲（子专题可折叠，章全列）/ 中正文 / 右本讲结构 ============ */
 /* 顶栏 46px + 一截呼吸就是正文顶边（原先要再让开左上角那枚 44px 圆钮，2026-11-17 起不用了） */
 .chap3{display:grid;grid-template-columns:280px minmax(0,1fr) 224px;gap:22px;align-items:start;margin-top:18px}

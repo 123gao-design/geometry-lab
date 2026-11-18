@@ -2,6 +2,7 @@ import {defineConfig} from 'vite';
 import vue from '@vitejs/plugin-vue';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /* 默认文字位置文件的写入接口（只在 dev 服务器上生效）：
    POST /__lbl-write  { path: 'public/xxx.json', data: {...} }
@@ -46,9 +47,26 @@ function lblWritePlugin() {
   };
 }
 
+/* 画板总数：关于页显示「N 块画板」。这个数在配置期数一遍 src/boards 就够——
+   若改成前端 import.meta.glob，412 个画板模块会被挂进构建图：它们平时是各章 view 静态 import 的，
+   再动态 import 一次，Rollup 就会把每个画板单独拆成一块 chunk，章页反倒多出几百个请求。 */
+function countBoards(dir) {
+  let n = 0;
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) n += countBoards(p);
+    else if (e.isFile() && e.name.endsWith('.js')) n++;
+  }
+  return n;
+}
+const BOARD_COUNT = countBoards(fileURLToPath(new URL('./src/boards', import.meta.url)));
+
 export default defineConfig({
   plugins: [vue(), lblWritePlugin()],
   base: './', // 构建产物可用 file:// 直接打开（配合 hash 路由，完全离线）
+  define: {
+    __GL_BOARD_COUNT__: String(BOARD_COUNT), // 关于页的画板数，构建期定值
+  },
   build: {
     rollupOptions: {
       output: {

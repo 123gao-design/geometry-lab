@@ -26,6 +26,16 @@
         <circle cx="9" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/>
       </svg>
     </router-link>
+    <router-link v-if="!isCalendar" to="/calendar" class="fr-btn cal" title="日历 · 待办" aria-label="日历 · 待办">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="4" y="5.4" width="16" height="14.4" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M4 9.6h16" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M8.4 3.6v3.4M15.6 3.6v3.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        <circle cx="8.6" cy="13" r="1" fill="currentColor"/><circle cx="12" cy="13" r="1" fill="currentColor"/>
+        <circle cx="15.4" cy="13" r="1" fill="currentColor"/><circle cx="8.6" cy="16.4" r="1" fill="currentColor"/>
+      </svg>
+      <b v-if="todayLeft" class="fr-badge">{{ todayLeft > 99 ? '99+' : todayLeft }}</b>
+    </router-link>
     <button v-if="showNotes" class="fr-btn notes" :class="{ on: notesOpen }" type="button"
       :title="notesOpen ? '收起笔记' : '在这一页记笔记'" aria-label="随页笔记" @click="$emit('update:notesOpen', !notesOpen)">
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -46,12 +56,14 @@
 </template>
 
 <script setup>
-// 左侧竖排圆按钮：返回上一页 / 回首页 / 回顶部 / 数字游戏 / 随页笔记 / 助手。
+// 左侧竖排圆按钮：返回上一页 / 回首页 / 回顶部 / 数字游戏 / 日历待办 / 随页笔记 / 助手。
 // 「返回上一页」只在站内确实有上一页出现（读 vue-router 写进 history.state 的 back），
 // 直接打开链接或从站外进来时不显示，免得按一下跳出本站；首页上不显示「回首页」，
-// 游戏页上不显示「数字游戏」，页面在顶部时不显示「回顶部」。
+// 游戏页上不显示「数字游戏」，日历页上不显示「日历」，页面在顶部时不显示「回顶部」。
+// 日历钮右上角挂一枚小圆点数字：今天还没完成的待办条数，为 0 时不挂。
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { byDate, todayKey } from '../lib/todos.js';
 
 defineProps({
   chatOpen: { type: Boolean, default: false },
@@ -63,6 +75,9 @@ const route = useRoute();
 const router = useRouter();
 const isHome = computed(() => route.path === '/');
 const isGames = computed(() => route.path.startsWith('/games'));
+const isCalendar = computed(() => route.path === '/calendar');
+// 今天还剩几项没做完（todos.js 的 TODOS 是响应式的，增删改都会跟着重算）
+const todayLeft = computed(() => byDate(todayKey()).reduce((n, t) => n + (t.done ? 0 : 1), 0));
 // 随页笔记只挂在具体章节页上：首页和笔记页本身不显示这枚按钮
 const showNotes = computed(() => route.path !== '/' && route.path !== '/notes');
 
@@ -95,6 +110,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll));
   display: flex; flex-direction: column; gap: 10px;
 }
 .fr-btn {
+  position: relative;
   width: 44px; height: 44px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   color: var(--mut); background: color-mix(in srgb, var(--card) 82%, transparent);
@@ -112,6 +128,15 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll));
 .fr-btn.games:hover { color: #fff; background: var(--purple); border-color: var(--purple); }
 .fr-btn.notes { color: var(--green); border-color: color-mix(in srgb, var(--green) 40%, transparent); }
 .fr-btn.notes:hover, .fr-btn.notes.on { color: #fff; background: var(--green); border-color: var(--green); }
+.fr-btn.cal { color: var(--orange); border-color: color-mix(in srgb, var(--orange) 40%, transparent); }
+.fr-btn.cal:hover { color: #fff; background: var(--orange); border-color: var(--orange); }
+.fr-badge {
+  position: absolute; top: -3px; right: -3px; min-width: 17px; height: 17px; padding: 0 4px;
+  border-radius: 99px; font-size: 10.5px; font-weight: 600; line-height: 17px; text-align: center;
+  color: #fff; background: var(--orange); border: 1.5px solid var(--bg);
+  font-variant-numeric: tabular-nums; pointer-events: none;
+}
+.fr-btn.cal:hover .fr-badge { background: #fff; color: var(--orange); }
 @media print { .float-rail { display: none !important; } }
 @media (max-width: 900px) {
   .float-rail { left: 10px; bottom: 74px; gap: 8px; }

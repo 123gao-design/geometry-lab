@@ -39,6 +39,7 @@ const SUGGEST = [
   { t: '定理速查', to: '/cheatsheet' },
   { t: '自由画板', to: '/playground' },
   { t: '笔记', to: '/notes' },
+  { t: '使用说明', to: '/guide' },
   { t: '设置', to: '/settings' },
 ];
 </script>

@@ -503,8 +503,32 @@ function boardToPad(src) {
   emit('update:open', true);
   setTimeout(() => run(14), 60);            // 等 mount() 把页与画板搭好
 }
+/* ---- 图片 → 画布：canvas 画的板（物理演示）搬不了矢量节点，交给演示外壳贴一张 JPEG 过来，
+        和截图 / 粘贴走同一个 ingestImage（长边缩到 1600、JPEG 0.9 这两步在引擎里做） ---- */
+function imageToPad(dataUrl, name) {
+  if (!dataUrl) return;
+  const run = tries => {
+    const b = curBoard || (sheetOf(pageNum.value) || {}).board;
+    if (b && typeof b.ingestImage === 'function') {
+      if (pageNum.value && !curBoard) setAct(pageNum.value);
+      fetch(dataUrl)
+        .then(r => r.blob())
+        .then(bl => {
+          const f = new File([bl], (name || '演示') + '.jpg', { type: bl.type || 'image/jpeg' });
+          b.ingestImage(f);
+        })
+        .catch(() => {});
+      return;
+    }
+    if (tries > 0) setTimeout(() => run(tries - 1), 70);
+  };
+  if (props.open) { nextTick(() => run(6)); return; }
+  emit('update:open', true);
+  setTimeout(() => run(14), 60);
+}
 window.addEventListener('paste', pasteImage);
 if (typeof window !== 'undefined') window.__glBoardToPad = boardToPad;
+if (typeof window !== 'undefined') window.__glImageToPad = imageToPad;
 // 纸面面板：点面板与「▦ 纸面」钮以外的地方收起
 function onDocDown(e) {
   if (!paperOpen.value) return;
@@ -527,6 +551,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', onResize);
   window.removeEventListener('paste', pasteImage);
   if (window.__glBoardToPad === boardToPad) window.__glBoardToPad = null;
+  if (window.__glImageToPad === imageToPad) window.__glImageToPad = null;
   document.removeEventListener('pointerdown', onDocDown, true);
   window.removeEventListener('pointermove', onFabMove);
   window.removeEventListener('pointerup', onFabUp);

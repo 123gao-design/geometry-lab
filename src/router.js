@@ -345,6 +345,12 @@ const Games = () => import('./views/Games.vue');
 // 游戏子页：2048（边长可选）与数独，入口是游戏页顶部的页签
 const Games2048 = () => import('./views/Games2048.vue');
 const GamesSudoku = () => import('./views/GamesSudoku.vue');
+// 日历 · 待办（月视图 + 当日清单），入口在左侧竖排圆按钮与首页工具卡
+const Calendar = () => import('./views/Calendar.vue');
+// 站务三页：关于本站 / 使用说明 / 更新日志，入口在页脚
+const About = () => import('./views/About.vue');
+const Guide = () => import('./views/Guide.vue');
+const Changelog = () => import('./views/Changelog.vue');
 // 高等数学 · 一元函数微积分（已开写）
 const Calc1Home = () => import('./views/calc1/Calc1Home.vue');
 const SpacegeomHome = () => import('./views/spacegeom/SpacegeomHome.vue');
@@ -510,9 +516,48 @@ const SS1 = () => import('./views/spacegeom/surface/s1.vue');
 const SS2 = () => import('./views/spacegeom/surface/s2.vue');
 const SS3 = () => import('./views/spacegeom/surface/s3.vue');
 const SS4 = () => import('./views/spacegeom/surface/s4.vue');
+// 物理演示：与数学模块分页，实验体（Rapier / three.js）由各实验自己动态 import
+const PhysicsHome = () => import('./views/PhysicsHome.vue');
+const PhysicsPart = () => import('./views/PhysicsPart.vue');
+const PhysicsLab = () => import('./views/PhysicsLab.vue');
+// 物理讲义章（/physics/ch/<id> 三段，与上面的 /physics/:id 不冲突）
+const PM1 = () => import('./views/physics/mech/motion1.vue');
+const PM2 = () => import('./views/physics/mech/motion2.vue');
+const PM3 = () => import('./views/physics/mech/motion3.vue');
+const PM4 = () => import('./views/physics/mech/motion4.vue');
+const PM5 = () => import('./views/physics/mech/motion5.vue');
+// 相互作用（重力与弹力 / 摩擦力 / 力的合成与平衡）
+const PF1 = () => import('./views/physics/mech/gravity.vue');
+const PF2 = () => import('./views/physics/mech/friction.vue');
+const PF3 = () => import('./views/physics/mech/forcecomb.vue');
+// 牛顿运动定律
+const PW1 = () => import('./views/physics/mech/newton1.vue');
+const PW2 = () => import('./views/physics/mech/newton2.vue');
+const PW3 = () => import('./views/physics/mech/newton3.vue');
+const PW4 = () => import('./views/physics/mech/newton4.vue');
 
 export default [
   { path: '/', name: 'home', component: Home },
+  // 物理演示实验室（首页的学科页签切到这里）
+  { path: '/physics', name: 'physics', component: PhysicsHome },
+  // 物理讲义的部分页（首页 → 部分 → 章），与数学的模块主页同一层；三段，不与下面的 /physics/:id 撞
+  { path: '/physics/p/:part', name: 'physics-part', component: PhysicsPart },
+  { path: '/physics/:id', name: 'physics-lab', component: PhysicsLab },
+  // 物理讲义 · 一 力学 · 运动的描述与匀变速直线运动
+  { path: '/physics/ch/motion1', component: PM1 },
+  { path: '/physics/ch/motion2', component: PM2 },
+  { path: '/physics/ch/motion3', component: PM3 },
+  { path: '/physics/ch/motion4', component: PM4 },
+  { path: '/physics/ch/motion5', component: PM5 },
+  // 物理讲义 · 一 力学 · 相互作用
+  { path: '/physics/ch/gravity', component: PF1 },
+  { path: '/physics/ch/friction', component: PF2 },
+  { path: '/physics/ch/forcecomb', component: PF3 },
+  // 物理讲义 · 一 力学 · 牛顿运动定律
+  { path: '/physics/ch/newton1', component: PW1 },
+  { path: '/physics/ch/newton2', component: PW2 },
+  { path: '/physics/ch/newton3', component: PW3 },
+  { path: '/physics/ch/newton4', component: PW4 },
   // 模块一 · 集合与常用逻辑
   { path: '/sets', name: 'sets', component: SetsHome },
   // 子专题一 · 集合的语言
@@ -1025,6 +1070,12 @@ export default [
   { path: '/games/sudoku', name: 'games-sudoku', component: GamesSudoku },
   // 旧路径：两页合并时的地址，重定向到 2048
   { path: '/games/classic', redirect: '/games/2048' },
+  // 日历 · 待办（月视图 + 当日清单，数据存本机 gl-todos）
+  { path: '/calendar', name: 'calendar', component: Calendar },
+  // 站务三页，入口在页脚
+  { path: '/about', name: 'about', component: About },
+  { path: '/guide', name: 'guide', component: Guide },
+  { path: '/changelog', name: 'changelog', component: Changelog },
   // 旧路径重定向：/projective[/chN] → /conics[/chN]
   { path: '/projective/:pathMatch(.*)*', redirect: to => '/conics' + (to.params.pathMatch ? '/' + to.params.pathMatch : '') },
 ];

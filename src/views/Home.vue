@@ -1,4 +1,6 @@
 <template>
+  <SubjectTabs active="math" />
+
   <div class="card hero" style="margin-top:26px">
     <div class="hero-row">
       <svg class="home-logo" viewBox="0 0 48 48" aria-hidden="true">
@@ -178,12 +180,18 @@
       <strong>定理速查</strong>
       <span>全站结论一页收纳，卡片即内链，可打印当考前小抄</span>
     </router-link>
+    <router-link class="tool-link" to="/calendar">
+      <span class="tag">工具</span>
+      <strong>日历 · 待办</strong>
+      <span>按月排学习计划，点某一天记下要做的事；数据留在本机，可备份成 JSON</span>
+    </router-link>
   </div>
 </template>
 <script setup>
 import { READ } from '../lib/progress.js';
 import { HIGHER, chapterCount } from '../lib/higherplan.js';
 import Katex from '../components/Katex.vue';
+import SubjectTabs from '../components/SubjectTabs.vue';
 const planned = HIGHER.filter(m => !['calc1', 'spacegeom', 'calc2', 'complexvar', 'numtheory', 'topology', 'fractal', 'projgeom', 'algebra'].includes(m.slug));
 const c1Read = () => [...READ.set].filter(p => p.startsWith('/calc1/')).length;
 const sgRead = () => [...READ.set].filter(p => p.startsWith('/spacegeom/')).length;

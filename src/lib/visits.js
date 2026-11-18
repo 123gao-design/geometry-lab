@@ -5,6 +5,8 @@ import { reactive } from 'vue';
 import { PREFS } from './settings.js';
 import { MODULES } from './modnav.js';
 import { HIGHER_TITLE } from './higherplan.js';
+import { EXPERIMENTS, findExp } from '../physics/index.js';
+import { chapterByRoute, partByRoute, labelOf } from '../physics/plan.js';
 
 const KEY = 'gl-visits';
 export const MAX_VISITS = 20;
@@ -22,6 +24,11 @@ const PAGE_TITLES = {
   '/games': '数字游戏',
   '/games/2048': '2048',
   '/games/sudoku': '数独',
+  '/calendar': '日历 · 待办',
+  '/about': '关于本站',
+  '/guide': '使用说明',
+  '/changelog': '更新日志',
+  '/physics': '可视化物理',
 };
 
 export function visitCap() {
@@ -30,9 +37,10 @@ export function visitCap() {
   return Math.max(1, Math.min(MAX_VISITS, k));
 }
 
-/** 组名形如「一　集合的语言」，面包屑里去掉前面的汉字序号 */
+/** 组名形如「一　集合的语言」或「一、运动的描述」，面包屑里去掉前面的汉字序号
+    （两种分隔都认：数学那边是全角空格，物理那边是顿号） */
 function groupName(t) {
-  return String(t || '').replace(/^[一二三四五六七八九十]+[\s　]+/, '');
+  return String(t || '').replace(/^[一二三四五六七八九十]+[\s　、]+/, '');
 }
 
 /** 路由路径 → 面包屑各段（模块 / 子专题 / 章节），查不到就给个兜底 */
@@ -56,6 +64,48 @@ export function infoOf(path) {
     return { mod: mod.t, group: '', title: mod.t, no: '', modulePath: '/' + seg[0], kind: 'module' };
   }
   const planned = HIGHER_TITLE[path];
+  // 物理讲义的部分页 /physics/p/<id>：与数学的模块主页同一层，副行就是学科名
+  if (seg[0] === 'physics' && seg[1] === 'p' && seg[2]) {
+    const p = partByRoute(path);
+    if (p) {
+      return {
+        mod: '可视化物理',
+        group: '',
+        title: groupName(p.t),
+        no: '',
+        modulePath: '/physics',
+        kind: 'chapter',
+      };
+    }
+  }
+  // 物理讲义章走三段路径 /physics/ch/<id>，要先于下面的实验段判断
+  if (seg[0] === 'physics' && seg[1] === 'ch' && seg[2]) {
+    const c = chapterByRoute(path);
+    if (c) {
+      return {
+        mod: '可视化物理',
+        group: groupName(c.part.t) + ' · ' + c.group.t,
+        title: c.t,
+        no: labelOf(c),
+        modulePath: '/physics',
+        kind: 'chapter',
+      };
+    }
+  }
+  if (seg[0] === 'physics' && seg.length > 1) {
+    const ex = findExp(seg[1]);
+    if (ex) {
+      const i = EXPERIMENTS.indexOf(ex);
+      return {
+        mod: '可视化物理',
+        group: ex.group,
+        title: ex.title,
+        no: String(i + 1).padStart(2, '0'),
+        modulePath: '/physics',
+        kind: 'chapter',
+      };
+    }
+  }
   return {
     // 高等数学的模块页只有大纲，还没进 modnav：标题从 higherplan 里取，副行标「高等数学」
     mod: planned ? '高等数学' : '',

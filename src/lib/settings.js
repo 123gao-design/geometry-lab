@@ -27,6 +27,9 @@ export const CHOICES = {
   inkBar: ['auto', 'pin'],         // 画布工具条：点空白自动收回 / 常驻不收回
   inkTip: ['toast', 'off'],        // 批注操作提示：画板下方弹一条 / 不提示
   inkSelMode: ['cut', 'whole'],    // 套索选择：圈到哪段选哪段（跨界剪开）/ 整条选
+  physInfo: ['on', 'off'],         // 物理实验的受力分析：常显 / 只在鼠标停到物体上时显示
+  physIntro: ['on', 'off'],        // 物理实验顶部中间的简介框：显示 / 收起
+  physHold: ['on', 'off'],         // 鼠标停到物体上时把实验定格（方便看受力）
 };
 
 // 「跟随主题」之外允许自带 '#rrggbb' 的项，白名单表达不了，单独校验
@@ -35,6 +38,8 @@ const FREE = {
   cardInk: v => v === 'theme' || HEX.test(v), // 首页卡片悬停亮线颜色
   bgInk: v => v === 'auto' || HEX.test(v),   // 背景混沌线条颜色
   bgAlpha: v => typeof v === 'number' && v >= 0.3 && v <= 2.5, // 背景线条浓度倍数
+  physSpeed: v => typeof v === 'number' && v >= 0.1 && v <= 3,  // 物理实验播放速度倍率
+  physScale: v => typeof v === 'number' && v >= 0.5 && v <= 1.8, // 物理实验物体大小倍率
 };
 const ok = (k, v) => (CHOICES[k] ? CHOICES[k].includes(v) : FREE[k] ? FREE[k](v) : true);
 
@@ -63,6 +68,11 @@ const DEFAULTS = {
   bgInk: 'auto',                   // 背景混沌线条颜色：默认冷蓝色带，或 '#rrggbb'
   bgAlpha: 0.3,                    // 背景线条浓度倍数（0.3–2.5，默认 30%，用户 2026-11-16 拍板）
   lblPath: 'lbl-default.json', // 默认文字位置文件（相对站点根目录，放在 public/ 下）
+  physInfo: 'off',              // 物理实验默认只在鼠标停到物体上时显示受力与速度
+  physIntro: 'on',              // 实验简介框默认摆出来（右下「简介」与框角的 × 都能收起，记在本机）
+  physSpeed: 1,                 // 播放速度倍率（0.1–3，滑块给；0.25 一类慢速用来细看碰撞与落地）
+  physScale: 1,                 // 物体大小倍率（0.5–1.8，滑块给；小屏或看全局时缩一档）
+  physHold: 'off',              // 默认不停格；开了以后指针碰到物体，实验就停住
 };
 
 export const PREFS = reactive({ ...DEFAULTS });

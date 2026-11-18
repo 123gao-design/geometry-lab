@@ -38,7 +38,10 @@
   <DrawPad v-model:open="drawOpen" v-model:mode="drawMode" v-model:side="drawSide" />
   <footer v-if="!isPlayground" :class="{ 'dock-split': dockOpen, 'dock-left': dockOpen && PREFS.dockSide === 'left',
     'chat-split': chatOpen && PREFS.chatSize === 'half', 'chat-left': chatOpen && PREFS.chatSize === 'half' && PREFS.chatSide === 'left',
-    'draw-split': drawOpen && drawMode === 'side', 'draw-left': drawOpen && drawMode === 'side' && drawSide === 'left' }">Geometry Lab · 单机离线运行 · Vue 3 + Vite + KaTeX · 画板引擎为框架无关的纯 SVG/JS，可独立复用</footer>
+    'draw-split': drawOpen && drawMode === 'side', 'draw-left': drawOpen && drawMode === 'side' && drawSide === 'left' }">
+    <div class="foot-line">Geometry Lab · Vue 3 + Vite + KaTeX · designed by CuoJue</div>
+    <nav class="foot-links" aria-label="站务"><router-link to="/about">关于</router-link><i>·</i><router-link to="/guide">使用说明</router-link><i>·</i><router-link to="/changelog">更新日志</router-link></nav>
+  </footer>
 </template>
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';

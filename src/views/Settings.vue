@@ -181,7 +181,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>操作条位置</strong>
-          <span>画板右上角那一排按钮（缩放、半屏、底色、导出等）放哪儿。选板外时它们排到画板上方的一条里，不再压住图形；半屏/全屏展示时自动收回板内顶部。</span>
+          <span>画板右上角那一排按钮（缩放、半屏、底色、导出等）放哪儿。选板外时它们排到画板上方的一条里，不再压住图形；半屏/全屏展示时自动收回板内顶部。物理讲义的演示画板同此设置。</span>
         </div>
         <div class="seg" role="group" aria-label="画板操作条位置">
           <button v-for="o in DL_POS" :key="o.v" type="button" :class="{ on: PREFS.dlPos === o.v }"
