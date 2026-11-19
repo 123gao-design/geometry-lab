@@ -73,10 +73,10 @@ export function create(st) {
     label(ctx, 'A', ax + wA / 2, top + 22, pal.bg2, 'center', 15);
     label(ctx, 'B', bx + wB / 2, top + 22, pal.bg2, 'center', 15);
 
-    /* 推力 F：从左边顶在 A 上 */
-    const fLen = clamp(F * 5, 22, 96);
+    /* 推力 F：从左边顶在 A 上；箭头留够长度，量值写在箭头上方，整行落在 A 的左侧 */
+    const fLen = clamp(F * 5, 64, 96);
     arrow(ctx, ax - 6 - fLen, top + 22, ax - 6, top + 22, pal.orange, 2.4);
-    label(ctx, 'F = ' + fmt(F, 1) + ' N', ax - 10 - fLen, top + 6, pal.orange, 'left', 13);
+    label(ctx, 'F = ' + fmt(F, 1) + ' N', ax - 10 - fLen, top + 4, pal.orange, 'left', 13);
 
     /* 一对接触力：等长，方向相反，分别落在两块上 */
     const nLen = clamp(N * 5, 16, 120);
@@ -112,23 +112,40 @@ export function create(st) {
       ctx.restore();
       label(ctx, b.side, cx, cy, pal.bg2, 'center', 15);
 
-      /* 箭头一律从物块右侧出发或回到它，文字挂在箭头末端，
-         都在框内：块的左边留给出框的余量 */
+      /* 箭头一律从物块右侧出发或回到它；宽屏把量值挂在箭头末端，
+         窄屏挤不下，改成短句压在各自箭头的上方，数字仍由读数栏给出 */
       const ex = cx + 18;
-      const sc = Math.min(6, (b.w - 150) / Math.max(F, 1));
+      const tight = b.w < 176;
+      const sc = Math.max(0.8, Math.min(6, (b.w - (tight ? 96 : 150)) / Math.max(F, 1)));
       if (b.side === 'A') {
-        arrow(ctx, ex, cy - 14, ex + F * sc, cy - 14, pal.orange, 2.2);
-        label(ctx, 'F = ' + fmt(F, 1) + ' N', ex + 4, cy - 30, pal.orange, 'left', 12);
-        arrow(ctx, ex + N * sc, cy + 10, ex, cy + 10, pal.purple, 2.2);
-        label(ctx, 'B 对 A = ' + fmt(N, 1) + ' N', ex + N * sc + 6, cy + 10, pal.purple, 'left', 12);
-        /* 合力：F 与 B 对 A 的力相减 */
-        arrow(ctx, ex, cy + 48, ex + netA * sc, cy + 48, pal.green, 2.2);
-        label(ctx, '合力 = ' + fmt(netA, 1) + ' N', ex + netA * sc + 6, cy + 48, pal.green, 'left', 12);
+        if (tight) {
+          arrow(ctx, ex, cy - 24, ex + F * sc, cy - 24, pal.orange, 2.2);
+          label(ctx, 'F = ' + fmt(F, 1) + ' N', ex + 2, cy - 38, pal.orange, 'left', 12);
+          arrow(ctx, ex + N * sc, cy + 6, ex, cy + 6, pal.purple, 2.2);
+          label(ctx, 'B 对 A = ' + fmt(N, 1) + ' N', ex + 2, cy - 8, pal.purple, 'left', 12);
+          arrow(ctx, ex, cy + 36, ex + netA * sc, cy + 36, pal.green, 2.2);
+          label(ctx, '合力 = ' + fmt(netA, 1) + ' N', ex + 2, cy + 22, pal.green, 'left', 12);
+        } else {
+          arrow(ctx, ex, cy - 14, ex + F * sc, cy - 14, pal.orange, 2.2);
+          label(ctx, 'F = ' + fmt(F, 1) + ' N', ex + 4, cy - 30, pal.orange, 'left', 12);
+          arrow(ctx, ex + N * sc, cy + 10, ex, cy + 10, pal.purple, 2.2);
+          label(ctx, 'B 对 A = ' + fmt(N, 1) + ' N', ex + N * sc + 6, cy + 10, pal.purple, 'left', 12);
+          /* 合力：F 与 B 对 A 的力相减 */
+          arrow(ctx, ex, cy + 48, ex + netA * sc, cy + 48, pal.green, 2.2);
+          label(ctx, '合力 = ' + fmt(netA, 1) + ' N', ex + netA * sc + 6, cy + 48, pal.green, 'left', 12);
+        }
       } else {
-        arrow(ctx, ex, cy - 14, ex + N * sc, cy - 14, pal.pink, 2.2);
-        label(ctx, 'A 对 B = ' + fmt(N, 1) + ' N', ex + 4, cy - 30, pal.pink, 'left', 12);
-        arrow(ctx, ex, cy + 22, ex + N * sc, cy + 22, pal.green, 2.2);
-        label(ctx, '合力 = ' + fmt(N, 1) + ' N', ex + N * sc + 6, cy + 22, pal.green, 'left', 12);
+        if (tight) {
+          arrow(ctx, ex, cy - 18, ex + N * sc, cy - 18, pal.pink, 2.2);
+          label(ctx, 'A 对 B = ' + fmt(N, 1) + ' N', ex + 2, cy - 32, pal.pink, 'left', 12);
+          arrow(ctx, ex, cy + 14, ex + N * sc, cy + 14, pal.green, 2.2);
+          label(ctx, '合力 = ' + fmt(N, 1) + ' N', ex + 2, cy, pal.green, 'left', 12);
+        } else {
+          arrow(ctx, ex, cy - 14, ex + N * sc, cy - 14, pal.pink, 2.2);
+          label(ctx, 'A 对 B = ' + fmt(N, 1) + ' N', ex + 4, cy - 30, pal.pink, 'left', 12);
+          arrow(ctx, ex, cy + 22, ex + N * sc, cy + 22, pal.green, 2.2);
+          label(ctx, '合力 = ' + fmt(N, 1) + ' N', ex + N * sc + 6, cy + 22, pal.green, 'left', 12);
+        }
       }
     }
 

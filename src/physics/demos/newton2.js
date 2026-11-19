@@ -86,13 +86,14 @@ export function create(st) {
     }
     ctx.restore();
 
-    /* 拉力与加速度：两根箭头都从车身中线出发，长度分别正比于 F 与 a */
+    /* 拉力与加速度：两根箭头都从车身左端出发，长度分别正比于 F 与 a；
+       量值各自压在箭头上方一行，两行拉开，字不压线，也不会被车头推着挤出左边这块 */
     const fLen = clamp(F * 10, 18, x1 - bx - 4);
     arrow(ctx, bx, gy - 58, bx + fLen, gy - 58, pal.orange, 2.4);
     label(ctx, 'F = ' + fmt(F, 1) + ' N', bx + 4, gy - 72, pal.orange, 'left', 13);
     const aLen = clamp(a * 9, 14, x1 - bx - 4);
-    arrow(ctx, bx, gy - 86, bx + aLen, gy - 86, pal.green, 2.2);
-    label(ctx, 'a', bx + aLen + 6, gy - 86, pal.green, 'left', 13);
+    arrow(ctx, bx, gy - 98, bx + aLen, gy - 98, pal.green, 2.2);
+    label(ctx, 'a = ' + fmt(a, 2), bx + 4, gy - 112, pal.green, 'left', 13);
 
     /* ── 右：v-t 图 ── */
     const px0 = sw + 24;

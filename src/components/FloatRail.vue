@@ -1,62 +1,73 @@
 <template>
-  <div class="float-rail" aria-label="快捷按钮">
-    <button v-if="canBack" class="fr-btn back" type="button" title="返回上一页" aria-label="返回上一页" @click="goBack">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M19 12H6.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M11.2 6.6 5.8 12l5.4 5.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <router-link v-if="!isHome" to="/" class="fr-btn" title="回到首页" aria-label="回到首页">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M4 10.6 12 4l8 6.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M6.4 9.6V19h11.2V9.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </router-link>
-    <button v-show="showTop" class="fr-btn" type="button" title="回到顶部" aria-label="回到顶部" @click="toTop">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 19V6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M6.4 11.4 12 5.8l5.6 5.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <router-link v-if="!isGames" to="/games" class="fr-btn games" title="数字游戏" aria-label="数字游戏">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-        <circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/>
-        <circle cx="12" cy="12" r="1.2" fill="currentColor"/>
-        <circle cx="9" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/>
-      </svg>
-    </router-link>
-    <router-link v-if="!isCalendar" to="/calendar" class="fr-btn cal" title="日历 · 待办" aria-label="日历 · 待办">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="4" y="5.4" width="16" height="14.4" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.6"/>
-        <path d="M4 9.6h16" fill="none" stroke="currentColor" stroke-width="1.6"/>
-        <path d="M8.4 3.6v3.4M15.6 3.6v3.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-        <circle cx="8.6" cy="13" r="1" fill="currentColor"/><circle cx="12" cy="13" r="1" fill="currentColor"/>
-        <circle cx="15.4" cy="13" r="1" fill="currentColor"/><circle cx="8.6" cy="16.4" r="1" fill="currentColor"/>
-      </svg>
-      <b v-if="todayLeft" class="fr-badge">{{ todayLeft > 99 ? '99+' : todayLeft }}</b>
-    </router-link>
-    <button v-if="showNotes" class="fr-btn notes" :class="{ on: notesOpen }" type="button"
-      :title="notesOpen ? '收起笔记' : '在这一页记笔记'" aria-label="随页笔记" @click="$emit('update:notesOpen', !notesOpen)">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M6 3.8h8.2L18 7.6V20H6Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-        <path d="M14 3.8V8h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-        <path d="M8.8 12h6.4M8.8 15.2h4.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-    </button>
-    <button class="fr-btn chat" :class="{ on: chatOpen }" type="button"
-      :title="chatOpen ? '收起助手' : '和助手聊聊这道题'" aria-label="AI 助手" @click="$emit('update:chatOpen', !chatOpen)">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M4.2 11.4c0-3.5 3.5-6.3 7.8-6.3s7.8 2.8 7.8 6.3-3.5 6.3-7.8 6.3c-.9 0-1.8-.1-2.6-.35L5.6 19.2l.7-3.1c-1.3-1.1-2.1-2.6-2.1-4.7Z"
-          fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-        <circle cx="9.2" cy="11.5" r="1" fill="currentColor"/><circle cx="12" cy="11.5" r="1" fill="currentColor"/><circle cx="14.8" cy="11.5" r="1" fill="currentColor"/>
+  <div class="float-rail" :class="{ folded }" aria-label="快捷按钮">
+    <div class="fr-stack">
+      <button v-if="canBack" class="fr-btn back" type="button" title="返回上一页" aria-label="返回上一页" @click="goBack">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19 12H6.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M11.2 6.6 5.8 12l5.4 5.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <router-link v-if="!isHome" to="/" class="fr-btn" title="回到首页" aria-label="回到首页">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 10.6 12 4l8 6.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6.4 9.6V19h11.2V9.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </router-link>
+      <button v-show="showTop" class="fr-btn" type="button" title="回到顶部" aria-label="回到顶部" @click="toTop">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 19V6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M6.4 11.4 12 5.8l5.6 5.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <router-link v-if="!isGames" to="/games" class="fr-btn games" title="数字游戏" aria-label="数字游戏">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/>
+          <circle cx="12" cy="12" r="1.2" fill="currentColor"/>
+          <circle cx="9" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/>
+        </svg>
+      </router-link>
+      <router-link v-if="!isCalendar" to="/calendar" class="fr-btn cal" title="日历 · 待办" aria-label="日历 · 待办">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="5.4" width="16" height="14.4" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M4 9.6h16" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M8.4 3.6v3.4M15.6 3.6v3.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          <circle cx="8.6" cy="13" r="1" fill="currentColor"/><circle cx="12" cy="13" r="1" fill="currentColor"/>
+          <circle cx="15.4" cy="13" r="1" fill="currentColor"/><circle cx="8.6" cy="16.4" r="1" fill="currentColor"/>
+        </svg>
+        <b v-if="todayLeft" class="fr-badge">{{ todayLeft > 99 ? '99+' : todayLeft }}</b>
+      </router-link>
+      <button v-if="showNotes" class="fr-btn notes" :class="{ on: notesOpen }" type="button"
+        :title="notesOpen ? '收起笔记' : '在这一页记笔记'" aria-label="随页笔记" @click="$emit('update:notesOpen', !notesOpen)">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 3.8h8.2L18 7.6V20H6Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M14 3.8V8h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M8.8 12h6.4M8.8 15.2h4.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="fr-btn chat" :class="{ on: chatOpen }" type="button"
+        :title="chatOpen ? '收起助手' : '和助手聊聊这道题'" aria-label="AI 助手" @click="$emit('update:chatOpen', !chatOpen)">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4.2 11.4c0-3.5 3.5-6.3 7.8-6.3s7.8 2.8 7.8 6.3-3.5 6.3-7.8 6.3c-.9 0-1.8-.1-2.6-.35L5.6 19.2l.7-3.1c-1.3-1.1-2.1-2.6-2.1-4.7Z"
+            fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          <circle cx="9.2" cy="11.5" r="1" fill="currentColor"/><circle cx="12" cy="11.5" r="1" fill="currentColor"/><circle cx="14.8" cy="11.5" r="1" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+    <button class="fr-btn fold" type="button" :class="{ on: folded }"
+      :title="folded ? '展开快捷按钮' : '收起快捷按钮'"
+      :aria-label="folded ? '展开快捷按钮' : '收起快捷按钮'" :aria-expanded="!folded"
+      @click="folded = !folded">
+      <svg class="fr-chev" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
   </div>
 </template>
 
 <script setup>
-// 左侧竖排圆按钮：返回上一页 / 回首页 / 回顶部 / 数字游戏 / 日历待办 / 随页笔记 / 助手。
+// 左侧竖排圆按钮：返回上一页 / 回首页 / 回顶部 / 数字游戏 / 日历待办 / 随页笔记 / 助手，
+// 最下面另有一枚「收起」：把这一摞淡出收走，只留它自己，再点一下原样弹回。
 // 「返回上一页」只在站内确实有上一页出现（读 vue-router 写进 history.state 的 back），
 // 直接打开链接或从站外进来时不显示，免得按一下跳出本站；首页上不显示「回首页」，
 // 游戏页上不显示「数字游戏」，日历页上不显示「日历」，页面在顶部时不显示「回顶部」。
@@ -100,6 +111,10 @@ const goBack = () => {
 };
 watch(() => route.fullPath, syncBack);
 
+// 最下面那枚「收起」：把上面这一摞圆钮淡出并向下滑走，只剩它自己；
+// 再点一下，按钮自下而上弹回来。状态只留在这一次会话里，不写偏好。
+const folded = ref(false);
+
 onMounted(() => { onScroll(); syncBack(); window.addEventListener('scroll', onScroll, { passive: true }); });
 onBeforeUnmount(() => window.removeEventListener('scroll', onScroll));
 </script>
@@ -108,6 +123,17 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll));
 .float-rail {
   position: fixed; left: 16px; bottom: 96px; z-index: 94;
   display: flex; flex-direction: column; gap: 10px;
+}
+/* 上面那一摞：收起时淡出、向下缩回去；展开时自下而上弹回。
+   按钮仍留在流里，所以「收起」钮本身的位置始终不变，不会被拽着上下跳。 */
+.fr-stack {
+  display: flex; flex-direction: column; gap: 10px;
+  transform-origin: 50% 100%;
+  transition: opacity .18s ease, transform .28s cubic-bezier(.3, 1.15, .5, 1);
+}
+.float-rail.folded .fr-stack {
+  opacity: 0; transform: translateY(18px) scale(.86); pointer-events: none;
+  visibility: hidden; transition: opacity .18s ease, transform .28s cubic-bezier(.3, 1.15, .5, 1), visibility 0s .28s;
 }
 .fr-btn {
   position: relative;
@@ -121,6 +147,12 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll));
 }
 .fr-btn svg { width: 21px; height: 21px; }
 .fr-btn:hover { color: var(--ink); border-color: var(--mut); transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0, 0, 0, .24); }
+/* 最下面那枚收起钮：展开时箭头朝下（往回收），收起后朝上（点一下弹出来） */
+.fr-btn.fold { color: var(--mut); }
+.fr-btn.fold:hover { color: var(--ink); }
+.fr-btn.fold .fr-chev { width: 18px; height: 18px; transform: rotate(180deg); transition: transform .28s cubic-bezier(.3, 1.15, .5, 1); }
+.float-rail.folded .fr-btn.fold .fr-chev { transform: rotate(0deg); }
+@media (prefers-reduced-motion: reduce) { .fr-stack, .fr-btn.fold .fr-chev { transition: none; } }
 .fr-btn.chat { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 40%, transparent); }
 .fr-btn.chat:hover { color: #fff; background: var(--blue); border-color: var(--blue); }
 .fr-btn.chat.on { color: #fff; background: var(--blue); border-color: var(--blue); }

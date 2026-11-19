@@ -29,6 +29,7 @@ const PAGE_TITLES = {
   '/guide': '使用说明',
   '/changelog': '更新日志',
   '/physics': '可视化物理',
+  '/physics/lab/circuit': '电路实验室',
 };
 
 export function visitCap() {
@@ -91,6 +92,17 @@ export function infoOf(path) {
         kind: 'chapter',
       };
     }
+  }
+  // 电路实验室：三段 /physics/lab/circuit，归到「可视化物理」下面
+  if (seg[0] === 'physics' && seg[1] === 'lab' && seg[2] === 'circuit') {
+    return {
+      mod: '可视化物理',
+      group: '实验工具',
+      title: '电路实验室',
+      no: '',
+      modulePath: '/physics',
+      kind: 'page',
+    };
   }
   if (seg[0] === 'physics' && seg.length > 1) {
     const ex = findExp(seg[1]);

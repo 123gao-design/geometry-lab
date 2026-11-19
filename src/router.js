@@ -520,6 +520,8 @@ const SS4 = () => import('./views/spacegeom/surface/s4.vue');
 const PhysicsHome = () => import('./views/PhysicsHome.vue');
 const PhysicsPart = () => import('./views/PhysicsPart.vue');
 const PhysicsLab = () => import('./views/PhysicsLab.vue');
+// 电路实验台（三段 /physics/lab/circuit，自搭元件、自连线、实时解电路）
+const CircuitLab = () => import('./views/physics/CircuitLab.vue');
 // 物理讲义章（/physics/ch/<id> 三段，与上面的 /physics/:id 不冲突）
 const PM1 = () => import('./views/physics/mech/motion1.vue');
 const PM2 = () => import('./views/physics/mech/motion2.vue');
@@ -535,6 +537,87 @@ const PW1 = () => import('./views/physics/mech/newton1.vue');
 const PW2 = () => import('./views/physics/mech/newton2.vue');
 const PW3 = () => import('./views/physics/mech/newton3.vue');
 const PW4 = () => import('./views/physics/mech/newton4.vue');
+// 抛体运动（运动的合成与分解 / 平抛 / 斜抛）
+const PW5 = () => import('./views/physics/mech/proj1.vue');
+const PW6 = () => import('./views/physics/mech/proj2.vue');
+const PW7 = () => import('./views/physics/mech/proj3.vue');
+// 圆周运动（描述与向心力 / 竖直平面内 / 离心现象）
+const PW8 = () => import('./views/physics/mech/circ1.vue');
+const PW9 = () => import('./views/physics/mech/circ2.vue');
+const PW10 = () => import('./views/physics/mech/circ3.vue');
+const PW11 = () => import('./views/physics/mech/grav1.vue');
+const PW12 = () => import('./views/physics/mech/grav2.vue');
+const PW13 = () => import('./views/physics/mech/grav3.vue');
+// 机械能（功与功率 / 动能定理 / 机械能守恒 / 功能关系）
+const PW14 = () => import('./views/physics/mech/energy1.vue');
+const PW15 = () => import('./views/physics/mech/energy2.vue');
+const PW16 = () => import('./views/physics/mech/energy3.vue');
+const PW17 = () => import('./views/physics/mech/energy4.vue');
+// 动量（冲量与动量定理 / 动量守恒与碰撞）
+const PW18 = () => import('./views/physics/mech/momentum1.vue');
+const PW19 = () => import('./views/physics/mech/momentum2.vue');
+// 机械振动（简谐运动 / 单摆 / 阻尼与受迫振动）
+const PV1 = () => import('./views/physics/vib/vib1.vue');
+const PV2 = () => import('./views/physics/vib/vib2.vue');
+const PV3 = () => import('./views/physics/vib/vib3.vue');
+// 机械波（波的形成 / 波的图像 / 干涉衍射 / 波的方程）
+const PW21 = () => import('./views/physics/vib/wave1.vue');
+const PW22 = () => import('./views/physics/vib/wave2.vue');
+const PW23 = () => import('./views/physics/vib/wave3.vue');
+const PW24 = () => import('./views/physics/vib/wave4.vue');
+// 热学（分子动理论 / 气体实验定律 / 状态方程 / 热力学两定律）
+const PH1 = () => import('./views/physics/heat/heat1.vue');
+const PH2 = () => import('./views/physics/heat/heat2.vue');
+const PH3 = () => import('./views/physics/heat/heat3.vue');
+const PH4 = () => import('./views/physics/heat/heat4.vue');
+const PH5 = () => import('./views/physics/heat/heat5.vue');
+// 电磁学（静电场 / 恒定电流 / 磁场 / 电磁感应 / 交变电流）
+const EF1 = () => import('./views/physics/em/efield1.vue');
+const EF2 = () => import('./views/physics/em/efield2.vue');
+const EF3 = () => import('./views/physics/em/efield3.vue');
+const EF4 = () => import('./views/physics/em/efield4.vue');
+const CIR1 = () => import('./views/physics/em/circuit1.vue');
+const CIR2 = () => import('./views/physics/em/circuit2.vue');
+const CIR3 = () => import('./views/physics/em/circuit3.vue');
+const MAG1 = () => import('./views/physics/em/mag1.vue');
+const MAG2 = () => import('./views/physics/em/mag2.vue');
+const MAG3 = () => import('./views/physics/em/mag3.vue');
+const IND1 = () => import('./views/physics/em/ind1.vue');
+const IND2 = () => import('./views/physics/em/ind2.vue');
+const IND3 = () => import('./views/physics/em/ind3.vue');
+const IND4 = () => import('./views/physics/em/ind4.vue');
+const AC1 = () => import('./views/physics/em/ac1.vue');
+const AC2 = () => import('./views/physics/em/ac2.vue');
+const AC3 = () => import('./views/physics/em/ac3.vue');
+// 光学（几何光学 / 波动光学）
+const OP1 = () => import('./views/physics/opt/opt1.vue');
+const OP2 = () => import('./views/physics/opt/opt2.vue');
+const OP3 = () => import('./views/physics/opt/opt3.vue');
+const OP4 = () => import('./views/physics/opt/opt4.vue');
+const OP5 = () => import('./views/physics/opt/opt5.vue');
+// 近代物理（波粒二象性 / 原子与原子核）
+const MOD1 = () => import('./views/physics/mod/mod1.vue');
+const MOD2 = () => import('./views/physics/mod/mod2.vue');
+const MOD3 = () => import('./views/physics/mod/mod3.vue');
+const MOD4 = () => import('./views/physics/mod/mod4.vue');
+const MOD5 = () => import('./views/physics/mod/mod5.vue');
+
+// 实验与测量（力学 / 电学 / 其他与数据处理）
+const EXP1 = () => import('./views/physics/exps/exp1.vue');
+const EXP2 = () => import('./views/physics/exps/exp2.vue');
+const EXP3 = () => import('./views/physics/exps/exp3.vue');
+const EXP4 = () => import('./views/physics/exps/exp4.vue');
+const EXP5 = () => import('./views/physics/exps/exp5.vue');
+const EXP6 = () => import('./views/physics/exps/exp6.vue');
+const EXP7 = () => import('./views/physics/exps/exp7.vue');
+const EXP8 = () => import('./views/physics/exps/exp8.vue');
+const EXP9 = () => import('./views/physics/exps/exp9.vue');
+const EXP10 = () => import('./views/physics/exps/exp10.vue');
+const EXP11 = () => import('./views/physics/exps/exp11.vue');
+const EXP12 = () => import('./views/physics/exps/exp12.vue');
+const EXP13 = () => import('./views/physics/exps/exp13.vue');
+const EXP14 = () => import('./views/physics/exps/exp14.vue');
+const EXP15 = () => import('./views/physics/exps/exp15.vue');
 
 export default [
   { path: '/', name: 'home', component: Home },
@@ -542,6 +625,7 @@ export default [
   { path: '/physics', name: 'physics', component: PhysicsHome },
   // 物理讲义的部分页（首页 → 部分 → 章），与数学的模块主页同一层；三段，不与下面的 /physics/:id 撞
   { path: '/physics/p/:part', name: 'physics-part', component: PhysicsPart },
+  { path: '/physics/lab/circuit', name: 'physics-circuit-lab', component: CircuitLab },
   { path: '/physics/:id', name: 'physics-lab', component: PhysicsLab },
   // 物理讲义 · 一 力学 · 运动的描述与匀变速直线运动
   { path: '/physics/ch/motion1', component: PM1 },
@@ -558,6 +642,81 @@ export default [
   { path: '/physics/ch/newton2', component: PW2 },
   { path: '/physics/ch/newton3', component: PW3 },
   { path: '/physics/ch/newton4', component: PW4 },
+  // 物理讲义 · 一 力学 · 抛体运动
+  { path: '/physics/ch/proj1', component: PW5 },
+  { path: '/physics/ch/proj2', component: PW6 },
+  { path: '/physics/ch/proj3', component: PW7 },
+  { path: '/physics/ch/circ1', component: PW8 },
+  { path: '/physics/ch/circ2', component: PW9 },
+  { path: '/physics/ch/circ3', component: PW10 },
+  { path: '/physics/ch/grav1', component: PW11 },
+  { path: '/physics/ch/grav2', component: PW12 },
+  { path: '/physics/ch/grav3', component: PW13 },
+  { path: '/physics/ch/energy1', component: PW14 },
+  { path: '/physics/ch/energy2', component: PW15 },
+  { path: '/physics/ch/energy3', component: PW16 },
+  { path: '/physics/ch/energy4', component: PW17 },
+  { path: '/physics/ch/momentum1', component: PW18 },
+  { path: '/physics/ch/momentum2', component: PW19 },
+  { path: '/physics/ch/vib1', component: PV1 },
+  { path: '/physics/ch/vib2', component: PV2 },
+  { path: '/physics/ch/vib3', component: PV3 },
+  { path: '/physics/ch/wave1', component: PW21 },
+  { path: '/physics/ch/wave2', component: PW22 },
+  { path: '/physics/ch/wave3', component: PW23 },
+  { path: '/physics/ch/wave4', component: PW24 },
+  // 物理讲义 · 三 热学 · 分子动理论与气体
+  { path: '/physics/ch/heat1', component: PH1 },
+  { path: '/physics/ch/heat2', component: PH2 },
+  { path: '/physics/ch/heat3', component: PH3 },
+  { path: '/physics/ch/heat4', component: PH4 },
+  { path: '/physics/ch/heat5', component: PH5 },
+  // 物理讲义 · 四 电磁学 · 静电场
+  { path: '/physics/ch/efield1', component: EF1 },
+  { path: '/physics/ch/efield2', component: EF2 },
+  { path: '/physics/ch/efield3', component: EF3 },
+  { path: '/physics/ch/efield4', component: EF4 },
+  { path: '/physics/ch/circuit1', component: CIR1 },
+  { path: '/physics/ch/circuit2', component: CIR2 },
+  { path: '/physics/ch/circuit3', component: CIR3 },
+  { path: '/physics/ch/mag1', component: MAG1 },
+  { path: '/physics/ch/mag2', component: MAG2 },
+  { path: '/physics/ch/mag3', component: MAG3 },
+  { path: '/physics/ch/ind1', component: IND1 },
+  { path: '/physics/ch/ind2', component: IND2 },
+  { path: '/physics/ch/ind3', component: IND3 },
+  { path: '/physics/ch/ind4', component: IND4 },
+  { path: '/physics/ch/ac1', component: AC1 },
+  { path: '/physics/ch/ac2', component: AC2 },
+  { path: '/physics/ch/ac3', component: AC3 },
+  // 物理讲义 · 五 光学 · 几何光学
+  { path: '/physics/ch/opt1', component: OP1 },
+  { path: '/physics/ch/opt2', component: OP2 },
+  { path: '/physics/ch/opt3', component: OP3 },
+  { path: '/physics/ch/opt4', component: OP4 },
+  { path: '/physics/ch/opt5', component: OP5 },
+  // 物理讲义 · 六 近代物理 · 波粒二象性
+  { path: '/physics/ch/mod1', component: MOD1 },
+  { path: '/physics/ch/mod2', component: MOD2 },
+  { path: '/physics/ch/mod3', component: MOD3 },
+  { path: '/physics/ch/mod4', component: MOD4 },
+  { path: '/physics/ch/mod5', component: MOD5 },
+  // 物理讲义 · 七 实验与测量
+  { path: '/physics/ch/exp1', component: EXP1 },
+  { path: '/physics/ch/exp2', component: EXP2 },
+  { path: '/physics/ch/exp3', component: EXP3 },
+  { path: '/physics/ch/exp4', component: EXP4 },
+  { path: '/physics/ch/exp5', component: EXP5 },
+  { path: '/physics/ch/exp6', component: EXP6 },
+  { path: '/physics/ch/exp7', component: EXP7 },
+  { path: '/physics/ch/exp8', component: EXP8 },
+  { path: '/physics/ch/exp9', component: EXP9 },
+  { path: '/physics/ch/exp10', component: EXP10 },
+  { path: '/physics/ch/exp11', component: EXP11 },
+  { path: '/physics/ch/exp12', component: EXP12 },
+  { path: '/physics/ch/exp13', component: EXP13 },
+  { path: '/physics/ch/exp14', component: EXP14 },
+  { path: '/physics/ch/exp15', component: EXP15 },
   // 模块一 · 集合与常用逻辑
   { path: '/sets', name: 'sets', component: SetsHome },
   // 子专题一 · 集合的语言

@@ -39,13 +39,9 @@
     </aside>
 
     <div class="chapmain">
-      <router-link v-if="cur.part" class="part-back" :to="partPath(cur.part)">
-        ← 回{{ plain(cur.part.t) }}的目录
-      </router-link>
-
       <nav v-if="tabs.length > 1" class="chaptabs">
         <router-link v-for="c in tabs" :key="c.id" :to="pathOf(c)" :class="{ on: c.id === cur.id }">
-          <span class="ct-n">{{ labelOf(c) }}</span>
+          <span class="ct-n">{{ noIn(c) }}</span>
           <span class="ct-t">{{ c.t }}</span>
         </router-link>
       </nav>
@@ -82,7 +78,7 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ORDERED_PARTS, ON_CHAPS, pathOf, partPath, chapterByRoute, labelOf } from '../physics/plan.js';
+import { ORDERED_PARTS, ON_CHAPS, pathOf, chapterByRoute, labelOf } from '../physics/plan.js';
 import { isRead, toggleRead } from '../lib/progress.js';
 import { NAV_OPEN, NAV_SCROLL } from '../lib/navpos.js';
 import { PREFS } from '../lib/settings.js';
@@ -102,8 +98,13 @@ const here = computed(() => ON_CHAPS.findIndex(c => c.id === cur.value.id));
 const prev = computed(() => (here.value > 0 ? ON_CHAPS[here.value - 1] : null));
 const next = computed(() => (here.value >= 0 && here.value < ON_CHAPS.length - 1 ? ON_CHAPS[here.value + 1] : null));
 
-// 顶部横排：当前部分里已上线的章
-const tabs = computed(() => (cur.value.part ? cur.value.part.chapters.filter(c => c.on) : []));
+// 顶部横排：只列当前这一组（子专题）里已上线的章，按组划开
+// （用户 2026-11-19：力1 顶上只放「质点、参考系与位移」到「运动图像与追及相遇」这五章，不铺整部分）
+const tabs = computed(() => {
+  const g = cur.value.group;
+  const list = cur.value.part ? cur.value.part.chapters : [];
+  return list.filter(c => c.on && (!g || c.group === g));
+});
 
 // 左栏只列当前所在的部分（用户 2026-11-18：「力学就只展示力学部分，『运动的描述与匀变速直线运动』
 // 这些在导航栏中应该就属于原来『力学』的样式」）：部分里的各组直接当折叠组头，
@@ -114,8 +115,8 @@ const NAV = computed(() => (part.value.groups || []).map(g => ({
   chapters: part.value.chapters.filter(c => c.group === g),
 })));
 
-// 回部分目录那句里要用不带序号的名字：「回力学的目录」
-const plain = t => String(t || '').replace(/^[一二三四五六七八九十]+[\s　]+/, '');
+// 顶部横排的序号：按本部分里的章序连续排（机械振动 1/2/3，机械波 4/5/6），与章号前缀无关
+const noIn = c => c.part.chapters.indexOf(c) + 1;
 
 const onCount = g => g.chapters.filter(c => c.on).length;
 const readCount = g => g.chapters.filter(c => c.on && isRead(pathOf(c))).length;
@@ -214,17 +215,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 </script>
 
 <style scoped>
-/* 章页顶上回部分目录的那一行（首页 → 部分 → 章 那层） */
-.part-back {
-  display: inline-block;
-  margin: 2px 0 6px;
-  font-size: 12.5px;
-  color: var(--faint);
-  text-decoration: none;
-  transition: color .14s ease;
-}
-.part-back:hover { color: var(--blue); }
-
 .cn-off {
   display: flex;
   gap: 8px;

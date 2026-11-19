@@ -36,7 +36,7 @@
   <NotesDock v-model:open="notesOpen" />
   <FloatRail v-model:chat-open="chatOpen" v-model:notes-open="notesOpen" />
   <DrawPad v-model:open="drawOpen" v-model:mode="drawMode" v-model:side="drawSide" />
-  <footer v-if="!isPlayground" :class="{ 'dock-split': dockOpen, 'dock-left': dockOpen && PREFS.dockSide === 'left',
+  <footer v-if="!isFullPage" :class="{ 'dock-split': dockOpen, 'dock-left': dockOpen && PREFS.dockSide === 'left',
     'chat-split': chatOpen && PREFS.chatSize === 'half', 'chat-left': chatOpen && PREFS.chatSize === 'half' && PREFS.chatSide === 'left',
     'draw-split': drawOpen && drawMode === 'side', 'draw-left': drawOpen && drawMode === 'side' && drawSide === 'left' }">
     <div class="foot-line">Geometry Lab · Vue 3 + Vite + KaTeX · designed by CuoJue</div>
@@ -91,6 +91,9 @@ watch(drawOpen, v => { if (v) { dockOpen.value = false; chatOpen.value = false; 
 // 画板页是整页画板：页脚会顶出竖向滚动条，故只在非画板页显示
 const route = useRoute();
 const isPlayground = computed(() => route.path === '/playground');
+// 电路实验室铺满整页，但页脚要留在画板底下——画板高度由页内 fitHeight() 按「视口减标题减页脚」现算，
+// 两者叠起来正好一屏，不会顶出滚动条。故这里不再把它算进 isFullPage。
+const isFullPage = computed(() => isPlayground.value);
 
 // 切页过渡：动画种类由设置页决定（main[data-anim]），这里只负责重放入场；
 // 顺手收起右侧的窗——整屏助手盖着整页时点站名会看不到新页面，像是「跳不过去」
