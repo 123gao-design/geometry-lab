@@ -87,7 +87,7 @@ export function create(st) {
             ctx.stroke();
           }
           ctx.restore();
-          arrowLine(ctx, P1.X(x1), yl, P1.X(x2), yl, pal.purple);
+          arrowLine(ctx, P1.X(x1), P1.X(x2), yl, pal.purple);
           label(ctx, 'λ', (P1.X(x1) + P1.X(x2)) / 2, yl - 6, pal.purple, 'center', 13);
         }
       }
@@ -172,7 +172,7 @@ export function create(st) {
           ctx.stroke();
         }
         ctx.restore();
-        arrowLine(ctx, PS.X(nodes[0]), yl, PS.X(nodes[1]), yl, pal.purple);
+        arrowLine(ctx, PS.X(nodes[0]), PS.X(nodes[1]), yl, pal.purple);
         label(ctx, 'λ/2', (PS.X(nodes[0]) + PS.X(nodes[1])) / 2, yl + 16, pal.purple, 'center', 13);
       }
       if (nodes.length >= 1) label(ctx, '波节', PS.X(nodes[0]) + 7, PS.Y(0) + 17, pal.green, 'left', 13);
@@ -266,7 +266,7 @@ export function create(st) {
 }
 
 /* 双箭头：两端各带一枚箭头 */
-function arrowLine(ctx, x1, y, x2, y, color) {
+function arrowLine(ctx, x1, x2, y, color) {
   ctx.strokeStyle = color;
   ctx.fillStyle = color;
   ctx.lineWidth = 1.6;
