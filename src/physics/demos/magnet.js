@@ -2,8 +2,9 @@
    两档：① 磁感线——条形磁铁两端的磁场按两个磁极叠加（B = Σ q·r/|r|³）数值积分，
         画出从 N 极出发、回到 S 极的一族曲线；小磁针放在滑块指定的位置，针身沿该点的
         磁场方向，红色一端指 N。磁场线越密的地方，小磁针受的力矩越大。
-        ② 磁感应强度——一段通电导线垂直放进匀强磁场，安培力 F = BIL，
-        读数栏的 F/(IL) 拖任何滑块都等于 B，这就是磁感应强度的定义式。 */
+        ② 磁感应强度——一台测量装置而不是再讲一遍安培力：通电导线垂直放进匀强
+        磁场，下栏摆三行试验（I 与 L 各取参照值与当前值），F 随导线变，
+        而 F/(IL) 一栏三行都是同一个 B，这就是磁感应强度的定义式。 */
 import { label, clamp, fmt, arrow } from '../gfx.js';
 import { panel, poly, spot } from './axes.js';
 
@@ -92,7 +93,7 @@ export function create(st) {
       const stop = (x, y) => inside(x, y) || x < 10 || x > w - 10 || y < 10 || y > h - 10;
 
       ctx.save();
-      ctx.strokeStyle = pal.cyan;
+      ctx.strokeStyle = pal.graphite;
       ctx.lineWidth = 1.5;
       ctx.globalAlpha = 0.75;
       const NL = 9;
@@ -106,7 +107,7 @@ export function create(st) {
           ctx.beginPath();
           p1.forEach((p, k) => (k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
           ctx.stroke();
-          headAt(ctx, p1, 0.3, pal.cyan);
+          headAt(ctx, p1, 0.3, pal.graphite);
         }
         // 从 S 极倒着走：补上左半边的线
         const b = Math.PI - 1.36 + (2.72 * i) / NL;
@@ -117,17 +118,17 @@ export function create(st) {
           ctx.beginPath();
           p2.forEach((p, k) => (k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
           ctx.stroke();
-          headAt(ctx, p2, 0.72, pal.cyan);
+          headAt(ctx, p2, 0.72, pal.graphite);
         }
       }
       ctx.restore();
 
       // 磁铁本体：左半 S、右半 N
       ctx.save();
-      ctx.fillStyle = pal.blue;
-      ctx.globalAlpha = 0.75;
+      ctx.fillStyle = pal.indigo;
+      ctx.globalAlpha = 0.8;
       ctx.fillRect(mx - hl, my - ht, hl, ht * 2);
-      ctx.fillStyle = pal.orange;
+      ctx.fillStyle = pal.sienna;
       ctx.fillRect(mx, my - ht, hl, ht * 2);
       ctx.globalAlpha = 1;
       ctx.strokeStyle = pal.ink;
@@ -148,14 +149,14 @@ export function create(st) {
       ctx.translate(nx, ny);
       ctx.rotate(ang);
       const nl = 26;
-      ctx.fillStyle = pal.orange;
+      ctx.fillStyle = pal.sienna;
       ctx.beginPath();
       ctx.moveTo(nl, 0);
       ctx.lineTo(0, -7);
       ctx.lineTo(0, 7);
       ctx.closePath();
       ctx.fill();
-      ctx.fillStyle = pal.blue;
+      ctx.fillStyle = pal.indigo;
       ctx.beginPath();
       ctx.moveTo(-nl, 0);
       ctx.lineTo(0, -7);
@@ -171,7 +172,7 @@ export function create(st) {
       ctx.stroke();
       ctx.restore();
       label(ctx, '小磁针', nx, ny - 42, pal.mut, 'center', 14);
-      label(ctx, '磁感线越密，磁场越强', w * 0.62, h * 0.12, pal.cyan, 'left', 14);
+      label(ctx, '磁感线越密，磁场越强', w * 0.62, h * 0.12, pal.indigo, 'left', 14);
       label(ctx, '磁铁外部：N 极出发，回到 S 极', w * 0.62, h * 0.12 + 22, pal.mut, 'left', 14);
       label(ctx, '磁铁内部：从 S 极回到 N 极', w * 0.62, h * 0.12 + 44, pal.mut, 'left', 14);
       label(ctx, '任意一点的切线方向就是该点磁场方向', w * 0.62, h * 0.12 + 66, pal.faint, 'left', 13);
@@ -185,23 +186,27 @@ export function create(st) {
       return;
     }
 
-    /* ── ② 磁感应强度：F = BIL 的定义 ───────────────── */
-    const fx0 = w * 0.08;
-    const fx1 = w * 0.56;
-    const fy0 = h * 0.16;
-    const fy1 = h * 0.82;
-    const wy = h * 0.5;
-    const wx0 = fx0 + w * 0.05;
-    const wx1 = wx0 + w * 0.36 * (0.4 + 0.6 * ((L - 0.2) / 1));
+    /* ── ② 磁感应强度：把 F/(IL) 量出来 ─────────────────
+       这一档是「测量」而不是再讲一遍安培力：下栏摆三行试验，I 与 L 各取
+       一组参照值与当前值，F 随导线变，F/(IL) 一栏三行都是 B。 */
+    const fx0 = w * 0.055;
+    const FW = w * 0.47;
+    const fx1 = fx0 + FW;
+    const fy0 = h * 0.10;
+    const fy1 = h * 0.58;
+    const wy = h * 0.34;
+    const wx0 = fx0 + FW * 0.16;
+    const wx1 = wx0 + FW * 0.66 * (0.35 + 0.65 * ((L - 0.2) / 1));
     const F = B * I * L;
+    const mx = (wx0 + wx1) / 2;
 
-    // 匀强磁场：一排小叉表示垂直屏幕向里
+    // 匀强磁场：一排小叉表示垂直纸面向里
     ctx.save();
     ctx.strokeStyle = pal.mut;
     ctx.lineWidth = 1.4;
     ctx.globalAlpha = 0.65;
-    for (let gx = fx0 + 14; gx < fx1 - 10; gx += 34) {
-      for (let gy = fy0 + 14; gy < fy1 - 10; gy += 34) {
+    for (let gx = fx0 + 14; gx < fx1 - 10; gx += 30) {
+      for (let gy = fy0 + 14; gy < fy1 - 10; gy += 30) {
         ctx.beginPath();
         ctx.moveTo(gx - 4, gy - 4);
         ctx.lineTo(gx + 4, gy + 4);
@@ -211,9 +216,9 @@ export function create(st) {
       }
     }
     ctx.restore();
-    label(ctx, '× 表示磁场垂直纸面向里', fx0 + 6, fy0 - 4, pal.mut, 'left', 13);
+    label(ctx, '× 表示磁场垂直纸面向里', fx0 + 2, fy0 - 8, pal.mut, 'left', 13);
 
-    // 通电导线
+    // 通电导线与电流方向
     ctx.save();
     ctx.strokeStyle = pal.ink;
     ctx.lineWidth = 3;
@@ -223,38 +228,60 @@ export function create(st) {
     ctx.lineTo(wx1, wy);
     ctx.stroke();
     ctx.restore();
-    arrow(ctx, wx0 + 8, wy, wx0 + 46, wy, pal.orange, 2.4);
-    label(ctx, `I = ${fmt(I, 1)} A`, (wx0 + wx1) / 2, wy + 22, pal.orange, 'center', 14);
+    const al = Math.max(16, Math.min(40, (wx1 - wx0) * 0.45));
+    arrow(ctx, wx0 + 3, wy, wx0 + 3 + al, wy, pal.sienna, 2.4);
+    label(ctx, `I = ${fmt(I, 1)} A`, wx0, wy + 18, pal.sienna, 'left', 14);
 
-    // L 的量线
+    // L 的量线（挂在导线下侧，避开向上的力箭头）
+    const dy = wy + 40;
     ctx.save();
     ctx.strokeStyle = pal.mut;
     ctx.lineWidth = 1.2;
     ctx.setLineDash([4, 4]);
     ctx.beginPath();
-    ctx.moveTo(wx0, wy - 34);
-    ctx.lineTo(wx1, wy - 34);
+    ctx.moveTo(wx0, dy);
+    ctx.lineTo(wx1, dy);
     ctx.stroke();
     ctx.restore();
-    arrow(ctx, (wx0 + wx1) / 2, wy - 34, wx0, wy - 34, pal.mut, 1.4);
-    arrow(ctx, (wx0 + wx1) / 2, wy - 34, wx1, wy - 34, pal.mut, 1.4);
-    label(ctx, `L = ${fmt(L, 2)} m`, (wx0 + wx1) / 2, wy - 46, pal.mut, 'center', 14);
+    arrow(ctx, mx, dy, wx0, dy, pal.mut, 1.4);
+    arrow(ctx, mx, dy, wx1, dy, pal.mut, 1.4);
+    label(ctx, `L = ${fmt(L, 2)} m`, mx, dy + 16, pal.mut, 'center', 14);
 
-    // 安培力：长度随 F 变
-    const Fl = clamp(20 + F * 26, 22, h * 0.24);
-    arrow(ctx, (wx0 + wx1) / 2, wy, (wx0 + wx1) / 2, wy - Fl, pal.green, 3);
-    label(ctx, `F = ${fmt(F, 2)} N`, (wx0 + wx1) / 2 + 10, wy - Fl - 12, pal.green, 'left', 14);
-    label(ctx, `B = ${fmt(B, 2)} T（垂直纸面向里）`, fx0 + 6, fy1 - 6, pal.ink, 'left', 14);
+    // 安培力：B 垂直纸面、I 沿纸面，所以 F 落在纸面内且垂直导线，竖直向上
+    const Fl = clamp(18 + F * 20, 22, Math.max(26, wy - fy0 - 30));
+    arrow(ctx, mx, wy, mx, wy - Fl, pal.indigo, 3);
+    label(ctx, `F = ${fmt(F, 2)} N`, mx + 9, wy - Fl - 8, pal.indigo, 'left', 14);
+    label(ctx, `B = ${fmt(B, 2)} T（垂直纸面向里）`, fx0 + 2, fy1 + 16, pal.ink, 'left', 14);
+
+    // 三行试验：I 与 L 各不相同，F 也各不相同，最后一栏三行相同
+    const rowY = [h * 0.70, h * 0.76, h * 0.82, h * 0.88];
+    const colX = [0, 0.16, 0.32, 0.50, 0.72].map(f => fx0 + FW * f);
+    ['试验', 'I / A', 'L / m', 'F / N', 'F /(IL)'].forEach((s, i) =>
+      label(ctx, s, colX[i], rowY[0], pal.mut, 'left', 13));
+    [
+      ['参照一', 2, 0.4, B * 2 * 0.4, pal.faint],
+      ['当前', I, L, F, pal.ink],
+      ['参照二', 8, 1.2, B * 8 * 1.2, pal.faint],
+    ].forEach((t, k) => {
+      const y = rowY[k + 1];
+      label(ctx, t[0], colX[0], y, t[4], 'left', 13);
+      label(ctx, fmt(t[1], 1), colX[1], y, t[4], 'left', 13);
+      label(ctx, fmt(t[2], 2), colX[2], y, t[4], 'left', 13);
+      label(ctx, fmt(t[3], 2), colX[3], y, t[4], 'left', 13);
+      label(ctx, fmt(t[3] / (t[1] * t[2]), 2), colX[4], y, t[4], 'left', 13);
+    });
+    label(ctx, '最后一栏三行相同：F/(IL) 只由磁场本身决定', fx0 + 2, h * 0.945, pal.mut, 'left', 13);
 
     /* 右栏：F 随 I 的直线，斜率 BL */
-    const rc = { x: w * 0.62, y: h * 0.18, w: w * 0.32, h: h * 0.58 };
+    const rc = { x: w * 0.60, y: h * 0.16, w: w * 0.36, h: h * 0.60 };
     const iMax = 10;
     const fMax = B * iMax * L;
     const g = panel(ctx, rc, [0, iMax], [0, fMax * 1.08], pal, { xlab: 'I/A', ylab: 'F/N', nx: 5, ny: 4 });
-    poly(ctx, g.X, g.Y, [[0, 0], [iMax, fMax]], pal.cyan, 2.2);
-    spot(ctx, g.X(I), g.Y(F), 5, pal.orange, pal.bg2);
-    label(ctx, 'F = BIL', rc.x + 8, rc.y + 15, pal.cyan, 'left', 14);
-    label(ctx, '同一条直线：F/I 都是 BL', rc.x + 8, rc.y + 35, pal.faint, 'left', 13);
+    poly(ctx, g.X, g.Y, [[0, 0], [iMax, fMax]], pal.indigo, 2.2);
+    spot(ctx, g.X(I), g.Y(F), 5, pal.sienna, pal.paper);
+    // 纵轴名「F/N」占着框内左上角，图例从它下面一行起
+    label(ctx, 'F = BIL', rc.x + 8, rc.y + 34, pal.indigo, 'left', 14);
+    label(ctx, `斜率 = BL = ${fmt(B * L, 2)} N/A`, rc.x + 8, rc.y + 56, pal.faint, 'left', 13);
 
     st.readout([
       ['磁感应强度 B', fmt(B, 2) + ' T'],

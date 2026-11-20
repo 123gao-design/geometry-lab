@@ -2,7 +2,7 @@
    与实验板的 camera2d 不同，这里的每个面板只负责自己那一块矩形，
    宽高由调用方按画布现算，所以两个面板并排、上下叠都不互相牵制。 */
 
-import { label } from '../gfx.js';
+import { label, INK, gridMark } from '../gfx.js';
 
 /** 取一个「好看」的刻度间隔：1 / 2 / 5 × 10^n */
 export function niceStep(range, n = 5) {
@@ -25,6 +25,9 @@ export function num(v) {
  * 返回 { X, Y, sx, sy }，X/Y 把数学坐标换成屏幕像素。
  */
 export function panel(ctx, r, xr, yr, pal, o = {}) {
+  /* 这块面板自带一张坐标网格：告诉外壳这一帧别再把纸面方格铺上来，
+    两种网格叠在一起会互相咬（「自动」档据此收起背景网格） */
+  gridMark();
   const X = v => r.x + ((v - xr[0]) / (xr[1] - xr[0])) * r.w;
   const Y = v => r.y + r.h - ((v - yr[0]) / (yr[1] - yr[0])) * r.h;
   const sx = o.sx || niceStep(xr[1] - xr[0], o.nx || 5);
@@ -57,49 +60,65 @@ export function panel(ctx, r, xr, yr, pal, o = {}) {
   const hasZeroX = xr[0] <= 0 && xr[1] >= 0;
   const ay = hasZeroY ? Y(0) : r.y + r.h;
   const ax = hasZeroX ? X(0) : r.x;
+  /* 轴用石墨色、描粗一档，箭头也放大一号——整幅图里最先认出的是这两条线；
+     老模块自带的 pal 没有 graphite 时退回 mut，不至于画不出来 */
+  const AX = pal.graphite || pal.mut;
+  const TX = pal.mut || pal.faint;
 
+  const hAy = Math.round(ay) + 0.5;
+  const hAx = Math.round(ax) + 0.5;
   ctx.save();
-  ctx.strokeStyle = pal.mut;
-  ctx.fillStyle = pal.mut;
-  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = AX;
+  ctx.fillStyle = AX;
+  /* 轴宽是「绝对」的：外壳的 ctx 会把每处 lineWidth 乘 INK.lw，这里先除回去，
+     再乘 INK.axis，于是设置页的「坐标轴」与「线条」两根滑块各管各的、不叠乘 */
+  ctx.lineWidth = 1.4 * (ctx.__ink ? INK.axis / INK.lw : INK.axis);
+  ctx.lineCap = 'round';
   // 轴画到框边，右端 / 上端各补一枚实心箭头（坐标轴的方向靠它交代）
   ctx.beginPath();
-  ctx.moveTo(r.x, Math.round(ay) + 0.5);
-  ctx.lineTo(r.x + r.w - 5, Math.round(ay) + 0.5);
+  ctx.moveTo(r.x, hAy);
+  ctx.lineTo(r.x + r.w - 8, hAy);
   ctx.stroke();
-  arrowHead(ctx, r.x + r.w - 1, ay, 0, 6);
+  arrowHead(ctx, r.x + r.w - 1, ay, 0, 7);
   ctx.beginPath();
-  ctx.moveTo(Math.round(ax) + 0.5, r.y + 5);
-  ctx.lineTo(Math.round(ax) + 0.5, r.y + r.h);
+  ctx.moveTo(hAx, r.y + 8);
+  ctx.lineTo(hAx, r.y + r.h);
   ctx.stroke();
-  arrowHead(ctx, ax, r.y + 1, -Math.PI / 2, 6);
+  arrowHead(ctx, ax, r.y + 1, -Math.PI / 2, 7);
+  ctx.restore();
 
-  ctx.strokeStyle = pal.faint;
+  // 刻度：短线朝画框外侧探出，数字用次一级的墨色，读数不必跟轴线抢
+  ctx.save();
+  ctx.strokeStyle = TX;
   ctx.lineWidth = 1;
   for (let x = Math.ceil(xr[0] / sx) * sx; x <= xr[1] + 1e-9; x += sx) {
     if (Math.abs(x) < 1e-9) continue;
     const px = X(x);
     if (px < r.x + 10 || px > r.x + r.w - 10) continue;
     ctx.beginPath();
-    ctx.moveTo(px, ay);
-    ctx.lineTo(px, ay + 4);
+    ctx.moveTo(px, hAy);
+    ctx.lineTo(px, ay + 5);
     ctx.stroke();
-    label(ctx, num(x), px, ay + 13, pal.faint, 'center', 12);
+    label(ctx, num(x), px, ay + 14, TX, 'center', 12);
   }
   for (let y = Math.ceil(yr[0] / sy) * sy; y <= yr[1] + 1e-9; y += sy) {
     if (Math.abs(y) < 1e-9) continue;
     const py = Y(y);
     if (py < r.y + 10 || py > r.y + r.h - 10) continue;
     ctx.beginPath();
-    ctx.moveTo(ax - 4, py);
+    ctx.moveTo(ax - 5, py);
     ctx.lineTo(ax, py);
     ctx.stroke();
-    label(ctx, num(y), ax - 6, py, pal.faint, 'right', 12);
+    label(ctx, num(y), ax - 7, py, TX, 'right', 12);
   }
   ctx.restore();
 
-  if (o.xlab) label(ctx, o.xlab, r.x + r.w - 11, ay - 10, pal.mut, 'right', 13);
-  if (o.ylab) label(ctx, o.ylab, ax + 9, r.y + 16, pal.mut, 'left', 13);
+  // 两轴在框内相交时，交点补一枚原点记号（落在左下那一角，躲开刻度数字）。
+  // 字号跟刻度数字同级，不进可拖动标签的表——免得给老演示的文字位置存档错位。
+  if (hasZeroX && hasZeroY) label(ctx, 'O', ax - 7, ay + 13, AX, 'right', 12.5);
+
+  if (o.xlab) label(ctx, o.xlab, r.x + r.w - 13, ay - 11, AX, 'right', 13.5);
+  if (o.ylab) label(ctx, o.ylab, ax + 10, r.y + 15, AX, 'left', 13.5);
 
   return { X, Y, sx, sy, ax, ay };
 }

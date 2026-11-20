@@ -1,8 +1,9 @@
 /* 光3 透镜成像。
    薄透镜公式 1/u + 1/v = 1/f（实像 v > 0、虚像 v < 0），放大率 m = −v/u。
    凸透镜 f > 0、凹透镜 f < 0；物是一支竖箭头，像由三条特殊光线定出。
-   左栏是光具座：物、透镜、像与三条光线；右栏画像距 v 随物距 u 的变化曲线，
-   凸透镜在 u = f 处断开（物在焦点上，出射光平行、像在无穷远）。 */
+   左栏是光具座：物、透镜、像与三条光线，凸透镜另有 2F、2F′ 两个分界点；
+   右栏画像距 v 随物距 u 的变化曲线，凸透镜在 u = f 处断开（物在焦点上，
+   出射光平行、像在无穷远），u = 2f 处 v 也等于 2f——像与物等大，是放大与缩小的分界。 */
 import { label, arrow, clamp, fmt } from '../gfx.js';
 import { panel, poly, spot } from './axes.js';
 
@@ -28,6 +29,15 @@ export function create(st) {
     const v = inf ? Infinity : (u0 * f) / (u0 - f);
     const hp = Number.isFinite(v) ? -(v / u0) * hh : 0;
     const mag = Number.isFinite(v) ? Math.abs(v / u0) : Infinity;
+
+    // 物距落在哪一档：凸透镜的成像规律以 2f 与 f 为分界
+    let rel;
+    if (conc) rel = '凹透镜：恒为正立、缩小的虚像';
+    else if (inf) rel = '物在焦点上，不成像';
+    else if (u0 > 2 * f0 + 0.05) rel = 'u > 2f：倒立、缩小的实像';
+    else if (u0 > 2 * f0 - 0.05) rel = 'u = 2f：倒立、等大的实像，像在 2F′';
+    else if (u0 > f0) rel = 'f < u < 2f：倒立、放大的实像';
+    else rel = 'u < f：正立、放大的虚像';
 
     ctx.clearRect(0, 0, w, h);
 
@@ -96,6 +106,24 @@ export function create(st) {
       ctx.fill();
       ctx.restore();
       label(ctx, txt, xp, cy + 18, pal.mut, 'center', 13);
+    }
+
+    /* ── 二倍焦距 2F、2F′：放大与缩小的分界（仅凸透镜）──── */
+    if (!conc) {
+      for (const [xf, txt, above] of [[-2 * f0, '2F', false], [2 * f0, '2F′', true]]) {
+        const xp = PX(xf);
+        if (xp < 6 || xp > benchW - 6) continue;
+        ctx.save();
+        ctx.strokeStyle = pal.mut;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.arc(xp, cy, 3.4, 0, Math.PI * 2);
+        ctx.stroke();                       // 空心圈，与实心的 F、F′ 区分
+        ctx.restore();
+        // 左侧 2F 处物箭头朝上、实像朝下，标签放在轴下方避开两者；
+        // 右侧 2F′ 处实像朝下、虚像朝上，标签放在轴上方同理
+        label(ctx, txt, xp, above ? cy - 14 : cy + 18, pal.mut, 'center', 13);
+      }
     }
 
     /* ── 三条特殊光线 ───────────────────────────── */
@@ -196,6 +224,8 @@ export function create(st) {
     }
     if (inf) {
       label(ctx, '物在焦点上：出射光平行，像在无穷远', benchW * 0.5, 22, pal.mut, 'center', 13);
+    } else {
+      label(ctx, rel, 12, 22, pal.orange, 'left', 13);
     }
 
     /* ── 右栏：像距随物距的变化 ─────────────────── */
@@ -235,13 +265,43 @@ export function create(st) {
     ctx.stroke();
     ctx.restore();
 
+    // u = 2f 与 v = 2f 两条虚线，交点 (2f, 2f) 上套一枚空心圈：像与物等大
+    if (!conc) {
+      const x2 = g.X(2 * f0);
+      const y2 = g.Y(2 * f0);
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = pal.purple;
+      ctx.globalAlpha = 0.55;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(x2, rc.y);
+      ctx.lineTo(x2, rc.y + rc.h);
+      ctx.moveTo(rc.x, y2);
+      ctx.lineTo(rc.x + rc.w, y2);
+      ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.strokeStyle = pal.purple;
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.arc(x2, y2, 8.5, 0, Math.PI * 2);   // 圈住橙点时不挡它（spot 的底色环半径 7.4）
+      ctx.stroke();
+      ctx.restore();
+    }
+
     // 当前取值
     if (Number.isFinite(v) && Math.abs(v) <= YV) {
       spot(ctx, g.X(u0), g.Y(v), 4.4, pal.orange, pal.bg2);
       label(ctx, `u = ${fmt(u0, 0)}, v = ${fmt(v, 1)}`, g.X(u0) + 8, g.Y(v) - 12, pal.mut, 'left', 12);
     }
     label(ctx, '像距 v 随物距 u 变化', rc.x + 2, rc.y - 14, pal.mut, 'left', 13);
-    label(ctx, conc ? 'v 恒为负：像总在同一侧、总是虚像' : 'u < f 一侧 v 为负（虚像），此处曲线断开', rc.x + 2, rc.y + rc.h + 18, pal.mut, 'left', 12);
+    if (conc) {
+      label(ctx, 'v 恒为负：像总在同一侧、总是虚像', rc.x + 2, rc.y + rc.h + 18, pal.mut, 'left', 12);
+    } else {
+      label(ctx, '紫虚线交点 u = v = 2f：像与物等大', rc.x + 2, rc.y + rc.h + 18, pal.mut, 'left', 12);
+      label(ctx, 'u < f 一侧是虚像，曲线在 u = f 处断开', rc.x + 2, rc.y + rc.h + 34, pal.mut, 'left', 12);
+    }
 
     /* ── 读数 ───────────────────────────────────── */
     const size = mag > 1.02 ? '放大' : mag < 0.98 ? '缩小' : '等大';
@@ -257,6 +317,8 @@ export function create(st) {
       ['像高 h′', inf ? '—' : fmt(hp, 2) + ' cm'],
       ['放大率 |m| = |v/u|', inf ? '—' : fmt(mag, 3)],
       ['像的性质', kind],
+      ['物距所处的档', rel],
+      ['2F 分界（凸透镜）', conc ? '不适用' : `u = v = 2f = ${fmt(2 * f0, 1)} cm`],
       ['1/u + 1/v', inf ? '—' : fmt(1 / u0 + 1 / v, 5)],
       ['1/f', fmt(1 / f, 5)],
       ['二倍焦距 2|f|', fmt(2 * f0, 1) + ' cm'],

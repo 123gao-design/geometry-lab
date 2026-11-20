@@ -142,13 +142,16 @@ export function create(st) {
     const pts = [];
     for (let tt = 0; tt <= 2 * PERIOD + 1e-6; tt += 0.08) pts.push([tt, fluxOf(dist(tt), sg)]);
     poly(ctx, g.X, g.Y, pts, pal.cyan, 2.2);
-    // 切线：斜率就是此刻的 ΔΦ/Δt
+    // 切线：斜率就是此刻的 ΔΦ/Δt（换算成像素斜率时要带上纵向翻转的负号）
     const gx = g.X(T);
     const gy = g.Y(phi);
     const tl = 34;
-    const kPix = (rate * g.sy) / g.sx;
+    const kPix = -((rate * rc.h) / (2 * hi)) * ((2 * PERIOD) / rc.w);
     const kn = Math.hypot(1, kPix) || 1;
     ctx.save();
+    ctx.beginPath();
+    ctx.rect(rc.x, rc.y, rc.w, rc.h);
+    ctx.clip();
     ctx.strokeStyle = pal.purple;
     ctx.lineWidth = 1.6;
     ctx.setLineDash([5, 4]);
@@ -158,7 +161,7 @@ export function create(st) {
     ctx.stroke();
     ctx.restore();
     spot(ctx, gx, gy, 5.5, pal.orange, pal.bg2);
-    label(ctx, '切线斜率 = ΔΦ/Δt', rc.x + 6, rc.y + 14, pal.purple, 'left', 13);
+    label(ctx, '切线斜率 = ΔΦ/Δt', rc.x + 6, rc.y + 34, pal.purple, 'left', 13);
 
     st.readout([
       ['磁铁的极性', sg > 0 ? 'N 极朝向线圈' : 'S 极朝向线圈'],

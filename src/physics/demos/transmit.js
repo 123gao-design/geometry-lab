@@ -180,7 +180,8 @@ export function create(st) {
     ctx.lineTo(g.X(Uk), rc.y + rc.h);
     ctx.stroke();
     ctx.restore();
-    label(ctx, '电压翻倍，损耗降到四分之一', rc.x + 8, rc.y + 16, pal.faint, 'left', 13);
+    // 纵轴名占着框内左上角（横轴起点就在左边缘），这句放到框外的上边当小标题
+    label(ctx, '电压翻倍，损耗降到四分之一', rc.x, rc.y - 14, pal.orange, 'left', 13);
 
     st.readout([
       ['输送功率 P', fmt(Pk, 0) + ' kW'],

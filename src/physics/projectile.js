@@ -104,15 +104,15 @@ export async function create(st) {
 
       /* ---------- 绘制 ---------- */
       const ctx = st.ctx;
-      ctx.clearRect(0, 0, w, h);
-      grid2d(ctx, cam, w, h, 2, 'rgba(140,160,190,.13)');
       const pal = st.pal;
+      ctx.clearRect(0, 0, w, h);
+      grid2d(ctx, cam, w, h, 2, pal.grid);
 
       // 地面
       ctx.beginPath();
       ctx.moveTo(0, cam.Y(0));
       ctx.lineTo(w, cam.Y(0));
-      ctx.strokeStyle = pal.faint;
+      ctx.strokeStyle = pal.graphite;
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -129,9 +129,11 @@ export async function create(st) {
         if (i === 0) ctx.moveTo(cam.X(x), cam.Y(y));
         else ctx.lineTo(cam.X(x), cam.Y(y));
       }
-      ctx.strokeStyle = 'rgba(160,180,210,.55)';
+      ctx.strokeStyle = pal.mut;
       ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.6;
       ctx.stroke();
+      ctx.globalAlpha = 1;
       ctx.setLineDash([]);
 
       // 轨迹
@@ -141,14 +143,14 @@ export async function create(st) {
         if (i === 0) ctx.moveTo(cam.X(q.x), cam.Y(q.y));
         else ctx.lineTo(cam.X(q.x), cam.Y(q.y));
       }
-      ctx.strokeStyle = pal.cyan;
+      ctx.strokeStyle = pal.sienna;
       ctx.lineWidth = 2;
       ctx.stroke();
 
       // 小球
       ctx.beginPath();
       ctx.arc(cam.X(tg.x), cam.Y(tg.y), R * cam.s, 0, Math.PI * 2);
-      ctx.fillStyle = pal.orange;
+      ctx.fillStyle = pal.sienna;
       ctx.fill();
       ctx.strokeStyle = 'rgba(0,0,0,.3)';
       ctx.lineWidth = 1.5;
@@ -157,23 +159,23 @@ export async function create(st) {
       // 速度箭头。末端留给下面的读数：切线以上的那一侧是空的（抛物线总在切线下方），
       // 读数挂到箭尖的右上方就不会压在轨迹与理论虚线上。
       const sp = Math.hypot(v.x, v.y);
-      const vTip = sp > 0.2 ? vec(ctx, cam, tg.x, tg.y, v.x, v.y, 0.2, pal.green, 2.5) : null;
+      const vTip = sp > 0.2 ? vec(ctx, cam, tg.x, tg.y, v.x, v.y, 0.2, pal.indigo, 2.5) : null;
 
       // 受力分析：开关常显，或指针停在小球上
       if (showInfo(st.ui, onBall)) {
         const mB = (4 / 3) * Math.PI * R * R * R;   // 碰撞体密度按 1 设的
         const mg = mB * p.g;
         const kF = 1.25 / mg;
-        const tG = vec(ctx, cam, tg.x, tg.y, 0, -mg, kF, pal.pink, 2.5);
-        label(ctx, 'mg', tG.x + 10, tG.y + 13, pal.pink, 'left', 15);
+        const tG = vec(ctx, cam, tg.x, tg.y, 0, -mg, kF, pal.graphite, 2.5);
+        label(ctx, 'mg', tG.x + 10, tG.y + 13, pal.graphite, 'left', 15);
         if (p.drag > 0 && sp > 0.05) {
           // Rapier 的线性阻尼等价于加速度 −k v，也就是阻力 −k m v
           const Fd = p.drag * mB * sp;
-          const tD = vec(ctx, cam, tg.x, tg.y, -v.x / sp * Fd, -v.y / sp * Fd, kF, pal.orange, 2.5);
-          label(ctx, 'kv', tD.x + 10, tD.y - 12, pal.orange, 'left', 15);
+          const tD = vec(ctx, cam, tg.x, tg.y, -v.x / sp * Fd, -v.y / sp * Fd, kF, pal.alert, 2.5);
+          label(ctx, 'kv', tD.x + 10, tD.y - 12, pal.alert, 'left', 15);
         }
         const vt = vTip || { x: cam.X(tg.x), y: cam.Y(tg.y) - R * cam.s - 16 };
-        label(ctx, `v=${fmt(sp)} m/s`, vt.x + 10, vt.y - 14, pal.cyan, 'left', 15);
+        label(ctx, `v=${fmt(sp)} m/s`, vt.x + 10, vt.y - 14, pal.indigo, 'left', 15);
       }
 
       // 理论射程标记
@@ -183,11 +185,11 @@ export async function create(st) {
       ctx.setLineDash([3, 4]);
       ctx.moveTo(cam.X(mx), cam.Y(0));
       ctx.lineTo(cam.X(mx), cam.Y(predict().height * 0.5));
-      ctx.strokeStyle = pal.purple;
+      ctx.strokeStyle = pal.graphite;
       ctx.lineWidth = 1.5;
       ctx.stroke();
       ctx.setLineDash([]);
-      label(ctx, `理论射程 ${fmt(prr, 1)} m`, cam.X(mx), cam.Y(-0.55), pal.purple, 'center', 15);
+      label(ctx, `理论射程 ${fmt(prr, 1)} m`, cam.X(mx), cam.Y(-0.55), pal.graphite, 'center', 15);
     },
     dispose() { if (world) { world.free(); world = null; } },
   };

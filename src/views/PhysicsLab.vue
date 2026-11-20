@@ -1,6 +1,6 @@
 <template>
   <div class="plab">
-    <div ref="stageEl" class="stage">
+    <div ref="stageEl" class="stage" :class="{ 'grid-off': gridHidden }" :style="[paperStyle, gridStyle]">
       <div ref="hostEl" class="stage-body">
         <canvas ref="cvEl"></canvas>
       </div>
@@ -77,6 +77,7 @@
           />
           <b>{{ objText }}</b>
         </label>
+        <PhysicsPaperPicker :bar="false" />
         <button type="button" class="an" :class="{ on: introOn }" title="实验简介：顶部中间的说明框，点了收起" @click="toggleIntro">简介</button>
         <button type="button" class="an" :class="{ on: howOpen }" @click="howOpen = !howOpen">原理</button>
         <button type="button" @click="togglePause">{{ paused ? '▶ 继续' : '⏸ 暂停' }}</button>
@@ -99,10 +100,12 @@ import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } 
 import { useRoute } from 'vue-router';
 import { EXPERIMENTS, findExp } from '../physics/index.js';
 import { DEMO_PART } from '../physics/plan.js';
-import { readPal, VIEW, resetView } from '../physics/gfx.js';
+import { readPal, VIEW, resetView, inkCtx, setInkStyle, gridBegin, gridUsed } from '../physics/gfx.js';
+import { paperVars } from '../lib/papers.js';
 import { getRapier2D, getRapier3D } from '../lib/physics/rapier.js';
 import { PREFS, setPref } from '../lib/settings.js';
 import Katex from '../components/Katex.vue';
+import PhysicsPaperPicker from '../components/PhysicsPaperPicker.vue';
 
 const route = useRoute();
 const stageEl = ref(null);
@@ -119,6 +122,41 @@ const error = ref('');
 const meta = computed(() => findExp(route.params.id));
 const is2d = computed(() => !meta.value || meta.value.dim !== '3d');
 const zoomPct = ref(100);
+
+/* 纸面配色：预设档把整套 --pb-* 以内联变量挂在 .stage 上（papers.js），
+   「跟随主题」时返回空对象、沿用下面 CSS 的两套默认令牌。
+   板外的控制框仍读主题色，--pb-* 只管画布这一块 */
+const paperStyle = computed(() => paperVars(PREFS.physPaper));
+
+/* 换纸面不重建实验（会重掷小球、丢掉当前状态）：等变量落到 DOM，再把 host 上的
+   那套令牌重新读进 pal。实验模块都拿着 st.pal 的引用逐帧取值，原地刷一遍就换色。
+   （三维实验的 three 材质是建实例时定的色，换纸面后不跟着变，属已知边界） */
+watch(() => PREFS.physPaper, async () => {
+  await nextTick();
+  if (stRef && hostEl.value) Object.assign(stRef.pal, readPal(hostEl.value));
+});
+
+/* 字号与线条粗细：三个倍率灌进 gfx.js 的 INK，下一帧画出来就是新的，不用重搭世界 */
+function syncInk() {
+  setInkStyle({ font: PREFS.physFont, lw: PREFS.physLineW, axis: PREFS.physAxisW });
+}
+syncInk();
+watch(() => [PREFS.physFont, PREFS.physLineW, PREFS.physAxisW], syncInk);
+
+/* 背景方格：自动档在有坐标网格的那些帧里收起，免得 32px 纸纹与刻度网格互相咬 */
+const gridHidden = ref(false);
+function syncGrid() {
+  const want = PREFS.physGrid === 'off' || (PREFS.physGrid === 'auto' && gridUsed());
+  if (want !== gridHidden.value) gridHidden.value = want;
+}
+watch(() => PREFS.physGrid, syncGrid);
+
+/* 纸纹跟着视野缩放平移：VIEW 是普通对象（gfx.js 的相机），改一次 bump 一下 vTick */
+const vTick = ref(0);
+const gridStyle = computed(() => {
+  void vTick.value;
+  return { '--pb-gz': VIEW.z, '--pb-gx': VIEW.x + 'px', '--pb-gy': VIEW.y + 'px' };
+});
 
 /* 受力分析：默认只在鼠标停到物体上时画，开关一按就常显。偏好存进 gl-prefs。 */
 const infoOn = computed(() => PREFS.physInfo === 'on');
@@ -200,7 +238,7 @@ function fit() {
   cv.height = Math.round(h * dpr);
   cv.style.width = w + 'px';
   cv.style.height = h + 'px';
-  ctx2d = cv.getContext('2d');
+  ctx2d = inkCtx(cv.getContext('2d'));
   ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
   resizers.forEach(fn => fn(w, h));
 }
@@ -221,6 +259,7 @@ function applyZoom(f, cx, cy) {
   VIEW.y = cy - h / 2 - k * (cy - h / 2 - VIEW.y);
   VIEW.z = z1;
   zoomPct.value = Math.round(z1 * 100);
+  vTick.value++;
 }
 
 function zoomStep(f) { applyZoom(f, size.w / 2, size.h / 2); }
@@ -228,6 +267,7 @@ function zoomStep(f) { applyZoom(f, size.w / 2, size.h / 2); }
 function viewReset() {
   resetView();
   zoomPct.value = 100;
+  vTick.value++;
 }
 
 // 三维档的双击归三个实验自己（复原视角），这里只接二维的；
@@ -264,6 +304,7 @@ function onMove(e) {
   if (!pan || e.pointerId !== pan.id) return;
   VIEW.x = pan.vx + (e.clientX - pan.x);
   VIEW.y = pan.vy + (e.clientY - pan.y);
+  vTick.value++;
 }
 
 function onLeave() { ptr.in = false; }
@@ -277,6 +318,7 @@ function onUp(e) {
 /* ---------- 实验实例 ---------- */
 let api = null;
 let seq = 0;
+let stRef = null;   // 当前实验的 st：换纸面时刷新 pal，不重建世界
 let pendingRows = null;
 
 function stageApi(canvas) {
@@ -285,7 +327,7 @@ function stageApi(canvas) {
     ctx: ctx2d,
     host: hostEl.value,
     params: pv,
-    pal: readPal(),
+    pal: readPal(hostEl.value),
     ui,
     get w() { return size.w; },
     get h() { return size.h; },
@@ -308,6 +350,7 @@ function stop() {
   }
   resizers.clear();
   pendingRows = null;
+  stRef = null;
   rows.value = [];
 }
 
@@ -337,7 +380,9 @@ async function boot() {
   try {
     const mod = await m.load();
     if (mine !== seq) return;
-    const inst = await mod.create(stageApi(cv));
+    const st = stageApi(cv);
+    stRef = st;
+    const inst = await mod.create(st);
     if (mine !== seq) {
       inst.dispose && inst.dispose();
       return;
@@ -374,12 +419,14 @@ function tick(now) {
 
   if (api && !loading.value && !error.value) {
     // 暂停时只传 0：各实验见 dt=0 就只重画、不步进，所以缩放手感和转视角照样跟手
+    gridBegin();
     try {
       api.frame(paused.value ? 0 : dt * speed.value);
     } catch (e) {
       error.value = '运行出错：' + (e && e.message ? e.message : String(e));
       return;
     }
+    syncGrid();
     if (pendingRows && now - lastFlush > 110) {
       rows.value = pendingRows;
       pendingRows = null;
@@ -453,19 +500,63 @@ onBeforeUnmount(() => {
   margin: 8px calc(50% - 50vw) 10px;
 }
 
+/* ── 纸面皮肤（2026-11-20，与讲义演示同一套令牌） ───────────────────────
+   画布透明，底色 / 方格 / 细框画在 .stage 上就整块换掉观感；这八枚 --pb-*
+   由 readPal(hostEl) 读进实验模块的 pal（paper / grid / rule / indigo /
+   sienna / graphite / alert）。深色家族深板岩纸，html.light 家族暖米色纸。 */
 .stage {
+  --pb-paper: #10161f;
+  --pb-grid: rgba(198, 216, 244, .05);
+  --pb-rule: rgba(214, 226, 246, .17);
+  --pb-ink: #e8eef7;
+  --pb-indigo: #8db4e8;
+  --pb-sienna: #d9976a;
+  --pb-graphite: #7d8aa0;
+  --pb-alert: #e08585;
   position: relative;
+  isolation: isolate;
   height: calc(100dvh - 64px);
   min-height: 420px;
   border-radius: 18px;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
-  background:
-    radial-gradient(120% 90% at 22% 0%, color-mix(in srgb, var(--blue) 10%, transparent), transparent 62%),
-    radial-gradient(90% 80% at 90% 100%, color-mix(in srgb, var(--purple) 8%, transparent), transparent 60%),
-    color-mix(in srgb, var(--bg2) 92%, var(--card));
-  box-shadow: 0 24px 60px -34px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .04);
+  border: 1px solid var(--pb-rule);
+  background-color: var(--pb-paper);
+  /* 三层：横方格、竖方格、纸面渐变（--pb-skin）。主题档没有渐变，第三层退成 none。
+     方格边长与相位跟着视野（--pb-gz / --pb-gx / --pb-gy 由 .stage 的行内变量给出） */
+  background-image:
+    linear-gradient(to right, var(--pb-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--pb-grid) 1px, transparent 1px),
+    var(--pb-skin, none);
+  background-size:
+    calc(32px * var(--pb-gz, 1)) calc(32px * var(--pb-gz, 1)),
+    calc(32px * var(--pb-gz, 1)) calc(32px * var(--pb-gz, 1)),
+    auto;
+  background-repeat: repeat, repeat, no-repeat;
+  background-position:
+    calc(-1px + var(--pb-gx, 0px)) calc(-1px + var(--pb-gy, 0px)),
+    calc(-1px + var(--pb-gx, 0px)) calc(-1px + var(--pb-gy, 0px)),
+    center;
+  box-shadow: 0 24px 60px -34px rgba(0, 0, 0, .6);
 }
+/* 背景方格收起（「隐藏」档，或「自动」档里这一帧画了坐标网格）。
+   只掐掉前两层渐变，不动 --pb-grid 令牌——pal.grid 还要供实验自己画网格 */
+.stage.grid-off {
+  background-image: none, none, var(--pb-skin, none);
+}
+:global(html.light) .stage {
+  --pb-paper: #fbf6ea;
+  --pb-grid: rgba(122, 96, 54, .075);
+  --pb-rule: rgba(122, 96, 54, .26);
+  --pb-ink: #2b303a;
+  --pb-indigo: #3d6ea8;
+  --pb-sienna: #a75f35;
+  --pb-graphite: #6f7683;
+  --pb-alert: #b4514f;
+}
+
+/* 纸面预设不再用类名：src/lib/papers.js 把整套令牌以 --pb-* 内联变量挂在
+   .stage 上，操作条「▦ 纸面」与设置页写同一个 PREFS.physPaper；
+   上面两块 CSS 只剩「跟随主题」的默认值 */
 
 .stage-body { position: absolute; inset: 0; cursor: grab; touch-action: none; }
 .stage-body.grab { cursor: grabbing; }
@@ -495,7 +586,12 @@ onBeforeUnmount(() => {
   transition: color .15s ease;
 }
 .tb-back:hover { color: var(--blue); }
-.tb-t { font-size: 15px; letter-spacing: .3px; }
+.tb-t {
+  font-family: Georgia, 'Songti SC', 'Noto Serif CJK SC', 'SimSun', serif;
+  font-size: 15.2px;
+  letter-spacing: .3px;
+  color: var(--ink);
+}
 .tb-d {
   font-size: 12.2px;
   color: var(--faint);
@@ -524,8 +620,12 @@ onBeforeUnmount(() => {
   gap: 16px;
   padding: 2px 0;
 }
-.hud-r em { font-style: normal; color: var(--faint); }
-.hud-r span { color: var(--ink); font-weight: 600; }
+.hud-r em { font-style: normal; color: var(--mut); }
+.hud-r span {
+  color: var(--ink); font-weight: 600;
+  /* 读数与画布里的标签同一副字（gfx.js 的 label 走 KaTeX 字族） */
+  font-family: 'KaTeX_Main', 'Latin Modern Math', 'Times New Roman', serif;
+}
 
 /* 参数面板 */
 .panel {
@@ -562,7 +662,7 @@ onBeforeUnmount(() => {
   margin: 2px 0;
   appearance: none;
   border-radius: 99px;
-  background: color-mix(in srgb, var(--blue) 22%, var(--line));
+  background: color-mix(in srgb, var(--blue) 26%, var(--line));
   outline: none;
 }
 .prm input[type='range']::-webkit-slider-thumb {
@@ -624,7 +724,7 @@ onBeforeUnmount(() => {
   cursor: default;
   user-select: none;
 }
-.sld > span { font-size: 12.4px; color: var(--faint); }
+.sld > span { font-size: 12.4px; color: var(--mut); }
 .sld > b {
   min-width: 40px;
   text-align: right;
@@ -639,7 +739,7 @@ onBeforeUnmount(() => {
   margin: 0;
   appearance: none;
   border-radius: 99px;
-  background: color-mix(in srgb, var(--blue) 22%, var(--line));
+  background: color-mix(in srgb, var(--blue) 26%, var(--line));
   outline: none;
   cursor: pointer;
 }
@@ -662,7 +762,7 @@ onBeforeUnmount(() => {
   cursor: pointer;
 }
 
-/* 分析 / 原理两个开关：开着的时候描蓝边 */
+/* 分析 / 原理两个开关：开着的时候描一道靛蓝边 */
 .acts button.an.on {
   color: var(--blue);
   border-color: color-mix(in srgb, var(--blue) 55%, var(--line));
@@ -780,15 +880,15 @@ onBeforeUnmount(() => {
   font-size: 13.5px;
   color: var(--mut);
   /* 装载期间板里还没有东西，直接盖住板底色，不留模糊层 */
-  background: color-mix(in srgb, var(--bg2) 94%, var(--card));
+  background: var(--pb-paper);
 }
-.veil.err { color: var(--pink); }
+.veil.err { color: var(--pb-alert); }
 .spin {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  border: 2px solid color-mix(in srgb, var(--blue) 30%, transparent);
-  border-top-color: var(--blue);
+  border: 2px solid color-mix(in srgb, var(--pb-indigo) 30%, transparent);
+  border-top-color: var(--pb-indigo);
   animation: sp .8s linear infinite;
 }
 @keyframes sp { to { transform: rotate(360deg); } }

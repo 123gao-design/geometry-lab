@@ -2,8 +2,11 @@
    两档：
    ① 单缝衍射 —— 缝宽 a、波长 λ，屏上强度 I = I₀(sinα/α)²，α = πa sinθ/λ，
       第一极小在 a sinθ = λ，中央亮纹宽度约为两侧亮纹的两倍。
+      缝前的平面波前向右移动，缝口当作次级波源，一圈圈波峰向两侧铺开；
+      方位上的强弱按 (sinα/α)² 给，所以正前方最亮、越偏越暗。
    ② 偏振 —— 自然光过第一块偏振片后成为线偏振光、强度减半，
-      再过与它成 θ 的第二块偏振片，强度为 I₀/2·cos²θ（马吕斯定律）。 */
+      再过与它成 θ 的第二块偏振片，强度为 I₀/2·cos²θ（马吕斯定律）。
+      各处的振动箭头随时间伸缩，一串箭头看起来就沿着光路向右行进。 */
 import { label, clamp, fmt } from '../gfx.js';
 import { panel, poly, spot } from './axes.js';
 
@@ -71,14 +74,17 @@ export function create(st) {
       /* ══ 单缝衍射 ══════════════════════════════ */
       const xb = w * 0.27, xs = w * 0.47, cy = h * 0.50;
       const ah = 5 + ((aum - 20) / 180) * 26;
+      const [cr, cg, cb] = wlColor(lamN);             // 这一束光的颜色，波前与条纹共用
+      const lamPix = 12 + ((lamN - 400) / 300) * 8;   // 画面上一个波长的示意长度
+      const ph = ((T * 26) / lamPix) % 1;             // 相位（26 px/s 向右）
 
-      // 入射平面波：一串竖直波前
+      // 入射平面波：一串竖直波前，随时间向右移动
       const ds = 9 + ((lamN - 400) / 300) * 9;
       ctx.save();
       ctx.strokeStyle = pal.faint;
       ctx.lineWidth = 1;
       ctx.globalAlpha = 0.5;
-      for (let x = w * 0.05; x < xb - 8; x += ds) {
+      for (let x = w * 0.05 + ph * ds; x < xb - 8; x += ds) {
         ctx.beginPath();
         ctx.moveTo(x, h * 0.12);
         ctx.lineTo(x, h * 0.88);
@@ -100,12 +106,54 @@ export function create(st) {
       ctx.restore();
       label(ctx, `单缝 a = ${fmt(aum, 0)} μm`, xb, h * 0.10 - 10, pal.mut, 'center', 13);
 
-      // 缝后的衍射光束：一组不同方向的光线
+      // 缝后：把缝口当作次级波源，一圈圈波峰向各方向扩张。
+      // 真实情形下 a/λ 在 10² 量级，按实际角度画会密到分辨不出，这里把角度压缩，
+      // 只保留「缝越窄、中央亮纹越宽」这条趋势——方位上的强弱仍按 (sinα/α)² 给。
+      const span = Math.atan((h * 0.38) / (xs - xb));
+      const rMax = Math.hypot(xs - xb + 2, h * 0.40);
+      const th1v = clamp((span * 1.15 * 60) / aum, 0.18, 1.45);  // 第一极小的示意方向
+      const Ienv = t => {
+        const al = (Math.PI * Math.sin(t)) / Math.sin(th1v);
+        if (Math.abs(al) < 1e-9) return 1;
+        const s2 = Math.sin(al) / al;
+        return s2 * s2;
+      };
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(xb, h * 0.04, xs - xb, h * 0.92);
+      ctx.clip();
+      ctx.strokeStyle = `rgb(${cr},${cg},${cb})`;
+      ctx.lineWidth = 1.15;
+      const NSEG = 36;
+      for (let k = 0; (k + ph) * lamPix < rMax; k++) {
+        const rr = (k + ph) * lamPix;
+        if (rr < 1.5) continue;
+        const fade = clamp(1 - (0.7 * rr) / rMax, 0.18, 1);
+        // 同一条波峰按方位分成四档亮度，档内合成一条路径一次描完
+        const buck = [[], [], [], []];
+        for (let j = 0; j < NSEG; j++) {
+          const t0 = -span + (2 * span * j) / NSEG;
+          const t1 = -span + (2 * span * (j + 1)) / NSEG;
+          buck[Math.min(3, Math.floor(Ienv((t0 + t1) / 2) * 4))].push([t0, t1]);
+        }
+        for (let b = 0; b < 4; b++) {
+          if (!buck[b].length) continue;
+          ctx.globalAlpha = (0.06 + 0.46 * (b / 3)) * fade;
+          ctx.beginPath();
+          for (const [t0, t1] of buck[b]) {
+            ctx.moveTo(xb + rr * Math.cos(t0), cy + rr * Math.sin(t0));
+            ctx.arc(xb, cy, rr, t0, t1);
+          }
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+
+      // 各个传播方向上的细光线，交代光向前走
       ctx.save();
       ctx.strokeStyle = pal.blue;
-      ctx.lineWidth = 1.2;
-      ctx.globalAlpha = 0.8;
-      const span = Math.atan((h * 0.38) / (xs - xb));
+      ctx.lineWidth = 1.1;
+      ctx.globalAlpha = 0.42;
       for (let k = -6; k <= 6; k++) {
         const aa = (k / 6) * span;
         ctx.beginPath();
@@ -163,7 +211,6 @@ export function create(st) {
 
       // 条纹本身
       const srec = { x: rc.x, y: rc.y + rc.h + 30, w: rc.w, h: 24 };
-      const [cr, cg, cb] = wlColor(lamN);
       for (let px = 0; px < srec.w; px += 2) {
         const yy = -Ymax + (2 * Ymax * px) / srec.w;
         const I = Iof(yy * 1e-3);
@@ -196,6 +243,9 @@ export function create(st) {
     const p1 = w * 0.30, p2 = w * 0.56;
     const x0 = w * 0.05, x1 = w * 0.48;
 
+    // 光波是交变的电场：每支箭头按行波的相位伸缩，一串箭头看起来就向右行进
+    const osc = (x, off = 0) => 0.45 + 0.55 * Math.abs(Math.sin(5.2 * T - x * 0.075 + off));
+
     // 自然光：各方向都有振动
     ctx.save();
     ctx.strokeStyle = pal.faint;
@@ -204,7 +254,7 @@ export function create(st) {
     for (let x = x0; x < p1 - 24; x += 20) {
       for (let k = 0; k < 6; k++) {
         const aa = (k / 6) * Math.PI;
-        twin(ctx, x, cy, aa, 9, pal.faint, 1.2);
+        twin(ctx, x, cy, aa, 9 * osc(x, k * 1.9), pal.faint, 1.2);
       }
     }
     ctx.restore();
@@ -233,7 +283,7 @@ export function create(st) {
 
     // P₁ 之后：竖直振动的线偏振光
     for (let x = p1 + 22; x < p2 - 26; x += 26) {
-      twin(ctx, x, cy, Math.PI / 2, 13, pal.green, 2);
+      twin(ctx, x, cy, Math.PI / 2, 13 * osc(x), pal.green, 2);
     }
 
     // 第二块偏振片（检偏器），绕光轴转过 θ
@@ -275,8 +325,9 @@ export function create(st) {
     const [pr, pg, pb] = wlColor(lamN);
     const col = `rgba(${pr},${pg},${pb},${(0.18 + 0.82 * amp).toFixed(3)})`;
     for (let x = p2 + 26; x < w * 0.52; x += 26) {
-      twin(ctx, x, cy, Math.PI / 2 - th, 4 + 15 * amp, col, 2.2);
+      twin(ctx, x, cy, Math.PI / 2 - th, (4 + 15 * amp) * osc(x), col, 2.2);
     }
+    label(ctx, '箭头的长短在变：光波的电场在振荡', x0, cy + h * 0.27, pal.mut, 'left', 12);
 
     /* 右栏：马吕斯定律 */
     const rc = { x: w * 0.60, y: h * 0.14, w: w * 0.36, h: h * 0.62 };

@@ -127,8 +127,9 @@ export function create(st) {
     poly(ctx, g.X, g.Y, [[0, 0], [tramp, n * BM * S]], pal.orange, 2.4);
     poly(ctx, g.X, g.Y, [[tramp, n * BM * S], [per, 0]], pal.cyan, 2.4);
     spot(ctx, g.X(ph), g.Y(phiT), 5.5, pal.orange, pal.bg2);
-    label(ctx, '斜率 = nS·ΔB/Δt', rc.x + 6, rc.y + 14, pal.faint, 'left', 13);
-    label(ctx, '橙：增强　青：减弱', rc.x + 6, rc.y + 32, pal.faint, 'left', 13);
+    // 纵轴名 'nΦ/Wb' 落在框内左上角（横轴起点就在左边缘），图注从它下面两行起
+    label(ctx, '斜率 = nS·ΔB/Δt', rc.x + 6, rc.y + 38, pal.faint, 'left', 13);
+    label(ctx, '橙：增强　青：减弱', rc.x + 6, rc.y + 58, pal.orange, 'left', 13);
 
     st.readout([
       ['磁感应强度 B', fmt(B, 2) + ' T'],

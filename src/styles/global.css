@@ -196,13 +196,16 @@ h3.sec .prog{float:right;color:var(--faint);font-size:13px;font-weight:400;margi
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:30px 34px;margin:20px 0}
 /* 画板 */
 .board-wrap{margin:18px 0 6px}
-/* 底色可自选：--bd-bg 由 board.js 的底色面板写在板根上，没选就回落到主题的 --bg2 */
-.board{background:var(--bd-bg,var(--bg2));border:1px solid var(--line);border-radius:12px;overflow:hidden;position:relative}
+/* 底色可自选：--bd-bg 由 board.js 的「▤ 外观」面板写在板根上，没选就回落到主题的 --bg2；
+   预设纸面另带一条斜向渐变 --bd-skin（与物理画板同一档 --pb-skin，白 + 淡蓝那一版就是它），
+   压在底色之上——纯色档没有这条变量，background-image 回落到 none */
+.board{background-color:var(--bd-bg,var(--bg2));background-image:var(--bd-skin,none);
+  border:1px solid var(--line);border-radius:12px;overflow:hidden;position:relative}
 .board svg{display:block;width:100%;height:auto;touch-action:none}
 .cap{color:var(--faint);font-size:13px;margin:8px 2px 0;line-height:1.7}
 .cap b{color:var(--mut)}
 /* --bd-ink：调色板自选底色时按亮度换的墨色（深底浅字、浅底深字）；没选就回落到主题 ink */
-svg text{fill:var(--bd-ink,var(--ink));font-size:12px;paint-order:stroke;stroke:var(--bd-bg,var(--bg2));stroke-width:3px;stroke-linejoin:round}
+svg text{fill:var(--bd-ink,var(--ink));font-size:var(--bd-fs,12px);paint-order:stroke;stroke:var(--bd-bg,var(--bg2));stroke-width:3px;stroke-linejoin:round}
 /* 板内文字可拖动（引擎在 svg 捕获阶段做事件委托）：dyn 层的标签与顶层 hint/hintM 都算，把手标签 .hndlbl 不参与 */
 svg text:not(.hndlbl){cursor:move;user-select:none}
 svg foreignObject{cursor:move}
@@ -392,7 +395,7 @@ circle.hnd.drag{stroke-width:3}
    子元素用 inherit 接住它——写死 crosshair 会把选择、橡皮这些工具的样式盖掉 */
 .board.ink-on svg,.board.ink-on svg text,.board.ink-on svg foreignObject{cursor:inherit}
 @media (hover:none){.dl{opacity:1}}
-/* 底色面板：挂在板根上，点「▤ 底色」在操作条下方展开一排色卡（「沿用主题」在最前） */
+/* 外观面板：挂在板根上，点「▤ 外观」在操作条下方展开（纸面 / 调色板 / 纸格 / 三项倍率） */
 .tint-pop{position:absolute;top:38px;right:8px;z-index:7;display:flex;flex-direction:column;gap:8px;
   padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);
   box-shadow:0 14px 36px rgba(0,0,0,.32)}
@@ -414,6 +417,33 @@ circle.hnd.drag{stroke-width:3}
 .tint-pick:hover{color:var(--ink)}
 .tint-pick.on{color:var(--blue)}
 .tint-pick.on input[type=color]{outline:2px solid var(--blue);outline-offset:2px}
+/* 纸格那一行：一排小胶囊（不画 / 自动 / 方格 / 点阵 / 横线），与设置页的那一项同一个值 */
+.tint-row.tint-grid{padding-top:7px;border-top:1px dashed var(--line)}
+.tint-row .tint-gl{font-size:11.5px;color:var(--mut);letter-spacing:.6px}
+.tint-gb{padding:2px 9px;border:1px solid var(--line);border-radius:99px;background:none;
+  color:var(--mut);font-size:11.5px;line-height:1.6;cursor:pointer}
+.tint-gb:hover{color:var(--ink);border-color:var(--blue)}
+.tint-gb.on{color:var(--blue);border-color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent)}
+/* 纸面那一段：照物理画板「▦ 纸面」的排法，九格三列，每格一枚双色小样加名字
+   （小样浅纸 / 深纸各占一半，一眼分得开）；「跟随主题」占满一行。
+   与下面的调色板之间那道虚线由 .tint-custom 自己画（别两边都画，会成双线） */
+.tint-row.tint-papers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:300px}
+.tint-pp{display:flex;align-items:center;gap:6px;padding:4px 7px;border:1px solid var(--line);
+  border-radius:9px;background:none;font:inherit;font-size:11.5px;color:var(--mut);cursor:pointer;white-space:nowrap}
+.tint-pp:hover{color:var(--ink);border-color:var(--blue)}
+.tint-pp.on{color:var(--blue);border-color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent)}
+.tint-pp.theme{grid-column:1 / -1}
+.tint-chip{flex:0 0 auto;width:16px;height:16px;border-radius:5px;border:1px solid var(--line);
+  background:linear-gradient(140deg,var(--bg2),var(--card))}
+.tint-f{font-size:11px;line-height:1.55;color:var(--mut);opacity:.78;max-width:300px}
+/* 字号 / 线宽 / 轴宽三根小滑块：标签固定宽度、读数右对齐，拖的时候小数点不跳 */
+.tint-slbox{display:flex;flex-direction:column;gap:6px;padding-top:7px;border-top:1px dashed var(--line)}
+.tint-row.tint-sl{gap:8px}
+.tint-row.tint-sl .tint-gl{flex:0 0 30px}
+.tint-row.tint-sl input[type=range]{flex:1 1 auto;width:118px;height:14px;margin:0;
+  background:none;accent-color:var(--blue);cursor:pointer}
+.tint-sv{flex:0 0 auto;min-width:36px;text-align:right;font-size:11px;color:var(--mut);
+  font-variant-numeric:tabular-nums}
 /* 半屏 / 全屏：把整块板 root 变成 fixed 浮层，四种模式共用的底色与投影写在 .bd-float；
    1px 的 100vmax 外扩投影顺带压暗页面（投影不接收点击，底下的正文只是看得见、点不到） */
 .board.bd-float{position:fixed;z-index:100;display:flex;flex-direction:column;overflow:hidden;

@@ -11,10 +11,9 @@ import { panel, poly, spot } from './axes.js';
 
 const K = 9e9;
 const GAP = 0.2; // 两板之间的实际距离（m）
-const RMIN = 0.05; // 试探电荷沿连线运动的可视范围（m）
-const RMAX = 0.6;
-const VR = 0.42; // 可视速度标尺（m/s）：能量为零处停下，能量越大走得越快
-const VMAX = 1.1; // 可视速度上限（m/s）
+const RMIN = 0.1; // 试探电荷沿连线运动的可视范围（m）
+const RMAX = 0.62;
+const VMAX = 1.1; // 速度箭头标尺上限（m/s）
 const HOLD = 0.9; // 到边界或走到 B 点后停顿再重放（s）
 const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 const sup = n => String(n).split('').map(c => (c === '-' ? '⁻' : SUP[+c])).join('');
@@ -35,6 +34,7 @@ function topOf(v) {
 export function create(st) {
   let T = 0;
   let cur = 0; // 电荷当前距离（点电荷档）或已走距离（匀强电场档）
+  let v = 0; // 试探电荷沿连线的径向速度（只用于定步长，质量取 1）
   let hold = 0;
   let last = '';
 
@@ -55,50 +55,59 @@ export function create(st) {
       last = key;
       T = 0;
       cur = mode === 'point' ? r : 0;
+      v = 0;
       hold = 0;
     }
 
     ctx.clearRect(0, 0, w, h);
 
     if (mode === 'point') {
-      const qx = w * 0.14;
-      const qy = h * 0.46;
+      const qx = w * 0.24;
+      const qy = h * 0.5;
       const CR = Math.min(w * 0.03, h * 0.06);
-      const posOf = rr => qx + w * 0.08 + ((rr - 0.1) / 0.5) * w * 0.22;
+      const SW = Math.min(w * 0.2, h * 0.3); // 0.5 m 对应的像素
+      const S0 = SW * 0.28; // r = 0.1 m 处离电荷中心的像素
+      const posOf = rr => qx + S0 + ((rr - 0.1) / 0.5) * SW;
       const C = K * Q * q0 * 1e-12; // Ep·r = C
       const EpOf = rr => C / rr;
       const Ep0 = EpOf(r);
-      const Eref = Math.abs(C) / r; // 释放处的电势能量级
       const dirSign = C > 0 ? 1 : C < 0 ? -1 : 0;
-      const E = (K * Math.abs(Q) * 1e-6) / (cur * cur);
       const V = (K * Q * 1e-6) / cur;
       const Ep = EpOf(cur);
       const Ek = Ep0 - Ep;
-      const vNow = Eref > 0 ? Math.min(VMAX, VR * Math.sqrt(Math.max(0, Ek / Eref))) : 0;
 
-      // 走动：速度由能量定（dr/dt = ±v），到边界停一拍再从头放开
+      // 走动：a = F/m = C/r²（单位质量），四步积分，到边界停一拍再从头放开
       if (dt > 0) {
         if (hold > 0) {
           hold -= dt;
           if (hold <= 0) {
             cur = r;
+            v = 0;
             hold = 0;
             T = 0;
           }
         } else if (dirSign !== 0) {
           T += dt;
-          cur += dirSign * vNow * dt;
-          if (cur >= RMAX || cur <= RMIN) {
-            cur = clamp(cur, RMIN, RMAX);
-            hold = HOLD;
+          const hh = dt / 4;
+          for (let i = 0; i < 4; i++) {
+            v += (C / (cur * cur)) * hh;
+            cur += v * hh;
+            if (cur >= RMAX || cur <= RMIN) {
+              cur = clamp(cur, RMIN, RMAX);
+              v = 0;
+              hold = HOLD;
+              break;
+            }
           }
         } else {
           T += dt;
         }
       }
+      const vNow = Math.min(Math.abs(v), VMAX);
 
       // 场线（细射线）与等势面（同心虚线圆）
       const NL = 10;
+      const rOut = posOf(0.46) - qx + 16; // 场线与最外一圈等势面等长
       for (let i = 0; i < NL; i++) {
         const a = (i / NL) * Math.PI * 2 + 0.31;
         ctx.save();
@@ -107,7 +116,7 @@ export function create(st) {
         ctx.lineWidth = 1.1;
         ctx.beginPath();
         ctx.moveTo(qx + Math.cos(a) * CR, qy + Math.sin(a) * CR);
-        ctx.lineTo(qx + Math.cos(a) * w * 0.11, qy + Math.sin(a) * w * 0.11);
+        ctx.lineTo(qx + Math.cos(a) * rOut, qy + Math.sin(a) * rOut);
         ctx.stroke();
         ctx.restore();
       }
@@ -191,7 +200,9 @@ export function create(st) {
       const rr0 = Math.max(0.1, CV !== 0 ? Math.abs(CV / (vmax > 0 ? hi : lo)) : 0.1);
       for (let rr = rr0; rr <= 0.6001; rr += 0.002) pts.push([rr, CV / rr]);
       poly(ctx, g.X, g.Y, pts, pal.cyan, 2.2);
-      if (Q !== 0 && cur >= 0.1) spot(ctx, g.X(cur), g.Y((K * Q * 1e-6) / cur), 5, pal.orange, pal.bg2);
+      if (Q !== 0 && cur >= 0.1 && cur <= 0.6) {
+        spot(ctx, g.X(cur), g.Y((K * Q * 1e-6) / cur), 5, pal.orange, pal.bg2);
+      }
       label(ctx, 'V = kQ/r', rc.x + 8, rc.y + 15, pal.cyan, 'left', 14);
       poly(ctx, g.X, g.Y, [[0.1, 0], [0.6, 0]], pal.faint, 1, [4, 4]);
 
@@ -221,6 +232,7 @@ export function create(st) {
     const pxPerM = span / d; // 每米多少像素
     const startX = q0 >= 0 ? xL : bx;
     const dirSign = q0 > 0 ? 1 : q0 < 0 ? -1 : 0;
+    if (dt > 0) T += dt; // 电荷从静止加速走完 A→B，循环重放
     const PER = 3.0; // 一个循环的时长
     const RUN = 2.2; // 加速走完 A→B 的时长
     const tc = T % PER;

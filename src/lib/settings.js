@@ -30,6 +30,12 @@ export const CHOICES = {
   physInfo: ['on', 'off'],         // 物理实验的受力分析：常显 / 只在鼠标停到物体上时显示
   physIntro: ['on', 'off'],        // 物理实验顶部中间的简介框：显示 / 收起
   physHold: ['on', 'off'],         // 鼠标停到物体上时把实验定格（方便看受力）
+  // 物理画板纸面：跟随主题 / 四档浅纸 / 四档深纸（预设表在 lib/papers.js）
+  physPaper: ['theme', 'paper', 'sand', 'mint', 'sakura', 'slate', 'abyss', 'forest', 'plum'],
+  // 物理画板背景方格：自动（有坐标网格时收起）/ 始终显示 / 隐藏
+  physGrid: ['auto', 'on', 'off'],
+  // 数学画板背景方格：不画 / 自动（板上有坐标网格时收起）/ 方格 / 点阵 / 横线
+  boardGrid: ['off', 'auto', 'square', 'dots', 'lines'],
 };
 
 // 「跟随主题」之外允许自带 '#rrggbb' 的项，白名单表达不了，单独校验
@@ -40,8 +46,18 @@ const FREE = {
   bgAlpha: v => typeof v === 'number' && v >= 0.3 && v <= 2.5, // 背景线条浓度倍数
   physSpeed: v => typeof v === 'number' && v >= 0.1 && v <= 3,  // 物理实验播放速度倍率
   physScale: v => typeof v === 'number' && v >= 0.5 && v <= 1.8, // 物理实验物体大小倍率
+  physFont: v => typeof v === 'number' && v >= 0.8 && v <= 1.6,  // 画板内字号倍率
+  physLineW: v => typeof v === 'number' && v >= 0.6 && v <= 2.5, // 画板线条粗细倍率
+  physAxisW: v => typeof v === 'number' && v >= 0.6 && v <= 3,   // 坐标轴线宽倍率（绝对）
+  boardFont: v => typeof v === 'number' && v >= 0.8 && v <= 1.6,  // 数学画板字号倍率
+  boardLineW: v => typeof v === 'number' && v >= 0.6 && v <= 2.5, // 数学画板线条粗细倍率
+  boardAxisW: v => typeof v === 'number' && v >= 0.6 && v <= 3,   // 数学画板坐标轴线宽倍率（绝对）
 };
 const ok = (k, v) => (CHOICES[k] ? CHOICES[k].includes(v) : FREE[k] ? FREE[k](v) : true);
+
+// 2026-11-20 纸面改版：旧的 cool / warm / green / mono 四档已并进新的九档预设，
+// 按这张表归位（与 lib/papers.js 的 PAPER_ALIAS 一致，这里不引它，免得读档时多拉一个模块）
+const PAPER_ALIAS = { cool: 'abyss', warm: 'sand', green: 'forest', mono: 'slate' };
 
 const DEFAULTS = {
   drawerSide: 'left',
@@ -73,6 +89,15 @@ const DEFAULTS = {
   physSpeed: 1,                 // 播放速度倍率（0.1–3，滑块给；0.25 一类慢速用来细看碰撞与落地）
   physScale: 1,                 // 物体大小倍率（0.5–1.8，滑块给；小屏或看全局时缩一档）
   physHold: 'off',              // 默认不停格；开了以后指针碰到物体，实验就停住
+  physPaper: 'theme',           // 物理画板纸面默认跟随主题（深色家族深板岩、浅色家族暖米）
+  physGrid: 'auto',             // 背景方格默认「自动」：演示里有坐标网格时先收起来，免得两套网格打架
+  physFont: 1.1,                // 画板内字号倍率（0.8–1.6）；读数、刻度、公式标签一起放大
+  physLineW: 1.25,              // 画板线条粗细倍率（0.6–2.5）；500 多处硬编码线宽统一乘它
+  physAxisW: 1.2,               // 坐标轴线宽倍率（0.6–3，绝对宽度，不跟线条倍率叠乘）
+  boardFont: 1,                 // 数学画板字号倍率（0.8–1.6）；默认 1，旧板版面与原来一致
+  boardLineW: 1,                // 数学画板线条粗细倍率（0.6–2.5）；mk() 里统一乘，墨迹层不吃
+  boardAxisW: 1,                // 数学画板坐标轴线宽倍率（0.6–3，绝对宽度）
+  boardGrid: 'off',             // 数学画板背景方格默认不画：旧板版面保持原样，要纸面纹理在设置里选
 };
 
 export const PREFS = reactive({ ...DEFAULTS });
@@ -81,8 +106,11 @@ try {
   const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
   if (saved && typeof saved === 'object') {
     for (const k of Object.keys(DEFAULTS)) {
+      // 早期存过的纸面档名先归位，别让白名单把整项判成脏数据、悄悄退回「跟随主题」
+      let val = saved[k];
+      if (k === 'physPaper' && PAPER_ALIAS[val]) val = PAPER_ALIAS[val];
       // 没有白名单的项（如 lblPath）是自由字符串，别让 undefined 的 includes 抛错中断整轮读档
-      if (ok(k, saved[k])) PREFS[k] = saved[k];
+      if (ok(k, val)) PREFS[k] = val;
     }
   }
 } catch (e) { /* 隐私模式读不到就按默认值来 */ }

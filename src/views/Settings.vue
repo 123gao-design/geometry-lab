@@ -190,6 +190,102 @@
       </div>
       <div class="set-row">
         <div class="set-label">
+          <strong>物理画板纸面</strong>
+          <span>讲义演示与实验页那块画板的底色、方格与墨色。默认跟随主题——深色家族是一方深板岩纸，浅色家族是一张暖米色的纸；另有四档浅纸（纸白 · 浅蓝、暖沙 · 米黄、青瓷 · 薄荷、樱粉 · 淡桃）与四档深纸（深板岩、墨蓝、林深、紫夜），每档自带一整套墨色与语义色，暗色主题下选浅纸也照样看得清。画板操作条上的「▦ 纸面」是同一项。</span>
+        </div>
+        <div class="seg wide" role="group" aria-label="物理画板纸面">
+          <button v-for="o in PAPERS" :key="o.v" type="button" :class="{ on: PREFS.physPaper === o.v }"
+            @click="setPref('physPaper', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>画板字号</strong>
+          <span>画板里所有图内文字（读数、刻度、公式符号与单位）的字号倍率。数字与公式走 KaTeX 的衬线数学体，带汉字的说明仍用系统字体。</span>
+        </div>
+        <div class="ink-slide">
+          <input class="ink-range" type="range" min="0.8" max="1.6" step="0.05" :value="PREFS.physFont"
+            aria-label="画板字号" @input="onPhysFont" />
+          <span class="ink-val">{{ Math.round(PREFS.physFont * 100) }}%</span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>画板线条粗细</strong>
+          <span>图里曲线、箭头、辅助线与物体轮廓的粗细倍率，100% 是原来的画法。觉得线太细往右拉；拖动即刻生效，不会重播实验。</span>
+        </div>
+        <div class="ink-slide">
+          <input class="ink-range" type="range" min="0.6" max="2.5" step="0.05" :value="PREFS.physLineW"
+            aria-label="画板线条粗细" @input="onPhysLine" />
+          <span class="ink-val">{{ Math.round(PREFS.physLineW * 100) }}%</span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>坐标轴线宽</strong>
+          <span>坐标图里两条轴的粗细，是绝对倍率、不与「线条粗细」叠乘。刻度短线与网格线仍随线条粗细走。</span>
+        </div>
+        <div class="ink-slide">
+          <input class="ink-range" type="range" min="0.6" max="3" step="0.05" :value="PREFS.physAxisW"
+            aria-label="坐标轴线宽" @input="onPhysAxis" />
+          <span class="ink-val">{{ Math.round(PREFS.physAxisW * 100) }}%</span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>画板背景网格</strong>
+          <span>板底那层纸面方格。自动：演示里有坐标网格时先收起来，免得两套线条叠在一起互相咬；显示：始终画；隐藏：完全不画。方格会跟着缩放平移一起走，与图上的坐标网格同一个相位。</span>
+        </div>
+        <div class="seg" role="group" aria-label="画板背景网格">
+          <button v-for="o in GRID_MODES" :key="o.v" type="button" :class="{ on: PREFS.physGrid === o.v }"
+            @click="setPref('physGrid', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>数学画板字号</strong>
+          <span>数学画板（各章的 SVG 演示台）里图内文字的字号倍率。数字、拉丁与希腊字母、运算符一律排成 KaTeX 的数学体，变量斜体、函数名与数字正体，汉字仍用系统字体；100% 与原来的版面一致。</span>
+        </div>
+        <div class="ink-slide">
+          <input class="ink-range" type="range" min="0.8" max="1.6" step="0.05" :value="PREFS.boardFont"
+            aria-label="数学画板字号" @input="onBoardFont" />
+          <span class="ink-val">{{ Math.round(PREFS.boardFont * 100) }}%</span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>数学画板线条粗细</strong>
+          <span>图里曲线、辅助线、网格与图形轮廓的粗细倍率，100% 是原来的画法。批注墨迹与把手不吃这一项。</span>
+        </div>
+        <div class="ink-slide">
+          <input class="ink-range" type="range" min="0.6" max="2.5" step="0.05" :value="PREFS.boardLineW"
+            aria-label="数学画板线条粗细" @input="onBoardLine" />
+          <span class="ink-val">{{ Math.round(PREFS.boardLineW * 100) }}%</span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>数学画板坐标轴线宽</strong>
+          <span>函数图象板两条坐标轴的粗细，是绝对倍率、不与「线条粗细」叠乘；箭头与轴字母跟着一起变。刻度短线与网格线仍随线条粗细走。</span>
+        </div>
+        <div class="ink-slide">
+          <input class="ink-range" type="range" min="0.6" max="3" step="0.05" :value="PREFS.boardAxisW"
+            aria-label="数学画板坐标轴线宽" @input="onBoardAxis" />
+          <span class="ink-val">{{ Math.round(PREFS.boardAxisW * 100) }}%</span>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>数学画板背景纸格</strong>
+          <span>垫在整块画板底下的一层纸纹。自动：板上有坐标网格时收起，免得两套线条叠在一起；方格、点阵、横线：始终铺。纸格跟着画板缩放平移一起走，导出图里也带着它。画布页自己选的纸面不受这一项影响。画板操作条上的「▤ 外观」面板里有同一个开关。</span>
+        </div>
+        <div class="seg wide" role="group" aria-label="数学画板背景纸格">
+          <button v-for="o in MATH_GRID" :key="o.v" type="button" :class="{ on: PREFS.boardGrid === o.v }"
+            @click="setPref('boardGrid', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
           <strong>画布工具条</strong>
           <span>自动收回：在画布空白处点一下，工具条收成一个小钮（工具条右侧的图钉可以随手切换）；常驻：一直留在原位，点空白也不会收。</span>
         </div>
@@ -382,6 +478,11 @@ const ANIMS = [
 const ONS = [{ v: 'on', t: '开' }, { v: 'off', t: '关' }];
 // 画板操作条放哪儿（见 lib/board.js 的 _placeBar）：
 const DL_POS = [{ v: 'left', t: '板上靠左' }, { v: 'right', t: '板上靠右' }, { v: 'in', t: '板内右上' }];
+const PAPERS = [
+  { v: 'theme', t: '跟随主题' },
+  { v: 'paper', t: '纸白' }, { v: 'sand', t: '暖沙' }, { v: 'mint', t: '青瓷' }, { v: 'sakura', t: '樱粉' },
+  { v: 'slate', t: '板岩' }, { v: 'abyss', t: '墨蓝' }, { v: 'forest', t: '林深' }, { v: 'plum', t: '紫夜' },
+];
 // 画布批注工具条：点空白自动收回 / 常驻（见 lib/board.js 的 _inkFoldTo 与 pointerup 判空白）
 const BAR_MODES = [{ v: 'auto', t: '自动收回' }, { v: 'pin', t: '常驻' }];
 // 套索选择：圈到哪段选哪段 / 整条选（见 lib/board.js 的 _inkEndSel → _inkCutByPoly）
@@ -397,6 +498,25 @@ const bgInkHex = computed(() => (PREFS.bgInk === 'auto' ? '#5cadff' : PREFS.bgIn
 const pickBgInk = () => setPref('bgInk', bgInkHex.value);
 const onBgInk = (e) => setPref('bgInk', e.target.value);
 const onBgAlpha = (e) => setPref('bgAlpha', Number(e.target.value));
+const onPhysFont = (e) => setPref('physFont', Number(e.target.value));
+const onPhysLine = (e) => setPref('physLineW', Number(e.target.value));
+const onPhysAxis = (e) => setPref('physAxisW', Number(e.target.value));
+const GRID_MODES = [
+  { v: 'auto', t: '自动' },
+  { v: 'on', t: '显示' },
+  { v: 'off', t: '隐藏' },
+];
+// 数学画板的三个倍率（见 lib/board.js 的 boardFontPx / mk / grid）与背景纸格（见 _paperStyle）
+const onBoardFont = (e) => setPref('boardFont', Number(e.target.value));
+const onBoardLine = (e) => setPref('boardLineW', Number(e.target.value));
+const onBoardAxis = (e) => setPref('boardAxisW', Number(e.target.value));
+const MATH_GRID = [
+  { v: 'off', t: '不画' },
+  { v: 'auto', t: '自动' },
+  { v: 'square', t: '方格' },
+  { v: 'dots', t: '点阵' },
+  { v: 'lines', t: '横线' },
+];
 
 const sceneBlurb = computed(() => {
   const s = SCENE_LIST.find(x => x.id === PREFS.bgScene);

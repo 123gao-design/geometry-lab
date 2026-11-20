@@ -143,7 +143,7 @@ export function create(st) {
 
       label(ctx, '两个时刻的速度', px0 + 4, 24, pal.mut, 'left', 13);
 
-      /* 指向圆心的虚线：Δv 与它平行 */
+      /* 指向圆心的虚线：Δv 与它平行。只画到弦以里，把弦外那圈让给标签 */
       const am = th + dTh / 2;
       const um = [-Math.cos(am), Math.sin(am)];
       ctx.save();
@@ -152,19 +152,38 @@ export function create(st) {
       ctx.lineWidth = 1.2;
       ctx.beginPath();
       ctx.moveTo(ox, oy);
-      ctx.lineTo(ox + um[0] * (Lv * 1.5), oy + um[1] * (Lv * 1.5));
+      ctx.lineTo(ox + um[0] * (Lv * 0.8), oy + um[1] * (Lv * 0.8));
       ctx.stroke();
       ctx.restore();
 
       arrow(ctx, ox, oy, p1[0], p1[1], pal.green, 2);
       arrow(ctx, ox, oy, p2[0], p2[1], pal.green, 2);
-      label(ctx, 'v₁', p1[0] + t1[0] * 14, p1[1] + t1[1] * 14, pal.green, 'center', 13);
-      label(ctx, 'v₂', p2[0] + t2[0] * 14, p2[1] + t2[1] * 14, pal.green, 'center', 13);
+
+      /* v₁、v₂ 贴在各自箭头里侧（朝分角线外侧让开），弦外那一圈留给 Δv */
+      const nrm = (v) => {
+        const L = Math.hypot(v[0], v[1]) || 1;
+        return [v[0] / L, v[1] / L];
+      };
+      const n1 = nrm([t1[0] - um[0], t1[1] - um[1]]);
+      const n2 = nrm([t2[0] - um[0], t2[1] - um[1]]);
+      const k1 = Lv * 0.5;
+      label(
+        ctx, 'v₁',
+        ox + t1[0] * k1 + n1[0] * 15,
+        oy + t1[1] * k1 + n1[1] * 15,
+        pal.green, 'center', 13,
+      );
+      label(
+        ctx, 'v₂',
+        ox + t2[0] * k1 + n2[0] * 15,
+        oy + t2[1] * k1 + n2[1] * 15,
+        pal.green, 'center', 13,
+      );
 
       /* Δv = v₂ − v₁：从 v₁ 末端指向 v₂ 末端 */
       arrow(ctx, p1[0], p1[1], p2[0], p2[1], pal.purple, 2.2);
-      const mx = (p1[0] + p2[0]) / 2 + um[0] * 16;
-      const my = (p1[1] + p2[1]) / 2 + um[1] * 16;
+      const mx = (p1[0] + p2[0]) / 2 + um[0] * 24;
+      const my = (p1[1] + p2[1]) / 2 + um[1] * 24;
       label(ctx, 'Δv', mx, my, pal.purple, 'center', 13);
 
       label(ctx, 'Δv 指向圆心', ox - Lv * 0.55, h - 58, pal.mut, 'left', 13);

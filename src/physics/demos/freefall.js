@@ -4,7 +4,7 @@
    同一时刻落在同一条竖虚线上，上下的读数直接对得起来。
    取竖直向上为正，a = −g。 */
 
-import { label, arrow, clamp, fmt } from '../gfx.js';
+import { label, textWidth, arrow, clamp, fmt } from '../gfx.js';
 import { panel, poly, spot } from './axes.js';
 
 export function create(st) {
@@ -184,16 +184,26 @@ export function create(st) {
       spot(ctx, gA.X(tl), gA.Y(0), 3.2, pal.orange, pal.bg2);
     }
 
+    /* 公式贴在自己那条线旁边：曲线一路下行，字落在曲线的右上方空白里 */
+    if (freeOn && tff > 0.12) {
+      const ta = tff * 0.64;
+      formulaLabel(ctx, 'y = H − gt²/2', gA.X(ta) + 9, gA.Y(H - 0.5 * g * ta * ta) - 13, pal.blue, rA.x + rA.w);
+    }
+    if (throwOn && tl > 0.12) {
+      const ta = tl * 0.7;
+      formulaLabel(ctx, 'y = H + v₀t − gt²/2', gA.X(ta) + 9, gA.Y(H + v0 * ta - 0.5 * g * ta * ta) - 13, pal.orange, rA.x + rA.w);
+    }
+
     if (apexOn) {
       /* 顶点：上升与下落的分界，t = t上 时 v = 0 */
       dashV(ctx, gA.X(up), gA.Y(yp), gA.ay, pal.orange);
       spot(ctx, gA.X(up), gA.Y(yp), 4.2, pal.orange, pal.bg2);
-      if (big) label(ctx, 't上', gA.X(up) - 5, gA.ay - 8, pal.orange, 'right', 12);
+      if (big) label(ctx, 't_{上}', gA.X(up) - 5, gA.ay - 8, pal.orange, 'right', 12);
       /* 回到抛出高度的时刻 2t上：与顶点那段关于 t = t上 对称 */
       if (tr < tl && Math.abs(gA.X(tr) - gA.X(up)) > 70) {
         dashV(ctx, gA.X(tr), gA.Y(H), gA.ay, pal.faint);
         spot(ctx, gA.X(tr), gA.Y(H), 3.2, pal.faint, pal.bg2);
-        label(ctx, '2t上', gA.X(tr) + 5, gA.ay - 8, pal.orange, 'left', 12);
+        label(ctx, '2t_{上}', gA.X(tr) + 5, gA.ay - 8, pal.orange, 'left', 12);
       }
     }
 
@@ -234,9 +244,19 @@ export function create(st) {
     if (freeOn) poly(ctx, gB.X, gB.Y, [[0, 0], [tff, vLandF]], pal.blue, 2.2);
     if (throwOn) poly(ctx, gB.X, gB.Y, [[0, v0], [tl, vLandU]], pal.orange, 2.2);
 
+    /* 两条线的斜率都是 −g，公式各自挂在自己那条线上 */
+    if (freeOn && tff > 0.12) {
+      const ta = tff * 0.74;
+      formulaLabel(ctx, 'v = −gt', gB.X(ta) + 9, gB.Y(-g * ta) + 15, pal.blue, rB.x + rB.w);
+    }
+    if (throwOn && tl > 0.12) {
+      const ta = tl * 0.3;
+      formulaLabel(ctx, 'v = v₀ − gt', gB.X(ta) + 9, gB.Y(v0 - g * ta) - 12, pal.orange, rB.x + rB.w);
+    }
+
     if (apexOn) {
       dashV(ctx, gB.X(up), gB.Y(vHi * 1.12 + 0.3), gB.Y(0), pal.faint);
-      if (big) label(ctx, 't上', gB.X(up), gB.ay - 7, pal.faint, 'center', 12);
+      if (big) label(ctx, 't_{上}', gB.X(up), gB.ay - 7, pal.faint, 'center', 12);
       /* 落回抛出高度时速率与抛出时相等、方向相反 */
       if (tr < tl && Math.abs(gB.X(tr) - gB.X(up)) > 60) {
         spot(ctx, gB.X(tr), gB.Y(-v0), 3.2, pal.faint, pal.bg2);
@@ -265,22 +285,14 @@ export function create(st) {
       spot(ctx, gB.X(tU), gB.Y(v2), 5, pal.orange, pal.bg2);
     }
 
-    /* 图例 */
+    /* 图例：照统计图的写法，一小段色线加名称，不用「橙」「蓝」这类字辨色 */
     if (dual) {
-      label(ctx, '橙 竖直上抛', lx, rA.y + 14, pal.orange, 'right', 12);
-      label(ctx, '蓝 自由落体', lx, rA.y + 30, pal.blue, 'right', 12);
+      legend(ctx, lx, rA.y + 14, pal.orange, '竖直上抛', pal);
+      legend(ctx, lx, rA.y + 30, pal.blue, '自由落体', pal);
+      label(ctx, '两条线斜率都是 −g', rB.x + rB.w - 10, rB.y + 14, pal.green, 'right', 12);
     } else {
-      label(ctx, throwOn ? '竖直上抛' : '自由落体', lx, rA.y + 14, throwOn ? pal.orange : pal.blue, 'right', 12);
+      legend(ctx, lx, rA.y + 14, throwOn ? pal.orange : pal.blue, throwOn ? '竖直上抛' : '自由落体', pal);
     }
-    label(
-      ctx,
-      dual ? '两条线斜率都是 −g' : throwOn ? 'v = v₀ − gt' : 'v = −gt',
-      rB.x + rB.w - 10,
-      rB.y + 14,
-      pal.green,
-      'right',
-      12,
-    );
 
     /* ── 读数条 ── */
     if (mode === 'free') {
@@ -343,6 +355,28 @@ export function create(st) {
     ctx.closePath();
     ctx.fillStyle = color;
     ctx.fill();
+    ctx.restore();
+  }
+
+  /** 公式标签：贴在曲线某点的右上方；右边放不下就翻到点的左侧、改右对齐收口 */
+  function formulaLabel(ctx, text, x, y, color, right) {
+    const tw = textWidth(ctx, text, 12);
+    if (x + tw <= right - 4) { label(ctx, text, x, y, color, 'left', 12); return; }
+    const xr = x - 26;
+    label(ctx, text, xr - tw >= 24 ? xr : right - 4, y, color, 'right', 12);
+  }
+
+  /** 统计图式的图例：右对齐一段色线 + 名称，名称用中性墨色，色只落在样线上 */
+  function legend(ctx, x, y, color, text, pal) {
+    const tw = textWidth(ctx, text, 12);
+    label(ctx, text, x, y, pal.mut, 'right', 12);
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(x - tw - 19, y);
+    ctx.lineTo(x - tw - 6, y);
+    ctx.stroke();
     ctx.restore();
   }
 

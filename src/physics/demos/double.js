@@ -1,7 +1,9 @@
 /* 光4 光的干涉。
    杨氏双缝：两缝间距 d、屏距 L，屏上离中心 y 处的光程差 Δr ≈ dy/L。
    Δr = kλ 处加强，Δr = (k+½)λ 处减弱，条纹间距 Δx = Lλ/d。
-   左栏是光路示意（缝距按可见比例放大），右栏是屏上的强度曲线与彩色条纹本身。 */
+   左栏是光路示意（缝距按可见比例放大）：缝前是一列向右移动的平面波前，过缝后
+   两条缝各发出一圈圈同相波峰，两组圆弧在某些方向上「峰对峰」、在另一些方向上
+   「峰对谷」；右栏是屏上的强度曲线与彩色条纹本身。 */
 import { label, clamp, fmt } from '../gfx.js';
 import { panel, poly, spot } from './axes.js';
 
@@ -42,6 +44,7 @@ export function create(st) {
     const dr = (dd * dy) / Lm;                          // 光程差，m
     const ord = dr / lam;                               // 级次
     const Iof = y => Math.cos((Math.PI * dd * y) / (Lm * lam)) ** 2;
+    const [cr, cg, cb] = wlColor(lamN);                 // 这一束光的颜色，波前与条纹共用
 
     ctx.clearRect(0, 0, w, h);
 
@@ -87,6 +90,44 @@ export function create(st) {
     ctx.moveTo(xb - w * 0.20, cy);
     ctx.lineTo(xs, cy);
     ctx.stroke();
+    ctx.restore();
+
+    /* ── 波前：左边平面波右移，过缝后从两缝各发出一圈圈波峰 ── */
+    const ink = a => `rgba(${cr},${cg},${cb},${a.toFixed(3)})`;
+    const lamPix = 11 + ((lamN - 400) / 300) * 9;       // 画面上一个波长的示意长度，只随波长变
+    const ph = ((T * 22) / lamPix) % 1;                 // 相位（22 px/s 向右）
+    const xw0 = xb - w * 0.21;
+    ctx.save();
+    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = ink(0.34);
+    for (let k = 0; (k + ph) * lamPix < xb - xw0; k++) {
+      const xx = xb - (k + ph) * lamPix;
+      ctx.beginPath();
+      ctx.moveTo(xx, cy - h * 0.13);
+      ctx.lineTo(xx, cy + h * 0.13);
+      ctx.stroke();
+    }
+    ctx.restore();
+    label(ctx, '入射光波前', xw0 + 2, cy - h * 0.13 - 9, pal.mut, 'left', 12);
+
+    // 两条缝当作两个同相的点源，波峰是同心的圆；只留挡板与屏之间的那一带
+    const rMax = Math.hypot(xs - xb, h * 0.42);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(xb, h * 0.06, xs - xb, h * 0.86);
+    ctx.clip();
+    ctx.lineWidth = 1.15;
+    for (const sy of [cy - sd, cy + sd]) {
+      for (let k = 0; (k + ph) * lamPix < rMax; k++) {
+        const r = (k + ph) * lamPix;
+        if (r < 1.5) continue;
+        // 越外越淡：十几圈同色叠满会糊成一片
+        ctx.strokeStyle = ink(clamp(0.52 - (0.34 * r) / rMax, 0.10, 0.52));
+        ctx.beginPath();
+        ctx.arc(xb, sy, r, -Math.PI / 2, Math.PI / 2);  // 右半圈即缝后的传播方向
+        ctx.stroke();
+      }
+    }
     ctx.restore();
 
     // 两束光到 P
@@ -147,7 +188,6 @@ export function create(st) {
 
     // 条纹本身：一格一格按光强上色
     const srec = { x: rc.x, y: rc.y + rc.h + 30, w: rc.w, h: 24 };
-    const [cr, cg, cb] = wlColor(lamN);
     for (let px = 0; px < srec.w; px += 2) {
       const yy = -Ymax + (2 * Ymax * px) / srec.w;
       const I = Iof(yy * 1e-3);

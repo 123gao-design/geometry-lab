@@ -8,6 +8,8 @@ import { readLabels, writeLabels, defaultBoard } from './labelstore.js';
 import { loadInk, saveInk, nearPolyline, recognizeShape, pointInPolygon, bboxOf } from './ink.js';
 import { setBoardContextProvider } from './boardctx.js';
 import { PREFS, setPref } from './settings.js';
+/* 板面纸色的八档预设与物理画板共用一张表（lib/papers.js，纯数据、没有依赖） */
+import { PAPERS as PAPER_SET } from './papers.js';
 export * from './math.js'; // 画板模块统一从 board.js 导入数学工具
 // 主题与光影的实现已挪到 theme.js（首屏不该为它拖整个引擎），这里转出去，老路子的 import 照旧可用
 export { THEMES, themeOf, currentTheme, isLight, applyTheme, initTheme, mountThemeButton, animEnabled, setAnim, initAnim, onThemeChange } from './theme.js';
@@ -49,18 +51,33 @@ export const COLOR = {
   'rgba(139,163,189,.35)': ['rgba(139,163,189,.35)', 'rgba(77,87,102,.45)'],
   'rgba(255,209,102,.55)': ['rgba(255,209,102,.55)', 'rgba(184,134,11,.45)'],
 };
+/* 板面自选了纸色时，语义色的亮/暗家族未必跟页面主题是一家（浅色主题下也能选深纸）：
+   render() 期间把这一块板要用的家族放到 FAM_LIGHT 上，null 表示跟页面主题走，画完再交还 */
+let FAM_LIGHT = null;
 function paint(c) {
   const m = COLOR[c];
   if (!m) return c;
-  return document.documentElement.classList.contains('light') ? m[1] : m[0];
+  const light = FAM_LIGHT == null ? document.documentElement.classList.contains('light') : FAM_LIGHT;
+  return light ? m[1] : m[0];
 }
 
+/* 线条粗细倍率：所有经 mk() 画的元素统一乘 PREFS.boardLineW（默认 1，原样）。
+   设成 1.0 之外的档时，500 多处硬编码的 stroke-width 不用逐个改；
+   attrs.__lw === 'abs' 的那一笔不吃倍率（坐标轴线宽是绝对值，勾股线号一类也照此办）。
+   批注墨迹、选区块、把手这些自己 setAttribute 的地方不走这里，粗细仍按笔宽走。 */
 export function mk(tag, attrs = {}, parent) {
   const e = document.createElementNS(SVGNS, tag);
+  const absW = attrs.__lw === 'abs';
   for (const k in attrs) {
+    if (k === '__lw') continue;
     let v = attrs[k];
     if (k === 'fill' || k === 'stroke') v = paint(v);
-    k === 'text' ? (e.textContent = v) : e.setAttribute(k, v);
+    if (k === 'stroke-width' && !absW) {
+      const n = parseFloat(v);
+      if (isFinite(n) && n > 0 && PREFS.boardLineW !== 1) v = Math.round(n * PREFS.boardLineW * 100) / 100;
+    }
+    // text: 一律过 fillRuns —— 数字 / 字母 / 公式排成 KaTeX 字族，汉字仍走系统字体（见 mathRuns）
+    k === 'text' ? fillRuns(e, v) : e.setAttribute(k, v);
   }
   if (parent) parent.appendChild(e);
   return e;
@@ -107,6 +124,133 @@ export function texMix(s) {
 }
 /** 当前主题的正文墨色（画板内 foreignObject 公式用：CSS 变量在导出克隆里解析不了，须落成具体色） */
 export function inkCol() { return document.documentElement.classList.contains('light') ? '#20293a' : '#e8eef7'; }
+
+/* ---------- 板内文字走 KaTeX 的字族（与物理画板同一套口径） ----------
+   数学画板上的数字、拉丁字母、希腊字母与运算符一律排成 KaTeX 的字形：数字、运算符与单位
+   用 KaTeX_Main 正体，变量字母与希腊字母用 KaTeX_Math 斜体，sin / cos / ln 这类函数名与
+   常数排正体；汉字与中文标点 KaTeX 字族没有字形，仍走系统无衬线。上下标（₂ ² 与 _{…} ^{…}）
+   排成真正的小一号小字、压低 0.2 字高 / 抬高 0.36 字高，与正文里的 KaTeX 公式是一路样子。
+   整条字符串先切成「字族 + 上下标档」相同的连续几段，B.text 再逐段落成 tspan。 */
+const K_SANS = "-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif";
+const K_MAIN = "'KaTeX_Main','Latin Modern Math','Times New Roman',serif";
+const K_MATH = "'KaTeX_Math','KaTeX_Main','Times New Roman',serif";
+const HAS_CJK = /[⺀-鿿豈-﫿＀-￯]/;
+const GREEK_RE = /[Ͱ-Ͽ]/;
+const LATIN_RE = /[A-Za-z]/;
+/* 可以交给 KaTeX 字族的符号：四则、比较、括号、逗号句点、单位与常用数学记号。
+   不在表里的字符（汉字、①、⊗、emoji 一类）一律退回系统字体，免得缺字形画成方框 */
+const MATH_PUNCT = /[0-9+\-=<>≤≥≈≠±×÷·⋅()\[\]{}|.,:;!?%°′″/√∞∈∉⊂⊆∪∩→←↔⇒⇔∠△⊥∥−]/;
+const WS_RE = /\s/;
+
+/* 上下标：Unicode 的 ₀ ₁ ² 与 ^{…} / _{…} 标记都展开成 { c, lv }（−1 下标 / 0 常规 / 1 上标） */
+const SUB_MAP = {
+  '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4', '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9',
+  '₊': '+', '₋': '−', '₌': '=', '₍': '(', '₎': ')', 'ₐ': 'a', 'ₑ': 'e', 'ₒ': 'o', 'ₓ': 'x',
+};
+const SUP_MAP = {
+  '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9',
+  '⁺': '+', '⁻': '−', '⁼': '=', '⁽': '(', '⁾': ')', 'ⁿ': 'n',
+};
+/* 排正体的函数名与常数；别的一串字母按 LaTeX 的规矩拆成一个个斜体变量（gt² 是 g·t 的平方） */
+const UP_WORDS = new Set([
+  'sin', 'cos', 'tan', 'cot', 'sec', 'csc', 'arcsin', 'arccos', 'arctan',
+  'sinh', 'cosh', 'tanh', 'ln', 'log', 'lg', 'exp', 'lim', 'max', 'min', 'det', 'const',
+]);
+function scriptTokens(text) {
+  const out = [];
+  for (let k = 0; k < text.length; k++) {
+    const ch = text[k];
+    if ((ch === '^' || ch === '_') && k + 1 < text.length) {
+      const lv = ch === '^' ? 1 : -1;
+      if (text[k + 1] === '{') {
+        const end = text.indexOf('}', k + 2);
+        if (end > k + 1) {
+          for (const c of text.slice(k + 2, end)) out.push({ c, lv });
+          k = end;
+          continue;
+        }
+      } else if (!WS_RE.test(text[k + 1])) {
+        out.push({ c: text[k + 1], lv }); k += 1; continue;
+      }
+    }
+    if (SUB_MAP[ch]) { out.push({ c: SUB_MAP[ch], lv: -1 }); continue; }
+    if (SUP_MAP[ch]) { out.push({ c: SUP_MAP[ch], lv: 1 }); continue; }
+    out.push({ c: ch, lv: 0 });
+  }
+  return out;
+}
+/* 一个字符归哪一族：汉字 / 中文标点 → 系统无衬线；空格跟着前一段走；
+   字母 → 函数名与常数正体、其余按斜体变量（希腊字母一律按变量）；数字与运算符 → 数学正体 */
+function classify(toks) {
+  const kinds = new Array(toks.length);
+  for (let k = 0; k < toks.length; k++) {
+    const c = toks[k].c;
+    if (WS_RE.test(c)) { kinds[k] = k > 0 ? kinds[k - 1] : 'math'; continue; }
+    if (HAS_CJK.test(c)) { kinds[k] = 'cjk'; continue; }
+    /* 希腊字母按变量排斜体；数字、运算符与单位排 KaTeX_Main 正体（KaTeX_Math 里没有数字字形，
+       早先一并归成 var 只能靠字体回退，正体字其实来自链上的 KaTeX_Main）；其余怪字符退回系统字体 */
+    if (!LATIN_RE.test(c)) { kinds[k] = GREEK_RE.test(c) ? 'var' : MATH_PUNCT.test(c) ? 'math' : 'cjk'; continue; }
+    let a = k, b = k;
+    while (a > 0 && LATIN_RE.test(toks[a - 1].c)) a--;
+    while (b < toks.length - 1 && LATIN_RE.test(toks[b + 1].c)) b++;
+    let word = '';
+    for (let j = a; j <= b; j++) word += toks[j].c;
+    kinds[k] = UP_WORDS.has(word.toLowerCase()) ? 'math' : 'var';
+  }
+  return kinds;
+}
+const K_FAM = { cjk: K_SANS, var: K_MATH, math: K_MAIN };
+/* 切段：返回 [{ s, fam, size, dy }]；整条都是汉字时返回 null（不必落 tspan，保持原来的纯文本）。
+   size / dy 一律是像素，按板内实际字号 base（12 × 字号倍率）现算 */
+function mathRuns(text, base) {
+  const toks = scriptTokens(text);
+  const kinds = classify(toks);
+  const out = [];
+  for (let k = 0; k < toks.length; k++) {
+    const tk = toks[k], kind = kinds[k];
+    const size = tk.lv ? Math.round(base * 0.7 * 100) / 100 : base;
+    const dy = tk.lv > 0 ? -base * 0.36 : tk.lv < 0 ? base * 0.2 : 0;
+    const last = out[out.length - 1];
+    if (last && last.kind === kind && last.lv === tk.lv) last.s += tk.c;
+    else out.push({ kind, lv: tk.lv, s: tk.c, fam: K_FAM[kind], size, dy });
+  }
+  if (out.every(r => r.kind === 'cjk' && !r.lv)) return null;
+  return out;
+}
+/* 板内字号：global.css 的 svg text 规则读 --bd-fs（默认 12px），这里按倍率写进板根 */
+const boardFontPx = () => Math.round(12 * (PREFS.boardFont || 1) * 100) / 100;
+
+/* 切段结果缓存：动画板每帧重画，同一条标签会反复切（键里带字号，换倍率自然失效） */
+const _runCache = new Map();
+function mathRunsCached(text, base) {
+  const key = base + '|' + text;
+  let r = _runCache.get(key);
+  if (r === undefined) {
+    r = mathRuns(text, base);
+    if (_runCache.size > 4000) _runCache.clear();
+    _runCache.set(key, r);
+  }
+  return r;
+}
+/* 把一串文字落进 <text>：按切段结果逐段写 tspan（字族 + 字号 + 上下标位移）。
+   整条都是汉字（或空串）时不开 tspan，直接 textContent —— 与原来的画法一模一样。
+   注意 tspan 的 font-size 必须写成像素：svg text 的 CSS 规则把字号钉在 --bd-fs，
+   而上下标的 dy 用的是像素差量，若字号走 em 就会把位移一起缩放、上下标贴不住基线。 */
+function fillRuns(el, s, base) {
+  const str = s == null ? '' : String(s);
+  const runs = mathRunsCached(str, base || boardFontPx());
+  if (!runs) { el.textContent = str; return el; }
+  el.textContent = '';
+  let cur = 0;
+  for (const r of runs) {
+    const t = mk('tspan', { 'font-family': r.fam, 'font-size': r.size }, el);
+    const d = r.dy - cur;
+    if (d) t.setAttribute('dy', Math.round(d * 100) / 100);
+    cur = r.dy;
+    t.textContent = r.s;
+  }
+  return el;
+}
 
 /* ---------- 批注调色板：颜色解析 + 「最近用过」缓存 ----------
    调色板里既能点色卡、用系统取色器，也能手输 #rgb / #rrggbb / rgb() / rgba() / hsl() / hsla()，
@@ -194,19 +338,43 @@ async function katexCss() {
    和 katex 一起拖进入口包。这里只留一处接线：换主题后让所有活着的板重画一遍。 */
 export const BOARDS = [];
 onThemeChange(() => BOARDS.forEach(b => b.render()));
+/* 字号 / 线宽 / 轴宽改动后所有板都得重画一遍。滑块一次拖动会连发 input，
+   攒到下一帧只重画一次，免得一页几块板一帧画几十遍 */
+let _restyleQueued = false;
+function restyleAll() {
+  if (_restyleQueued) return;
+  _restyleQueued = true;
+  const run = () => {
+    _restyleQueued = false;
+    for (const b of BOARDS) { try { b.render(); } catch (_) { /* 某块板画崩不牵连其余 */ } }
+  };
+  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run);
+  else setTimeout(run, 16);
+}
 /* 画板缩放范围：1 = 原样；下限 0.4（画面缩到四成、四周自然留白），上限 6 */
 const ZMIN = 0.4, ZMAX = 6;
 const clampR = (v, a, b) => Math.max(Math.min(a, b), Math.min(Math.max(a, b), v)); // 两端大小颠倒也成立
 
-/* 每块板可自选的底色：同一亮/暗家族里的几档，选「蓝调」后切主题会自动换成另一家族的同名档，
-   墨色与语义色（COLOR 表）仍按亮/暗家族走，文字始终读得清 */
-const TINTS = [
-  { n: '纯净', dark: '#05070b', light: '#ffffff' },
-  { n: '蓝调', dark: '#0a1428', light: '#eef4fb' },
-  { n: '绿调', dark: '#08160f', light: '#eef8f1' },
-  { n: '紫调', dark: '#130b26', light: '#f4f0fb' },
-  { n: '暖调', dark: '#17110a', light: '#fbf5e9' },
-];
+/* 每块板可自选的纸面：用 lib/papers.js 里那一张表（与物理画板共用，主题那一档在面板里另算）。
+   每档带着自己的底色、墨色与亮/暗家族——浅纸配深墨、深纸配浅墨，深纸的语义色改取 COLOR 表里
+   暗色家族那一列，所以浅色主题下选了「深板岩」，图形与读数照样压得住。整站主题仍归顶栏 🎨，
+   这里只改这一块板。 */
+const LIGHT_PAPERS = { paper: 1, sand: 1, mint: 1, sakura: 1 };
+const TINTS = ['paper', 'sand', 'mint', 'sakura', 'slate', 'abyss', 'forest', 'plum'].map(id => {
+  const p = PAPER_SET.find(x => x.id === id) || {};
+  const sw = p.sw || ['#ffffff', '#dddddd'];
+  return {
+    id, n: p.t || id, c: p.paper || sw[0], ink: p.ink || '',
+    light: !!LIGHT_PAPERS[id],
+    sw0: sw[0], sw1: sw[1],
+    skin: p.skin || '',   // 纸面的斜向渐变（物理板当 --pb-skin 用，数学板当 --bd-skin），小样照它画
+  };
+});
+/* 小样直接就是这一档的纸面本身（与板上的渐变逐字一致），没有渐变的档退回双色各半 */
+const tintChip = x => x.skin || ('linear-gradient(140deg,' + x.sw0 + ' 0%,' + x.sw0 + ' 46%,'
+  + x.sw1 + ' 54%,' + x.sw1 + ' 100%)');
+/* 面板格子只放「 · 」前半截，全名进 title（与物理画板同一个口径） */
+const tintName = n => String(n).split(' · ')[0];
 /* 自定义底色用：按相对亮度挑墨色（深底配浅字、浅底配深字），文字始终读得清 */
 const INK_LIGHT = '#e8eef7', INK_DARK = '#20293a';
 const lumOf = c => {
@@ -216,6 +384,36 @@ const lumOf = c => {
   const f = v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); };
   return .2126 * f(r) + .7152 * f(g) + .0722 * f(b);
 };
+/* 纸面渐变在导出 PNG / 录视频时要用 SVG 的写法重来一遍：把 CSS 的
+   linear-gradient(<角>deg, #hex <位>%, …) 换成过中心、盖满单位框的一条渐变线
+   （角度按 CSS 的规矩量：0deg 朝上、顺时针；单位向量 u = (sinθ, −cosθ)，
+  线长取 |sinθ| + |cosθ|，这是 CSS 自己在方框上的算法）。解析不出就退回纯色。 */
+function skinGrad(skin) {
+  const m = /^linear-gradient\(\s*(-?[\d.]+)deg\s*,\s*(.+)\)$/i.exec(String(skin || '').trim());
+  if (!m) return null;
+  const parts = [];
+  let buf = '', dep = 0;
+  for (const ch of m[2]) {
+    if (ch === '(') dep++;
+    else if (ch === ')') dep--;
+    if (ch === ',' && dep === 0) { parts.push(buf); buf = ''; } else buf += ch;
+  }
+  if (buf.trim()) parts.push(buf);
+  const stops = [];
+  for (const raw of parts) {
+    const t = raw.trim().match(/^(#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)|hsla?\([^)]*\))\s*([\d.]+%)?$/);
+    if (t) stops.push({ c: t[1], o: t[2] ? parseFloat(t[2]) / 100 : null });
+  }
+  if (stops.length < 2) return null;
+  stops.forEach((s, i) => { if (s.o == null) s.o = i / (stops.length - 1); });
+  const a = (parseFloat(m[1]) * Math.PI) / 180;
+  const sx = Math.sin(a), cy = Math.cos(a), L = Math.abs(sx) + Math.abs(cy);
+  return {
+    x1: 0.5 - (sx * L) / 2, y1: 0.5 + (cy * L) / 2,
+    x2: 0.5 + (sx * L) / 2, y2: 0.5 - (cy * L) / 2,
+    stops,
+  };
+}
 let OPEN_FLOAT = null; // 同一时刻只允许一块板浮起（半屏 / 全屏互斥，另开一块就把上一块收回）
 
 /* ---------- 实验参数进 URL（#/conics/def4?b1.e=1.4） ----------
@@ -332,7 +530,7 @@ export class Board {
     root.appendChild(this.dlBar);
     this._barPos = barPosPref();
     this._placeBar();
-    // 缩放状态：viewBox 当相机（条内靠 CSS order 排在最左：＋ － ｜ ◧ ⛶ ｜ GeoGebra ｜ 视频 ｜ ▤ 底色 ｜ Aa 底注 ｜ PNG）
+    // 缩放状态：viewBox 当相机（条内靠 CSS order 排在最左：＋ － ｜ ◧ ⛶ ｜ GeoGebra ｜ 视频 ｜ ▤ 外观 ｜ Aa 底注 ｜ PNG）
     this._vb = { x: 0, y: 0, w, h };
     this._z = 1;
     this.orbitCam = false; // 三维板由 orbit() 置 true：整块 svg 的拖拽已被转视角借走
@@ -388,13 +586,15 @@ export class Board {
       });
     });
     this.dlBar.appendChild(share);
-    // 画板底色：只改这一块板（同一亮/暗家族里的几档 + 调色板自选色，切主题时自动换成对应家族的那一档）
+    // 画板外观：这块板的纸面 + 纸格 + 字号 / 线宽 / 轴宽（面板见 _buildTintPop）
     this._tint = -1;
     this._bgCol = '';
+    this._skinCol = ''; // 预设纸面的斜向渐变（--bd-skin），跟随主题 / 自定义色时为纯色
     this._inkCol = '';
+    this._famLight = null; // 纸面自带亮/暗家族（null = 跟页面主题），paint() 认它
     this._custom = ''; // 调色板自选的底色（-2 号档）
-    this._tintBtn = hEl('button', { class: 'dl tint', title: '画板底色：只改这一块板；预设随亮/暗主题给对应色，调色板可选任意颜色' });
-    this._tintBtn.textContent = '▤ 底色';
+    this._tintBtn = hEl('button', { class: 'dl tint', title: '画板外观：这块板的纸面（底色与墨色）、背景纸格与字号 / 线宽 / 轴宽' });
+    this._tintBtn.textContent = '▤ 外观';
     this._tintBtn.addEventListener('click', e => {
       if (e && e.stopPropagation) e.stopPropagation(); // 别让 document 的收起监听顺手关掉刚开的面板
       if (!this._tintPop) return;
@@ -593,23 +793,31 @@ export class Board {
     document.addEventListener('keydown', onKey);
     this._offKey = () => document.removeEventListener && document.removeEventListener('keydown', onKey);
   }
-  /* ---------- 底色：同一亮暗家族里的几档 + 调色板自选 ---------- */
+  /* ---------- 外观：纸面 + 纸格 + 字号 / 线宽 / 轴宽 ----------
+     纸面用 lib/papers.js 那张共用表（八档纸色 + 跟随主题）：只改这一块板的底色、墨色
+     与语义色的亮/暗家族，页面本身的配色不动（整站换肤仍是顶栏 🎨）。纸格与三项倍率
+     跟设置页「画板」共用同一套 PREFS。 */
   _buildTintPop() {
     const pop = hEl('div', { class: 'tint-pop', style: 'display:none' }, this.root);
     const t = hEl('div', { class: 'tint-t' }, pop);
-    t.textContent = '画板底色（只改这一块）';
-    const row = hEl('div', { class: 'tint-row' }, pop);
+    t.textContent = '画板纸面';
+    /* 纸面一格：小样 + 名字（照物理画板那枚「▦ 纸面」的排法，九格三列） */
+    const row = hEl('div', { class: 'tint-row tint-papers' }, pop);
     const sws = [];
-    const add = (name, bg, idx) => {
-      const b = hEl('button', { class: 'tint-sw' + (idx < 0 ? ' theme' : ''), title: name });
-      if (bg) b.style.cssText = 'background:' + bg;
-      b.textContent = idx < 0 ? '沿用主题' : '';
+    const add = (name, label, bg, idx) => {
+      const b = hEl('button', { class: 'tint-pp' + (idx < 0 ? ' theme' : ''), title: name + '（只改这一块板）' });
+      const ch = hEl('i', { class: 'tint-chip' }, b);
+      if (bg) ch.style.background = bg;
+      b._chip = ch;
+      const s = hEl('span', { class: 'tint-pn' }, b);
+      s.textContent = label;
       b.addEventListener('click', () => { this.setTint(idx); this._tintClose(); });
       row.appendChild(b); sws.push(b);
     };
-    add('沿用页面主题的底色', '', -1);
-    TINTS.forEach((x, i) => add(x.n + '（' + (isLight() ? x.light : x.dark) + '）', isLight() ? x.light : x.dark, i));
-    // 调色板：任意底色；文字墨色按底色亮度自动换（深底配浅字、浅底配深字）
+    add('跟随页面主题的纸色与墨色', '跟随主题', '', -1);
+    TINTS.forEach((x, i) => add(x.n + ' · ' + (x.light ? '浅纸深字' : '深纸浅字'),
+      tintName(x.n), tintChip(x), i));
+    // 调色板：任意底色；墨色与语义色的家族按底色亮度自动换（深底配浅字、浅底配深字）
     const crow = hEl('div', { class: 'tint-row tint-custom' }, pop);
     const pick = hEl('label', { class: 'tint-pick', title: '调色板：自选任意底色，文字自动换成深/浅墨色' }, crow);
     const inp = hEl('input', { type: 'color' }, pick);
@@ -631,10 +839,63 @@ export class Board {
     });
     this._tintPick = inp;
     this._tintPickLab = pick;
+    // 纸格：与设置页「数学画板背景网格」是同一项（PREFS.boardGrid），这里只是就近的入口。
+    // 不动 setPaper（那是画布显式定的纸面），只重铺那些跟着全局档走的板。
+    const grow = hEl('div', { class: 'tint-row tint-grid' }, pop);
+    hEl('span', { class: 'tint-gl' }, grow).textContent = '纸格';
+    const gbs = [];
+    for (const [v, txt, tip] of [['off', '不画', '不铺背景纸格'], ['auto', '自动', '板上有坐标网格时自动收起'],
+      ['square', '方格', '铺一层方格纸纹'], ['dots', '点阵', '铺一层点阵纸纹'], ['lines', '横线', '铺一层横线纸纹']]) {
+      const b = hEl('button', { class: 'tint-gb' + (PREFS.boardGrid === v ? ' on' : ''), title: tip }, grow);
+      b.textContent = txt;
+      b.addEventListener('click', () => {
+        setPref('boardGrid', v);
+        gbs.forEach(x => x.classList.toggle('on', x === b));
+        BOARDS.forEach(bd => { bd._paperKey = ''; bd._paperDraw(); });
+      });
+      gbs.push(b);
+    }
+    this._tintGbs = gbs;
+    // 字号 / 线宽 / 轴宽：与设置页「画板」同一套 PREFS，这里只是就近的入口。
+    // 倍率改的是 mk() 与 B.grid 的绘制参数，必须整板重画，restyleAll() 攒到下一帧画一遍
+    const sbox = hEl('div', { class: 'tint-slbox' }, pop);
+    const sls = [];
+    const mkSl = (label, key, min, max, tip) => {
+      const row = hEl('div', { class: 'tint-row tint-sl', title: tip }, sbox);
+      hEl('span', { class: 'tint-gl' }, row).textContent = label;
+      const inp = hEl('input', { type: 'range', min, max, step: 0.05 }, row);
+      inp.value = PREFS[key];
+      if (inp.setAttribute) inp.setAttribute('value', inp.value);
+      const sv = hEl('span', { class: 'tint-sv' }, row);
+      const show = v => { sv.textContent = (+v).toFixed(2) + '×'; };
+      show(PREFS[key]);
+      inp.addEventListener('input', () => {
+        const v = +inp.value;
+        if (!isFinite(v)) return;
+        setPref(key, v);
+        show(v);
+        restyleAll();
+      });
+      sls.push({ inp, key, show });
+    };
+    mkSl('字号', 'boardFont', 0.8, 1.6, '板内字号倍率：数字、字母、公式与汉字一起放大');
+    mkSl('线宽', 'boardLineW', 0.6, 2.5, '网格、曲线、连线与图形的线宽倍率；批注笔迹不跟这项');
+    mkSl('轴宽', 'boardAxisW', 0.6, 3, '坐标轴线宽（绝对宽度，不与线宽叠乘）');
+    // 底注：纸面只改这一块，其余三项与设置页同一套值（照物理画板面板底下那句）
+    const f = hEl('div', { class: 'tint-f' }, pop);
+    f.textContent = '纸面只改这一块板；纸格与三项倍率与设置页「画板」是同一项';
+    this._tintSls = sls;
     this._tintPop = pop;
-    this._tintSws = sws; // [0] 是「沿用主题」，k 对应 TINTS[k−1]
+    this._tintSws = sws; // [0] 是「跟随主题」，k 对应 TINTS[k−1]
     this._tintOpen = false;
-    this._tintOpenPop = () => { this._syncTintSw(); this._tintOpen = true; pop.style.display = 'flex'; };
+    this._tintOpenPop = () => {
+      this._syncTintSw();
+      if (this._tintGbs) this._tintGbs.forEach((x, k) => x.classList.toggle('on',
+        ['off', 'auto', 'square', 'dots', 'lines'][k] === PREFS.boardGrid));
+      // 设置页里可能刚改过：开面板时按当前 PREFS 刷一次滑块
+      if (this._tintSls) this._tintSls.forEach(s => { s.inp.value = PREFS[s.key]; s.show(PREFS[s.key]); });
+      this._tintOpen = true; pop.style.display = 'flex';
+    };
     this._tintClose = () => { this._tintOpen = false; pop.style.display = 'none'; };
     const onDoc = e => { // 点面板以外的地方就收起（开合状态记在 _tintOpen，不看内联 display）
       if (!this._tintOpen) return;
@@ -656,27 +917,42 @@ export class Board {
     const c = (cfg && cfg.c) || '';
     const g = (cfg && cfg.g) || 'none';
     this._paper = { c, g };
+    this._paperSet = true;   // 画布显式选的纸面压过设置页的全局档
     if (c) { this._custom = c; this._tint = -2; } else { this._tint = -1; }
     this.syncTint();
     this._paperDraw();
     return this._paper;
+  }
+  /** 纸格最终画什么：显式 setPaper 过的板（画布）听它，其余跟着设置页「画板背景网格」——
+   *  off 不画；auto 板上有坐标网格（B.grid）时收起，免得两套网格打架；其余按所选样式。 */
+  _paperStyle() {
+    if (this._paperSet) return (this._paper && this._paper.g) || 'none';
+    const m = PREFS.boardGrid || 'off';
+    if (m === 'off') return 'none';
+    if (m === 'auto') return this._gridMarked ? 'none' : 'square';
+    return m;
   }
   _paperDraw() {
     if (!this.svg || !this.svg.insertBefore) return;
     if (!this._paperEl) this._paperEl = mk('g', { class: 'bd-paper' });
     const g = this._paperEl;
     if (g.parentNode !== this.svg) this.svg.insertBefore(g, this.svg.firstChild || null);
-    if (g.innerHTML !== undefined) g.innerHTML = '';
+    const style = this._paperStyle();
     const p = this._paper || {};
-    if (!p.g || p.g === 'none') return;
-    const W = this.w, H = this.h, step = 50;
     const bg = p.c || this._bgCol || (isLight() ? '#fdfcf8' : '#0b0f17');
+    // 动画板每帧走一次 render()，这里每个 rAF 都会被调到；样式、底色、尺寸都没变就不重铺
+    const key = style + '|' + bg + '|' + this.w + '|' + this.h;
+    if (key === this._paperKey) return;
+    this._paperKey = key;
+    if (g.innerHTML !== undefined) g.innerHTML = '';
+    if (style === 'none') return;
+    const W = this.w, H = this.h, step = 50;
     const light = (lumOf(bg) == null ? !isLight() : lumOf(bg) > 0.42);
     const col = light ? 'rgba(35,60,90,.17)' : 'rgba(190,210,235,.15)';
     const add = (tag, at) => { const e = mk(tag, at, g); e.setAttribute('stroke', col); e.setAttribute('fill', 'none'); return e; };
-    if (p.g === 'lines') {
+    if (style === 'lines') {
       for (let y = step; y < H; y += step) add('line', { x1: 0, y1: y, x2: W, y2: y });
-    } else if (p.g === 'dots') {
+    } else if (style === 'dots') {
       for (let y = step; y < H; y += step) {
         for (let x = step; x < W; x += step) {
           const e = mk('circle', { cx: x, cy: y, r: 1.5 }, g);
@@ -690,9 +966,8 @@ export class Board {
   }
   _syncTintSw() {
     if (!this._tintSws) return;
-    const light = isLight();
     this._tintSws.forEach((b, k) => {
-      if (k > 0) b.style.cssText = 'background:' + (light ? TINTS[k - 1].light : TINTS[k - 1].dark);
+      if (b._chip && k > 0 && TINTS[k - 1]) b._chip.style.background = tintChip(TINTS[k - 1]);
       b.classList.toggle('on', k - 1 === this._tint);
     });
     if (this._tintPick) {
@@ -700,22 +975,35 @@ export class Board {
       if (this._tintPickLab && this._tintPickLab.classList) this._tintPickLab.classList.toggle('on', this._tint === -2);
     }
   }
-  /** 把当前底色写到 --bd-bg：.board 背景与 svg 文字的底色光晕都读它；
-   *  调色板自选色再按亮度写 --bd-ink（svg 文字与 KaTeX 公式的墨色），深底浅字、浅底深字。
-   *  没选就交还主题色。切主题时 render() 会再调一次，预设档自动换成另一家族的同名档。 */
+  /** 把当前纸面写到板根：--bd-bg 是底色（.board 背景与 svg 文字的底色光晕都读它），
+   *  --bd-skin 是预设纸面的斜向渐变（.board 的 background-image 读它，压在底色之上；
+   *  物理板同一档写的是 --pb-skin），--bd-ink 是墨色（svg 文字与 KaTeX 公式同读），
+   *  _famLight 交给 paint() 决定语义色取哪一家族。
+   *  跟随主题时三者都交还主题；自定义色按相对亮度定墨色与家族（深底浅字、浅底深字）。
+   *  切主题时 render() 会再调一次：跟随主题的板跟着换，自选纸面的板不动。 */
   syncTint() {
-    const col = this._tint === -2 ? (this._custom || '')
-      : this._tint >= 0 ? (isLight() ? TINTS[this._tint].light : TINTS[this._tint].dark) : '';
-    const l = col && this._tint === -2 ? lumOf(col) : null;
-    const ink = l == null ? '' : (l < .42 ? INK_LIGHT : INK_DARK);
-    if (col === this._bgCol && ink === this._inkCol) return;
-    this._bgCol = col; this._inkCol = ink;
+    const p = this._tint >= 0 ? (TINTS[this._tint] || null) : null;
+    const col = p ? p.c : this._tint === -2 ? (this._custom || '') : '';
+    const skin = p ? (p.skin || '') : '';   // 预设纸面带斜向渐变，跟随主题 / 自定义色是纯色
+    let fam = p ? p.light : null;
+    let ink = p ? (p.ink || (fam ? INK_DARK : INK_LIGHT)) : '';
+    if (this._tint === -2 && col) {
+      const l = lumOf(col);
+      if (l != null) { fam = l > .42; ink = fam ? INK_DARK : INK_LIGHT; }
+    }
+    if (col === this._bgCol && ink === this._inkCol && fam === this._famLight && skin === this._skinCol) return;
+    this._bgCol = col; this._inkCol = ink; this._famLight = fam; this._skinCol = skin;
     const st = this.root && this.root.style;
     if (!st || !st.setProperty) return; // 无头 mock 的 style 是普通对象
     if (col) st.setProperty('--bd-bg', col);
     else if (st.removeProperty) st.removeProperty('--bd-bg');
     if (ink) st.setProperty('--bd-ink', ink);
     else if (st.removeProperty) st.removeProperty('--bd-ink');
+    if (skin) st.setProperty('--bd-skin', skin);
+    else if (st.removeProperty) st.removeProperty('--bd-skin');
+    // 底色的明暗决定纸格线色，换了底色就重铺一次（没变则不进来）
+    this._paperKey = '';
+    this._paperDraw();
   }
   /* ---------- 底部文字开关：只收画板内部的提示行（hint / hintM），板框外的图注不动 ---------- */
   toggleFoot() {
@@ -3257,7 +3545,13 @@ export class Board {
   seg(p1, p2, at) { return mk('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, ...at }, this.dyn); }
   inf(p1, p2, at) { const [a, b] = extSeg(p1, p2); return this.seg(a, b, at); }
   dot(p, r, at) { return mk('circle', { cx: p.x, cy: p.y, r, ...at }, this.dyn); }
-  text(p, s, at = {}) { return mk('text', { x: p.x, y: p.y, 'text-anchor': 'middle', text: s, ...at }, this.dyn); }
+  /** 板内文字：数字、拉丁 / 希腊字母、运算符一律排成 KaTeX 的字族（变量斜体、函数名与数字正体），
+   *  汉字仍走系统无衬线；'₂' '²' 与 '_{…}' '^{…}' 排成真正的上下标。返回 <text> 元素。 */
+  text(p, s, at = {}) {
+    const el = mk('text', { x: p.x, y: p.y, 'text-anchor': 'middle', ...at });
+    this.dyn.appendChild(el);
+    return fillRuns(el, s);
+  }
   /** B.text 的公式版：s 里 '$…$' 段走 KaTeX 混排；定位沿 B.text 语义 —— p 为文字基线、默认水平居中，
    *  at 沿用 B.text 的键（'font-size'、fill、'text-anchor'、'font-weight'）。宽度按字符自动预算（可 at.w 覆盖）。 */
   textM(p, s, at = {}) {
@@ -3380,7 +3674,7 @@ export class Board {
     let t = this._hint;
     if (!t) { t = mk('text', { x: this.w / 2, y: this.h - 10, 'text-anchor': 'middle', fill: '#ffd166', 'font-size': 14 }, this.svg); this._hint = t; }
     this._hintT = text || '';
-    t.textContent = text; t.style.display = text && this._foot ? '' : 'none';
+    fillRuns(t, text); t.style.display = text && this._foot ? '' : 'none';
   }
   /** hint 的公式版：text 里 '$…$' 段走 KaTeX 混排（同 hint 顶层常驻、空串隐藏）；宽度一行预算同 hint（字号 14） */
   hintM(text) {
@@ -3405,6 +3699,7 @@ export class Board {
    *  画在 dyn 层，随后画的曲线、色带自然盖在其上；轴色 '#8fa3bd'、网格 '#2b3b53' 实线低透明度、刻度 '#5c6a80'。 */
   grid(m) {
     const gx = m.sx || 1, gy = m.sy || 1;
+    this._gridMarked = true;   // 板上有坐标网格 → 背景纸格在「自动」档让路（免得两套网格打架）
     const gAt = { stroke: '#2b3b53', 'stroke-width': .8, 'stroke-opacity': .5 };
     if (m.grid !== false) {
       for (let x = Math.ceil(m.X0 / gx) * gx; x <= m.X1 + 1e-9; x += gx)
@@ -3412,7 +3707,8 @@ export class Board {
       for (let y = Math.ceil(m.Y0 / gy) * gy; y <= m.Y1 + 1e-9; y += gy)
         this.seg(V(m.px(m.X0), m.py(y)), V(m.px(m.X1), m.py(y)), gAt);
     }
-    const aAt = { stroke: '#8fa3bd', 'stroke-width': 1.8 };
+    // 轴宽是**绝对**的（含箭头与轴字母那一笔画），只跟坐标轴线宽倍率走，不再叠线条倍率
+    const aAt = { stroke: '#8fa3bd', 'stroke-width': Math.round(1.8 * PREFS.boardAxisW * 100) / 100, __lw: 'abs' };
     const tAt = { 'font-size': 11, fill: '#5c6a80' };
     const inX = m.Y0 <= 0 && m.Y1 >= 0, inY = m.X0 <= 0 && m.X1 >= 0;
     if (inX) { // x 轴：右端箭头 + 字母
@@ -3552,13 +3848,27 @@ export class Board {
       }
     }
     const st = mk('style', {}, clone);
-    st.textContent = 'text{fill:' + ink + ';font-size:12px;paint-order:stroke;stroke:' + bg
+    // 注入的规则必须与 global.css 那条逐字对齐（页面 CSS 的优先级高于呈现属性），
+    // 只有字号改成 --bd-fs 的真实像素值：导出的图不读页面的 --bd-fs 变量
+    st.textContent = 'text{fill:' + ink + ';font-size:' + boardFontPx() + 'px;paint-order:stroke;stroke:' + bg
       + ';stroke-width:3px;stroke-linejoin:round;'
       + "font-family:-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif}"
       + (this._inkCol ? '.bd-tex-ink{color:' + ink + ' !important}' : '');
-    clone.insertBefore(mk('rect', { x: 0, y: 0, width: this.w, height: this.h, fill: bg }), clone.firstChild);
+    // 预设纸面的斜向渐变：导出的 SVG 里没有 CSS，这里换成一枚 linearGradient 让底图照旧有渐变
+    const gd = this._skinCol ? skinGrad(this._skinCol) : null;
+    if (gd) {
+      const lg = mk('linearGradient', {
+        id: 'bd-skin', x1: gd.x1.toFixed(4), y1: gd.y1.toFixed(4),
+        x2: gd.x2.toFixed(4), y2: gd.y2.toFixed(4),
+      }, mk('defs', {}, clone));
+      for (const s of gd.stops) mk('stop', { offset: String(+s.o.toFixed(4)), 'stop-color': s.c }, lg);
+    }
+    clone.insertBefore(mk('rect', {
+      x: 0, y: 0, width: this.w, height: this.h, fill: gd ? 'url(#bd-skin)' : bg,
+    }), clone.firstChild);
     clone.insertBefore(st, clone.firstChild);
-    if (clone.querySelector('foreignObject')) st.textContent += await katexCss();
+    // 公式（foreignObject）与 KaTeX 字族的 tspan 都要把字体内联进去，否则导出图退回系统字体
+    if (clone.querySelector('foreignObject, tspan')) st.textContent += await katexCss();
     return new XMLSerializer().serializeToString(clone);
   }
   /** 导出当前画面为 PNG（默认 2× 分辨率）→ 下载。name 不给时按 _saveBase 或当前路由起名。 */
@@ -3654,10 +3964,31 @@ export class Board {
     for (const { c, lbl, st } of this.handles) {
       const p = st.get();
       c.setAttribute('cx', p.x); c.setAttribute('cy', p.y);
-      if (lbl) { lbl.setAttribute('x', p.x + (st.lo ? st.lo[0] : 9)); lbl.setAttribute('y', p.y + (st.lo ? st.lo[1] : -9)); lbl.textContent = st.label; }
+      if (lbl) { lbl.setAttribute('x', p.x + (st.lo ? st.lo[0] : 9)); lbl.setAttribute('y', p.y + (st.lo ? st.lo[1] : -9)); fillRuns(lbl, st.label); }
     }
   }
-  render() { this.syncTint(); this._lblSyncId(); if (this.renderFn) { this.clear(); this.renderFn(); this.sync(); this._applyLblOffsets(); } }
+  render() {
+    this.syncTint();
+    // 字号倍率写进板根：global.css 的 svg text 规则读 --bd-fs（缺省 12px，旧板原样）
+    const st = this.root && this.root.style;
+    if (st && st.setProperty) st.setProperty('--bd-fs', boardFontPx() + 'px');
+    this._lblSyncId();
+    if (this.renderFn) {
+      // 纸面自带的亮/暗家族：这一块板画图期间语义色按它取，画完交还（别的板各用各的）
+      const prevFam = FAM_LIGHT;
+      FAM_LIGHT = this._famLight == null ? null : this._famLight;
+      try {
+        this.clear();
+        this._gridMarked = false;   // 本次重画有没有坐标网格，等 B.grid 自己举手
+        this.renderFn();
+        this.sync();
+        this._applyLblOffsets();
+        this._paperDraw();          // 纸格在网格标记定下来之后再铺（「自动」档要看它）
+      } finally {
+        FAM_LIGHT = prevFam;
+      }
+    }
+  }
 }
 
 /* ---------- 给 AI 助手的画板快照 ----------
