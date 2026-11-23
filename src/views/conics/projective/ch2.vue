@@ -51,7 +51,7 @@
     <Katex tex="\left(\frac1A,\frac1B;\frac1C,\frac1D\right)=\frac{(C-A)(D-B)}{(C-B)(D-A)}=(A,B;C,D)." display />
     <p>据此，任何形如 <Katex tex="t\mapsto(\alpha t+\beta)/(\gamma t+\delta)" />（<Katex tex="\alpha\delta-\beta\gamma\neq0" />）的变换都保持交叉比，因而把调和点列映成调和点列。中心投影把一条直线上的坐标换到另一条直线上，正是这样一种变换，本章开头的画板在数值上核对的就是这条代数事实。反过来，任取一个这样的变换作用在 <Katex tex="0,\ 1,\ t,\ \tfrac{t}{2t-1}" /> 上，结果仍是调和点列；实射影直线上每一个调和点列也都能这样得到。</p>
 
-    <p>公式可以算出共轭点。下一节会用完全四点形，仅靠连线和求交作出同一个点。</p>
+    <p>公式可以算出共轭点。下一节「完全四边形」将用四点连线和求交作出同一个点。</p>
   </ChPage>
 </template>
 <script setup>

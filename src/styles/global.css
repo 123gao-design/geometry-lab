@@ -285,8 +285,10 @@ circle.hnd.drag{stroke-width:3}
    用一段负下边距抵消，相邻外边距折叠后只剩十来像素，条仍贴着卡片上沿 */
 .dlbar.out.out-fig{margin-bottom:-18px}
 /* 半屏 / 全屏时板是 fixed 浮层，外面留不下这一条：条跟着回板内，作浮层顶部的工具条 */
-.board.bd-float .dlbar.out{order:-1;padding:6px 10px}
-.board.bd-float .dlbar.out .dl{background:transparent}
+.board.bd-float>.dlbar{position:relative;inset:auto;z-index:6;order:-1;flex:none;flex-wrap:wrap;
+  justify-content:flex-end;padding:6px 10px;border-bottom:1px solid var(--line)}
+.board.bd-float>.dlbar.out-l{justify-content:flex-start}
+.board.bd-float>.dlbar .dl:not(:disabled){opacity:1;background:var(--card)}
 .board:hover .dl,.board:focus-within .dl{opacity:1}
 .dl:hover{color:var(--ink);border-color:var(--blue)}
 .dl.on{opacity:1;color:var(--red,#ff7b8a);border-color:var(--red,#ff7b8a)}
@@ -300,7 +302,7 @@ circle.hnd.drag{stroke-width:3}
   max-width:calc(100% - 16px);padding:6px 7px;border:1px solid var(--line);border-radius:12px;background:var(--card);
   box-shadow:0 10px 26px rgba(0,0,0,.3)}
 .board.ink-on .inkbar{display:flex}
-.board.bd-float .inkbar{top:46px}
+.board.bd-float>.inkbar{top:calc(var(--bd-bar-height,32px) + 8px)}
 .inkbar .dl{position:static;top:auto;right:auto;opacity:1;background:transparent;padding:0 10px;height:30px;
   display:inline-flex;align-items:center;justify-content:center}
 .inkbar .dl.on{color:var(--blue);border-color:var(--blue)}
@@ -493,22 +495,29 @@ circle.hnd.drag{stroke-width:3}
   background:none;accent-color:var(--blue);cursor:pointer}
 .tint-sv{flex:0 0 auto;min-width:36px;text-align:right;font-size:11px;color:var(--mut);
   font-variant-numeric:tabular-nums}
-/* 半屏 / 全屏：把整块板 root 变成 fixed 浮层，四种模式共用的底色与投影写在 .bd-float；
-   1px 的 100vmax 外扩投影顺带压暗页面（投影不接收点击，底下的正文只是看得见、点不到） */
-.board.bd-float{position:fixed;z-index:100;display:flex;flex-direction:column;overflow:hidden;
-  border-radius:16px;box-shadow:0 0 0 100vmax rgba(6,9,14,.42),0 26px 70px rgba(0,0,0,.45)}
-html.light .board.bd-float{box-shadow:0 0 0 100vmax rgba(60,50,25,.16),0 26px 70px rgba(60,50,20,.25)}
-.board.bd-half{left:auto;right:16px;top:58px;bottom:16px;width:min(56vw,940px)}
-.board.bd-full{left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);
-  width:min(94vw,1680px);height:min(90vh,1040px)}
-/* 浮层里的 svg 撑满剩余高度（等比居中，留边由 preserveAspectRatio 处理）；控件行不参与压缩 */
-.board.bd-float svg{width:100%;height:auto;flex:1 1 auto;min-height:0}
-.board.bd-float .ctrl{flex:none;max-height:34%;overflow:auto}
-.board.bd-float .ctrl.chips{max-height:none}
+/* 半屏随图高收紧，全屏用尽窗口；正文中保留原画板和操作条所占的位置。 */
+.bd-float-space{max-width:100%;visibility:hidden;pointer-events:none}
+.board.bd-float{--bd-panel-height:100dvh;
+  --bd-controls-height:max(0px,calc(var(--bd-panel-height) - var(--bd-bar-height,32px) - min(38dvh,160px) - 2px));
+  position:fixed;z-index:100;display:flex;flex-direction:column;overflow:hidden}
+.board.bd-half{--bd-panel-height:calc(100dvh - 74px);
+  top:58px;right:16px;width:min(56vw,940px);max-height:var(--bd-panel-height);border-radius:16px;
+  box-shadow:0 0 0 100vmax rgba(6,9,14,.42),0 26px 70px rgba(0,0,0,.45)}
+html.light .board.bd-half{box-shadow:0 0 0 100vmax rgba(60,50,25,.16),0 26px 70px rgba(60,50,20,.25)}
+.board.bd-full{inset:0 auto auto 0;width:100vw;height:100dvh;border-radius:0;box-shadow:none}
+/* 只有绘图 SVG 占用可伸缩的空间，内嵌工具图标维持原大小。 */
+.board.bd-float>svg{flex:1 1 auto;min-height:0}
+.board.bd-float>:is(.ctrl,.fn-board-notes,.fn-board-guide){flex:none;overflow:auto;overscroll-behavior:contain}
+/* 短窗口先保留绘图区，再分配参数、读数和函数讲解的滚动区域。 */
+.board.bd-float>.ctrl{max-height:calc(var(--bd-controls-height) / 2)}
+.board.bd-float.fn-board>.ctrl{max-height:calc(var(--bd-controls-height) * .32)}
+.board.bd-float>:is(.fn-board-notes,.fn-board-guide){max-height:calc(var(--bd-controls-height) * .18)}
+.board.bd-float>.tint-pop{top:calc(var(--bd-bar-height,32px) + 8px);max-width:calc(100% - 16px);
+  max-height:calc(100% - var(--bd-bar-height,32px) - 16px);overflow:auto}
 html.bd-lock{overflow:hidden}
+html.bd-lock body{padding-inline-end:var(--bd-scrollbar-width,0px)}
 @media (max-width:900px){
   .board.bd-half{left:10px;right:10px;width:auto}
-  .board.bd-full{width:96vw;height:92vh}
 }
 /* 控件 */
 .ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;
@@ -944,7 +953,11 @@ html[data-theme='lav'] .topic-card .tag{border-color:#d5c3f0}
   @page{margin:14mm}
   .bg-fx{display:none}
   .topnav,.chapnav,.chaptabs,footer,.read-row,.dlbar,.dl,.toc{display:none}
-  .board.bd-float{position:static;transform:none;width:auto;height:auto;box-shadow:none} /* 浮着的板印时回落到文档流 */
+  .bd-float-space,.board.bd-float>.dlbar{display:none}
+  html.bd-lock{overflow:visible}
+  html.bd-lock body{padding-inline-end:0}
+  .board.bd-float{position:static;width:auto;height:auto;max-height:none;box-shadow:none} /* 浮着的板印时回落到文档流 */
+  .board.bd-float>:is(.ctrl,.fn-board-notes,.fn-board-guide),.board.bd-float.fn-board>.ctrl{max-height:none;overflow:visible}
   .chap3,.chap3.no-toc{display:block}
   .ctrl{display:none}                        /* 滑块与按钮不印 */
   .ctrl.chips{display:block;padding:2px 0}   /* 实时读数徽章保留 —— 讲义里的实验数据 */

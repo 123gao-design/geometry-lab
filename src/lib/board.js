@@ -564,12 +564,12 @@ export class Board {
     this._bindZoom();
     // 半屏 / 全屏：把这一块板浮起来看，同时只浮一块（Esc 或再点一次复原）
     this._floatMode = '';
-    const half = hEl('button', { class: 'dl fs', title: '半屏展示这一块画板（再点一次复原）' });
+    const half = hEl('button', { class: 'dl fs', title: '半屏展示这一块画板（再点一次复原）', 'aria-pressed': 'false' });
     half.textContent = '◧ 半屏';
     half.addEventListener('click', () => this.setFloat('half'));
     this.dlBar.appendChild(half);
     this._fsHalf = half;
-    const full = hEl('button', { class: 'dl fs', title: '全屏展示这一块画板（Esc 或再点一次复原）' });
+    const full = hEl('button', { class: 'dl fs', title: '全屏展示这一块画板（Esc 或再点一次复原）', 'aria-pressed': 'false' });
     full.textContent = '⛶ 全屏';
     full.addEventListener('click', () => this.setFloat('full'));
     this.dlBar.appendChild(full);
@@ -816,9 +816,17 @@ export class Board {
      同一时刻只浮一块：另开一块时先上一块自动收回；Esc 或再点一次同一颗钮复原。 */
   setFloat(mode) { this._applyFloat(this._floatMode === mode ? '' : mode); }
   _applyFloat(m) {
-    if (OPEN_FLOAT && OPEN_FLOAT !== this) OPEN_FLOAT._applyFloat(''); // 收回上一位
-    this._floatMode = m || '';
+    if (m === this._floatMode) return;
+    if (m && OPEN_FLOAT && OPEN_FLOAT !== this) OPEN_FLOAT._applyFloat('');
     const r = this.root;
+    const bar = this.dlBar;
+    const focus = bar.contains?.(document.activeElement) ? document.activeElement : null;
+    if (m && !this._floatMode) {
+      // 入场动画会让正文形成独立层，挡住浮层顶部或改变 fixed 的坐标基准。
+      r.closest?.('main.page-in')?.classList.remove('page-in');
+      this._reserveFloatSpace();
+    }
+    this._floatMode = m;
     if (r && r.classList) {
       r.classList.toggle('bd-float', !!this._floatMode);
       r.classList.toggle('bd-half', this._floatMode === 'half');
@@ -828,10 +836,48 @@ export class Board {
     else if (OPEN_FLOAT === this) OPEN_FLOAT = null;
     // 全屏时锁住页面滚动，免得滚轮带着底下的正文跑；半屏不锁（还看得见页面）
     const lock = !!(OPEN_FLOAT && OPEN_FLOAT._floatMode === 'full');
-    if (document.documentElement && document.documentElement.classList) document.documentElement.classList.toggle('bd-lock', lock);
-    if (this._fsHalf) this._fsHalf.classList.toggle('on', this._floatMode === 'half');
-    if (this._fsFull) this._fsFull.classList.toggle('on', this._floatMode === 'full');
-    this._placeBar(); // 浮起来时把条收回板内，复原后送回板外（设置成板内悬浮时不动）
+    const page = document.documentElement;
+    if (lock && !page.classList.contains('bd-lock')) {
+      page.style.setProperty?.('--bd-scrollbar-width', (window.innerWidth - page.clientWidth) + 'px');
+    }
+    page.classList.toggle('bd-lock', lock);
+    if (!lock) page.style.removeProperty?.('--bd-scrollbar-width');
+    for (const [mode, button] of [['half', this._fsHalf], ['full', this._fsFull]]) {
+      const active = m === mode;
+      button.classList.toggle('on', active);
+      button.setAttribute('aria-pressed', String(active));
+    }
+    this._placeBar();
+    if (m) {
+      // 窄屏的操作条可换行，浮层菜单要从实际底边开始。
+      const measure = () => r.style.setProperty?.('--bd-bar-height', bar.offsetHeight + 'px');
+      measure();
+      if (!this._floatBarObserver && typeof ResizeObserver !== 'undefined') {
+        this._floatBarObserver = new ResizeObserver(measure);
+        this._floatBarObserver.observe(bar);
+      }
+    } else {
+      this._floatBarObserver?.disconnect();
+      this._floatBarObserver = null;
+      r.style.removeProperty?.('--bd-bar-height');
+      this._floatSpaces?.forEach(space => space.remove());
+      this._floatSpaces = null;
+    }
+    if (focus && document.activeElement !== focus) focus.focus({ preventScroll: true });
+  }
+  _reserveFloatSpace() {
+    const r = this.root;
+    const bar = this.dlBar;
+    const nodes = bar.parentElement === r ? [r] : [r, bar];
+    this._floatSpaces = [];
+    for (const node of nodes) {
+      if (!node.parentElement) continue;
+      const { width, height } = node.getBoundingClientRect();
+      const className = node === bar ? `bd-float-space ${bar.className}` : 'bd-float-space';
+      const space = hEl('div', { class: className, 'aria-hidden': 'true', style: `width:${width}px;height:${height}px` });
+      node.parentElement.insertBefore(space, node);
+      this._floatSpaces.push(space);
+    }
   }
   _bindFloatKeys() {
     if (!document.addEventListener) return;

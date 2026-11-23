@@ -1,12 +1,14 @@
 <template>
-  <ChPage :cur="3" title="完全四点形与调和构造" sub="同一个调和点列，可以由对边交点、角平分线或距离比得到。"
-    :toc="[{ id: 'c3-quad', t: '完全四点形' }, { id: 'c3-ab', t: '内外角平分线' }, { id: 'c3-ap', t: '阿波罗尼奥斯圆' }]">
-    <h3 class="sec" id="c3-quad">完全四点形</h3>
-    <p>取四个无三点共线的点 <Katex tex="A,B,C,D" />，两两连出六条直线。令三对对边分别相交，得到<strong>对角三角形</strong>的三个顶点：</p>
+  <ChPage :cur="3" title="完全四边形与调和构造" sub="从对边交点作出调和点列，再看对角三角形如何确定极点与极线。"
+    :toc="[{ id: 'c3-quad', t: '完全四边形' }, { id: 'c3-ab', t: '内外角平分线' }, { id: 'c3-ap', t: '阿波罗尼奥斯圆' }]">
+    <h3 class="sec" id="c3-quad">完全四边形</h3>
+    <p>四条直线两两相交且无三线共点，它们与六个交点组成<strong>完全四边形</strong>。下面使用它的对偶构型<strong>完全四点形</strong>来作图。取四个无三点共线的点 <Katex tex="A,B,C,D" />，两两连出六条直线。让三对对边分别相交，得到<strong>对角三角形</strong>的三个顶点。</p>
     <Katex tex="P_1=AB\cap CD,\qquad P_2=AC\cap BD,\qquad P_3=AD\cap BC." display />
     <p>在边 <Katex tex="AB" /> 上取 <Katex tex="S_1=AB\cap P_2P_3" />，便有 <Katex tex="(A,B;P_1,S_1)=-1" />。在其余五条边上也可以作同样的构造。</p>
-    <ConicFigure head="bottom" number="3" title="用对边交点构造调和点列" :factory="createBoard">
-      选一条边（如 <Katex tex="AB" />），再拖动任一顶点。点「AB 与 CD 平行」，或手动把对边 <Katex tex="CD" /> 转到与 <Katex tex="AB" /> 平行，观察 <Katex tex="P_1" /> 移向无穷远时 <Katex tex="S_1" /> 如何趋向中点。
+    <p>相对于任一条经过四个顶点的非退化圆锥曲线，对角三角形都是<strong>自配极三角形</strong>。每个顶点的极线都是另外两个顶点的连线。例如，<Katex tex="P_1" /> 的极线是 <Katex tex="P_2P_3" />，它与 <Katex tex="AB" /> 相交于调和共轭点 <Katex tex="S_1" />。</p>
+    <ConicFigure head="bottom" number="3" title="从对边交点读出调和点列与极线" :factory="createBoard"
+      :legend="[['blue', '所选边'], ['gold', '调和共轭点', 'point'], ['mint', '极点与极线（开启后）', 'dashed'], ['violet', '过四点的圆锥曲线（开启后）']]">
+      点「显示极点与极线」叠加圆锥曲线和配极关系，再切换 <Katex tex="AB,AC,AD" /> 比较三组极点与极线。试试「AB 与 CD 平行」，观察 <Katex tex="P_1" /> 到无穷远时，<Katex tex="S_1" /> 落在 <Katex tex="AB" /> 的中点。拖动顶点时视野固定，读数会提示交点的位置。
     </ConicFigure>
     <p><strong>为什么是 −1？</strong> 选取射影坐标，把前三个顶点放在三个坐标方向上，再利用坐标的比例自由把第四个顶点写成 <Katex tex="D=[1:1:1]" />。因为无三点共线，这三个坐标都可以分别缩放到 1。于是 <Katex tex="AB" /> 是 <Katex tex="W=0" />，直接求交得到 <Katex tex="P_1=[1:1:0],\ P_2=[1:0:1],\ P_3=[0:1:1]" />。<Katex tex="P_2P_3" /> 的方程是 <Katex tex="X+Y=W" />，所以 <Katex tex="S_1=[1:-1:0]" />。在 <Katex tex="AB" /> 上用 <Katex tex="[X:Y]" /> 看，两个点恰好只差第二个坐标的符号。这就是 §2 的调和判据。</p>
     <p>这个证明也说明了作图的自由度。只要固定 <Katex tex="A,B,P_1" />，就可以换一条过 <Katex tex="P_1" /> 的对边 <Katex tex="CD" />。构造出的 <Katex tex="S_1" /> 始终相同，因为 <Katex tex="P_1" /> 的调和共轭唯一。</p>
@@ -23,7 +25,7 @@
     <ConicFigure head="bottom" number="3c" title="从比值圆过渡到垂直平分线" :factory="createApollonius">
       调节 <Katex tex="k" />，看两个调和共轭点 <Katex tex="D,E" /> 如何移动。拖动 <Katex tex="P" /> 验证距离比，再将 <Katex tex="k" /> 调到 1，观察外分点走向无穷远。
     </ConicFigure>
-    <p>把完全四点形的四个顶点都放在一条非退化圆锥曲线上，对角三角形就会成为<strong>自配极三角形</strong>。此时曲线和割线的两个交点自然成为一对基点。下一节会说明，为什么换了割线、换了基点，所得到的共轭点仍然落在同一条直线上。</p>
+    <p>下一节会说明，固定极点后，沿不同割线作出的调和共轭点为什么都落在它的极线上。</p>
   </ChPage>
 </template>
 <script setup>

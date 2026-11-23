@@ -150,7 +150,7 @@
     <div class="topic-grid">
       <router-link class="topic-card" to="/conics/ch1"><span class="tag">六1</span><h3>消点：盯住不变量</h3><p class="fx"><Katex tex="(A,B;C,D)=\dfrac{CA}{CB}\div\dfrac{DA}{DB}" /></p><p>交叉比在中心投影下不变 —— 复杂构图消成简单构图再核验。</p></router-link>
       <router-link class="topic-card" to="/conics/ch2"><span class="tag">六2</span><h3>交叉比与调和点列</h3><p class="fx"><Katex tex="(A,B;C,D)=-1" /></p><p>＝−1 即调和 —— 内外分点、极点极线的度量判据。</p></router-link>
-      <router-link class="topic-card" to="/conics/ch3"><span class="tag">六3</span><h3>完全四点形</h3><p class="fx"><Katex tex="\text{内接完全四点形的对角三角形自配极}" /></p><p>纯射影的配极构造 —— 不依赖任何度量也能定极线。</p></router-link>
+      <router-link class="topic-card" to="/conics/ch3"><span class="tag">六3</span><h3>完全四边形</h3><p class="fx"><Katex tex="\text{内接完全四点形的对角三角形自配极}" /></p><p>在对偶的四点构型中，每个对角点的极线由另外两个对角点确定。</p></router-link>
       <router-link class="topic-card" to="/conics/ch4"><span class="tag">六4</span><h3>极点与极线</h3><p class="fx"><Katex tex="\overrightarrow{OP}\cdot\overrightarrow{OQ}=R^2" /></p><p>圆的情形：Q 沿 P 的极线 —— 极线⊥OP，距离倒数记录。</p></router-link>
       <router-link class="topic-card" to="/conics/ch5"><span class="tag">六5</span><h3>配极原则与齐次坐标</h3><p class="fx"><Katex tex="\ell=AP,\quad P=A^{-1}\ell" /></p><p>矩阵对称性给出 La Hire 互易，共线点的极线共点。</p></router-link>
       <router-link class="topic-card" to="/conics/ch6"><span class="tag">六6</span><h3>Pascal 与 Brianchon</h3><p class="fx"><Katex tex="\text{六点对边交点共线}" /></p><p>Pascal 线的极点就是 Brianchon 点。相邻点可取切线极限，平行对边交于无穷远。</p></router-link>
