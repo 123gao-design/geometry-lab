@@ -4,10 +4,10 @@
     :toc="[{ id: 'd5-def', t: '第三定义（图 D5）' }, { id: 'd5-deriv', t: '第三定义的推导与逆命题' }, { id: 'd5-tri', t: '焦点三角形面积（图 D6）' }, { id: 'd5-sum', t: '五种定义一览' }]">
     <p>前四个定义都离不开"量距离"。第三定义换了角度：只看动点与两个定点连线的<strong>斜率</strong>。它常以"轨迹题"的形式出现在试卷上，本质仍是圆锥曲线。</p>
     <div class="note good" id="d5-def"><strong>第三定义</strong>：设 <Katex tex="A(-a,\ 0)" />、<Katex tex="B(a,\ 0)" /> 为两定点，动点 P 满足直线 PA 与 PB 的斜率之积为定值 <Katex tex="\lambda" />（<Katex tex="\lambda \ne 0" />）。则 <Katex tex="\lambda < 0" /> 时轨迹为<strong>椭圆</strong>（<Katex tex="\lambda = -1" /> 时恰为圆），<Katex tex="\lambda > 0" /> 时轨迹为<strong>双曲线</strong>（均需去掉 A、B 两个退化点）。当 A、B 恰为长轴（实轴）顶点时，<Katex tex="\lambda = -b^2/a^2" />（椭圆）、<Katex tex="\lambda = +b^2/a^2" />（双曲线）。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createThirdDef" />
-      <div class="cap">图 D5 · <b>椭圆的第三定义</b>：拖动 P，绿线 <Katex tex="k(PA)" /> 与紫线 <Katex tex="k(PB)" /> 各自变动，乘积却固定为 <Katex tex="-b^2/a^2" />（椭圆）或 <Katex tex="+b^2/a^2" />（双曲线，可切换）。把椭圆调成 <Katex tex="a = b" />（圆），乘积恰为 <Katex tex="-1" /> —— 那是"直径所对圆周角为直角"的斜率翻译。</div>
-    </div>
+    <ConicFigure head="bottom" number="D5" title="两条斜率随点改变，乘积恒定" :factory="createThirdDef"
+      :legend="[['mint', '当前曲线'], ['green', 'PA'], ['violet', 'PB']]">
+      拖动 P，绿线 <Katex tex="k(PA)" /> 与紫线 <Katex tex="k(PB)" /> 各自变动，乘积却固定为 <Katex tex="-b^2/a^2" />（椭圆）或 <Katex tex="+b^2/a^2" />（双曲线，可切换）。把椭圆调成 <Katex tex="a = b" />（圆），乘积恰为 <Katex tex="-1" /> —— 那是"直径所对圆周角为直角"的斜率翻译。
+    </ConicFigure>
 
     <h3 class="sec" id="d5-deriv">推导与逆命题：两个方向都成立</h3>
     <p>设 <Katex tex="P(x_0,\ y_0)" />，直接计算斜率之积：</p>
@@ -22,10 +22,10 @@
     <p>移项即用掉全部已知：<Katex tex="r_1r_2=\dfrac{2b^2}{1+\cos\theta}" />，于是面积</p>
     <Katex tex="S=\dfrac12 r_1r_2\sin\theta=b^2\cdot\dfrac{\sin\theta}{1+\cos\theta}=b^2\tan\dfrac{\theta}{2}" display />
     <p>双曲线版本把 <Katex tex="(r_1 + r_2)^2" /> 换成 <Katex tex="(r_1 - r_2)^2" />，得 <Katex tex="r_1r_2 = 2b^2/(1 - \cos\theta)" />，于是 <Katex tex="S = b^2\cdot\cot(\theta/2)" />。整个推导只有余弦定理与半角公式，漂亮得像一道例题 —— 它确实常考。</p>
-    <div class="board-wrap">
-      <BoardMount :factory="createFocusTri" />
-      <div class="cap">图 D6 · <b>焦点三角形</b>：拖动 P，阴影三角形的形状与张角 θ 时刻在变，而"S 实测"与"公式值"两栏始终吻合（相对误差读数为证）。可切换双曲线模式验证 cot 版本。把 P 拖到长轴端点附近：θ → 0，面积 → 0，公式依然成立。</div>
-    </div>
+    <ConicFigure head="bottom" number="D6" title="从焦点夹角读出三角形面积" :factory="createFocusTri"
+      :legend="[['mint', '当前曲线'], ['gold', '焦点', 'point']]">
+      拖动 P，阴影三角形的形状与张角 θ 时刻在变，而"S 实测"与"公式值"两栏始终吻合（相对误差读数为证）。可切换双曲线模式验证 cot 版本。把 P 拖到长轴端点附近：θ → 0，面积 → 0，公式依然成立。
+    </ConicFigure>
 
     <h3 class="sec" id="d5-sum">五种定义一览：同族曲线的五种刻画</h3>
     <table>
@@ -43,7 +43,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createThirdDef } from '../../../boards/conics/definitions/thirddef.js';
 import { createBoard as createFocusTri } from '../../../boards/conics/definitions/focustri.js';

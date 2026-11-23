@@ -5,10 +5,10 @@
     <p>圆的面积是 <Katex tex="\pi a^2" />。椭圆的呢？两条路都通向 <Katex tex="\pi ab" />，而第一条路几乎不费力。</p>
 
     <h3 class="sec" id="a3-lab">割椭圆术</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createAffineArea" />
-      <div class="cap">图 A3 · <b>割椭圆术</b>：圆内接正 n 边形与它的椭圆像。拖大 n，两个读数各自逼近 <Katex tex="\pi a^2" /> 与 <Katex tex="\pi ab" />；而「像 ÷ 原」从头到尾等于 k。刘徽在圆里做的极限，在椭圆里自动重演。</div>
-    </div>
+    <ConicFigure head="bottom" number="A3" title="用同一个多边形逼近圆与椭圆" :factory="createAffineArea"
+      :legend="[['blue', '圆内接多边形'], ['mint', '椭圆内接多边形']]">
+      圆内接正 n 边形与它的椭圆像。拖大 n，两个读数各自逼近 <Katex tex="\pi a^2" /> 与 <Katex tex="\pi ab" />；而「像 ÷ 原」从头到尾等于 k。刘徽在圆里做的极限，在椭圆里自动重演。
+    </ConicFigure>
 
     <h3 class="sec" id="a3-der">推导：面积比不变量</h3>
     <p><strong>第一步（不变量）</strong>：竖直压缩 <Katex tex="T_k" /> 把每个"水平薄条"的高度乘 k、宽度不变，面积恰好乘 k —— 于是<strong>任意</strong>图形（不只多边形）的面积都被乘 k：S(像) = k·S(原)。多边形情形可以直接剖分成水平三角形来验；一般情形由图形被水平条逼近（图 A3 的动画正在演这件事）。</p>
@@ -34,7 +34,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createAffineArea } from '../../../boards/conics/affine/affinearea.js';
 import { AFF_CHAPTERS } from './affnav.js';

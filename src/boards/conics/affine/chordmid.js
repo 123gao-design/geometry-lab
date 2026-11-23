@@ -1,11 +1,12 @@
 /* 图 A2 · 平行弦中点机：一族方向角为 α 的平行弦，中点全部落在过中心的"共轭直径"上
    圆（虚线对照）：中点直径与弦方向垂直 —— 垂径定理，k_弦·k_径 = −1
    椭圆（实线）：斜率被压扁，k_弦·k_径 = −b²/a² —— 这就是点差法，也正是 D5 第三定义 */
-import { Board, mk, V, add, mul, dist, fmt } from '../../../lib/board.js';
+import { mk, V, add, mul, dist, fmt } from '../../../lib/board.js';
+import { createConicLab, plotInk } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 860, H = 470;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
   const C = V(430, 240), a = 190, b = 115;
   const st = { alpha: 35, run: false, sweep: null, trace: [], showCircle: true };
 
@@ -40,23 +41,23 @@ export function createBoard(root) {
   B.renderFn = () => {
     const d = dir(), kChord = d.y / d.x;
     // 轴
-    B.seg(V(20, C.y), V(W - 20, C.y), { stroke: '#22314a', 'stroke-width': 1.2 });
-    B.seg(V(C.x, 20), V(C.x, H - 20), { stroke: '#22314a', 'stroke-width': 1.2 });
+    B.seg(V(20, C.y), V(W - 20, C.y), { stroke: plotInk.axis, 'stroke-width': 1.2 });
+    B.seg(V(C.x, 20), V(C.x, H - 20), { stroke: plotInk.axis, 'stroke-width': 1.2 });
     // 椭圆 + 对照圆
     const epts = [], cpts = [];
     for (let t = -Math.PI; t <= Math.PI + 1e-9; t += 0.03) {
       epts.push(`${(C.x + a * Math.cos(t)).toFixed(1)},${(C.y + b * Math.sin(t)).toFixed(1)}`);
       if (st.showCircle) cpts.push(`${(C.x + a * Math.cos(t)).toFixed(1)},${(C.y + a * Math.sin(t)).toFixed(1)}`);
     }
-    mk('polyline', { points: epts.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 2.2 }, B.dyn);
-    if (st.showCircle) mk('polyline', { points: cpts.join(' '), fill: 'none', stroke: '#5cadff', 'stroke-width': 1.4, 'stroke-dasharray': '7 6', opacity: 0.55 }, B.dyn);
+    mk('polyline', { points: epts.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 2.2 }, B.dyn);
+    if (st.showCircle) mk('polyline', { points: cpts.join(' '), fill: 'none', stroke: plotInk.blue, 'stroke-width': 1.4, 'stroke-dasharray': '7 6', opacity: 0.55 }, B.dyn);
     // 平行弦族（椭圆）
     const hE = hMax(a, b);
     for (const f of [-0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75]) {
       const ch = chordAt(f * hE, a, b);
       if (!ch) continue;
-      B.seg(ch.P1, ch.P2, { stroke: '#ff7b8a', 'stroke-width': f === 0 ? 2 : 1.3, opacity: f === 0 ? 1 : 0.7 });
-      B.dot(ch.M, 3, { fill: '#ffd166' });
+      B.seg(ch.P1, ch.P2, { stroke: plotInk.rose, 'stroke-width': f === 0 ? 2 : 1.3, opacity: f === 0 ? 1 : 0.7 });
+      B.dot(ch.M, 3, { fill: plotInk.amber });
     }
     // 对照圆上的平行弦族（细）与其中点
     if (st.showCircle) {
@@ -64,20 +65,20 @@ export function createBoard(root) {
       for (const f of [-0.6, -0.3, 0, 0.3, 0.6]) {
         const ch = chordAt(f * hC, a, a);
         if (!ch) continue;
-        B.seg(ch.P1, ch.P2, { stroke: '#3f5f8f', 'stroke-width': f === 0 ? 1.6 : 0.9, opacity: 0.65 });
-        B.dot(ch.M, 2.6, { fill: '#8fa3bd' });
+        B.seg(ch.P1, ch.P2, { stroke: plotInk.rule, 'stroke-width': f === 0 ? 1.6 : 0.9, opacity: 0.65 });
+        B.dot(ch.M, 2.6, { fill: plotInk.guide });
       }
     }
     // 中点直径：椭圆 dm = (a² sinα, −b² cosα)；圆 = 垂直方向 (sinα, −cosα)
     const dmE = V(a * a * Math.sin(rad()), -b * b * Math.cos(rad()));
     const dmC = V(Math.sin(rad()), -Math.cos(rad()));
-    B.inf(C, add(C, dmE), { stroke: '#ffd166', 'stroke-width': 2, 'stroke-dasharray': '9 6' });
-    if (st.showCircle) B.inf(C, add(C, dmC), { stroke: '#8fa3bd', 'stroke-width': 1.3, 'stroke-dasharray': '3 6' });
-    B.text(add(C, mul(mul(dmE, 1 / Math.hypot(dmE.x, dmE.y)), 105)), '中点轨迹（共轭直径）', { fill: '#ffd166', 'font-size': 11.5, 'font-weight': 700 });
+    B.inf(C, add(C, dmE), { stroke: plotInk.amber, 'stroke-width': 2, 'stroke-dasharray': '9 6' });
+    if (st.showCircle) B.inf(C, add(C, dmC), { stroke: plotInk.guide, 'stroke-width': 1.3, 'stroke-dasharray': '3 6' });
+    B.text(add(C, mul(mul(dmE, 1 / Math.hypot(dmE.x, dmE.y)), 105)), '中点轨迹（共轭直径）', { fill: plotInk.amber, 'font-size': 11.5, 'font-weight': 700 });
     // 圆心处的直角标记（垂径定理）
     if (st.showCircle) {
       const u1 = mul(d, 16), u2 = mul(dmC, -16);
-      mk('path', { d: `M${(C.x + u1.x).toFixed(1)},${(C.y + u1.y).toFixed(1)}L${(C.x + u1.x + u2.x).toFixed(1)},${(C.y + u1.y + u2.y).toFixed(1)}L${(C.x + u2.x).toFixed(1)},${(C.y + u2.y).toFixed(1)}`, fill: 'none', stroke: '#8fa3bd', 'stroke-width': 1.2 }, B.dyn);
+      mk('path', { d: `M${(C.x + u1.x).toFixed(1)},${(C.y + u1.y).toFixed(1)}L${(C.x + u1.x + u2.x).toFixed(1)},${(C.y + u1.y + u2.y).toFixed(1)}L${(C.x + u2.x).toFixed(1)},${(C.y + u2.y).toFixed(1)}`, fill: 'none', stroke: plotInk.guide, 'stroke-width': 1.2 }, B.dyn);
     }
     // 扫描动画：一条弦从一侧滑到另一侧，中点沿直径爬行
     if (st.run && st.sweep !== null) {
@@ -85,16 +86,16 @@ export function createBoard(root) {
       if (st.sweep > 1) { st.sweep = -1; }
       const ch = chordAt(st.sweep * hE * 0.98, a, b);
       if (ch) {
-        B.seg(ch.P1, ch.P2, { stroke: '#ff9e4a', 'stroke-width': 2.6 });
-        B.dot(ch.M, 5, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 1.6 });
+        B.seg(ch.P1, ch.P2, { stroke: plotInk.copper, 'stroke-width': 2.6 });
+        B.dot(ch.M, 5, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 1.6 });
         const last = st.trace[st.trace.length - 1];
         if (!last || dist(last, ch.M) < 80) st.trace.push(ch.M);
       }
     }
     if (st.trace.length > 1) {
-      mk('polyline', { points: st.trace.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '), fill: 'none', stroke: 'rgba(255,209,102,.55)', 'stroke-width': 6 }, B.dyn);
+      mk('polyline', { points: st.trace.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '), fill: 'none', stroke: plotInk.pulse, 'stroke-width': 6 }, B.dyn);
     }
-    B.dot(C, 3, { fill: '#93a1b5' });
+    B.dot(C, 3, { fill: plotInk.guide });
     // 读数
     const kDiamE = dmE.y / dmE.x, kDiamC = dmC.y / dmC.x;
     const vertE = Math.abs(d.x) < 1e-6 || Math.abs(dmE.x) < 1e-6;

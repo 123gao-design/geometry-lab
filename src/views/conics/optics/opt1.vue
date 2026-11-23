@@ -5,10 +5,10 @@
     <p>光学性质的主角不是曲线本身，而是曲线上每一点处的<strong>切线</strong> —— 光打在曲面哪一点，就以那一点的切线为"镜面"反射。所以先解决代数问题：给定曲线上一点 <Katex tex="P(x_0,\ y_0)" />，切线方程是什么？</p>
 
     <h3 class="sec" id="t1-lab">四种求法总览</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createTangentLab" />
-      <div class="cap">图 T1 · <b>圆锥曲线的切线</b>：切换椭圆 / 双曲线 / 抛物线三种曲线，拖动 P —— 白色切线、紫色法线实时跟随，读数区给出局部坐标下的切线方程与斜率；打开「梯度 ∇F」开关后，金色箭头标出偏导数给出的法向量 <Katex tex="\nabla F" />，它永远与切线垂直。</div>
-    </div>
+    <ConicFigure head="bottom" number="T1" title="在同一个切点对照切线、法线与梯度" :factory="createTangentLab"
+      :legend="[['mint', '曲线'], ['ink', '切线'], ['violet', '法线', 'dashed'], ['gold', '梯度']]">
+      切换椭圆 / 双曲线 / 抛物线三种曲线，拖动 P —— 白色切线、紫色法线实时跟随，读数区给出局部坐标下的切线方程与斜率；打开「梯度 ∇F」开关后，金色箭头标出偏导数给出的法向量 <Katex tex="\nabla F" />，它永远与切线垂直。
+    </ConicFigure>
 
     <h3 class="sec" id="t1-d1">求法一：判别式法（最"初等"）</h3>
     <p>切线是"与曲线恰有一个公共点"的直线（对二次曲线这一定义成立）。设直线 y = kx + m，代入椭圆标准方程：</p>
@@ -59,7 +59,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createTangentLab } from '../../../boards/conics/optics/tangentlab.js';
 import { OPT_CHAPTERS } from './optnav.js';

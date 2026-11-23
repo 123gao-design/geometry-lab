@@ -58,6 +58,7 @@ const Ch4 = () => import('./views/conics/projective/ch4.vue');
 const Ch5 = () => import('./views/conics/projective/ch5.vue');
 const Ch6 = () => import('./views/conics/projective/ch6.vue');
 const Ch7 = () => import('./views/conics/projective/ch7.vue');
+const Ch8 = () => import('./views/conics/projective/ch8.vue');
 // 子专题一 · 圆锥曲线的定义与标准方程
 const Def1 = () => import('./views/conics/definitions/def1.vue');
 const Def2 = () => import('./views/conics/definitions/def2.vue');
@@ -783,6 +784,7 @@ export default [
   { path: '/conics/ch5', component: Ch5 },
   { path: '/conics/ch6', component: Ch6 },
   { path: '/conics/ch7', component: Ch7 },
+  { path: '/conics/ch8', component: Ch8 },
   // 子专题一 · 圆锥曲线的定义与标准方程
   { path: '/conics/def1', component: Def1 },
   { path: '/conics/def2', component: Def2 },

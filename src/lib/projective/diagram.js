@@ -1,4 +1,4 @@
-import { Board, V, dist, mk } from '../board.js';
+import { V, dist, mk } from '../board.js';
 import { atInfinity, infinityLine } from './homogeneous.js';
 
 export const ink = 'var(--pj-ink)', blue = 'var(--pj-blue)', gold = 'var(--pj-gold)';
@@ -9,63 +9,7 @@ export const lineStyle = (stroke, width = 2, dashed = '') => ({
   stroke, 'stroke-width': width, 'stroke-linecap': 'round', ...(dashed && { 'stroke-dasharray': dashed }),
 });
 
-const LIGHT = { ink: '#202d3a', blue: '#2b598c', gold: '#8a5529', mint: '#316763', pink: '#794e69', guide: '#56677a' };
-const DARK = { ink: '#e8edf5', blue: '#95b9e5', gold: '#d5a77f', mint: '#8ebfb7', pink: '#cba5be', guide: '#a0aec2' };
-const rgb = hex => hex.slice(1).match(/../g).map(channel => parseInt(channel, 16));
-function luminance(channels) {
-  const [r, g, b] = channels.map(v => {
-    const s = v / 255;
-    return s <= .04045 ? s / 12.92 : ((s + .055) / 1.055) ** 2.4;
-  });
-  return .2126 * r + .7152 * g + .0722 * b;
-}
-
-function setPalette(B, background) {
-  const bg = luminance(rgb(background));
-  // 在纯黑与纯白的对比度相等处切换墨色，对自定义的中灰纸面也适用。
-  const light = bg >= Math.sqrt(1.05 * .05) - .05;
-  const palette = light ? LIGHT : DARK;
-  const contrast = color => {
-    const fg = luminance(color);
-    return (Math.max(fg, bg) + .05) / (Math.min(fg, bg) + .05);
-  };
-  const figure = B.root.closest('.projective-figure');
-  for (const [key, color] of Object.entries({ ...palette, paper: background })) {
-    let value = color;
-    if (key !== 'paper') {
-      const min = key === 'ink' || key === 'guide' ? 4.5 : 3.6;
-      const channels = rgb(color);
-      const limit = light ? 0 : 255;
-      let candidate = channels;
-      for (let step = 1; contrast(candidate) < min && step <= 16; step++) {
-        candidate = channels.map(v => Math.round(v + (limit - v) * step / 16));
-      }
-      value = '#' + candidate.map(v => v.toString(16).padStart(2, '0')).join('');
-    }
-    const name = '--pj-' + key;
-    B.root.style.setProperty(name, value);
-    // 导出会克隆 SVG，画面本身也要携带当前纸面的色值。
-    B.svg.style.setProperty(name, value);
-    if (key === 'ink') B.svg.style.setProperty('--bd-svg-ink', value);
-    figure?.style.setProperty(name, value);
-  }
-}
-
-class ProjectiveBoard extends Board {
-  handle(options) {
-    const handle = super.handle({ ...options, r: options.thin ? 3.5 : 4.6 });
-    handle.setAttribute('stroke', 'none');
-    return handle;
-  }
-}
-
-export function createDiagram(root, width, height, label) {
-  root.classList.add('projective-board');
-  const B = new ProjectiveBoard(root, width, height, { onAppearanceChange: setPalette });
-  B.svg.setAttribute('role', 'group');
-  B.svg.setAttribute('aria-label', label);
-  return B;
-}
+export { createDiagram } from '../conic-diagram.js';
 
 export function drawEllipse(B, { cx, cy, a, b }) {
   mk('ellipse', { cx, cy, rx: a, ry: b, ...conicStyle }, B.dyn);

@@ -3,10 +3,9 @@
     title="子集与真子集：⊆、⊊ 与 =" sub="∈ 是元素对集合的单线关系，⊆ 是集合对集合的整体关系 —— 但判定标准仍然是元素：A 的每个元素都在 B 里，才写 A⊆B。圈画得再出界、元素一个没跟出去就不算反例；反之只要找到一个「在 A 不在 B」的元素，A⊈B 即被推翻。"
     :toc="[{ id: 'x1-def', t: '定义：一个蕴含式' }, { id: 'x1-ext', t: '外延性：相等即互含' }, { id: 'x1-pit', t: '空集与记号' }]">
     <div class="note good" id="x1-law"><strong>子集定义</strong>：<Katex tex="A\subseteq B\iff\forall x\,(x\in A\Rightarrow x\in B)" />。<strong>真子集</strong>：A⊆B 且 <Katex tex="B" /> 中至少有一个元素不在 A 里，记 <Katex tex="A\subsetneq B" />。<strong>外延性（相等）</strong>：<Katex tex="A=B\iff A\subseteq B\ \text{且}\ B\subseteq A" /> —— 两个集合元素完全相同就是同一个集合。<strong>空集</strong>：<Katex tex="\varnothing\subseteq A" /> 对任何 A 恒成立（反例元素根本找不到）。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createSub" />
-      <div class="cap">图 X1 · <b>子集</b>：拖金圈 A 靠近、压上、越过蓝圈 B —— 元素点实时变色：全被 B 罩住是 A⊆B，元素跟出去一个就是反例；四个预设演足 ⊊、=、⊈、∅ 四种结局，A∖A 的「剩余」同步核验。</div>
-    </div>
+    <ConicFigure number="X1" title="子集" head="bottom" :factory="createSub">
+      拖金圈 A 靠近、压上、越过蓝圈 B —— 元素点实时变色：全被 B 罩住是 A⊆B，元素跟出去一个就是反例；四个预设演足 ⊊、=、⊈、∅ 四种结局，A∖A 的「剩余」同步核验。
+    </ConicFigure>
 
     <h3 class="sec" id="x1-def">定义：一个蕴含式</h3>
     <p>把 <Katex tex="A\subseteq B" /> 的定义读成一句话：「<strong>任取</strong>一个 x，只要 <Katex tex="x\in A" />，就有 <Katex tex="x\in B" />」—— 这就是数学里第一次正式出场的蕴含式 <Katex tex="P\Rightarrow Q" />。它的判定方式是<strong>单向</strong>的：证 A⊆B 要从 A 里任取元素验到 B（图 X1 里金圈的元素全变绿，一个不漏）；推翻它却只需<strong>一个反例</strong> —— 找到一个 <Katex tex="x\in A" /> 但 <Katex tex="x\notin B" /> 的元素，结论立即被推翻。图 X1 的 ③ 预设把圈画到左上角，圈的大部分落在 B 外 —— 但判定徽章不看圈的面积，只认元素 8 跟了出去。顺带一提：蕴含式对「前件为假」的 x 自动成立 —— A 里的元素若根本不存在（A=∅），「任取」无从取起，空集便无差别地成为任何集合的子集。</p>
@@ -28,7 +27,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createSub } from '../../../boards/sets/rel/subslab.js';
 import { X_CHAPTERS } from './xnav.js';

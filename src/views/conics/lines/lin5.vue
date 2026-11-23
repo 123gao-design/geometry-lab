@@ -5,10 +5,10 @@
     <div class="note good"><strong>本讲主角</strong>：弦 <strong>AB</strong> 过定点问题。顶点视角最经典的版本：椭圆上两点 A、B 满足 <Katex tex="k_{VA}\cdot k_{VB}=K" />（V 为右顶点，K 为定值），则弦 <strong>AB</strong> 恒过 <strong>x 轴上一个定点</strong> —— 且定点坐标有闭式 <Katex tex="t=a\cdot\tfrac{K'+1}{K'-1}" />（<Katex tex="K'=K\tfrac{a^2}{b^2}" />）。斜率积换一个值，定点就在 x 轴上挪一个位置：从左顶点、中心（直径）到右焦点，一条 K 轴串起三种身份。</div>
 
     <h3 class="sec" id="l5-lab">定点问题</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createFixedPt" />
-      <div class="cap">图 L5 · <b>定点与定值</b>：橙色弦绕椭圆转（「扫弦」或拖 u），但所有弦都过金色定点 T，理论与实测读数同步变绿。滑 K：<strong>定点沿 x 轴滑过左顶点（<Katex tex="K\to 0^-" />）、中心（<Katex tex="K=-\tfrac{b^2}{a^2}" />，弦全是直径）、右焦点（<Katex tex="K=K^*" />）</strong>，右下角标签实时显示。</div>
-    </div>
+    <ConicFigure head="bottom" number="L5" title="保持斜率积，观察弦经过的定点" :factory="createFixedPt"
+      :legend="[['mint', '椭圆'], ['orange', '动弦'], ['gold', '定点 T', 'point']]">
+      橙色弦绕椭圆转（「扫弦」或拖 u），但所有弦都过金色定点 T，理论与实测读数同步变绿。滑 K：<strong>定点沿 x 轴滑过左顶点（<Katex tex="K\to 0^-" />）、中心（<Katex tex="K=-\tfrac{b^2}{a^2}" />，弦全是直径）、右焦点（<Katex tex="K=K^*" />）</strong>，右下角标签实时显示。
+    </ConicFigure>
 
     <h3 class="sec" id="l5-fix">定点：完整解法</h3>
     <p><strong>设线</strong>：把弦写成 <Katex tex="x=my+t" />（过点 <Katex tex="(t,\ 0)" />；m=1/k，竖直线由 m=0 自动覆盖 —— L2 的免退化技巧）。代入 <Katex tex="\tfrac{x^2}{a^2}+\tfrac{y^2}{b^2}=1" />：</p>
@@ -41,7 +41,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createFixedPt } from '../../../boards/conics/lines/fixedpt.js';
 import { LIN_CHAPTERS } from './linnav.js';

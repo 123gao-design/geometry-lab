@@ -1,6 +1,6 @@
 [package]
 name = "geometry-lab"
-version = "0.5.1"
+version = "0.5.2"
 description = "几何演示实验室（交互式高中数学演示站）的桌面壳"
 authors = ["123gao-design"]
 edition = "2021"

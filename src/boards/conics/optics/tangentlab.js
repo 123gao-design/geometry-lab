@@ -3,11 +3,12 @@
    椭圆  u²/a²+v²/b²=1   切线方向 (−a²v, b²u)   梯度 ∇F=(2u₀/a², 2v₀/b²)   切线 u·u₀/a²+v·v₀/b²=1
    双曲线 u²/a²−v²/b²=1   切线方向 ( a²v, b²u)   梯度 ∇F=(2u₀/a², −2v₀/b²)  切线 u·u₀/a²−v·v₀/b²=1
    抛物线 v²=2pu          切线方向 ( v₀, p)      梯度 ∇F=(−2p, 2v₀)        切线 v·v₀=p(u+u₀) */
-import { Board, mk, V, add, mul, norm, dist, fmt } from '../../../lib/board.js';
+import { mk, V, add, mul, norm, dist, fmt } from '../../../lib/board.js';
+import { createConicLab, plotInk } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 800, H = 480;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
   const st = { mode: 'e', cx: 400, cy: 250, a: 180, b: 112, p: 150, vx: 240, t: 0.8, s: 1, u: 120, normal: false, grad: false };
 
   const isE = () => st.mode === 'e', isH = () => st.mode === 'h', isP = () => st.mode === 'p';
@@ -49,56 +50,56 @@ export function createBoard(root) {
   B.renderFn = () => {
     const p = P(), u0 = p.x - (isP() ? st.vx : st.cx), v0 = p.y - st.cy;
     // 轴
-    B.seg(V(20, st.cy), V(W - 20, st.cy), { stroke: '#22314a', 'stroke-width': 1.5 });
-    B.seg(V(isP() ? st.vx : st.cx, 16), V(isP() ? st.vx : st.cx, H - 16), { stroke: '#22314a', 'stroke-width': 1.5 });
+    B.seg(V(20, st.cy), V(W - 20, st.cy), { stroke: plotInk.axis, 'stroke-width': 1.5 });
+    B.seg(V(isP() ? st.vx : st.cx, 16), V(isP() ? st.vx : st.cx, H - 16), { stroke: plotInk.axis, 'stroke-width': 1.5 });
     // 曲线
     if (isE()) {
       const pts = [];
       for (let t = -Math.PI; t <= Math.PI + 1e-9; t += 0.03)
         pts.push(`${(st.cx + st.a * Math.cos(t)).toFixed(1)},${(st.cy + st.b * Math.sin(t)).toFixed(1)}`);
-      mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 2.4 }, B.dyn);
+      mk('polyline', { points: pts.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 2.4 }, B.dyn);
       const c = Math.sqrt(st.a * st.a - st.b * st.b);
       for (const [f, nm] of [[V(st.cx - c, st.cy), 'F₁'], [V(st.cx + c, st.cy), 'F₂']]) {
-        B.dot(f, 5.5, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 1.8 });
-        B.text(V(f.x, f.y + 19), nm, { fill: '#ffd166', 'font-size': 12, 'font-weight': 700 });
+        B.dot(f, 5.5, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 1.8 });
+        B.text(V(f.x, f.y + 19), nm, { fill: plotInk.amber, 'font-size': 12, 'font-weight': 700 });
       }
       cR(`c=√(a²−b²)=${fmt(c, 1)}`);
     } else if (isH()) {
       for (const dir of [V(st.a, st.b), V(st.a, -st.b)])
-        B.inf(V(st.cx, st.cy), V(st.cx + dir.x, st.cy + dir.y), { stroke: '#3a4a63', 'stroke-width': 1.2, 'stroke-dasharray': '6 6' });
+        B.inf(V(st.cx, st.cy), V(st.cx + dir.x, st.cy + dir.y), { stroke: plotInk.rule, 'stroke-width': 1.2, 'stroke-dasharray': '6 6' });
       for (const s of [1, -1]) {
         const pts = [];
         for (let t = -1.35; t <= 1.35 + 1e-9; t += 0.03)
           pts.push(`${(st.cx + s * st.a / Math.cos(t)).toFixed(1)},${(st.cy + st.b * Math.tan(t)).toFixed(1)}`);
-        mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 2.4 }, B.dyn);
+        mk('polyline', { points: pts.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 2.4 }, B.dyn);
       }
       const c = Math.sqrt(st.a * st.a + st.b * st.b);
       for (const [f, nm] of [[V(st.cx - c, st.cy), 'F₁'], [V(st.cx + c, st.cy), 'F₂']]) {
-        B.dot(f, 5.5, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 1.8 });
-        B.text(V(f.x, f.y + 19), nm, { fill: '#ffd166', 'font-size': 12, 'font-weight': 700 });
+        B.dot(f, 5.5, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 1.8 });
+        B.text(V(f.x, f.y + 19), nm, { fill: plotInk.amber, 'font-size': 12, 'font-weight': 700 });
       }
       cR(`c=√(a²+b²)=${fmt(c, 1)}`);
     } else {
       const pts = [];
       for (let u = -220; u <= 220; u += 4) pts.push(`${(st.vx + u * u / (2 * st.p)).toFixed(1)},${(st.cy + u).toFixed(1)}`);
-      mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 2.4 }, B.dyn);
+      mk('polyline', { points: pts.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 2.4 }, B.dyn);
       const f = V(st.vx + st.p / 2, st.cy), lx = st.vx - st.p / 2;
-      B.seg(V(lx, 16), V(lx, H - 16), { stroke: '#67e8f9', 'stroke-width': 1.3, 'stroke-dasharray': '6 5' });
-      B.dot(f, 5.5, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 1.8 });
-      B.text(V(f.x, f.y + 19), 'F', { fill: '#ffd166', 'font-size': 12.5, 'font-weight': 700 });
+      B.seg(V(lx, 16), V(lx, H - 16), { stroke: plotInk.teal, 'stroke-width': 1.3, 'stroke-dasharray': '6 5' });
+      B.dot(f, 5.5, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 1.8 });
+      B.text(V(f.x, f.y + 19), 'F', { fill: plotInk.amber, 'font-size': 12.5, 'font-weight': 700 });
       cR(`p = ${fmt(st.p, 0)}，F = (${fmt(st.p / 2, 0)}, 0)`);
     }
     // 切线 / 法线（方向由模式决定，见文件头）
     const d = isE() ? V(-st.a * st.a * v0, st.b * st.b * u0)
       : isH() ? V(st.a * st.a * v0, st.b * st.b * u0)
         : V(v0, st.p);
-    B.inf(p, add(p, d), { stroke: '#fff', 'stroke-width': 2 });
+    B.inf(p, add(p, d), { stroke: plotInk.ink, 'stroke-width': 2 });
     if (st.normal) {
       const n = isE() ? V(st.b * st.b * u0, st.a * st.a * v0)
         : isH() ? V(st.b * st.b * u0, -st.a * st.a * v0)
           : V(st.p, -v0);
-      B.inf(p, add(p, n), { stroke: '#c084fc', 'stroke-width': 1.6, 'stroke-dasharray': '7 6' });
-      B.text(V(p.x + 30, p.y - 26), '法线', { fill: '#c084fc', 'font-size': 11.5 });
+      B.inf(p, add(p, n), { stroke: plotInk.violet, 'stroke-width': 1.6, 'stroke-dasharray': '7 6' });
+      B.text(V(p.x + 30, p.y - 26), '法线', { fill: plotInk.violet, 'font-size': 11.5 });
     }
     // 梯度 ∇F（等值线的法向）：F_x·(x−x₀) + F_y·(y−y₀) = 0 —— 切线方程的"线性化"来源
     if (st.grad) {
@@ -106,18 +107,17 @@ export function createBoard(root) {
         : isH() ? V(2 * u0 / (st.a * st.a), -2 * v0 / (st.b * st.b))
           : V(-2 * st.p, 2 * v0);
       const L = Math.hypot(g.x, g.y) || 1, n = V(g.x / L, g.y / L), tip = add(p, mul(n, 62));
-      B.seg(p, tip, { stroke: '#ffd166', 'stroke-width': 2.4 });
+      B.seg(p, tip, { stroke: plotInk.amber, 'stroke-width': 2.4 });
       const ha = Math.atan2(n.y, n.x);
       for (const da of [2.6, -2.6])
-        B.seg(tip, add(tip, mul(V(Math.cos(ha + da), Math.sin(ha + da)), 11)), { stroke: '#ffd166', 'stroke-width': 2.2 });
-      B.text(V(tip.x + n.x * 14, tip.y + n.y * 14 + 4), '∇F', { fill: '#ffd166', 'font-size': 12.5, 'font-weight': 700 });
+        B.seg(tip, add(tip, mul(V(Math.cos(ha + da), Math.sin(ha + da)), 11)), { stroke: plotInk.amber, 'stroke-width': 2.2 });
+      B.text(V(tip.x + n.x * 14, tip.y + n.y * 14 + 4), '∇F', { fill: plotInk.amber, 'font-size': 12.5, 'font-weight': 700 });
       const sy = isH() ? '−' : '+';
       if (isP()) cG(`(−2p, 2y₀) = (${fmt(-2 * st.p, 1)}, ${fmt(2 * v0, 1)})`, 'ok');
       else cG(`(2x₀/a², ${sy}2y₀/b²) = (${fmt(g.x, 4)}, ${fmt(g.y, 4)})`, 'ok');
     } else cG('打开「梯度 ∇F」开关');
-    B.text(V(p.x + 26, p.y - 10), '切线', { fill: '#fff', 'font-size': 11.5 });
-    B.dot(p, 6.5, { fill: '#67e8f9', stroke: '#fff', 'stroke-width': 2 });
-    B.text(V(p.x, p.y - 15), 'P', { fill: '#67e8f9', 'font-size': 13, 'font-weight': 700 });
+    B.text(V(p.x + 26, p.y - 10), '切线', { fill: plotInk.ink, 'font-size': 11.5 });
+    B.dot(p, 6.5, { fill: plotInk.teal, stroke: plotInk.ink, 'stroke-width': 2 });
     // 读数
     if (isE()) cEq(`${fmt(u0 / (st.a * st.a), 3)}·x + ${fmt(v0 / (st.b * st.b), 3)}·y = 1`, 'ok');
     else if (isH()) cEq(`${fmt(u0 / (st.a * st.a), 3)}·x − ${fmt(v0 / (st.b * st.b), 3)}·y = 1`, 'ok');
@@ -139,7 +139,7 @@ export function createBoard(root) {
         st.t = Math.max(-1.3, Math.min(1.3, Math.atan((q.y - st.cy) / st.b)));
       } else st.u = Math.max(-220, Math.min(220, q.y - st.cy));
     },
-    color: '#67e8f9', r: 9, label: 'P', lo: [10, -12],
+    color: plotInk.teal, r: 9, label: 'P', lo: [10, -12],
   });
 
   B.render();

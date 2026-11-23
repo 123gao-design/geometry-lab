@@ -1,11 +1,12 @@
 /* 图 D4 · 统一定义（第二定义）：|PF| / d(P, l) = e —— 一个滑块给出三种曲线
    焦点 F 为极点、轴向准线反方向时：r = e·d / (1 + e·cosθ)；
    e > 1 时分母有零点 → 另一支来自 r < 0 的方向（即 cosθ > 1/e 处 r = ed/(e·cosθ − 1)）。 */
-import { Board, mk, V, dist, fmt } from '../../../lib/board.js';
+import { mk, V, dist, fmt } from '../../../lib/board.js';
+import { createConicLab, plotInk } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 800, H = 500;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
   const F = V(330, 250), LX = 590, d = LX - F.x; // 焦点到准线的距离
   const st = { e: 0.55, t: 1.8, side: 0 };
 
@@ -52,21 +53,20 @@ export function createBoard(root) {
   B.renderFn = () => {
     const P = curP(), Q = V(LX, P.y);
     // 轴与准线
-    B.seg(V(20, F.y), V(W - 20, F.y), { stroke: '#22314a', 'stroke-width': 1.5 });
-    B.seg(V(LX, 18), V(LX, H - 18), { stroke: '#67e8f9', 'stroke-width': 1.8, 'stroke-dasharray': '8 6' });
-    B.text(V(LX, 32), '准线 l', { fill: '#67e8f9', 'font-size': 12.5 });
+    B.seg(V(20, F.y), V(W - 20, F.y), { stroke: plotInk.axis, 'stroke-width': 1.5 });
+    B.seg(V(LX, 18), V(LX, H - 18), { stroke: plotInk.teal, 'stroke-width': 1.8, 'stroke-dasharray': '8 6' });
+    B.text(V(LX, 32), '准线 l', { fill: plotInk.teal, 'font-size': 12.5 });
     // 曲线（可能多段多支）
     for (const path of [...traceSide(0), ...traceSide(1)])
-      if (path.length > 1) mk('polyline', { points: path.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 2.6 }, B.dyn);
+      if (path.length > 1) mk('polyline', { points: path.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 2.6 }, B.dyn);
     // 焦点
-    B.dot(F, 6, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 2 });
-    B.text(V(F.x, F.y + 20), 'F', { fill: '#ffd166', 'font-size': 13, 'font-weight': 700 });
+    B.dot(F, 6, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 2 });
+    B.text(V(F.x, F.y + 20), 'F', { fill: plotInk.amber, 'font-size': 13, 'font-weight': 700 });
     // P 与两条关键线段
-    B.seg(P, F, { stroke: '#ff9e4a', 'stroke-width': 2.4 });
-    B.seg(P, Q, { stroke: '#5cadff', 'stroke-width': 2.4 });
-    B.dot(Q, 4.5, { fill: '#5cadff' });
-    B.dot(P, 6.5, { fill: '#67e8f9', stroke: '#fff', 'stroke-width': 2 });
-    B.text(V(P.x, P.y - 14), 'P', { fill: '#67e8f9', 'font-size': 13, 'font-weight': 700 });
+    B.seg(P, F, { stroke: plotInk.copper, 'stroke-width': 2.4 });
+    B.seg(P, Q, { stroke: plotInk.blue, 'stroke-width': 2.4 });
+    B.dot(Q, 4.5, { fill: plotInk.blue });
+    B.dot(P, 6.5, { fill: plotInk.teal, stroke: plotInk.ink, 'stroke-width': 2 });
     const pf = dist(P, F), pq = Math.abs(LX - P.x);
     const tp = Math.abs(st.e - 1) < 0.005 ? '抛物线（e = 1）' : st.e < 1 ? '椭圆（e < 1）' : '双曲线（e > 1）';
     cType(`e = ${fmt(st.e, 2)} → ${tp}`);
@@ -89,7 +89,7 @@ export function createBoard(root) {
       if (cs.length > 1 && dist(cs[1].p, p) < dist(cs[0].p, p)) best = cs[1];
       st.t = t; st.side = best.side;
     },
-    color: '#67e8f9', r: 9, label: 'P', lo: [10, -12],
+    color: plotInk.teal, r: 9, label: 'P', lo: [10, -12],
   });
 
   B.render();

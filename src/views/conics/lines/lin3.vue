@@ -5,10 +5,10 @@
     <div class="note good"><strong>本讲主角</strong>：点 M 与椭圆 <Katex tex="\tfrac{u^2}{a^2}+\tfrac{v^2}{b^2}=1" /> 的位置关系由 <Katex tex="F(M)=\tfrac{u_0^2}{a^2}+\tfrac{v_0^2}{b^2}-1" /> 的符号直接判定：内（&lt;0）、上（=0）、外（&gt;0）；而 T1 的极线 <Katex tex="\tfrac{u u_0}{a^2}+\tfrac{v v_0}{b^2}=1" /> 随 M 一起走，在三种位置上分别有三种含义。</div>
 
     <h3 class="sec" id="l3-lab">点的内外与切线条数</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createPointPolar" />
-      <div class="cap">图 L3 · <b>点与圆锥曲线的位置关系</b>：拖 M 任意走。F(M) 的符号一秒分内外；M 在椭圆外时两条切线与<strong>切点弦</strong>自动现身 —— 切点弦的方程与金色极线逐字相同（La Hire）；把 M 放到曲线上，极线恰好塌成 <strong>M 处的切线</strong>；M 走进椭圆，切线消失、极线仍在。</div>
-    </div>
+    <ConicFigure head="bottom" number="L3" title="极点位置怎样改变实切线条数" :factory="createPointPolar"
+      :legend="[['mint', '椭圆'], ['gold', '极线'], ['orange', '拖动点 M', 'point']]">
+      拖 M 任意走。F(M) 的符号一秒分内外；M 在椭圆外时两条切线与<strong>切点弦</strong>自动现身 —— 切点弦的方程与金色极线逐字相同（La Hire）；把 M 放到曲线上，极线恰好塌成 <strong>M 处的切线</strong>；M 走进椭圆，切线消失、极线仍在。
+    </ConicFigure>
 
     <h3 class="sec" id="l3-judge">推导：点的内外与切线条数</h3>
     <p>过 M 作方向一族直线，每条按 L1 的判别式给交点数 —— 把这些 Δ 拼起来，结论浓缩成 F(M) 的符号：M 在外，存在两条实切线；在上，恰一条；在内，零条。判别式一览（L1）的「线对曲线」由此翻译成「点对曲线」：<strong>内外之判就是切线之数</strong>。这与 D4 的统一定义遥相呼应 —— e&gt;1 的轨道才够得着准线之外的世界。</p>
@@ -44,7 +44,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createPointPolar } from '../../../boards/conics/lines/pointpolar.js';
 import { LIN_CHAPTERS } from './linnav.js';

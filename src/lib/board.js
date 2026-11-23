@@ -516,6 +516,7 @@ export class Board {
     this.handles = []; this.renderFn = null; this._rafs = [];
     this.root = root;
     this._onAppearanceChange = opt?.onAppearanceChange;
+    this._preciseSliders = opt?.preciseSliders ?? false;
     this.svg = mk('svg', { viewBox: `0 0 ${w} ${h}`, style: `aspect-ratio:${w}/${h}` });
     root.appendChild(this.svg);
     const defs = mk('defs', {}, this.svg), uid = 'clip' + (Board.n = (Board.n || 0) + 1);
@@ -662,17 +663,23 @@ export class Board {
       bar.classList.toggle('out-l', pos === 'left');
       bar.classList.toggle('out-r', pos === 'right');
     }
-    const host = r.parentElement;
+    // 卡片框（.conic-figure）里的板：条再往上提一层，排到卡片外面——卡片边框只圈住画面与图注，
+    // 工具条不占卡片内的版面，也就不被那道框框住（照集合那几章的样子）
+    const fig = r.closest ? r.closest('.conic-figure') : null;
+    const frame = fig && fig.parentElement ? fig : null;
+    const host = frame ? frame.parentElement : r.parentElement;
     // 父容器是 flex / grid 时不多塞一个格子（会顶乱两栏排布）：退回板内顶部一条，样式照旧是 .out
     let flow = true;
     try {
       const dv = host && host.ownerDocument && host.ownerDocument.defaultView;
       flow = !dv || !/flex|grid/.test(dv.getComputedStyle(host).display || '');
     } catch (_) { flow = true; }
+    // 提层出来时给条挂个标记类：卡片自带 24px 上边距，不抵消的话条与卡片之间会空出一大截
+    if (bar.classList) bar.classList.toggle('out-fig', out && !this._floatMode && flow && !!frame);
     const want = out && !this._floatMode && flow && host ? host : r;
     const cur = bar.parentElement || bar.parent; // 无头测试的 mock 只记 parent
     if (cur === want) return;
-    if (want === host) host.insertBefore(bar, r);
+    if (want === host) host.insertBefore(bar, frame || r);
     else if (out) want.insertBefore(bar, want.firstChild || null); // 板内档也要排在最前：非 flex 容器靠 DOM 序
     else want.appendChild(bar);
   }
@@ -3680,9 +3687,10 @@ export class Board {
     return { set };
   }
   slider(label, min, max, step, val, fn, key) {
+    const digits = this._preciseSliders ? Math.max(1, String(step).split('.')[1]?.length ?? 0) : 1;
     const w = hEl('label', { class: 'slider' });
     const s = hEl('input', { type: 'range', min, max, step, value: val }); w.appendChild(s);
-    const t = hEl('span', {}, w); t.textContent = `${label} ${fmt(val, 1)}`;
+    const t = hEl('span', {}, w); t.textContent = `${label} ${fmt(val, digits)}`;
     // URL 键：默认取标签首个拉丁/希腊字母（θ→th 等），无字母则 p1/p2；同板冲突加序号；第 7 参可显式指定
     const base = () => key || sliderKey(label, this.sliders.length);
     let k = base();
@@ -3690,12 +3698,12 @@ export class Board {
     this._keys.add(k);
     this.sliders.push({ s, key: k, min, max, label });
     s.addEventListener('input', () => {
-      t.textContent = `${label} ${fmt(+s.value, 1)}`;
+      t.textContent = `${label} ${fmt(+s.value, digits)}`;
       fn(+s.value);
       scheduleQuerySync(); // 防抖后把整页滑块状态写进 hash query
     });
     // 程序化同步滑块 UI 与标签：不触发 fn、不把值读回（range 的 value 可能被浏览器按 step 整化）
-    s.sync = v => { s.value = v; t.textContent = `${label} ${fmt(+v, 1)}`; };
+    s.sync = v => { s.value = v; t.textContent = `${label} ${fmt(+v, digits)}`; };
     this.ctrl.appendChild(w); return s;
   }
   chip(label) { // 返回 update(text, cls)

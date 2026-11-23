@@ -3,10 +3,9 @@
     title="运算律：德摩根与分配" sub="恒等式的证明不必背图 —— 只需让元素逐一检验：「属于左式」与「属于右式」永远同成立或同不成立，恒等式就成立了。左右双面板各搭各的区域，八个元素逐一验证；顺便看清集合运算律与逻辑等价式是同一结构的两种表达。"
     :toc="[{ id: 'y3-elem', t: '元素观点：逐个核验' }, { id: 'y3-logic', t: '与逻辑的同构' }, { id: 'y3-pit', t: '穿过括号要翻转' }]">
     <div class="note good" id="y3-law"><strong>德摩根律</strong>：<Katex tex="\complement_U(A\cap B)=\complement_UA\cup\complement_UB" />、<Katex tex="\complement_U(A\cup B)=\complement_UA\cap\complement_UB" /> —— 补集穿过括号，∩∪ 互换。<strong>分配律</strong>：<Katex tex="A\cap(B\cup C)=(A\cap B)\cup(A\cap C)" />、<Katex tex="A\cup(B\cap C)=(A\cup B)\cap(A\cup C)" />（交对并、并对交都成立）。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createDM" />
-      <div class="cap">图 Y3 · <b>德摩根律与分配律</b>：左面板按定义直译搭区域、右面板按恒等式右端搭 —— 八个元素各自判属，两式同时命中、同时落空；四组恒等式（德摩根两式 + 分配律两式）逐组验收，🎲 随机撒点也拆不散这两种写法。</div>
-    </div>
+    <ConicFigure number="Y3" title="德摩根律与分配律" head="bottom" :factory="createDM">
+      左面板按定义直译搭区域、右面板按恒等式右端搭 —— 八个元素各自判属，两式同时命中、同时落空；四组恒等式（德摩根两式 + 分配律两式）逐组验收，🎲 随机撒点也拆不散这两种写法。
+    </ConicFigure>
 
     <h3 class="sec" id="y3-elem">元素观点：逐个核验</h3>
     <p>证明 <Katex tex="\complement_U(A\cap B)=\complement_UA\cup\complement_UB" /> 的标准动作只有一行：<strong>任取 x</strong> —— 左边说「x 在 U 内且不同时在 A、B 里」，右边说「x 在 U 内且不在 A，或在 U 内且不在 B」—— 「不同在 A、B」与「至少缺一边」一字不差，所以两边的元素清单完全一致，由外延性（X1 的 <Katex tex="A=B\iff"/> 互相包含）恒等式成立。图 Y3 把这套「逐个核验」做成双面板：左式按定义直译搭区域、右式按右端搭，八个元素两边各自判属 —— <strong>怎么搭不重要</strong>，命中清单永远相同（① 组 7 命中、② 组 3 命中、③ 组 2 命中、④ 组 3 命中）。点 🎲 随机撒点，左右照样同步 —— 因为恒等式的成立靠的是「任取 x」的推理，与这八个元素落在哪里无关。</p>
@@ -28,7 +27,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createDM } from '../../../boards/sets/ops/demorgan.js';
 import { Y_CHAPTERS } from './ynav.js';

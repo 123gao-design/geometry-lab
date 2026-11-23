@@ -8,10 +8,10 @@
     <Katex tex="(A,B;C,D)=\frac{[C,A][D,B]}{[C,B][D,A]}." display />
     <p>中心投影在这两条线的齐次坐标之间由一个可逆的 <Katex tex="2\times2" /> 矩阵表示。四个行列式各乘同一个因子，分子和分母里的因子恰好抵消。</p>
 
-    <ProjectiveFigure id="c2-exp" number="2" title="对照投影前后的交叉比" :factory="createBoard"
+    <ConicFigure head="bottom" id="c2-exp" number="2" title="对照投影前后的交叉比" :factory="createBoard"
       :legend="[['guide', '两条基线'], ['ink', '投影中心 S', 'point'], ['gold', 'D 与 D′', 'point']]">
       拖动 <Katex tex="S" /> 或下方直线的把手，比较两条线的读数。点「保持调和」后，<Katex tex="D" /> 会跟随 <Katex tex="C" />。点「令 C 为中点」可直接看到 <Katex tex="D" /> 在无穷远，而它的像 <Katex tex="D'" /> 可以是有限点。
-    </ProjectiveFigure>
+    </ConicFigure>
 
     <h3 class="sec" id="c2-harm">调和共轭的性质与证明</h3>
     <p>交叉比等于 −1 时，称四点构成<strong>调和点列</strong>。通常先固定基点 <Katex tex="A,B" />，再问 <Katex tex="C" /> 的调和共轭 <Katex tex="D" /> 在哪里。令 <Katex tex="A=0,\ B=1,\ C=t,\ D=s" />，把定义代入得到</p>
@@ -56,7 +56,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import ProjectiveFigure from '../../../components/ProjectiveFigure.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard } from '../../../boards/conics/projective/cross.js';
 </script>

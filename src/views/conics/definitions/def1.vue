@@ -4,10 +4,10 @@
     :toc="[{ id: 'd1-def', t: '第一定义与绳尺作图（图 D1）' }, { id: 'd1-deriv', t: '标准方程的推导' }, { id: 'd1-radius', t: '推论 · 焦半径公式' }, { id: 'd1-degen', t: '退化与边界情形' }]">
     <p>圆的定义只有一句话：到一个定点的距离等于定长。把这句话改动一处 —— 把<strong>一个定点</strong>换成<strong>两个定点</strong>，把<strong>距离</strong>换成<strong>距离之和</strong> —— 就得到了椭圆。这个改动有极强的作图直觉：把一根绳子的两端钉在 <Katex tex="F_1" />、<Katex tex="F_2" /> 两颗图钉上，用笔尖把绳子绷紧，转一圈，笔尖走过的曲线就是椭圆。绳长就是 <Katex tex="2a" />。</p>
     <div class="note good" id="d1-def"><strong>椭圆的第一定义</strong>：平面内到两个定点 <Katex tex="F_1" />、<Katex tex="F_2" /> 的距离之和为常数 <Katex tex="2a" />（要求 <Katex tex="2a>|F_1F_2|" />）的点 P 的轨迹，称为<strong>椭圆</strong> <span class="term">(ellipse)</span>。<Katex tex="F_1" />、<Katex tex="F_2" /> 称为<strong>焦点</strong>，<Katex tex="|F_1F_2| = 2c" /> 称为<strong>焦距</strong>；比值 <Katex tex="e = c/a" /> 称为<strong>离心率</strong>。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createEllDef" />
-      <div class="cap">图 D1 · <b>椭圆的第一定义</b>：拖动 P 沿椭圆滑动，蓝橙两段绳子长度此消彼长，底部长度条把它们首尾相接 —— 总长纹丝不动地等于 2a。滑块 a、c 重塑椭圆形状；点「绳尺作图」可看笔尖绷紧绳子扫出整条曲线的过程。c 越小椭圆越圆，c → a 时椭圆被拉成一根"针"。</div>
-    </div>
+    <ConicFigure head="bottom" number="D1" title="焦半径此消彼长，绳长保持不变" :factory="createEllDef"
+      :legend="[['mint', '椭圆'], ['blue', '到 F₁ 的距离'], ['orange', '到 F₂ 的距离']]">
+      拖动 P 沿椭圆滑动，蓝橙两段绳子长度此消彼长，底部长度条把它们首尾相接 —— 总长纹丝不动地等于 2a。滑块 a、c 重塑椭圆形状；点「绳尺作图」可看笔尖绷紧绳子扫出整条曲线的过程。c 越小椭圆越圆，c → a 时椭圆被拉成一根"针"。
+    </ConicFigure>
 
     <h3 class="sec" id="d1-deriv">标准方程的推导：两次平方，一次改名</h3>
     <p>几何定义要变成可用的工具，必须翻译成代数。取 <Katex tex="F_1F_2" /> 的中点为原点、<Katex tex="F_1F_2" /> 所在直线为 x 轴，则 <Katex tex="F_1(-c,\ 0)" />、<Katex tex="F_2(c,\ 0)" />。设 P(x, y)，第一定义写成：</p>
@@ -40,7 +40,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createEllDef } from '../../../boards/conics/definitions/elldef.js';
 import { DEF_CHAPTERS } from './defnav.js';

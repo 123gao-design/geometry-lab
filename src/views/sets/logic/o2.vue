@@ -3,10 +3,9 @@
     title="量词命题的否定：真假互补" sub="否定一个命题，就是把它的真假反过来 —— 所以否定式必须与原命题一真一假。对量词命题，这要求两件事同时做：量词翻转（∀ 换 ∃、∃ 换 ∀）、结论取反。只否结论而量词不动，写出来的式子在多数场合与原命题同真同假，根本不是否定。"
     :toc="[{ id: 'o2-law', t: '否定式：两行推导' }, { id: 'o2-iso', t: '与补集的同一结构' }, { id: 'o2-wrong', t: '误写剖析：量词不换' }, { id: 'o2-pit', t: '否定与取反面' }]">
     <div class="note good" id="o2-law"><strong>量词的否定对偶</strong>：<Katex tex="\neg(\forall x\in M,\ p(x))=\exists x\in M,\ \neg p(x)" />、<Katex tex="\neg(\exists x\in M,\ p(x))=\forall x\in M,\ \neg p(x)" /> —— 量词互换，结论取反。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createND" />
-      <div class="cap">图 O2 · <b>量词的否定</b>：上带是 p(x) 的满足情况、下带是 ¬p(x) 的 —— 两带逐点颜色互补；四个预设各给出原命题、否定式与误写三支的实时判定。看点：否定式永远与原命题一真一假，而量词没换的误写在红绿相间的带子上与原命题同真同假 —— 当场失去否定的资格。</div>
-    </div>
+    <ConicFigure number="O2" title="量词的否定" head="bottom" :factory="createND">
+      上带是 p(x) 的满足情况、下带是 ¬p(x) 的 —— 两带逐点颜色互补；四个预设各给出原命题、否定式与误写三支的实时判定。看点：否定式永远与原命题一真一假，而量词没换的误写在红绿相间的带子上与原命题同真同假 —— 当场失去否定的资格。
+    </ConicFigure>
 
     <h3 class="sec" id="o2-law">否定式：两行推导</h3>
     <p>「否定」的检验标准只有一条：<strong>一真一假</strong>。全称命题 <Katex tex="\forall x\in M,\ p(x)" /> 为假，意思是 M 内<strong>存在</strong>使 p 不成立的 x —— 逐字翻译就是 <Katex tex="\exists x\in M,\ \neg p(x)" />，这正是它的否定式；存在命题为假，意思是 M 内<strong>每一个</strong> x 都使 p 不成立，翻译得 <Katex tex="\forall x\in M,\ \neg p(x)" />。两条推导结构相同：命题为假的直接读法，就是否定式本身 —— 所以否定式与原命题真假必然相反。</p>
@@ -31,7 +30,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createND } from '../../../boards/sets/logic/negdual.js';
 import { O_CHAPTERS } from './onav.js';

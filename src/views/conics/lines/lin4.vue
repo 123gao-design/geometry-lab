@@ -5,10 +5,10 @@
     <div class="note good"><strong>本讲主角</strong>：曲线系。设曲线 <Katex tex="f(x,y)=0" /> 与 <Katex tex="g(x,y)=0" /> 交于若干点，则 <Katex tex="F_\lambda=f+\lambda g=0" />（<Katex tex="\lambda\in\mathbb R" />）是<strong>过它们全部公共点</strong>的二次曲线族：交点处 <Katex tex="f=g=0" />，代入得 <Katex tex="F_\lambda=0+\lambda\cdot 0=0" />，与 λ 无关 —— 一个参数白手起家，包下所有公共点。</div>
 
     <h3 class="sec" id="l4-lab">曲线系</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createPencil" />
-      <div class="cap">图 L4 · <b>曲线系</b>（三模式）：「过交点族」里全族曲线（实线+虚影）被固定在椭圆与直线的两个交点上，拖 <Katex tex="P_0" /> 看 <Katex tex="\lambda" /> 法一步定出金色成员；「共渐近线族」里 <Katex tex="\lambda" /> 扫过 0 时横竖开口对调（L1 第四态正是 <Katex tex="\lambda\to 0" /> 的极限）；「共焦点族」里 t 穿过 0 时椭圆连续变形为双曲线，两个红焦点纹丝不动。</div>
-    </div>
+    <ConicFigure head="bottom" number="L4" title="同一个方程族中保持不变的几何对象" :factory="createPencil"
+      :legend="[['mint', '当前成员'], ['gold', '经过指定点的成员'], ['guide', '其他成员', 'dashed']]">
+      （三模式）：「过交点族」里全族曲线（实线+虚影）被固定在椭圆与直线的两个交点上，拖 <Katex tex="P_0" /> 看 <Katex tex="\lambda" /> 法一步定出金色成员；「共渐近线族」里 <Katex tex="\lambda" /> 扫过 0 时横竖开口对调（L1 第四态正是 <Katex tex="\lambda\to 0" /> 的极限）；「共焦点族」里 t 穿过 0 时椭圆连续变形为双曲线，两个红焦点纹丝不动。
+    </ConicFigure>
 
     <h3 class="sec" id="l4-def">原理与 λ 法</h3>
     <p>反方向才是主要题型：<strong>已知曲线过某些点 / 满足某些相切条件，求这条曲线</strong>。标准步骤两步：<strong>① 设系</strong>，把已知的公共点全部代入 <Katex tex="F_\lambda=f+\lambda g" />（g 常取直线或直线对）；<strong>② 定 λ</strong>，把剩余条件代入 —— <Katex tex="F_\lambda(P_0)=0" /> 关于 λ 是<strong>一次方程</strong>，一步解出。</p>
@@ -37,7 +37,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createPencil } from '../../../boards/conics/lines/pencil.js';
 import { LIN_CHAPTERS } from './linnav.js';

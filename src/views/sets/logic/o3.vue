@@ -3,10 +3,9 @@
     title="四种命题：互为逆否" sub="把「若 p 则 q」的条件与结论交换、否定、又换又否，得到逆命题、否命题、逆否命题。四个命题两两配对：原命题与逆否命题永远同真假，逆命题与否命题永远同真假 —— 原因只有一个组合：p→q 唯一为假处是「p 真而 q 假」，逆否命题恰好倒在同一格。"
     :toc="[{ id: 'o3-four', t: '四种命题' }, { id: 'o3-proof', t: '逆否等价的证明' }, { id: 'o3-use', t: '应用：改证逆否' }, { id: 'o3-pit', t: '真假的错位' }]">
     <div class="note good" id="o3-law">原命题 <Katex tex="p\Rightarrow q" />、逆命题 <Katex tex="q\Rightarrow p" />、否命题 <Katex tex="\neg p\Rightarrow\neg q" />、逆否命题 <Katex tex="\neg q\Rightarrow\neg p" />。等价关系：<Katex tex="p\Rightarrow q\iff\neg q\Rightarrow\neg p" />、<Katex tex="q\Rightarrow p\iff\neg p\Rightarrow\neg q" /> —— 互为逆否，同真同假。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createCT" />
-      <div class="cap">图 O3 · <b>原命题与逆否命题</b>：左侧四种命题随预设即时判定真假、标出反例；右侧 2×2 组合格把「p、q 真假」的四种世界摆开，p→q 与逆否命题共享「p 真而 q 假」这一格。看点：拖探针换世界 —— 高亮格落进红格时，原命题与逆否命题同时为假；落不进，两式同时为真，无一例外。</div>
-    </div>
+    <ConicFigure number="O3" title="原命题与逆否命题" head="bottom" :factory="createCT">
+      左侧四种命题随预设即时判定真假、标出反例；右侧 2×2 组合格把「p、q 真假」的四种世界摆开，p→q 与逆否命题共享「p 真而 q 假」这一格。看点：拖探针换世界 —— 高亮格落进红格时，原命题与逆否命题同时为假；落不进，两式同时为真，无一例外。
+    </ConicFigure>
 
     <h3 class="sec" id="o3-four">四种命题</h3>
     <p>以 <Katex tex="p\Rightarrow q" /> 为原命题：把条件与结论<strong>交换</strong>得逆命题 <Katex tex="q\Rightarrow p" />；把两者<strong>都否定</strong>得否命题 <Katex tex="\neg p\Rightarrow\neg q" />；既交换又否定得逆否命题 <Katex tex="\neg q\Rightarrow\neg p" />。注意对象：这一套是围绕「若…则…」型命题的改写，与 O2 那种把真假反过来的「命题的否定」不是一回事。预设 ① <Katex tex="p:\ x>2,\ q:\ x>1" /> 四式中原命题与逆否命题为真，逆命题与否命题为假（x=1.5 是反例）；预设 ② <Katex tex="p:\ x^2>4,\ q:\ x>2" /> 恰好整体反过来 —— 两个预设合起来说明：四种命题的真假之间<strong>没有</strong>「一真带动」的关系，只有配对内部的等价。</p>
@@ -31,7 +30,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createCT } from '../../../boards/sets/logic/contra.js';
 import { O_CHAPTERS } from './onav.js';

@@ -5,10 +5,10 @@
     <p>"求动点的轨迹方程"是解析几何的典型题型。三类方法归结起来只有三问：<strong>动点被什么约束？</strong>约束可以直接写成距离（定义法）、可以继承自另一个动点（相关点法）、可以是两条动直线的交点（交轨法）。</p>
 
     <h3 class="sec" id="p2-lab">交轨法</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createLocusGen" />
-      <div class="cap">图 P2 · <b>交轨法求轨迹</b>：过 A(−a,0) 的蓝线与过 B(a,0) 的橙线，被约束 <Katex tex="k_1k_2=K" />（定值）拴在一起。拖动蓝线，交点 P 应声而动；按「生成轨迹」看 P 扫出整条曲线。切到双曲线模式，留意 k₁ 越过 <Katex tex="\pm\tfrac{b}{a}" /> 时两线平行 —— 那正是渐近线方向，P 从一支跳到另一支。</div>
-    </div>
+    <ConicFigure head="bottom" number="P2" title="由两条受约束的直线生成轨迹" :factory="createLocusGen"
+      :legend="[['blue', '过 A 的直线'], ['orange', '过 B 的直线'], ['gold', '交点', 'point']]">
+      过 A(−a,0) 的蓝线与过 B(a,0) 的橙线，被约束 <Katex tex="k_1k_2=K" />（定值）拴在一起。拖动蓝线，交点 P 应声而动；按「生成轨迹」看 P 扫出整条曲线。切到双曲线模式，留意 k₁ 越过 <Katex tex="\pm\tfrac{b}{a}" /> 时两线平行 —— 那正是渐近线方向，P 从一支跳到另一支。
+    </ConicFigure>
 
     <h3 class="sec" id="p2-cross">交轨法：两行推导</h3>
     <p>设 P(x, y)，两条线的斜率直接写出来再相乘：</p>
@@ -31,7 +31,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createLocusGen } from '../../../boards/conics/locus/locusgen.js';
 import { PAR_CHAPTERS } from './parnav.js';

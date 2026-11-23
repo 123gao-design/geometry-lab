@@ -5,10 +5,10 @@
     <div class="note good"><strong>蒙日圆定理</strong>：椭圆 <Katex tex="\tfrac{x^2}{a^2}+\tfrac{y^2}{b^2}=1" /> 的两条<strong>互相垂直</strong>的切线，其交点 M 的轨迹是圆 <Katex tex="x^2+y^2=a^2+b^2" />（半径 <Katex tex="\sqrt{a^2+b^2}&gt;a" />，与椭圆同心）。反之，该圆上每一点恰好向椭圆发出一对垂直切线。</div>
 
     <h3 class="sec" id="p5-lab">蒙日圆</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createMonge" />
-      <div class="cap">图 P5 · <b>蒙日圆</b>：拖 M 任意走 —— 两条切线由极线（切点弦）现场求出。把 M 拖到金色圆上：两切线恰好成直角，右角标记现身，<strong>两块读数同时变绿</strong>；按「巡游」让 M 贴圆走一整圈，垂直关系纹丝不动。</div>
-    </div>
+    <ConicFigure head="bottom" number="P5" title="拖动切线交点，寻找直角出现的轨迹" :factory="createMonge"
+      :legend="[['mint', '椭圆'], ['gold', '蒙日圆', 'dashed'], ['orange', '两条切线']]">
+      拖 M 任意走 —— 两条切线由极线（切点弦）现场求出。把 M 拖到金色圆上：两切线恰好成直角，右角标记现身，<strong>两块读数同时变绿</strong>；按「巡游」让 M 贴圆走一整圈，垂直关系纹丝不动。
+    </ConicFigure>
 
     <h3 class="sec" id="p5-der">推导：六行代数</h3>
     <p>全部工具来自 T1 切线速查表（L1 判别式给出的那条）：斜率为 k 的切线满足 <Katex tex="m^2=a^2k^2+b^2" />。设两条垂直切线的斜率为 <Katex tex="k" /> 与 <Katex tex="-\tfrac{1}{k}" />：</p>
@@ -36,7 +36,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createMonge } from '../../../boards/conics/locus/monge.js';
 import { PAR_CHAPTERS } from './parnav.js';

@@ -5,10 +5,10 @@
     <div class="note good"><strong>圆的垂径定理</strong>：一族平行弦的中点，全都落在一条过圆心、且与弦垂直的直径上（圆心与弦中点的连线垂直于弦）。椭圆没有"垂直"了 —— 但下面的画板会告诉你，"中点共线、斜率乘积定值"这部分原封不动地活着。</div>
 
     <h3 class="sec" id="a2-lab">平行弦的中点</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createChordMid" />
-      <div class="cap">图 A2 · <b>平行弦的中点与点差法</b>：红色是椭圆的一族平行弦（转 α 滑块换方向），金色中点严格排成一条过中心的直线 —— 共轭直径。虚线圆是"压扁前"的对照：那里中点直径与弦垂直（灰色的直角标记），压扁后只剩斜率乘积 <Katex tex="k_{\text{弦}}\cdot k_{\text{径}}=-\tfrac{b^2}{a^2}" />。「扫描一条弦」看中点沿直径爬行。</div>
-    </div>
+    <ConicFigure head="bottom" number="A2" title="平行弦中点如何排成一条直线" :factory="createChordMid"
+      :legend="[['pink', '平行弦'], ['gold', '中点轨迹', 'dashed'], ['blue', '圆的对照', 'dashed']]">
+      红色是椭圆的一族平行弦（转 α 滑块换方向），金色中点严格排成一条过中心的直线 —— 共轭直径。虚线圆是"压扁前"的对照：那里中点直径与弦垂直（灰色的直角标记），压扁后只剩斜率乘积 <Katex tex="k_{\text{弦}}\cdot k_{\text{径}}=-\tfrac{b^2}{a^2}" />。「扫描一条弦」看中点沿直径爬行。
+    </ConicFigure>
     <p>读数区是本讲的心脏：圆的世界里乘积恒为 −1（垂直），压扁后恒为 <Katex tex="-\tfrac{b^2}{a^2}" /> —— 与 D5 第三定义里的数一模一样。这不是巧合，是同一条定理。</p>
 
     <h3 class="sec" id="a2-der">点差法：两行推导</h3>
@@ -42,7 +42,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createChordMid } from '../../../boards/conics/affine/chordmid.js';
 import { AFF_CHAPTERS } from './affnav.js';

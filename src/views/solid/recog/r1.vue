@@ -6,10 +6,9 @@
     <div class="note good">由若干个平面多边形围成的几何体叫做<strong>多面体</strong>。围成多面体的各个多边形叫做多面体的<strong>面</strong>，相邻两个面的公共边叫做多面体的<strong>棱</strong>，棱与棱的公共端点叫做多面体的<strong>顶点</strong>。把多面体的任何一个面伸展为平面，如果所有其他各面都在这个平面的同侧，这样的多面体叫做<strong>凸多面体</strong>；中学讨论的立体图形都是凸多面体。</div>
 
     <h3 class="sec" id="r1-def">面、棱、顶点</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createPolyhedronLab" />
-      <div class="cap">图 体1 · <b>多面体的面、棱与顶点</b>：五档切换三棱柱、长方体、三棱锥、四棱锥与四棱台，每个面一种颜色、带透明，前后两面能同时看见。看点：在画面上按住拖动即可转动视角，转到背面时原本被挡住的棱露出来；徽章始终读出顶点数、棱数与面数，并把三个数代进欧拉公式核验。</div>
-    </div>
+    <ConicFigure number="体1" title="多面体的面、棱与顶点" head="bottom" :factory="createPolyhedronLab">
+      五档切换三棱柱、长方体、三棱锥、四棱锥与四棱台，每个面一种颜色、带透明，前后两面能同时看见。看点：在画面上按住拖动即可转动视角，转到背面时原本被挡住的棱露出来；徽章始终读出顶点数、棱数与面数，并把三个数代进欧拉公式核验。
+    </ConicFigure>
     <p>多面体是空心的「壳」，它的形状由面的清单决定。同一条棱由两个面共有，数棱时不能重复计数；每个顶点至少聚着三条棱，三个顶点确定一个面之外的空间位置。把这三类对象数清楚，就抓住了多面体的全部组合信息。</p>
     <p>与平面图形不同，立体图形的形状不能只靠一张图说清：图中虚线表示被挡住的棱，实线表示能看见的棱，这个约定在三维旋转后会失效，因此本课程把每条棱都画成实线，用半透明的面把前后关系交代出来。</p>
 
@@ -44,7 +43,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createPolyhedronLab } from '../../../boards/solid/recog/polyhedronlab.js';
 import { SR_CHAPTERS } from './rnav.js';

@@ -5,10 +5,10 @@
     <div class="note good"><strong>本讲主角</strong>：竖直伸缩变换 <Katex tex="T_k:\ (x,\,y)\mapsto(x,\ k\,y)" />（<Katex tex="k>0" />）。它把每个点竖直方向按比例 k 挪动，水平不动。取 <Katex tex="k=\tfrac{b}{a}" />，它把圆 <Katex tex="x^2+y^2=a^2" /> 压成椭圆 <Katex tex="\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1" /> —— 椭圆不过是"拍了张被压扁的圆的照片"。</div>
 
     <h3 class="sec" id="a1-lab">伸缩变换</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createStretch" />
-      <div class="cap">图 A1 · <b>伸缩变换</b>：左侧圆及其切线，右侧是压缩后的像。拖动圆上的 Q（或按「同步扫描」），像点 <Katex tex="Q'" /> 与像切线同步运动 —— 注意读数区：圆切线方程里把 <Katex tex="\sin\theta" /> 换成 <Katex tex="\sin\theta/k" />，就逐字得到椭圆切线方程。k 拖到 1 时两个世界完全重合。</div>
-    </div>
+    <ConicFigure head="bottom" number="A1" title="同一切点与切线的伸缩前后" :factory="createStretch"
+      :legend="[['blue', '圆与原点位'], ['mint', '椭圆与像点'], ['orange', '纵向位移', 'dashed'], ['ink', '切线']]">
+      左侧圆及其切线，右侧是压缩后的像。拖动圆上的 Q（或按「同步扫描」），像点 <Katex tex="Q'" /> 与像切线同步运动 —— 注意读数区：圆切线方程里把 <Katex tex="\sin\theta" /> 换成 <Katex tex="\sin\theta/k" />，就逐字得到椭圆切线方程。k 拖到 1 时两个世界完全重合。
+    </ConicFigure>
     <p>这里值得注意的一点：<strong>切线变成切线</strong>。圆的切线只与椭圆碰一下（相切），压扁后这条直线的像也只与椭圆的像碰一下 —— "只碰一下"这件事没有被压扁破坏。</p>
 
     <h3 class="sec" id="a1-der">推导：圆的像与切线的像</h3>
@@ -37,7 +37,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createStretch } from '../../../boards/conics/affine/stretch.js';
 import { AFF_CHAPTERS } from './affnav.js';

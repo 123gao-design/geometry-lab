@@ -3,10 +3,9 @@
     title="数轴上的运算：解集实战" sub="不等式的解是区间，区间是集合 —— 于是「解不等式组」就是「对集合做交并补」。上下双轴实时核验：交取公共、并取覆盖、补挖两端；端点的实心与空心由「能不能取等」决定，四端开关一拨，开闭规则直接现形。"
     :toc="[{ id: 'y4-real', t: '解集：区间的集合身份' }, { id: 'y4-gap', t: '断口判据与端点开闭' }, { id: 'y4-pit', t: '取等与书写' }]">
     <div class="note good" id="y4-law"><strong>区间即集合</strong>：<Katex tex="[a,b)=\{x\mid a\le x<b\}" />，闭端实心（取得到）、开端空心（取不到）。<strong>运算口诀</strong>：交取公共 —— 两端各取靠内端、同点重合时「开优先」；并取覆盖 —— 重叠或闭端相触即连成一段，<strong>两端都开</strong>的触点才留断口；补 = 在 U 里挖去 A，剩余各段端点开闭对调（闭变开、开变闭）。<strong>不等式组</strong>的解集 = 各不等式解集的交集。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createAxis" />
-      <div class="cap">图 Y4 · <b>数轴上的区间运算</b>：上轴摆 A=[−3.5, 1.5)、B=(0.5, 4]，四个把手拖位置、四个开关切端点开闭 —— 下轴实时输出 A∩B / A∪B / ∁U A；金探针 x 顺带验证「这一点在不在结果里」，断口只在两端都开时留下。</div>
-    </div>
+    <ConicFigure number="Y4" title="数轴上的区间运算" head="bottom" :factory="createAxis">
+      上轴摆 A=[−3.5, 1.5)、B=(0.5, 4]，四个把手拖位置、四个开关切端点开闭 —— 下轴实时输出 A∩B / A∪B / ∁U A；金探针 x 顺带验证「这一点在不在结果里」，断口只在两端都开时留下。
+    </ConicFigure>
 
     <h3 class="sec" id="y4-real">解集：区间的集合身份</h3>
     <p>解不等式 <Katex tex="-2\le x<3" />，答案的规范写法是集合（J2 的描述法）： <Katex tex="\{x\mid -2\le x<3\}" />，配上区间记号 <Katex tex="[-2,3)" />、再配上数轴图示（−2 实心、3 空心）—— 三种语言说同一件事。而<strong>不等式组</strong>的实质是交集：组里每个不等式各交出自己的解集，全部同时成立，就是取交 —— 图 Y4 上轴的 A、B 各记一个不等式的功劳，下轴 ∩ 挡输出 <Katex tex="(0.5,\,1.5)" />，正是「既要又要」留下的公共段。反之，「解为 <Katex tex="A\cup B" />」的题面常藏在<strong>绝对值</strong>或<strong>平方式</strong>背后：<Katex tex="|x|>1" /> 的解集 <Katex tex="(-\infty,-1)\cup(1,+\infty)" /> 是两段的并 —— E8 的绝对值家族正是 ∪ 的最大客户。</p>
@@ -28,7 +27,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createAxis } from '../../../boards/sets/ops/axisops.js';
 import { Y_CHAPTERS } from './ynav.js';
