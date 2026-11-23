@@ -48,7 +48,7 @@ function obstacle(node) {
 
 export class FunctionBoard extends Board {
   constructor(root, w, h) {
-    super(root, w, h);
+    super(root, w, h, { preciseSliders: true });
     root.classList.add('fn-board');
     this._notes = [];
     this._labels = [];

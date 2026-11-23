@@ -1,15 +1,15 @@
 <template>
   <ChPage :cur="2" no="T2" base="/conics/opt" :chapters="OPT_CHAPTERS"
     title="椭圆的光学性质：聚光" sub="从一个焦点射出的光，经椭圆反射后必过另一个焦点 —— 切线平分焦半径的外角。"
-    :toc="[{ id: 't2-st', t: '定理陈述' }, { id: 't2-lab', t: '聚光机实验（图 T2）' }, { id: 't2-proof', t: '证明 · 外角平分线' }, { id: 't2-app', t: '费马原理与应用' }]">
+    :toc="[{ id: 't2-st', t: '定理陈述' }, { id: 't2-lab', t: '聚光的反射性质（图 T2）' }, { id: 't2-proof', t: '证明 · 外角平分线' }, { id: 't2-app', t: '费马原理与应用' }]">
     <div class="note good" id="t2-st"><strong>椭圆的光学性质</strong>：从椭圆一个焦点发出的光线，经椭圆反射后，必经过另一个焦点。等价的几何陈述：<strong>切线平分两焦半径所成角的外角</strong>（因而法线平分内角 <Katex tex="\angle F_1PF_2" />）。</div>
 
-    <h3 class="sec" id="t2-lab">聚光机实验</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createEllRefl" />
-      <div class="cap">图 T2 · <b>椭圆的光学性质</b>：黄色光脉冲从 <Katex tex="F_1" /> 出发，打到曲面上的 P 后折向 <Katex tex="F_2" /> —— 拖动 P，折点随便选，光路永远 <Katex tex="F_1 \to P \to F_2" />。两段金色圆弧标出入射角与反射角（都相对切线度量），读数恒相等；光程一栏始终是 <Katex tex="2a" />。</div>
-    </div>
-    <p>把这个实验倒过来听：因为无论 P 在哪，光程 <Katex tex="|F_1P| + |PF_2|" /> 都等于 <Katex tex="2a" />，光"走哪条路都一样耗时" —— 反射点便可以取遍整个椭圆。这正是下面证明的物理直觉，也是"椭圆台球桌"的规则：从一个焦点开杆的球，无论往哪打，一次反弹后必进另一个焦点。</p>
+    <h3 class="sec" id="t2-lab">聚光的反射性质</h3>
+    <ConicFigure head="bottom" number="T2" title="沿椭圆反射的两段光路" :factory="createEllRefl"
+      :legend="[['mint', '椭圆'], ['orange', '入射光'], ['green', '反射光'], ['ink', '切线']]">
+      黄色光脉冲从 <Katex tex="F_1" /> 出发，打到曲面上的 P 后折向 <Katex tex="F_2" /> —— 拖动 P，折点随便选，光路永远 <Katex tex="F_1 \to P \to F_2" />。两段金色圆弧标出入射角与反射角（都相对切线度量），读数恒相等；光程一栏始终是 <Katex tex="2a" />。
+    </ConicFigure>
+    <p>把这个结论倒过来看：因为无论 P 在哪，光程 <Katex tex="|F_1P| + |PF_2|" /> 都等于 <Katex tex="2a" />，光"走哪条路都一样耗时" —— 反射点便可以取遍整个椭圆。这正是下面证明的物理直觉，也是"椭圆台球桌"的规则：从一个焦点开杆的球，无论往哪打，一次反弹后必进另一个焦点。</p>
 
     <h3 class="sec" id="t2-proof">证明：切线是外角平分线（角平分线定理的逆定理）</h3>
     <p>设 <Katex tex="P(x_0,\ y_0)" /> 在椭圆上，切线 <Katex tex="\frac{xx_0}{a^2}+\frac{yy_0}{b^2}=1" /> 与 x 轴的交点记为 T。令 <Katex tex="y = 0" /> 解得</p>
@@ -32,7 +32,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createEllRefl } from '../../../boards/conics/optics/ellrefl.js';
 import { OPT_CHAPTERS } from './optnav.js';

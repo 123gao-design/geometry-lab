@@ -2,8 +2,8 @@
   <div>
     <div class="chapter-head">
       <h1>定理速查总览</h1>
-      <p class="sub">把二十三个模块 376 条的核心结论收进一张总表：每张卡片一条定理/判据 + 一句话用法，点进去看完整推导、易错点与实验台 —— 考前最后一遍复习用 Ctrl+P 打印（公式保留、控件不印）。</p>
-      <div class="readall">二十三个模块 · 106 小节 · 376 条（集合与常用逻辑 12 + 函数与微积分初步 35 + 不等式 15 + 三角与三角形 23 + 向量与复数 17 + 数列 20 + 直线与圆 13 + 极坐标与参数方程 9 + 圆锥曲线 32 + 立体几何 10 + 组合与二项式 9 + 概率与统计 18 + 数值计算 10 + 线性代数初步 14 + 一元函数微积分 33 + 空间解析几何 12 + 多元函数微积分 18 + 复变函数 12 + 初等数论 13 + 拓扑学基础 12 + 分形几何 11 + 高等几何（射影几何） 11 + 抽象代数 17）</div>
+      <p class="sub">把二十三个模块 377 条的核心结论收进一张总表：每张卡片一条定理/判据 + 一句话用法，点进去看完整推导、易错点与实验台 —— 考前最后一遍复习用 Ctrl+P 打印（公式保留、控件不印）。</p>
+      <div class="readall">二十三个模块 · 106 小节 · 377 条（集合与常用逻辑 12 + 函数与微积分初步 35 + 不等式 15 + 三角与三角形 23 + 向量与复数 17 + 数列 20 + 直线与圆 13 + 极坐标与参数方程 9 + 圆锥曲线 33 + 立体几何 10 + 组合与二项式 9 + 概率与统计 18 + 数值计算 10 + 线性代数初步 14 + 一元函数微积分 33 + 空间解析几何 12 + 多元函数微积分 18 + 复变函数 12 + 初等数论 13 + 拓扑学基础 12 + 分形几何 11 + 高等几何（射影几何） 11 + 抽象代数 17）</div>
     </div>
 
     <h3 class="sec">集合与常用逻辑 · 一 集合的语言</h3>
@@ -101,18 +101,7 @@
       <router-link class="topic-card" to="/trig/k2"><span class="tag">K2</span><h3>建模与最值</h3><p class="fx"><Katex tex="a\sin x+b\cos x+k\in[k-R,\ k+R],\quad R=\sqrt{a^2+b^2}" /></p><p>建模四步：T 两峰距、A 峰谷差半、k 峰谷平均、x₀ 升段零点；辅助角最值 R 管峰高；有界换元与定义域截断先查界再谈极值。</p></router-link>
     </div>
 
-    <h3 class="sec">圆锥曲线 · 一 极点极线与配极理论</h3>
-    <div class="topic-grid">
-      <router-link class="topic-card" to="/conics/ch1"><span class="tag">一1</span><h3>消点：盯住不变量</h3><p class="fx"><Katex tex="(A,B;C,D)=\dfrac{CA}{CB}\div\dfrac{DA}{DB}" /></p><p>交叉比在中心投影下不变 —— 复杂构图消成简单构图再核验。</p></router-link>
-      <router-link class="topic-card" to="/conics/ch2"><span class="tag">一2</span><h3>交叉比与调和点列</h3><p class="fx"><Katex tex="(A,B;C,D)=-1" /></p><p>＝−1 即调和 —— 内外分点、极点极线的度量判据。</p></router-link>
-      <router-link class="topic-card" to="/conics/ch3"><span class="tag">一3</span><h3>完全四点形</h3><p class="fx"><Katex tex="\text{对边三角形 = 自极三角形}" /></p><p>纯射影的配极构造 —— 不依赖任何度量也能定极线。</p></router-link>
-      <router-link class="topic-card" to="/conics/ch4"><span class="tag">一4</span><h3>极点与极线</h3><p class="fx"><Katex tex="\overrightarrow{OP}\cdot\overrightarrow{OQ}=R^2" /></p><p>圆的情形：Q 沿 P 的极线 —— 极线⊥OP，距离倒数记录。</p></router-link>
-      <router-link class="topic-card" to="/conics/ch5"><span class="tag">一5</span><h3>La Hire 互易</h3><p class="fx"><Katex tex="P\in q\iff Q\in p" /></p><p>P 在 Q 的极线上 <Katex tex="\iff"/> Q 在 P 的极线上 —— 作图互逆引擎。</p></router-link>
-      <router-link class="topic-card" to="/conics/ch6"><span class="tag">一6</span><h3>Pascal 与 Brianchon</h3><p class="fx"><Katex tex="\text{六点对边交点共线}" /></p><p>Pascal（六点）与 Brianchon（六切线）互为对偶 —— 退化态出中点弦、切线族。</p></router-link>
-      <router-link class="topic-card" to="/conics/ch7"><span class="tag">一7</span><h3>总结与延伸</h3><p>从交叉比到极线的完整链路 —— 度量性质如何挂在射影骨架上。</p></router-link>
-    </div>
-
-    <h3 class="sec">圆锥曲线 · 二 定义与标准方程</h3>
+    <h3 class="sec">圆锥曲线 · 一 定义与标准方程</h3>
     <div class="topic-grid">
       <router-link class="topic-card" to="/conics/def1"><span class="tag">D1</span><h3>椭圆第一定义</h3><p class="fx"><Katex tex="|PF_1|+|PF_2|=2a\ (2a>2c)" /></p><p>到两定点距离之和为定长 —— a&gt;b&gt;0 的来源。</p></router-link>
       <router-link class="topic-card" to="/conics/def2"><span class="tag">D2</span><h3>双曲线第一定义</h3><p class="fx"><Katex tex="\bigl||PF_1|-|PF_2|\bigr|=2a\ (2a<2c)" /></p><p>距离之差的绝对值 —— 两支的来历、渐近线的背景。</p></router-link>
@@ -121,7 +110,7 @@
       <router-link class="topic-card" to="/conics/def5"><span class="tag">D5</span><h3>第三定义（斜率积）</h3><p class="fx"><Katex tex="k_1k_2=-\dfrac{b^2}{a^2}" /></p><p>中心对称两点连线斜率恒定 —— 中点弦的关键；双曲线取 <Katex tex="+\dfrac{b^2}{a^2}"/>。</p></router-link>
     </div>
 
-    <h3 class="sec">圆锥曲线 · 三 光学性质与切线</h3>
+    <h3 class="sec">圆锥曲线 · 二 光学性质与切线</h3>
     <div class="topic-grid">
       <router-link class="topic-card" to="/conics/opt1"><span class="tag">T1</span><h3>切线四法</h3><p class="fx"><Katex tex="\text{判别式、求导、梯度、极线}" /></p><p>同一条切线四种求法 —— 按场合选用，极线最省力。</p></router-link>
       <router-link class="topic-card" to="/conics/opt2"><span class="tag">T2</span><h3>椭圆聚光</h3><p class="fx"><Katex tex="\angle F_1PT=\angle F_2PT" /></p><p>切线与两焦半径成等角 —— 一焦点进光必聚另一焦点。</p></router-link>
@@ -129,7 +118,7 @@
       <router-link class="topic-card" to="/conics/opt4"><span class="tag">T4</span><h3>双曲线虚焦点</h3><p class="fx"><Katex tex="\text{切线外平分}\ \angle F_1PF_2" /></p><p>反射光发散、延长线似出自另一支的「虚」焦点 —— 与聚光对偶。</p></router-link>
     </div>
 
-    <h3 class="sec">圆锥曲线 · 四 仿射变换</h3>
+    <h3 class="sec">圆锥曲线 · 三 仿射变换</h3>
     <div class="topic-grid">
       <router-link class="topic-card" to="/conics/aff1"><span class="tag">A1</span><h3>伸缩不变量</h3><p class="fx"><Katex tex="\text{平行、分点比、面积比不变}" /></p><p>单位圆压成椭圆：共线、相切、中点比全部保持不变。</p></router-link>
       <router-link class="topic-card" to="/conics/aff2"><span class="tag">A2</span><h3>点差法</h3><p class="fx"><Katex tex="k_{AB}\cdot k_{OM}=-\dfrac{b^2}{a^2}" /></p><p>中点弦斜率与中心连线斜率之积恒定 —— 只给必要条件。</p></router-link>
@@ -139,22 +128,34 @@
       <router-link class="topic-card" to="/conics/aff6"><span class="tag">A6</span><h3>一般二次方程</h3><p class="fx"><Katex tex="\lambda_\pm=\dfrac{(A+C)\pm\sqrt{(A-C)^2+4B^2}}{2}" /></p><p>特征值定主轴 —— 二次曲线家族=圆/椭圆/双曲线/抛物线（含退化）。</p></router-link>
     </div>
 
-    <h3 class="sec">圆锥曲线 · 五 参数方程与轨迹</h3>
+    <h3 class="sec">圆锥曲线 · 四 参数方程与轨迹</h3>
     <div class="topic-grid">
       <router-link class="topic-card" to="/conics/par1"><span class="tag">P1</span><h3>三曲线参数</h3><p class="fx"><Katex tex="x=a\cos\varphi,\ y=b\sin\varphi" /></p><p>离心角 φ ≠ 几何角 —— 参数是辅助圆上的时钟。</p></router-link>
       <router-link class="topic-card" to="/conics/par2"><span class="tag">P2</span><h3>交轨法与包络</h3><p>动直线族消参数得包络 —— 轨迹题的标准流程。</p></router-link>
-      <router-link class="topic-card" to="/conics/par3"><span class="tag">P3</span><h3>焦点弦</h3><p class="fx"><Katex tex="l=\dfrac{2ep}{1-e^2\cos^2\theta}" /></p><p>θ 垂直轴最短（通径 2ep）、沿轴最长 —— 三曲线一张公式。</p></router-link>
+      <router-link class="topic-card" to="/conics/par3"><span class="tag">P3</span><h3>焦点弦</h3><p class="fx"><Katex tex="l=\dfrac{2ed}{|1-e^2\cos^2\theta|}" /></p><p>d 为焦准距。焦点在两端之间时，通径 2ed 最短；双曲线异支弦需取绝对值。</p></router-link>
       <router-link class="topic-card" to="/conics/par4"><span class="tag">P4</span><h3>极坐标方程</h3><p class="fx"><Katex tex="\rho=\dfrac{ed}{1-e\cos\theta}" /></p><p>焦点作极点 —— 三个 e 一张图，三曲线统一名称。</p></router-link>
       <router-link class="topic-card" to="/conics/par5"><span class="tag">P5</span><h3>蒙日圆</h3><p class="fx"><Katex tex="x^2+y^2=a^2+b^2" /></p><p>两垂直切线交点的轨迹 —— 双曲线改 <Katex tex="a^2-b^2"/>（<Katex tex="|a|>|b|"/> 时成圆）。</p></router-link>
     </div>
 
-    <h3 class="sec">圆锥曲线 · 六 直线与圆锥曲线</h3>
+    <h3 class="sec">圆锥曲线 · 五 直线与圆锥曲线</h3>
     <div class="topic-grid">
       <router-link class="topic-card" to="/conics/lin1"><span class="tag">L1</span><h3>判别式一览与第四态</h3><p class="fx"><Katex tex="\text{二次项系数}=0\Rightarrow\text{一交非切}" /></p><p>Δ&gt;0 两交、=0 相切、&lt;0 无交；与渐近线平行降为一次 —— 第四态。</p></router-link>
       <router-link class="topic-card" to="/conics/lin2"><span class="tag">L2</span><h3>弦长公式</h3><p class="fx"><Katex tex="|AB|=\sqrt{1+k^2}\cdot\dfrac{\sqrt{\Delta}}{|a|}" /></p><p>联立、韦达、弦长三步 —— 竖弦用 Δ 直接给 <Katex tex="\dfrac{b^2\Delta}{|a|}"/>。</p></router-link>
       <router-link class="topic-card" to="/conics/lin3"><span class="tag">L3</span><h3>点位与极线三身份</h3><p class="fx"><Katex tex="\dfrac{x_0x}{a^2}\pm\dfrac{y_0y}{b^2}=1" /></p><p>点在曲线上=切线、在外=切点弦、在内=虚轨迹 —— 一套代数式。</p></router-link>
       <router-link class="topic-card" to="/conics/lin4"><span class="tag">L4</span><h3>曲线系</h3><p class="fx"><Katex tex="f+\lambda g=0" /></p><p>过 f=0 与 g=0 全部交点 —— 共焦点、共渐近线族一键生成。</p></router-link>
       <router-link class="topic-card" to="/conics/lin5"><span class="tag">L5</span><h3>定点·定值·最值</h3><p>大题三宝流程：设参 → 联立韦达 → 目标代换 → 证与参数无关。</p></router-link>
+    </div>
+
+    <h3 class="sec">圆锥曲线 · 六 极点极线与配极理论</h3>
+    <div class="topic-grid">
+      <router-link class="topic-card" to="/conics/ch1"><span class="tag">六1</span><h3>消点：盯住不变量</h3><p class="fx"><Katex tex="(A,B;C,D)=\dfrac{CA}{CB}\div\dfrac{DA}{DB}" /></p><p>交叉比在中心投影下不变 —— 复杂构图消成简单构图再核验。</p></router-link>
+      <router-link class="topic-card" to="/conics/ch2"><span class="tag">六2</span><h3>交叉比与调和点列</h3><p class="fx"><Katex tex="(A,B;C,D)=-1" /></p><p>＝−1 即调和 —— 内外分点、极点极线的度量判据。</p></router-link>
+      <router-link class="topic-card" to="/conics/ch3"><span class="tag">六3</span><h3>完全四点形</h3><p class="fx"><Katex tex="\text{内接完全四点形的对角三角形自配极}" /></p><p>纯射影的配极构造 —— 不依赖任何度量也能定极线。</p></router-link>
+      <router-link class="topic-card" to="/conics/ch4"><span class="tag">六4</span><h3>极点与极线</h3><p class="fx"><Katex tex="\overrightarrow{OP}\cdot\overrightarrow{OQ}=R^2" /></p><p>圆的情形：Q 沿 P 的极线 —— 极线⊥OP，距离倒数记录。</p></router-link>
+      <router-link class="topic-card" to="/conics/ch5"><span class="tag">六5</span><h3>配极原则与齐次坐标</h3><p class="fx"><Katex tex="\ell=AP,\quad P=A^{-1}\ell" /></p><p>矩阵对称性给出 La Hire 互易，共线点的极线共点。</p></router-link>
+      <router-link class="topic-card" to="/conics/ch6"><span class="tag">六6</span><h3>Pascal 与 Brianchon</h3><p class="fx"><Katex tex="\text{六点对边交点共线}" /></p><p>Pascal 线的极点就是 Brianchon 点。相邻点可取切线极限，平行对边交于无穷远。</p></router-link>
+      <router-link class="topic-card" to="/conics/ch7"><span class="tag">六7</span><h3>Pascal 与 Brianchon 的自对偶推广</h3><p class="fx"><Katex tex="\text{内接}\iff\text{共线}\iff\text{共点}\iff\text{外切}" /></p><p>配极互换六边形的内接与外切。两条圆锥曲线关于同一基准曲线互为共轭。</p></router-link>
+      <router-link class="topic-card" to="/conics/ch8"><span class="tag">六8</span><h3>用配极解定点与轨迹题</h3><p>动点沿定直线运动，切点弦经过这条直线的极点。反求交点轨迹还要检验实切线的存在条件。</p></router-link>
     </div>
 
     <h3 class="sec">函数与微积分初步 · 一 从映射到函数</h3>
@@ -239,7 +240,7 @@
     <h3 class="sec">不等式 · 四 放缩与常用不等式</h3>
     <div class="topic-grid">
       <router-link class="topic-card" to="/inequalities/f1"><span class="tag">放1</span><h3>三角不等式</h3><p class="fx"><Katex tex="|a+b|\le|a|+|b|" /></p><p>折返与直达（两短边闭合才成三角形）；只给上界，下界 <Katex tex="||a|-|b||" /> 由反向换 b→−b 得到。</p></router-link>
-      <router-link class="topic-card" to="/inequalities/f2"><span class="tag">放2</span><h3>柯西不等式</h3><p class="fx"><Katex tex="(a^2+b^2)(c^2+d^2)\ge(ac+bd)^2" /></p><p>差额正是平行四边形面积 <Katex tex="(ad-bc)^2"/>；取等在两数组成比例（共线），配成向量求平方和最值。</p></router-link>
+      <router-link class="topic-card" to="/inequalities/f2"><span class="tag">放2</span><h3>柯西不等式</h3><p class="fx"><Katex tex="(a^2+b^2)(c^2+d^2)\ge(ac+bd)^2" /></p><p>差额正是平行四边形面积的平方 <Katex tex="(ad-bc)^2"/>；取等在两数组成比例（共线），配成向量求平方和最值。</p></router-link>
       <router-link class="topic-card" to="/inequalities/f3"><span class="tag">放3</span><h3>常用放缩</h3><p class="fx"><Katex tex="\tfrac1{k^2}<\tfrac1{k(k-1)}=\tfrac1{k-1}-\tfrac1k" /></p><p>求不出的和三法开路：裂项成可相消的列、逐项夹逼在可算两界间、二项舍非负项取下界 2——等号在哪各不同。</p></router-link>
     </div>
 

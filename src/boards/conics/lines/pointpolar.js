@@ -4,11 +4,12 @@
    · 极线 l：u·u₀/a² + v·v₀/b² = 1（T1 的极线公式）。M 在外：两切点连线（切点弦）与 l 逐字相同（La Hire）；
      M 在上：l 退化为切线本身；M 在内：切线不存在，但 l 仍然是一条实实在在的直线（虚切点弦）。
    M 在中心时极线跑向无穷远。 */
-import { Board, mk, V, add, dist, fmt, polarLine, lineFromEq, lineConic } from '../../../lib/board.js';
+import { mk, V, add, dist, fmt, polarLine, lineFromEq, lineConic } from '../../../lib/board.js';
+import { createConicLab, plotInk } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 860, H = 470;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
   const C = { cx: 430, cy: 245, a: 185, b: 112 };
   const st = { M: V(640, 105) };
 
@@ -18,12 +19,12 @@ export function createBoard(root) {
     const m = st.M, aa = C.a * C.a, bb = C.b * C.b;
     const u0 = m.x - C.cx, v0 = m.y - C.cy;
     // 轴与椭圆
-    B.seg(V(20, C.cy), V(W - 20, C.cy), { stroke: '#22314a', 'stroke-width': 1.3 });
-    B.seg(V(C.cx, 16), V(C.cx, H - 16), { stroke: '#22314a', 'stroke-width': 1.3 });
+    B.seg(V(20, C.cy), V(W - 20, C.cy), { stroke: plotInk.axis, 'stroke-width': 1.3 });
+    B.seg(V(C.cx, 16), V(C.cx, H - 16), { stroke: plotInk.axis, 'stroke-width': 1.3 });
     const pts = [];
     for (let t = -Math.PI; t <= Math.PI + 1e-9; t += 0.03)
       pts.push(`${(C.cx + C.a * Math.cos(t)).toFixed(1)},${(C.cy + C.b * Math.sin(t)).toFixed(1)}`);
-    mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 2.4 }, B.dyn);
+    mk('polyline', { points: pts.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 2.4 }, B.dyn);
     // 点位
     const F = u0 * u0 / aa + v0 * v0 / bb - 1;
     cF(`F(M) = ${fmt(F, 3)} → ${F < -0.004 ? '内（过 M 无切线）' : F < 0.004 ? '上（恰一条切线）' : '外（恰两条切线）'}`,
@@ -36,15 +37,15 @@ export function createBoard(root) {
       const L = polarLine(C, m);
       const [q1, q2] = lineFromEq(L.A, L.B, L.D);
       const onCurve = Math.abs(F) < 0.004;
-      B.inf(q1, q2, { stroke: '#ffd166', 'stroke-width': onCurve ? 2.2 : 1.4, 'stroke-dasharray': onCurve ? '' : '7 5' });
+      B.inf(q1, q2, { stroke: plotInk.amber, 'stroke-width': onCurve ? 2.2 : 1.4, 'stroke-dasharray': onCurve ? '' : '7 5' });
       cP(`u·(${fmt(u0 / aa, 5)}) + v·(${fmt(v0 / bb, 5)}) = 1`, '');
       // 切点 / 切点弦
       const hits = lineConic(C, q1, q2);
       if (F > 0.004 && hits) {
         for (const [i, T] of hits.entries()) {
-          B.seg(m, T, { stroke: '#ff7b8a', 'stroke-width': 2 });
-          B.dot(T, 5, { fill: '#67e8f9', stroke: '#fff', 'stroke-width': 1.8 });
-          B.text(V(T.x + (i ? 10 : -10), T.y - 10), `T${i + 1}`, { fill: '#67e8f9', 'font-size': 12, 'font-weight': 700, 'text-anchor': i ? 'start' : 'end' });
+          B.seg(m, T, { stroke: plotInk.rose, 'stroke-width': 2 });
+          B.dot(T, 5, { fill: plotInk.teal, stroke: plotInk.ink, 'stroke-width': 1.8 });
+          B.text(V(T.x + (i ? 10 : -10), T.y - 10), `T${i + 1}`, { fill: plotInk.teal, 'font-size': 12, 'font-weight': 700, 'text-anchor': i ? 'start' : 'end' });
         }
         cT('两切点的连线（切点弦）＝ 极线 l（La Hire）', 'ok');
       } else if (onCurve) {
@@ -53,15 +54,14 @@ export function createBoard(root) {
         cT('M 在椭圆内：无实切线，但极线 l 仍然存在（虚切点弦）', '');
       }
     }
-    B.dot(m, 6.5, { fill: '#ff9e4a', stroke: '#fff', 'stroke-width': 2 });
-    B.text(V(m.x + 11, m.y - 11), 'M', { fill: '#ff9e4a', 'font-size': 13, 'font-weight': 700 });
+    B.dot(m, 6.5, { fill: plotInk.copper, stroke: plotInk.ink, 'stroke-width': 2 });
     B.hint('拖 M 任意走：F(M) 一秒判内外；M 在外两条切线现身 —— 切点弦与极线逐字相同；M 落到曲线上，极线塌成切线');
   };
 
   B.handle({
     get: () => st.M,
     set: q => { st.M = V(q.x, q.y); },
-    color: '#ff9e4a', r: 9, label: 'M', lo: [12, -13],
+    color: plotInk.copper, r: 9, label: 'M', lo: [12, -13],
   });
 
   B.render();

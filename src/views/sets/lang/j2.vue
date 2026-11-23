@@ -3,14 +3,12 @@
     title="集合的表示：列举、描述与图示" sub="有限集用列举、无限集用描述、几何对象用图示 —— 三种语言各有分工。描述法是重点：把「代表元 + 前置集合 + 条件」拆开看，集合就一目了然；数轴图示则把端点开闭画成看得见的实心与空心。"
     :toc="[{ id: 'j2-desc', t: '描述法解剖：三部件' }, { id: 'j2-three', t: '三种语言的分工' }, { id: 'j2-pit', t: '三种记法别认错' }]">
     <div class="note good" id="j2-law"><strong>描述法格式</strong>：<Katex tex="A=\{x\in U\mid P(x)\}" /> —— 三部件：<strong>代表元</strong> x（在讨论什么对象）、<strong>前置集合</strong> <Katex tex="x\in U" />（从哪个大集合里选）、<strong>条件</strong> P(x)（还须满足什么）。不写前置时默认 <Katex tex="x\in\mathbb{R}" />。<strong>列举法</strong> <Katex tex="\{-2,-1,0,1,2\}" /> 只适合有限集；无限集用描述法或数轴图示。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createRep" />
-      <div class="cap">图 J2 · <b>列举法、描述法与数轴图示</b>：四个预设集合各自上轴，拖金探针 x —— 先过「前置集合」这关、再验条件；吸附网格让探针精确踩上端点 3 与 −1，开闭直接核验。列举法、描述法、数轴图示三种语言实时互译。</div>
-    </div>
-    <div class="board-wrap">
-      <BoardMount id="ps" :factory="createPs" />
-      <div class="cap">图 J2 附 · <b>描述法不止落在数轴上</b>：描述法的主体同样可以是平面上的点集 —— 把代表元换成点 (x,y)、前置集合换成 <Katex tex="\mathbb{R}^{2}" />。直线用等式约束、区域用不等式约束；不带等号的不等号，边界是空的（上半平面不含 x 轴）。空间中再加一维：<Katex tex="\{(x,y,z)\mid x^{2}+y^{2}+z^{2}=1\}" /> 就是单位球面。</div>
-    </div>
+    <ConicFigure number="J2" title="列举法、描述法与数轴图示" head="bottom" :factory="createRep">
+      四个预设集合各自上轴，拖金探针 x —— 先过「前置集合」这关、再验条件；吸附网格让探针精确踩上端点 3 与 −1，开闭直接核验。列举法、描述法、数轴图示三种语言实时互译。
+    </ConicFigure>
+    <ConicFigure number="J2 附" title="描述法不止落在数轴上" head="bottom" id="ps" :factory="createPs">
+      描述法的主体同样可以是平面上的点集 —— 把代表元换成点 (x,y)、前置集合换成 <Katex tex="\mathbb{R}^{2}" />。直线用等式约束、区域用不等式约束；不带等号的不等号，边界是空的（上半平面不含 x 轴）。空间中再加一维：<Katex tex="\{(x,y,z)\mid x^{2}+y^{2}+z^{2}=1\}" /> 就是单位球面。
+    </ConicFigure>
 
     <h3 class="sec" id="j2-desc">描述法解剖：三部件</h3>
     <p>图 J2 的探针把描述法拆成两个步骤。第一步是<strong>前置集合</strong>：<Katex tex="A=\{x\in\mathbb{Z}\mid -2\le x<3\}" /> 里，探针落在 2.5 时区间条件尚未检验 —— 「不是整数」先被 <Katex tex="x\in\mathbb{Z}" /> 排除，前置集合先检验。第二步才是<strong>条件</strong>：通过前置检验的整数再验 <Katex tex="-2\le x<3" />，右端 x=3 因「<」不含等号而被排除。两步都通过才判定 ∈。这个「先圈定范围、再验条件」的两步结构，正是下一章子集判定的雏形 —— 前置集合本身就是一个小型的 <Katex tex="\forall x" /> 量词。</p>
@@ -33,7 +31,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createRep } from '../../../boards/sets/lang/replab.js';
 import { createBoard as createPs } from '../../../boards/sets/lang/psets.js';

@@ -3,10 +3,9 @@
     title="元素与集合：∈ 与 ∉" sub="集合是把「确定的对象」汇成整体的原点语言：对象叫元素，元素与集合之间只有属于（∈）与不属于（∉）两种关系，没有模糊地带。数系 ℕ⊂ℤ⊂ℚ⊂ℝ 是这套语言第一次出场 —— 圈层嵌套，逐层检验。"
     :toc="[{ id: 'j1-three', t: '集合的三性' }, { id: 'j1-nest', t: '数系嵌套：逐层检验' }, { id: 'j1-pit', t: '0、互异性与近似值' }]">
     <div class="note good" id="j1-law"><strong>属于关系</strong>：a 是集合 A 的元素，记 <Katex tex="a\in A" />；不是则记 <Katex tex="a\notin A" />。<strong>数系嵌套</strong>：<Katex tex="\mathbb{N}\subset\mathbb{Z}\subset\mathbb{Q}\subset\mathbb{R}" /> —— 站在 ℝ 的立场看，ℕ、ℤ、ℚ 都是真子集；每个数都能说清自己「从哪一圈起落户」。现行教材 <Katex tex="0\in\mathbb{N}" />。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createNum" />
-      <div class="cap">图 J1 · <b>八个数分别属于哪个数集</b>：八个候选数逐一检验：金点滑向所属数集圈的左侧隔层，四项检验逐项核验 —— 3 四项全部通过、<Katex tex="\sqrt 2"/> 仅通过 ℝ 一项；<Katex tex="22/7"/> 常被误当作 <Katex tex="\pi"/>，逐项检验即可分辨。</div>
-    </div>
+    <ConicFigure number="J1" title="八个数分别属于哪个数集" head="bottom" :factory="createNum">
+      八个候选数逐一检验：金点滑向所属数集圈的左侧隔层，四项检验逐项核验 —— 3 四项全部通过、<Katex tex="\sqrt 2"/> 仅通过 ℝ 一项；<Katex tex="22/7"/> 常被误当作 <Katex tex="\pi"/>，逐项检验即可分辨。
+    </ConicFigure>
 
     <h3 class="sec" id="j1-three">集合的三性</h3>
     <p>给「集合」下定义，靠的是三条品性。<strong>确定性</strong>：给定对象 a 与集合 A，<Katex tex="a\in A" /> 与 <Katex tex="a\notin A" /> 必居其一、只居其一 —— 「接近 1 的数」「个子高的同学」都不成集合，因为无法判定。<strong>互异性</strong>：集合里的元素互不相同，<Katex tex="\{1,1,2\}" /> 是非法记号，同一元素写两遍不产生新元素。<strong>无序性</strong>：<Katex tex="\{1,2,3\}=\{3,2,1\}" />，列举的先后不改变集合本身。三性合起来就是图 J1 逐项检验的依据：标准确定（每圈有明确判据）、身份唯一（归属只认最内圈）、次序无关（先问 ℕ 还是先问 ℝ，结论一致）。</p>
@@ -28,7 +27,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createNum } from '../../../boards/sets/lang/numsets.js';
 import { J_CHAPTERS } from './jnav.js';

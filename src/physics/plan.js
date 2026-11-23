@@ -9,7 +9,7 @@ export const PARTS = [
   {
     id: 'demo',
     t: '演示实验',
-    intro: '已经做成交互实验的六个场景。场景里的参数都能拖，读数跟着物体走；后面的章讲到这里时会把它们接进去。',
+    intro: '已经做成交互实验的场景。场景里的参数都能拖，读数跟着物体走；后面的章讲到这里时会把它们接进去。',
     groups: [
       {
         t: '已上线',
@@ -20,6 +20,8 @@ export const PARTS = [
           { id: 'projectile', t: '抛体运动', lab: 'projectile', on: true },
           { id: 'lorentz', t: '带电粒子在磁场中', lab: 'lorentz', on: true },
           { id: 'spring', t: '弹簧振子', lab: 'spring', on: true },
+          { id: 'balance', t: '托盘天平', an: 'balance', on: true },
+          { id: 'pendulum', t: '摆钟测周期', an: 'pendulum', on: true },
         ],
       },
     ],
@@ -281,8 +283,8 @@ export const PARTS = [
   },
 ];
 
-/** 章的路由：实验走 /physics/<id>，讲义章走 /physics/ch/<id> */
-export const pathOf = c => (c.lab ? '/physics/' + c.lab : '/physics/ch/' + c.id);
+/** 章的路由：原生演示走 /physics/anatomy/<id>，实验走 /physics/<id>，讲义章走 /physics/ch/<id> */
+export const pathOf = c => (c.an ? '/physics/anatomy/' + c.an : c.lab ? '/physics/' + c.lab : '/physics/ch/' + c.id);
 
 /** 部分（模块级）的路由：/physics/p/<部分 id>。
     与数学「模块主页」同一层，首页的卡片进这里、这里再列组与章。
@@ -315,6 +317,13 @@ export function partByRoute(path) {
 export function chapterByRoute(path) {
   const s = String(path || '').split('/').filter(Boolean);
   if (s[0] !== 'physics') return null;
+  if (s[1] === 'anatomy' && s[2]) {
+    for (const p of PARTS) {
+      const c = p.chapters.find(x => x.an === s[2]);
+      if (c) return c;
+    }
+    return null;
+  }
   if (s[1] === 'ch' && s[2]) {
     for (const p of PARTS) {
       const c = p.chapters.find(x => !x.lab && x.id === s[2]);

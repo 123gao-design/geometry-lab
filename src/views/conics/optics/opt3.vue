@@ -1,12 +1,12 @@
 <template>
   <ChPage :cur="3" no="T3" base="/conics/opt" :chapters="OPT_CHAPTERS"
     title="抛物线：把平行光拧成一束" sub="平行于轴的光反射后全部汇聚于焦点 —— 卫星锅、探照灯、太阳灶的几何原理。"
-    :toc="[{ id: 't3-st', t: '定理陈述与实验（图 T3）' }, { id: 't3-proof', t: '证明 · 倍角恒等式' }, { id: 't3-app', t: '真实应用' }]">
+    :toc="[{ id: 't3-st', t: '定理陈述与画板（图 T3）' }, { id: 't3-proof', t: '证明 · 倍角恒等式' }, { id: 't3-path', t: '为什么光程相同' }, { id: 't3-app', t: '真实应用' }]">
     <div class="note good" id="t3-st"><strong>抛物线的光学性质</strong>：平行于抛物线轴的光线，经抛物线反射后，必经过焦点；反过来，从焦点发出的光经抛物线反射后，必平行于轴射出。等价几何陈述：<strong>切线平分"焦点线 PF 与轴向平行线"的夹角</strong>。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createDishRefl" />
-      <div class="cap">图 T3 · <b>抛物线的光学性质与抛物面天线</b>：四束静态平行光（灰色）打在锅面上，反射后全部穿过焦点 F；橙色为可拖动光束，两段金色圆弧标出它对切线的入射角与反射角 —— 恒相等。滑块 p 改变锅型，聚光规律不变。</div>
-    </div>
+    <ConicFigure head="bottom" number="T3" title="平行光反射到焦点的等光程实验" :factory="createDishRefl"
+      :legend="[['mint', '反射面'], ['orange', '入射方向'], ['green', '反射方向'], ['violet', '法线', 'dashed']]">
+      拖动抛物面上的 P，比对入射和反射方向。点「发送同一波前」，看从右侧发射面的不同高度同时出发的光，怎样沿各自的折线路径到达同一焦点。
+    </ConicFigure>
     <p>抛物线可以看作"一个焦点被拖到无穷远的椭圆"：固定左焦点与顶点，把右焦点拖向无穷远，从右焦点射来的光就变成了平行光。于是椭圆的"聚光于另一焦点"退化成抛物线的"聚平行光于焦点" —— 光学性质与 D4 的统一定义完全同步。</p>
 
     <h3 class="sec" id="t3-proof">证明：一个漂亮的倍角恒等式</h3>
@@ -15,7 +15,12 @@
     <p>用二倍角公式把 θ 加倍：</p>
     <Katex tex="\tan 2\theta=\frac{2\tan\theta}{1-\tan^2\theta}=\frac{2(p/y_0)}{1-p^2/y_0^2}=\frac{2py_0}{y_0^2-p^2}=k_F" display />
     <p>所以 <strong>PF 与轴的夹角恰为切线倾角的两倍</strong> —— 切线正中平分"轴向平行线与焦点线"这对角。于是水平射来的光相对切线的入射角，等于它折向焦点所需的反射角，反射后必过焦点。∎</p>
-    <p>整个证明只用到了切线公式与一个二倍角公式，代数上是三讲里最轻的；而几何含义最重 —— 它说明抛物线是唯一能把一束平行光严格聚于一点的曲线。</p>
+    <p>上述斜率计算避开了竖直线。若 <Katex tex="y_0=0" />，切线竖直，轴向光沿原方向的反向射回焦点。若 <Katex tex="y_0^2=p^2" />，焦点线竖直，切线与坐标轴成 <Katex tex="45^\circ" />，等角关系仍然成立。</p>
+
+    <h3 class="sec" id="t3-path">为什么从同一波前出发会同时到达焦点？</h3>
+    <p>选一条在反射面开口一侧、垂直于轴的发射面 <Katex tex="x=X" />。各条平行入射线从这个面同时出发。设它经过反射点 <Katex tex="P=(x,y)" />，准线为 <Katex tex="x=x_\ell" />。入射段长 <Katex tex="X-x" />，反射段长 <Katex tex="|PF|=x-x_\ell" />，最后一个等号来自抛物线定义。</p>
+    <Katex tex="(X-x)+|PF|=X-x_\ell." display />
+    <p>所以无论打在反射面的哪个位置，同一介质中的折线路径都一样长。实验里靠边的光束更早遇到反射面，却要走更长的反射段，长短正好互相补偿。把这条性质和反射方向合在一起，才解释了图中各条光束为什么<strong>同时</strong>到达焦点。</p>
 
     <h3 class="sec" id="t3-app">真实应用</h3>
     <ul>
@@ -28,7 +33,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createDishRefl } from '../../../boards/conics/optics/dishrefl.js';
 import { OPT_CHAPTERS } from './optnav.js';

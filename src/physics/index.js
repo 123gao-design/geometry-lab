@@ -157,6 +157,32 @@ export const EXPERIMENTS = [
     load: () => import('./spring.js'),
   },
   {
+    id: 'balance',
+    title: '托盘天平',
+    group: '经典力学',
+    dim: '2d',
+    blurb: '原生 anatomy 等轴测的托盘天平：左右两盘质量可调，横梁按差值倾斜，吊盘保持水平，指针在标尺上指出偏转。',
+    params: [
+      { k: 'm1', label: '左盘质量 m₁', min: 0, max: 200, step: 10, value: 100, unit: 'g' },
+      { k: 'm2', label: '右盘质量 m₂', min: 0, max: 200, step: 10, value: 100, unit: 'g' },
+      { k: 'az', label: '视角', min: 10, max: 70, step: 5, value: 38, unit: '°' },
+    ],
+    load: () => import('./balance.js'),
+  },
+  {
+    id: 'pendulum',
+    title: '摆钟与单摆周期',
+    group: '机械振动',
+    dim: '2d',
+    blurb: '原生 anatomy 等轴测的单摆：摆球按余弦往复摆动，读数给出周期 T = 2π√(L/g) 与当前摆角。',
+    params: [
+      { k: 'L', label: '摆长 L', min: 0.3, max: 1.2, step: 0.05, value: 0.8, unit: 'm' },
+      { k: 'th0', label: '初始摆角 θ₀', min: 5, max: 30, step: 1, value: 20, unit: '°' },
+      { k: 'az', label: '视角', min: 10, max: 70, step: 5, value: 40, unit: '°' },
+    ],
+    load: () => import('./pendulum.js'),
+  },
+  {
     id: 'bounce3d',
     title: '三维弹跳小球',
     group: '经典力学',

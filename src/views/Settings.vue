@@ -243,6 +243,16 @@
       </div>
       <div class="set-row">
         <div class="set-label">
+          <strong>数学画板纸面</strong>
+          <span>各章 SVG 演示台那块画板的底色与墨色。默认跟随主题——深色家族是一方深纸、浅色家族是一张浅纸，随顶栏的 🎨 一起换；另有四档浅纸（纸白 · 浅蓝、暖沙 · 米黄、青瓷 · 薄荷、樱粉 · 淡桃）与四档深纸（深板岩、墨蓝、林深、紫夜），每档自带一整套墨色，暗色主题下选浅纸也照样看得清。选定后所有画板统一换到这一档；画板操作条上的「▤ 外观」也能改，那一处只改点它的那一块板，在此再动一次即全部交还。</span>
+        </div>
+        <div class="seg wide" role="group" aria-label="数学画板纸面">
+          <button v-for="o in PAPERS" :key="o.v" type="button" :class="{ on: PREFS.boardPaper === o.v }"
+            @click="setPref('boardPaper', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
           <strong>数学画板字号</strong>
           <span>数学画板（各章的 SVG 演示台）里图内文字的字号倍率。数字、拉丁与希腊字母、运算符一律排成 KaTeX 的数学体，变量斜体、函数名与数字正体，汉字仍用系统字体；100% 与原来的版面一致。</span>
         </div>

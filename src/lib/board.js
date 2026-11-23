@@ -1,5 +1,6 @@
 /* ================= SVG 画板引擎 + 主题系统 ================= */
 import katex from 'katex';
+import { watch } from 'vue';
 import { THEMES, themeOf, currentTheme, isLight, applyTheme, initTheme, mountThemeButton, animEnabled, setAnim, initAnim, onThemeChange } from './theme.js';
 import { V, extSeg, fmt } from './math.js';
 import { openGGB, setActiveOutlet, clearActiveOutlet } from './ggb.js';
@@ -338,6 +339,12 @@ async function katexCss() {
    和 katex 一起拖进入口包。这里只留一处接线：换主题后让所有活着的板重画一遍。 */
 export const BOARDS = [];
 onThemeChange(() => BOARDS.forEach(b => b.render()));
+/* 设置页「数学画板纸面」改了：全部板改回跟着这一项走（板内「▤ 外观」里单独点过的也就此交还），
+   再整板重画一遍。没有这一条，改设置只会影响此后新建的板 */
+watch(() => PREFS.boardPaper, () => {
+  for (const b of BOARDS) b._tintUser = false;
+  restyleAll();
+});
 /* 字号 / 线宽 / 轴宽改动后所有板都得重画一遍。滑块一次拖动会连发 input，
    攒到下一帧只重画一次，免得一页几块板一帧画几十遍 */
 let _restyleQueued = false;
@@ -373,6 +380,14 @@ const TINTS = ['paper', 'sand', 'mint', 'sakura', 'slate', 'abyss', 'forest', 'p
 /* 小样直接就是这一档的纸面本身（与板上的渐变逐字一致），没有渐变的档退回双色各半 */
 const tintChip = x => x.skin || ('linear-gradient(140deg,' + x.sw0 + ' 0%,' + x.sw0 + ' 46%,'
   + x.sw1 + ' 54%,' + x.sw1 + ' 100%)');
+/* 设置页的纸面档位（PREFS.boardPaper）→ _tint 的下标：'theme' 即 −1（交还主题色），
+   其余按 TINTS 里的档名列名对号；认不出的档也退回 −1，绝不落到一块白纸上 */
+const TINT_INDEX = {};
+TINTS.forEach((x, i) => { TINT_INDEX['$' + x.id] = i; });
+function paperTint(id) {
+  const i = TINT_INDEX['$' + (id || 'theme')];
+  return i == null ? -1 : i;
+}
 /* 面板格子只放「 · 」前半截，全名进 title（与物理画板同一个口径） */
 const tintName = n => String(n).split(' · ')[0];
 /* 自定义底色用：按相对亮度挑墨色（深底配浅字、浅底配深字），文字始终读得清 */
@@ -500,6 +515,8 @@ export class Board {
     this._pxFit = !!(opt && opt.fit);
     this.handles = []; this.renderFn = null; this._rafs = [];
     this.root = root;
+    this._onAppearanceChange = opt?.onAppearanceChange;
+    this._preciseSliders = opt?.preciseSliders ?? false;
     this.svg = mk('svg', { viewBox: `0 0 ${w} ${h}`, style: `aspect-ratio:${w}/${h}` });
     root.appendChild(this.svg);
     const defs = mk('defs', {}, this.svg), uid = 'clip' + (Board.n = (Board.n || 0) + 1);
@@ -587,7 +604,20 @@ export class Board {
     });
     this.dlBar.appendChild(share);
     // 画板外观：这块板的纸面 + 纸格 + 字号 / 线宽 / 轴宽（面板见 _buildTintPop）
-    this._tint = -1;
+    // 初始纸面读设置页那一项（默认 'theme' = 交还主题色，随整站主题变）；
+    // _tintUser 记「这块板在「▤ 外观」里被单独点过」，点过就压住设置页，设置页一改又交还（见下面的 watch）
+    this._tint = paperTint(PREFS.boardPaper);
+    this._tintUser = false;
+    // 板根上若还挂着上一块板留下的内联纸色（路由复用、HMR 时可能见到），先洗掉：
+    // syncTint 的早退守卫只比字段、不清 DOM，漏掉这一步就会一直白着
+    try {
+      const st = this.root && this.root.style;
+      if (st && st.removeProperty) {
+        st.removeProperty('--bd-bg');
+        st.removeProperty('--bd-ink');
+        st.removeProperty('--bd-skin');
+      }
+    } catch (_) { /* 无头 mock 没有 style */ }
     this._bgCol = '';
     this._skinCol = ''; // 预设纸面的斜向渐变（--bd-skin），跟随主题 / 自定义色时为纯色
     this._inkCol = '';
@@ -633,17 +663,23 @@ export class Board {
       bar.classList.toggle('out-l', pos === 'left');
       bar.classList.toggle('out-r', pos === 'right');
     }
-    const host = r.parentElement;
+    // 卡片框（.conic-figure）里的板：条再往上提一层，排到卡片外面——卡片边框只圈住画面与图注，
+    // 工具条不占卡片内的版面，也就不被那道框框住（照集合那几章的样子）
+    const fig = r.closest ? r.closest('.conic-figure') : null;
+    const frame = fig && fig.parentElement ? fig : null;
+    const host = frame ? frame.parentElement : r.parentElement;
     // 父容器是 flex / grid 时不多塞一个格子（会顶乱两栏排布）：退回板内顶部一条，样式照旧是 .out
     let flow = true;
     try {
       const dv = host && host.ownerDocument && host.ownerDocument.defaultView;
       flow = !dv || !/flex|grid/.test(dv.getComputedStyle(host).display || '');
     } catch (_) { flow = true; }
+    // 提层出来时给条挂个标记类：卡片自带 24px 上边距，不抵消的话条与卡片之间会空出一大截
+    if (bar.classList) bar.classList.toggle('out-fig', out && !this._floatMode && flow && !!frame);
     const want = out && !this._floatMode && flow && host ? host : r;
     const cur = bar.parentElement || bar.parent; // 无头测试的 mock 只记 parent
     if (cur === want) return;
-    if (want === host) host.insertBefore(bar, r);
+    if (want === host) host.insertBefore(bar, frame || r);
     else if (out) want.insertBefore(bar, want.firstChild || null); // 板内档也要排在最前：非 flex 容器靠 DOM 序
     else want.appendChild(bar);
   }
@@ -670,6 +706,16 @@ export class Board {
     }
     // 条可能挂在板外（板上方靠左/靠右），innerHTML 清不到它，先单独摘掉
     if (this.dlBar && this.dlBar.parentElement) this.dlBar.parentElement.removeChild(this.dlBar);
+    // 板根上的纸色与字号变量一并交还：宿主元素若被复用，下一块板不该继承这一块的纸面
+    try {
+      const st = this.root && this.root.style;
+      if (st && st.removeProperty) {
+        st.removeProperty('--bd-bg');
+        st.removeProperty('--bd-ink');
+        st.removeProperty('--bd-skin');
+        st.removeProperty('--bd-fs');
+      }
+    } catch (_) { /* 无头 mock 没有 style */ }
     this.root.innerHTML = '';
     const i = BOARDS.indexOf(this);
     if (i >= 0) BOARDS.splice(i, 1);
@@ -825,6 +871,7 @@ export class Board {
     inp.setAttribute && inp.setAttribute('value', inp.value);
     const pl = hEl('span', {}, pick); pl.textContent = '自定义';
     inp.addEventListener('input', () => {
+      this._tintUser = true;
       this._custom = inp.value || '';
       this._tint = -2;
       this._syncTintSw();
@@ -833,6 +880,7 @@ export class Board {
     // 已选过自定义色、后来切回预设：再点一次取色器就恢复自定义（同色不出 input 事件，靠这一条兜底）
     inp.addEventListener('click', () => {
       if (!this._custom) return;
+      this._tintUser = true;
       this._tint = -2;
       this._syncTintSw();
       this.syncTint();
@@ -908,7 +956,7 @@ export class Board {
     }
     this._syncTintSw();
   }
-  setTint(i) { this._tint = i; this._syncTintSw(); this.syncTint(); }
+  setTint(i) { this._tintUser = true; this._tint = i; this._syncTintSw(); this.syncTint(); }
   /* ---------- 画布纸面：底色 + 网格 ----------
      cfg = { c: '#rrggbb' | '', g: 'none' | 'square' | 'dots' | 'lines' }
      底色复用板底色那套（--bd-bg + 深/浅墨），网格画成 svg 最底下的一层 g.bd-paper：
@@ -918,6 +966,7 @@ export class Board {
     const g = (cfg && cfg.g) || 'none';
     this._paper = { c, g };
     this._paperSet = true;   // 画布显式选的纸面压过设置页的全局档
+    this._tintUser = true;
     if (c) { this._custom = c; this._tint = -2; } else { this._tint = -1; }
     this.syncTint();
     this._paperDraw();
@@ -982,6 +1031,9 @@ export class Board {
    *  跟随主题时三者都交还主题；自定义色按相对亮度定墨色与家族（深底浅字、浅底深字）。
    *  切主题时 render() 会再调一次：跟随主题的板跟着换，自选纸面的板不动。 */
   syncTint() {
+    // 设置页「数学画板纸面」是全局默认档：这块板没被「▤ 外观」单独点过、也不是画布显式定过纸面的，
+    // 每次进来都按 PREFS.boardPaper 现算一遍。切主题时 render() 会再调一次，跟随主题的板因此一直跟着换
+    if (!this._tintUser && !this._paperSet) this._tint = paperTint(PREFS.boardPaper);
     const p = this._tint >= 0 ? (TINTS[this._tint] || null) : null;
     const col = p ? p.c : this._tint === -2 ? (this._custom || '') : '';
     const skin = p ? (p.skin || '') : '';   // 预设纸面带斜向渐变，跟随主题 / 自定义色是纯色
@@ -991,7 +1043,23 @@ export class Board {
       const l = lumOf(col);
       if (l != null) { fam = l > .42; ink = fam ? INK_DARK : INK_LIGHT; }
     }
-    if (col === this._bgCol && ink === this._inkCol && fam === this._famLight && skin === this._skinCol) return;
+    if (this._onAppearanceChange) {
+      const theme = themeOf(currentTheme());
+      const background = col || theme.board;
+      if (background !== this._appearanceBg) {
+        this._appearanceBg = background;
+        this._onAppearanceChange(this, background);
+      }
+    }
+    if (col === this._bgCol && ink === this._inkCol && fam === this._famLight && skin === this._skinCol) {
+      // 早退只比字段、不比 DOM：板根被复用或换了实例时（路由复用、HMR 交接、画布页换纸），
+      // 上一块板写下的内联纸色还挂在这个元素上，而字段已经是「跟随主题」的空值——守卫判相等，
+      // 自此再没人来清，深色主题下这块板就一直白着。所以早退这一趟按实际值核一遍。
+      this._tintPut('--bd-bg', col);
+      this._tintPut('--bd-ink', ink);
+      this._tintPut('--bd-skin', skin);
+      return;
+    }
     this._bgCol = col; this._inkCol = ink; this._famLight = fam; this._skinCol = skin;
     const st = this.root && this.root.style;
     if (!st || !st.setProperty) return; // 无头 mock 的 style 是普通对象
@@ -1004,6 +1072,16 @@ export class Board {
     // 底色的明暗决定纸格线色，换了底色就重铺一次（没变则不进来）
     this._paperKey = '';
     this._paperDraw();
+  }
+  /* 把一项内联纸色校正到「应该是」的值：该有、板上却没有或不一样就补写，不该有就洗掉，
+     已经对就什么都不动。动画板每帧都会走 syncTint 的早退这趟，这里只读内联样式、值对时不写，
+     不触发布局。 */
+  _tintPut(name, want) {
+    const st = this.root && this.root.style;
+    if (!st || !st.getPropertyValue || !st.removeProperty) return; // 无头 mock 的 style 是普通对象
+    const has = st.getPropertyValue(name);
+    if (want) { if (has !== want && st.setProperty) st.setProperty(name, want); }
+    else if (has) st.removeProperty(name);
   }
   /* ---------- 底部文字开关：只收画板内部的提示行（hint / hintM），板框外的图注不动 ---------- */
   toggleFoot() {
@@ -3612,9 +3690,9 @@ export class Board {
     return { set, button: b };
   }
   slider(label, min, max, step, val, fn, key) {
+    const digits = this._preciseSliders ? Math.max(1, String(step).split('.')[1]?.length ?? 0) : 1;
     const w = hEl('label', { class: 'slider' });
     const s = hEl('input', { type: 'range', min, max, step, value: val }); w.appendChild(s);
-    const digits = Math.max(1, (String(step).split('.')[1] || '').length);
     const t = hEl('span', {}, w); t.textContent = `${label} ${fmt(val, digits)}`;
     // URL 键：默认取标签首个拉丁/希腊字母（θ→th 等），无字母则 p1/p2；同板冲突加序号；第 7 参可显式指定
     const base = () => key || sliderKey(label, this.sliders.length);
@@ -3854,7 +3932,7 @@ export class Board {
     const st = mk('style', {}, clone);
     // 注入的规则必须与 global.css 那条逐字对齐（页面 CSS 的优先级高于呈现属性），
     // 只有字号改成 --bd-fs 的真实像素值：导出的图不读页面的 --bd-fs 变量
-    st.textContent = 'text{fill:' + ink + ';font-size:' + boardFontPx() + 'px;paint-order:stroke;stroke:' + bg
+    st.textContent = 'text{fill:var(--bd-svg-ink,' + ink + ');font-size:' + boardFontPx() + 'px;paint-order:stroke;stroke:' + bg
       + ';stroke-width:3px;stroke-linejoin:round;'
       + "font-family:-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif}"
       + (this._inkCol ? '.bd-tex-ink{color:' + ink + ' !important}' : '');

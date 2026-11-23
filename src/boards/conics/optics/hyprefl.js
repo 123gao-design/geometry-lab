@@ -1,10 +1,11 @@
 /* 图 T4 · 双曲线散光机：从近焦点射向曲面的光，反射后反向延长线恰过另一焦点（虚焦点成像）
    几何内核：切线平分两焦半径夹角的"内角"（与椭圆恰好互补） */
-import { Board, mk, V, add, sub, mul, dist, lerp, norm, angDiff, acuteAng, arcPts, fmt } from '../../../lib/board.js';
+import { mk, V, add, sub, mul, dist, lerp, norm, angDiff, acuteAng, arcPts, fmt } from '../../../lib/board.js';
+import { createConicLab, plotInk } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 800, H = 500;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
   const st = { cx: 400, cy: 250, a: 90, c: 150, t: 0.55, s: 1, pulse: 0, run: true };
 
   const bOf = () => Math.sqrt(st.c * st.c - st.a * st.a);
@@ -17,36 +18,36 @@ export function createBoard(root) {
   B.renderFn = () => {
     const { cx, cy, a, c } = st, b = bOf(), p = P(), f1 = F1(), f2 = F2();
     const near = st.s > 0 ? f2 : f1, far = st.s > 0 ? f1 : f2;
-    B.seg(V(24, cy), V(W - 24, cy), { stroke: '#22314a', 'stroke-width': 1.5 });
+    B.seg(V(24, cy), V(W - 24, cy), { stroke: plotInk.axis, 'stroke-width': 1.5 });
     // 渐近线 + 双支
     for (const dir of [V(a, b), V(a, -b)])
-      B.inf(V(cx, cy), V(cx + dir.x, cy + dir.y), { stroke: '#3a4a63', 'stroke-width': 1.2, 'stroke-dasharray': '6 6' });
+      B.inf(V(cx, cy), V(cx + dir.x, cy + dir.y), { stroke: plotInk.rule, 'stroke-width': 1.2, 'stroke-dasharray': '6 6' });
     for (const s of [1, -1]) {
       const pts = [];
       for (let t = -1.35; t <= 1.35 + 1e-9; t += 0.03)
         pts.push(`${(cx + s * a / Math.cos(t)).toFixed(1)},${(cy + b * Math.tan(t)).toFixed(1)}`);
-      mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 2.4 }, B.dyn);
+      mk('polyline', { points: pts.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 2.4 }, B.dyn);
     }
     // 切线（平分内角）
     const u0 = p.x - cx, v0 = p.y - cy;
     const d = V(a * a * v0, b * b * u0);
-    B.inf(p, add(p, d), { stroke: '#fff', 'stroke-width': 1.7 });
+    B.inf(p, add(p, d), { stroke: plotInk.ink, 'stroke-width': 1.7 });
     // 焦点
     for (const [f, nm] of [[f1, 'F₁'], [f2, 'F₂']]) {
-      B.dot(f, 6, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 2 });
-      B.text(V(f.x, f.y + 20), nm, { fill: '#ffd166', 'font-size': 13, 'font-weight': 700 });
+      B.dot(f, 6, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 2 });
+      B.text(V(f.x, f.y + 20), nm, { fill: plotInk.amber, 'font-size': 13, 'font-weight': 700 });
     }
     // 光路：near → P，反射方向 = 远离 far（反向延长线过 far）
     const out = norm(sub(p, far)), q2 = add(p, mul(out, 330));
-    B.seg(near, p, { stroke: '#ff9e4a', 'stroke-width': 2.6 });
-    B.seg(p, q2, { stroke: '#4ade80', 'stroke-width': 2.6 });
-    B.inf(far, p, { stroke: '#5c6a80', 'stroke-width': 1.3, 'stroke-dasharray': '5 5' });
-    B.text(V(p.x + mul(out, 150).x, p.y + mul(out, 150).y - 8), '反向延长线过另一焦点', { fill: '#93a1b5', 'font-size': 11 });
+    B.seg(near, p, { stroke: plotInk.copper, 'stroke-width': 2.6 });
+    B.seg(p, q2, { stroke: plotInk.green, 'stroke-width': 2.6 });
+    B.inf(far, p, { stroke: plotInk.guide, 'stroke-width': 1.3, 'stroke-dasharray': '5 5' });
+    B.text(V(p.x + mul(out, 150).x, p.y + mul(out, 150).y - 8), '反向延长线过另一焦点', { fill: plotInk.guide, 'font-size': 11 });
     // 角度弧：切线两侧入射角 / 反射角
     const aT = Math.atan2(d.y, d.x);
     const aNear = Math.atan2(near.y - p.y, near.x - p.x), aFar = Math.atan2(far.y - p.y, far.x - p.x);
-    mk('path', { d: arcPts(p, aNear, aNear + angDiff(aT, aNear), 22), fill: 'none', stroke: '#ffd166', 'stroke-width': 1.8 }, B.dyn);
-    mk('path', { d: arcPts(p, aFar, aFar + angDiff(aT, aFar), 30), fill: 'none', stroke: '#ffd166', 'stroke-width': 1.8 }, B.dyn);
+    mk('path', { d: arcPts(p, aNear, aNear + angDiff(aT, aNear), 22), fill: 'none', stroke: plotInk.amber, 'stroke-width': 1.8 }, B.dyn);
+    mk('path', { d: arcPts(p, aFar, aFar + angDiff(aT, aFar), 30), fill: 'none', stroke: plotInk.amber, 'stroke-width': 1.8 }, B.dyn);
     const din = acuteAng(aNear, aT) * 180 / Math.PI, dout = acuteAng(aFar, aT) * 180 / Math.PI;
     cIn(`${fmt(din, 1)}°`);
     cOut(`${fmt(dout, 1)}°`, Math.abs(din - dout) < 0.05 ? 'ok' : 'warn');
@@ -55,11 +56,10 @@ export function createBoard(root) {
     if (st.run) {
       const r1 = dist(near, p), total = r1 + 330, s = st.pulse % total;
       const g = s < r1 ? lerp(near, p, s / r1) : lerp(p, q2, (s - r1) / 330);
-      mk('circle', { cx: g.x, cy: g.y, r: 9, fill: 'rgba(255,209,102,.55)' }, B.dyn);
-      B.dot(g, 4, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 1.2 });
+      mk('circle', { cx: g.x, cy: g.y, r: 9, fill: plotInk.pulse }, B.dyn);
+      B.dot(g, 4, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 1.2 });
     }
-    B.dot(p, 6.5, { fill: '#67e8f9', stroke: '#fff', 'stroke-width': 2 });
-    B.text(V(p.x, p.y - 14), 'P', { fill: '#67e8f9', 'font-size': 13, 'font-weight': 700 });
+    B.dot(p, 6.5, { fill: plotInk.teal, stroke: plotInk.ink, 'stroke-width': 2 });
     B.hint('从近焦点射向曲面的光被弹开，但反向延长线恰过另一焦点 —— 观察者会"看见"光从虚焦点发出：双曲反射镜的成像原理');
   };
 
@@ -70,7 +70,7 @@ export function createBoard(root) {
       st.s = q.x >= st.cx ? 1 : -1;
       st.t = Math.max(-1.3, Math.min(1.3, Math.atan((q.y - st.cy) / bOf())));
     },
-    color: '#67e8f9', r: 9, label: 'P', lo: [10, -12],
+    color: plotInk.teal, r: 9, label: 'P', lo: [10, -12],
   });
 
   B.render();

@@ -1,10 +1,11 @@
 /* 图 A3 · 割椭圆术：圆内接正 n 边形面积 S_n = ½·n·a²·sin(2π/n)，
    压缩 T_k 后像的面积严格乘 k —— 令 n→∞，πa² → πab（刘徽割圆术的仿射续集） */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { createConicLab, plotInk } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 860, H = 440;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
   const R = 140, O1 = V(215, 225), O2 = V(645, 225);
   const st = { n: 6, k: 0.7 };
 
@@ -16,19 +17,19 @@ export function createBoard(root) {
   B.renderFn = () => {
     const k = st.k, b = bOf(), n = st.n;
     for (const O of [O1, O2]) {
-      B.seg(V(O.x - 165, O.y), V(O.x + 165, O.y), { stroke: '#22314a', 'stroke-width': 1.2 });
-      B.seg(V(O.x, O.y - 165), V(O.x, O.y + 165), { stroke: '#22314a', 'stroke-width': 1.2 });
+      B.seg(V(O.x - 165, O.y), V(O.x + 165, O.y), { stroke: plotInk.axis, 'stroke-width': 1.2 });
+      B.seg(V(O.x, O.y - 165), V(O.x, O.y + 165), { stroke: plotInk.axis, 'stroke-width': 1.2 });
     }
-    B.text(V(O1.x, 40), `圆 · 内接 ${n} 边形`, { fill: '#5cadff', 'font-size': 13, 'font-weight': 700 });
-    B.text(V(O2.x, 40), `像 · 椭圆内接 ${n} 边形`, { fill: '#67e8f9', 'font-size': 13, 'font-weight': 700 });
+    B.text(V(O1.x, 40), `圆 · 内接 ${n} 边形`, { fill: plotInk.blue, 'font-size': 13, 'font-weight': 700 });
+    B.text(V(O2.x, 40), `像 · 椭圆内接 ${n} 边形`, { fill: plotInk.teal, 'font-size': 13, 'font-weight': 700 });
     // 曲线（虚）
     const cpts = [], epts = [];
     for (let t = -Math.PI; t <= Math.PI + 1e-9; t += 0.03) {
       cpts.push(`${(O1.x + R * Math.cos(t)).toFixed(1)},${(O1.y + R * Math.sin(t)).toFixed(1)}`);
       epts.push(`${(O2.x + R * Math.cos(t)).toFixed(1)},${(O2.y + b * Math.sin(t)).toFixed(1)}`);
     }
-    mk('polyline', { points: cpts.join(' '), fill: 'none', stroke: '#5cadff', 'stroke-width': 1.6, 'stroke-dasharray': '6 5', opacity: 0.6 }, B.dyn);
-    mk('polyline', { points: epts.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 1.6, 'stroke-dasharray': '6 5', opacity: 0.6 }, B.dyn);
+    mk('polyline', { points: cpts.join(' '), fill: 'none', stroke: plotInk.blue, 'stroke-width': 1.6, 'stroke-dasharray': '6 5', opacity: 0.6 }, B.dyn);
+    mk('polyline', { points: epts.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 1.6, 'stroke-dasharray': '6 5', opacity: 0.6 }, B.dyn);
     // 内接多边形
     const poly = (O, ry, fill, stroke) => {
       const pts = [];
@@ -38,8 +39,8 @@ export function createBoard(root) {
       }
       mk('polygon', { points: pts.join(' '), fill, stroke, 'stroke-width': 2 }, B.dyn);
     };
-    poly(O1, R, 'rgba(92,173,255,.05)', '#5cadff');
-    poly(O2, b, 'rgba(103,232,249,.045)', '#67e8f9');
+    poly(O1, R, plotInk.soft, plotInk.blue);
+    poly(O2, b, plotInk.tealWash, plotInk.teal);
     // 读数
     const Sn = 0.5 * n * R * R * Math.sin(2 * Math.PI / n);
     const S1 = Math.PI * R * R;

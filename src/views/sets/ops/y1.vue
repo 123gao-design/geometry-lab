@@ -3,10 +3,9 @@
     title="交集与并集：∩ 与 ∪" sub="两个集合如何「合起来算」：∩ 收录同时属于两边的元素（且），∪ 收录至少属于一边的元素（或）。九个元素点随手拖，区域着色与成员清单实时重算 —— 逻辑连接词 ∧、∨ 从此有了看得见的样子。"
     :toc="[{ id: 'y1-and', t: '∩ 与 ∪：且与或的集合实现' }, { id: 'y1-chain', t: '包含链与差集' }, { id: 'y1-pit', t: '交可以为空' }]">
     <div class="note good" id="y1-law"><strong>交集</strong>：<Katex tex="A\cap B=\{x\mid x\in A\wedge x\in B\}" />（同时属于两边）；<strong>并集</strong>：<Katex tex="A\cup B=\{x\mid x\in A\vee x\in B\}" />（至少属于一边）。<strong>包含链</strong>：<Katex tex="A\cap B\subseteq A\subseteq A\cup B" />，计数上 <Katex tex="n(A\cap B)\le n(A)\le n(A\cup B)\le n(A)+n(B)" />。<strong>差集</strong>：<Katex tex="A\setminus B=\{x\mid x\in A\wedge x\notin B\}" />，且 <Katex tex="A\setminus B\ne B\setminus A" />（差集不交换）。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createVenn" />
-      <div class="cap">图 Y1 · <b>交集与并集</b>：九个元素点随手拖，四挡模式 ∩、∪、A∖B、B∖A 实时切换 —— 区域着色、成员清单与包含链计数同步重算；⏩ 让 5 号元素绕「A only → 两边 → B only → 圈外」跑一圈，四种归属逐一显示。</div>
-    </div>
+    <ConicFigure number="Y1" title="交集与并集" head="bottom" :factory="createVenn">
+      九个元素点随手拖，四挡模式 ∩、∪、A∖B、B∖A 实时切换 —— 区域着色、成员清单与包含链计数同步重算；⏩ 让 5 号元素绕「A only → 两边 → B only → 圈外」跑一圈，四种归属逐一显示。
+    </ConicFigure>
 
     <h3 class="sec" id="y1-and">∩ 与 ∪：且与或的集合实现</h3>
     <p>J2 的描述法在这里开始真正发挥作用：<strong>且（∧）</strong>写成 <Katex tex="A\cap B" /> —— 两个条件同时过关的元素留下，图 Y1 里 5、6 号元素站在两圈重叠处，∩ 挡只保留它们；<strong>或（∨）</strong>写成 <Katex tex="A\cup B" /> —— 至少过关一边就保留，1..6 号全部在并集中。「且」越筛越严、「或」越并越宽，方向恰好相反 —— 但 7、8、9 号站在两圈之外，∧、∨ 都不保留：两个符号都不是「全部保留」。<strong>符号式徽章</strong>把四挡的定义直译成 <Katex tex="\wedge" /> 与 <Katex tex="\vee" /> 的描述法 —— 集合运算的本质就是「给逻辑连接词找一个集合当结果」。这也是 X1 蕴含式之后的第二块逻辑拼图：⇒ 管关系（⊆）、∧∨ 管运算，高中逻辑词表至此全部出现。</p>
@@ -28,7 +27,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createVenn } from '../../../boards/sets/ops/vennops.js';
 import { Y_CHAPTERS } from './ynav.js';

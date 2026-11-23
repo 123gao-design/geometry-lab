@@ -1,12 +1,12 @@
 <template>
   <ChPage :cur="4" no="T4" base="/conics/opt" :chapters="OPT_CHAPTERS"
     title="双曲线：虚焦点与光学总结" sub="反射光的反向延长线过另一焦点 —— 仿佛从「虚焦点」发出；三种曲线的光学性质在此合流。"
-    :toc="[{ id: 't4-st', t: '定理陈述与实验（图 T4）' }, { id: 't4-proof', t: '证明 · 内角平分线（与椭圆互补）' }, { id: 't4-app', t: '卡塞格林望远镜' }, { id: 't4-sum', t: '光学性质总结' }]">
+    :toc="[{ id: 't4-st', t: '定理陈述与画板（图 T4）' }, { id: 't4-proof', t: '证明 · 内角平分线（与椭圆互补）' }, { id: 't4-app', t: '卡塞格林望远镜' }, { id: 't4-sum', t: '光学性质总结' }]">
     <div class="note good" id="t4-st"><strong>双曲线的光学性质</strong>：从双曲线一个焦点发出的光线，经双曲线（外凸的一侧）反射后，反射光线的<strong>反向延长线</strong>必经过另一个焦点 —— 观察者会感觉光是从那个"虚焦点"发出的。等价几何陈述：<strong>切线平分两焦半径所成角的内角</strong>（与椭圆恰好互补：那边是外角）。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createHypRefl" />
-      <div class="cap">图 T4 · <b>双曲线的光学性质</b>：光脉冲从近焦点射向曲面上的 P，被弹开 —— 看似射向四面八方，实则反射线的反向延长线（灰色虚线）永远穿过另一焦点。拖动 P 可换支；金色圆弧标出对切线的入射角与反射角，恒相等。</div>
-    </div>
+    <ConicFigure head="bottom" number="T4" title="双曲线反射光与虚焦点" :factory="createHypRefl"
+      :legend="[['mint', '双曲线'], ['orange', '入射光'], ['green', '反射光'], ['guide', '反向延长线', 'dashed']]">
+      光脉冲从近焦点射向曲面上的 P，被弹开 —— 看似射向四面八方，实则反射线的反向延长线（灰色虚线）永远穿过另一焦点。拖动 P 可换支；金色圆弧标出对切线的入射角与反射角，恒相等。
+    </ConicFigure>
 
     <h3 class="sec" id="t4-proof">证明：切线是内角平分线</h3>
     <p>与 T2 的证明逐行平行，只是符号翻转。设 <Katex tex="P(x_0,\ y_0)" /> 在右支（<Katex tex="x_0 \ge a" />），切线 <Katex tex="\frac{xx_0}{a^2}-\frac{yy_0}{b^2}=1" /> 与 x 轴交于</p>
@@ -34,12 +34,12 @@
       </tbody>
     </table>
     <p>三种表述其实是同一句话的三种方言："<strong>入射角 = 反射角，而切线恰好平分一对由焦点定义的方向</strong>"。再往深处走一层：抛物线是"一个焦点在无穷远"的椭圆 —— 把 T2 的远焦点拖到无穷远，"射向另一焦点"的光就变成了平行光；双曲线则是焦点翻越无穷远回到实轴另一侧的版本。光学性质随 D4 的统一定义连续变形，正如离心率滑块上那三段曲线 —— 从未真正断裂过。</p>
-    <p>最后作一点延伸：T1 里说过"切线 = 曲上点的极线"。于是在射影几何看来，三种光学性质其实是同一性质 —— 配极变换下的对称 —— 在三个离心率区间的三种读法。子专题一的伏笔，在这里再次回收。</p>
+    <p>最后作一点延伸：T1 里说过"切线 = 曲上点的极线"。于是在射影几何看来，三种光学性质其实是同一性质 —— 配极变换下的对称 —— 在三个离心率区间的三种读法。子专题六的伏笔，在这里再次回收。</p>
   </ChPage>
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createHypRefl } from '../../../boards/conics/optics/hyprefl.js';
 import { OPT_CHAPTERS } from './optnav.js';

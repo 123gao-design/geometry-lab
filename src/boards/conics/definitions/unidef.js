@@ -1,10 +1,12 @@
 /* 图 D4 · 统一定义（第二定义）：|PF| / d(P, l) = e —— 一个滑块给出三种曲线
    以焦点为极点、指向准线为极轴；准线两侧分别解 r = e |d − r cosθ|。 */
-import { Board, mk, V, dist, fmt } from '../../../lib/board.js';
+import { mk, V, dist, fmt } from '../../../lib/board.js';
+import { createConicLab, plotInk, plotWindow } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 800, H = 500;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
+  const drawPlot = plotWindow(B, { x: 12, y: 42, width: W - 24, height: H - 77 }, 'conic-plot');
   const F = V(298, 250), LX = 458, d = LX - F.x;
   const st = { e: 0.55, t: 1.8, side: 0 };
 
@@ -47,31 +49,27 @@ export function createBoard(root) {
 
   B.renderFn = () => {
     const P = curP(), Q = V(LX, P.y);
-    // 轴与准线
-    B.seg(V(20, F.y), V(W - 20, F.y), { stroke: '#22314a', 'stroke-width': 1.5 });
-    B.seg(V(LX, 44), V(LX, H - 32), { stroke: '#5c6a80', 'stroke-width': 1.7, 'stroke-dasharray': '7 6' });
-    B.text(V(LX, 31), '准线 ℓ', { fill: '#93a1b5' });
-    B.text(V(24, 31), '焦点与准线固定', { fill: '#93a1b5', 'text-anchor': 'start' });
-    // 曲线（可能多段多支）
-    const clipId = B.uid + '-conic-plot';
-    const clip = mk('clipPath', { id: clipId }, B.dyn);
-    mk('rect', { x: 12, y: 42, width: W - 24, height: H - 77 }, clip);
-    const curves = mk('g', { 'clip-path': `url(#${clipId})` }, B.dyn);
-    for (const path of [...traceSide(0), ...traceSide(1)])
-      if (path.length > 1) mk('polyline', { points: path.join(' '), fill: 'none', stroke: '#5cadff', 'stroke-width': 3.2 }, curves);
+    drawPlot(() => {
+      B.seg(V(20, F.y), V(W - 20, F.y), { stroke: plotInk.axis, 'stroke-width': 1.5 });
+      B.seg(V(LX, 44), V(LX, H - 32), { stroke: plotInk.guide, 'stroke-width': 1.7, 'stroke-dasharray': '7 6' });
+      for (const path of [...traceSide(0), ...traceSide(1)])
+        if (path.length > 1) mk('polyline', { points: path.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 3.2 }, B.dyn);
+    });
+    B.text(V(LX, 31), '准线 ℓ', { fill: plotInk.guide });
+    B.text(V(24, 31), '焦点与准线固定', { fill: plotInk.guide, 'text-anchor': 'start' });
     // 焦点
-    B.dot(F, 6, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 2 });
-    B.text(V(F.x, F.y + 20), 'F', { fill: '#ffd166', 'font-size': 13, 'font-weight': 700 });
+    B.dot(F, 6, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 2 });
+    B.text(V(F.x, F.y + 20), 'F', { fill: plotInk.amber, 'font-size': 13, 'font-weight': 700 });
     // P 与两条关键线段
-    B.seg(P, F, { stroke: '#ff9e4a', 'stroke-width': 2.4 });
-    B.seg(P, Q, { stroke: '#67e8f9', 'stroke-width': 2.4, 'stroke-dasharray': '6 4' });
+    B.seg(P, F, { stroke: plotInk.copper, 'stroke-width': 2.4 });
+    B.seg(P, Q, { stroke: plotInk.blue, 'stroke-width': 2.4, 'stroke-dasharray': '6 4' });
     const corner = 9 * Math.sign(P.x - Q.x);
-    B.seg(V(Q.x + corner, Q.y), V(Q.x + corner, Q.y + 9), { stroke: '#67e8f9' });
-    B.seg(V(Q.x + corner, Q.y + 9), V(Q.x, Q.y + 9), { stroke: '#67e8f9' });
-    B.dot(Q, 3.5, { fill: '#67e8f9' });
-    B.text(V(Q.x + (P.x < Q.x ? 14 : -14), Q.y - 7), 'Q', { fill: '#67e8f9' });
-    B.text(V((P.x + F.x) / 2, (P.y + F.y) / 2 - 9), 'PF', { fill: '#ff9e4a' });
-    B.text(V((P.x + Q.x) / 2, P.y + 18), 'PQ', { fill: '#67e8f9' });
+    B.seg(V(Q.x + corner, Q.y), V(Q.x + corner, Q.y + 9), { stroke: plotInk.blue });
+    B.seg(V(Q.x + corner, Q.y + 9), V(Q.x, Q.y + 9), { stroke: plotInk.blue });
+    B.dot(Q, 3.5, { fill: plotInk.blue });
+    B.text(V(Q.x + (P.x < Q.x ? 14 : -14), Q.y - 7), 'Q', { fill: plotInk.blue });
+    B.text(V((P.x + F.x) / 2, (P.y + F.y) / 2 - 9), 'PF', { fill: plotInk.copper });
+    B.text(V((P.x + Q.x) / 2, P.y + 18), 'PQ', { fill: plotInk.blue });
     const pf = dist(P, F), pq = Math.abs(LX - P.x);
     const tp = Math.abs(st.e - 1) < 0.005 ? '抛物线（e = 1）' : st.e < 1 ? '椭圆（e < 1）' : '双曲线（e > 1）';
     cType(`e = ${fmt(st.e, 2)} → ${tp}`);
@@ -94,7 +92,7 @@ export function createBoard(root) {
       if (cs.length > 1 && dist(cs[1].p, p) < dist(cs[0].p, p)) best = cs[1];
       st.t = t; st.side = best.side;
     },
-    color: '#5cadff', r: 8, label: 'P', lo: [10, -12],
+    color: plotInk.teal, r: 9, label: 'P', lo: [10, -12],
   });
 
   B.render();

@@ -3,10 +3,9 @@
     title="充分条件与必要条件" sub="若 $p\Rightarrow q$，则称 p 是 q 的充分条件、q 是 p 的必要条件。把两个条件都写成真值集，推出关系就变成包含关系：$p\Rightarrow q\iff A\subseteq B$ —— 集合模块的子集判定（X1）与逻辑模块的推出关系（O3）在真值集上合流，四种条件类型按包含关系一一对号。"
     :toc="[{ id: 'o4-def', t: '定义与四类' }, { id: 'o4-set', t: '真值集观点：合流' }, { id: 'o4-flow', t: '判定流程与必要性的读法' }, { id: 'o4-pit', t: '方向与取等' }]">
     <div class="note good" id="o4-law">若 <Katex tex="p\Rightarrow q" />：p 是 q 的<strong>充分条件</strong>，q 是 p 的<strong>必要条件</strong>。四类：<strong>充分不必要</strong>（p⇒q 且 q⇏p）、<strong>必要不充分</strong>（q⇒p 且 p⇏q）、<strong>充要</strong>（<Katex tex="p\iff q" />）、<strong>既不充分也不必要</strong>（互推都不成立）。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createCD" />
-      <div class="cap">图 O4 · <b>充分条件与必要条件</b>：蓝带画 p 的真值集 A、橙带画 q 的真值集 B，四个预设即四类条件各一例；拖探针到 A∖B 或 B∖A 的位置，对应方向的「反例元素」当场读出。看点：小范围推出大范围 —— 两条带谁含住谁，箭头就指向谁，判定四类型只须比较包含关系。</div>
-    </div>
+    <ConicFigure number="O4" title="充分条件与必要条件" head="bottom" :factory="createCD">
+      蓝带画 p 的真值集 A、橙带画 q 的真值集 B，四个预设即四类条件各一例；拖探针到 A∖B 或 B∖A 的位置，对应方向的「反例元素」当场读出。看点：小范围推出大范围 —— 两条带谁含住谁，箭头就指向谁，判定四类型只须比较包含关系。
+    </ConicFigure>
 
     <h3 class="sec" id="o4-def">定义与四类</h3>
     <p>「充分」与「必要」说的是同一件事的两面：<Katex tex="p\Rightarrow q" /> 成立时，有 p <strong>足够</strong>保证 q（充分），而 p 成立<strong>离不开</strong> q（q 是 p 的必要条件 —— 逆否观点 <Katex tex="\neg q\Rightarrow\neg p" />：q 不成立则 p 也不成立，O3 的改证逆否在此直接用上）。四类条件就是 <Katex tex="p\Rightarrow q" /> 与 <Katex tex="q\Rightarrow p" /> 两个方向的真假组合：图 O4 的预设 ①<Katex tex="x>2" /> 对 <Katex tex="x>1" /> 是充分不必要（② 交换后即必要不充分），③ <Katex tex="|x|>1" /> 与 <Katex tex="x^2>1" /> 互推成立是充要，④ <Katex tex="x>0" /> 对 <Katex tex="|x|>1" /> 互推都不成立。</p>
@@ -31,7 +30,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createCD } from '../../../boards/sets/logic/condi.js';
 import { O_CHAPTERS } from './onav.js';

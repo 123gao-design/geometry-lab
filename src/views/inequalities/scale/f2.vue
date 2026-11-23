@@ -1,45 +1,55 @@
 <template>
   <ChPage :cur="2" no="放2" base="/inequalities/f" :chapters="F_CHAPTERS"
-    title="柯西不等式：$(a^2+b^2)(c^2+d^2)\ge(ac+bd)^2$"
-    sub="把四个数两两配成向量 $u=(a,b)$、$v=(c,d)$：内积的绝对值不超过两模长之积，两边平方即得柯西不等式。差额 $(ac+bd)^2$ 与 $(a^2+b^2)(c^2+d^2)$ 之间，缺的正是 u、v 张成平行四边形的面积——差 $(ad-bc)^2$。"
-    :toc="[{ id: 'f2-vec', t: '向量读法：内积与投影' }, { id: 'f2-id', t: '恒等式：$(ad-bc)^2$ 的面积意义' }, { id: 'f2-eq', t: '取等：两向量共线' }, { id: 'f2-dim', t: 'n 维形式与求最值' }, { id: 'f2-pit', t: '方向与取等' }]">
-    <div class="note good" id="f2-law">对任意实数，<Katex tex="(a^2+b^2)(c^2+d^2)\ge(ac+bd)^2" />，等号当且仅当 <Katex tex="ad=bc" />，即两数对 (a,b) 与 (c,d) 成比例。向量形式更见筋骨：<Katex tex="|\vec u\cdot\vec v|\le|\vec u|\,|\vec v|" />。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createCB" />
-      <div class="cap">图 放2 · <b>柯西不等式</b>：拖 a/b/c/d 或点四个预设，粉色四边形是 u、v 张开的带符号面积 <Katex tex="|ad-bc|"/>，青色虚线是 v 在 u 上的投影。看点：拖到③共线取等时四边形塌成一条直线、面积归零，内积读数攀到两模长之积——取等与面积同现；②正交例面积最大、内积最小。</div>
-    </div>
-
-    <h3 class="sec" id="f2-vec">向量读法：内积与投影</h3>
-    <p>令 <Katex tex="\vec u=(a,b),\ \vec v=(c,d)" />。内积 <Katex tex="\vec u\cdot\vec v=ac+bd" />，模长平方 <Katex tex="|\vec u|^2=a^2+b^2" />（同理 v）。由 <Katex tex="|\cos\theta|\le1" /> 得 <Katex tex="|\vec u\cdot\vec v|=|\vec u|\,|\vec v||\cos\theta|\le|\vec u|\,|\vec v|" />，两边平方便是柯西不等式。几何上，v 在 u 方向上的投影长度为 <Katex tex="|ac+bd|/\sqrt{a^2+b^2}" />，它总不超过 v 的模长——图 放2 青色虚线即这段投影，长度一眼可读。</p>
-
-    <h3 class="sec" id="f2-id">恒等式：<Katex tex="(ad-bc)^2"/> 的面积意义</h3>
-    <p>直接展开即得配方法：</p>
-    <Katex tex="(a^2+b^2)(c^2+d^2)-(ac+bd)^2=a^2d^2-2abcd+b^2c^2=(ad-bc)^2\ge0" display />
-    <p>而 <Katex tex="ad-bc" /> 恰是向量 u、v 张成平行四边形的带符号面积（两向量交叉相乘之差），也是 u、v 为基的 <Katex tex="2\times2" /> 行列式。于是柯西不等式断言：两模长之积被内积平方「追上」后，缺口的正是平行四边形面积——零面积即两向量共线。图 放2 的粉四边形实时显示这块面积，函数两式的读数差距恒等于面积平方。</p>
-
-    <h3 class="sec" id="f2-eq">取等：两向量共线</h3>
-    <p>等号条件 <Katex tex="ad=bc" /> 即二维行列式为零，等价于 <Katex tex="\vec u,\vec v" /> 共线（成比例；含退化——某量为零向量时两式均为零仍取等）。图 放2 预设③（1,2,2,4）让 <Katex tex="\vec v=2\vec u" />，四边形塌成线段、投影与 v 重合；预设②（1,2,−4,2）让 <Katex tex="\vec u\perp\vec v" />，内积为零、面积取到最大。</p>
-
-    <h3 class="sec" id="f2-dim">n 维形式与求最值</h3>
-    <p>对两组数 <Katex tex="a_1,\ldots,a_n" /> 与 <Katex tex="b_1,\ldots,b_n" />：<Katex tex="(a_1^2+\cdots+a_n^2)(b_1^2+\cdots+b_n^2)\ge(a_1b_1+\cdots+a_nb_n)^2" />，n=2 即本图，n=3 对应三维向量。它常用来求最值——约束 <Katex tex="ax+by=k" />（两个一次式的线性组合定值）时求 <Katex tex="x^2+y^2" /> 的下界：由柯西 <Katex tex="(x^2+y^2)(a^2+b^2)\ge(ax+by)^2" /> 得 <Katex tex="x^2+y^2\ge\frac{k^2}{a^2+b^2}" />，取等 <Katex tex="(x,y)\parallel(a,b)" />。例如 2x+3y=6 时 x²+y² 的最小值是 36/13，取等 <Katex tex="(x,y)=\frac{6}{13}(2,3)" />。这正是线1 线性规划里「目标函数沿可行域平移」的数原型。</p>
-
-    <h3 class="sec" id="f2-pit">方向与取等</h3>
-    <div class="note warn tip">
-      <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
-      <ul class="tip-list">
-        <li><strong>提示一：只给了一个方向的界。</strong>柯西给 <Katex tex="|ac+bd|\le\sqrt{a^2+b^2}\sqrt{c^2+d^2}" />，求 <Katex tex="ac+bd" /> 的最大值用它，最小值还要带负号 <Katex tex="\ge-\sqrt{\cdots}" />，别只写一半。</li>
-        <li><strong>提示二：取等是共线不是相等。</strong>「a=c 且 b=d」只对等向量成立，柯西取等在成比例（ad−bc=0），与基本不等式「两数相等」的取等不是一回事（见基1）。</li>
-        <li><strong>提示三：退化别漏。</strong>某向量为零时两式同为零仍取等，预设与含参题里要单列。</li>
-        <li><strong>提示四：方向勿反用。</strong>「和定（积定）求最值」在柯西这里是组合定值求平方和，套反了方向会把上界当下界。</li>
-      </ul>
-    </div>
-    <p>均值链里的平方均值与算术均值之差，本质也是这类「差为平方和」的缺口——柯西把它从一维配对抬到 n 维配对。下一章放3 把放缩变得日常：求不出的和，放大或夹逼成求得出的。</p>
+    title="柯西不等式" sub="把四个数配成两个向量，看清投影、面积和平方和怎样给出同一个界。"
+    :toc="[{id:'f2-vec',t:'投影与取等'},{id:'f2-triangles',t:'两个直角三角形的拼图'},{id:'f2-id',t:'面积恒等式'},{id:'f2-dim',t:'平方和与 n 维证明'},{id:'f2-min',t:'直线上的最小值'},{id:'f2-frac',t:'分式求下界'}]">
+    <div class="note good" id="f2-law">任意实数 <Katex tex="a,b,c,d" /> 都满足
+      <Katex tex="(a^2+b^2)(c^2+d^2)\ge(ac+bd)^2" />。等号成立当且仅当 <Katex tex="ad=bc" />。</div>
+    <h3 class="sec" id="f2-vec">把内积看成投影</h3>
+    <p>取 <Katex tex="u=(a,b),\ v=(c,d)" />。若两向量都非零，设夹角为 <Katex tex="\theta" />，则 <Katex tex="u\cdot v=|u||v|\cos\theta" />。把 v 的端点投影到 u 所在的直线，垂足记为 H。直角三角形中，投影长度 <Katex tex="OH=|v||\cos\theta|" /> 至多等于斜边长 <Katex tex="|v|" />。两边乘以 <Katex tex="|u|" /> 再平方，就得到柯西不等式。</p>
+    <ConicFigure number="2a" title="内积、垂足与平行四边形" head="bottom" :factory="vectors"
+      :legend="[['blue', '向量 u'], ['gold', '向量 v'], ['mint', 'u、v 张成的平行四边形与 v 的投影', 'dashed']]">
+      调整四个坐标，观察垂足 H。切换「同向」与「反向」时，内积变号，投影长度和等号条件都保持相同。
+    </ConicFigure>
+    <p id="f2-eq">同向与反向都使 <Katex tex="|\cos\theta|=1" />。只要有一个零向量，两边也同为零，此时直接从原式判断取等。正交时内积为零；在两向量长度固定的条件下，此时平行四边形面积最大。</p>
+    <h3 class="sec" id="f2-triangles">用两个直角三角形拼出柯西不等式</h3>
+    <p>先设四个数都是正数。在水平底边上取点 O，向右走 a、再向上走 b，到达 A。另从 O 向左走 d、再向上走 c，到达 B。这样，右侧直角三角形的斜边是 OA，左侧的是 OB。连接 AB，中间便围出三角形 OAB。</p>
+    <ConicFigure number="2b" title="拼成梯形，用两种方法量中间的三角形" head="bottom" :factory="triangles"
+      :legend="[['blue', '右侧直角三角形 OUA'], ['gold', '左侧直角三角形 OVB'], ['mint', '中间的三角形 OAB 与高 BH', 'dashed']]">
+      图中固定 a = 3、b = 1.5。拖动 B，虚线 BH 是中间三角形以 OA 为底的高。点「让两条斜边垂直」，观察垂足 H 的位置。
+    </ConicFigure>
+    <p><strong>先用拼图算面积。</strong>整个梯形的两条平行边是竖直的 b 和 c，它们相距 a + d。从梯形面积中扣去左右两个直角三角形，便得到中间的面积 S。</p>
+    <Katex tex="2S=(b+c)(a+d)-ab-cd=ac+bd." display />
+    <p><strong>再用底和高估面积。</strong>从 B 向直线 OA 作垂线，垂足为 H。点到直线的距离 BH 不超过 BO，所以</p>
+    <Katex tex="2S=OA\cdot BH\le OA\cdot OB=\sqrt{a^2+b^2}\sqrt{c^2+d^2}." display />
+    <p>把两个面积式接起来再平方，就得到柯西不等式。等号成立时 H 恰与 O 重合，两条斜边垂直。此时左右两个直角三角形相似，对应直角边满足 <Katex tex="b/a=d/c" />，即 <Katex tex="ad=bc" />。反过来，这个比例也保证两条斜边垂直。</p>
+    <p>边长为零的情形可令正边长趋于零得到。对任意实数，先用 <Katex tex="|ac+bd|\le |a||c|+|b||d|" />，再对四个绝对值应用拼图结论，便得到同一个上界。下面的恒等式直接给出包括负数、零在内的完整取等条件。</p>
+    <h3 class="sec" id="f2-id">差额恰好是面积的平方</h3>
+    <p>也可以完全用代数证明。展开两边，消去共同的 <Katex tex="a^2c^2" /> 与 <Katex tex="b^2d^2" /> 后，余下的是一个完全平方。</p>
+    <Katex tex="(a^2+b^2)(c^2+d^2)-(ac+bd)^2=(ad-bc)^2." display />
+    <p>从图上也能读出这个因子。若 u 非零，取与它垂直的单位向量 <Katex tex="(-b,a)/|u|" />。v 在这个方向上的投影长度为 <Katex tex="|ad-bc|/|u|" />。以 u 为底，底乘高得到面积 <Katex tex="|ad-bc|" />。所以差额等于面积的平方，等号对应平行四边形压成线段或点。</p>
+    <h3 class="sec" id="f2-dim">让一个平方和取到最小值</h3>
+    <p>将二维结论推广到 n 维，可以从一个对所有实数 t 都非负的量出发。设 <Katex tex="A=\sum a_i^2,\ B=\sum a_ib_i,\ C=\sum b_i^2" />，各项都从 1 加到 n。展开并配方，在 <Katex tex="A>0" /> 时得到</p>
+    <Katex tex="q(t)=\sum_i(ta_i-b_i)^2=At^2-2Bt+C=A(t-B/A)^2+C-B^2/A." display />
+    <p>取 <Katex tex="t=B/A" />，第一项消失，余下的最小值仍须非负。因此 <Katex tex="AC\ge B^2" />。等号成立恰好要求每一个平方项都为零，即对所有 i 有 <Katex tex="b_i=(B/A)a_i" />。若 <Katex tex="A=0" />，所有 <Katex tex="a_i" /> 都是零，原式直接取等。</p>
+    <h3 class="sec" id="f2-min">例一 · 直线上哪一点离原点最近？</h3>
+    <p>已知 <Katex tex="2x+3y=6" />，求 <Katex tex="x^2+y^2" /> 的最小值。把系数 (2, 3) 与未知数 (x, y) 配成两个向量，内积已固定为 6，故 <Katex tex="13(x^2+y^2)\ge36" />。取等时 <Katex tex="(x,y)=\lambda(2,3)" />，代回约束得到 <Katex tex="\lambda=6/13" />。最小值 <Katex tex="36/13" /> 在 <Katex tex="H=(12/13,18/13)" /> 处取得。</p>
+    <ConicFigure number="2d" title="沿约束直线寻找最小半径" head="bottom" :factory="minimum"
+      :legend="[['blue', '约束直线 2x + 3y = 6'], ['gold', '半径 OP'], ['mint', '以 O 为心的圆与垂足 H', 'dashed']]">
+      拖动 P，圆始终经过 P。点「回到垂足」，圆与直线相切，此时半径与直线的法向量 (2, 3) 同向。
+    </ConicFigure>
+    <p>同理，对 <Katex tex="ax+by=k" /> 且 <Katex tex="a^2+b^2>0" />，最小距离平方为 <Katex tex="k^2/(a^2+b^2)" />。反过来，若给定向量长度而求内积的最值，要同时考虑同向和反向，它们分别给出上界和下界。</p>
+    <h3 class="sec" id="f2-frac">例二 · 把正分母配进向量</h3>
+    <p>设 <Katex tex="x,y>0,\ x+y=10" />，求 <Katex tex="9/x+4/y" /> 的最小值。想把两个分式写成模长平方，就取 <Katex tex="u=(3/\sqrt{x},2/\sqrt{y})" />，再用 <Katex tex="v=(\sqrt{x},\sqrt{y})" /> 消去内积中的根号。</p>
+    <Katex tex="(9/x+4/y)(x+y)\ge(3+2)^2." display />
+    <p>下界是 <Katex tex="5/2" />。两向量成比例要求 <Katex tex="3/x=2/y" />，与和为 10 联立得 <Katex tex="x=6,\ y=4" />，故下界可以达到。这个配对也证明了一般的分式形式：当所有 <Katex tex="w_i>0" /> 时，<Katex tex="\sum_i z_i^2/w_i\ge(\sum_i z_i)^2/\sum_i w_i" />，取等当且仅当各 <Katex tex="z_i/w_i" /> 相同。</p>
   </ChPage>
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
-import { createBoard as createCB } from '../../../boards/inequalities/scale/cauchy.js';
+import { createBoard as vectors } from '../../../boards/inequalities/scale/cauchy.js';
+import { createBoard as triangles } from '../../../boards/inequalities/scale/cauchyTriangles.js';
+import { createBoard as minimum } from '../../../boards/inequalities/scale/cauchyMinimum.js';
 import { F_CHAPTERS } from './fnav.js';
 </script>

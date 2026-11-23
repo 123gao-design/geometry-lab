@@ -1,87 +1,94 @@
-/* 图 4 · 扫描出极线：调和共轭点的轨迹 */
-import { Board, mk, V, add, sub, mul, dist, harmFourth, crOn, polarLine, lineFromEq, lineConic, TAU, fmt } from '../../../lib/board.js';
+/* 图 4 · 以实割线的调和共轭点采样极线 */
+import { V, add, sub, mul, len, fmt } from '../../../lib/board.js';
+import { EPS, projectiveCrossRatio, unitPolar } from '../../../lib/projective/homogeneous.js';
+import { blue, gold, guide, ink, lineStyle, createDiagram, drawEllipse, drawLine, mark, toCanvas, toLocal, visible } from '../../../lib/projective/diagram.js';
 
 export function createBoard(root) {
-  const W = 800, H = 540;
-  const B = new Board(root, W, H);
-  const CIR = { cx: 400, cy: 270, a: 130, b: 130 }, R = 130;
-  const st = { P: V(330, 300), theta: 0.4, trail: [], showPolar: false, scanning: false };
-  st.P.clamp = p => {
-    p.x = Math.max(20, Math.min(W - 20, p.x)); p.y = Math.max(20, Math.min(H - 20, p.y));
-    const d = dist(p, V(CIR.cx, CIR.cy));
-    if (d < 16) { const u = norm2(sub(p, V(CIR.cx, CIR.cy))); return add(V(CIR.cx, CIR.cy), mul(u, 16)); }
-    return p;
-  };
-  function norm2(v) { const l = Math.hypot(v.x, v.y) || 1; return V(v.x / l, v.y / l); }
-
-  B.handle({ get: () => st.P, set: p => { st.P = st.P.clamp(p); st.trail.length = 0; }, color: '#fff', r: 8, label: 'P', lo: [11, -12] });
-  B.handle({ get: () => add(st.P, mul(V(Math.cos(st.theta), Math.sin(st.theta)), 80)),
-    set: p => { const d = sub(p, st.P); if (dist(d, V(0, 0)) > 18) st.theta = Math.atan2(d.y, d.x); },
-    color: '#ff9e4a', r: 6, thin: true, lo: [10, -10] });
-
+  const B = createDiagram(root, 720, 420, '拖动极点和割线方向，或单击开始扫描');
+  const frame = { cx: 300, cy: 206, a: 132, b: 132 };
+  const origin = V(frame.cx, frame.cy);
+  let P = toCanvas(frame, [.7, .15, 1]), angle = .18, show = false;
+  let trail = [];
+  function stop() { B.cancelRaf(); }
+  const direction = () => V(Math.cos(angle), -Math.sin(angle));
+  B.handle({ get: () => P, set: p => { stop(); trail = []; P = p; }, color: ink, label: 'P', lo: [12, 20] });
+  B.handle({ get: () => add(P, mul(direction(), 56)), set: p => {
+    stop();
+    const d = sub(p, P);
+    if (len(d) > 10) angle = Math.atan2(-d.y, d.x);
+  }, color: guide, thin: true });
   B.btn('开始扫描', () => {
-    B.cancelRaf();
-    const t0 = st.theta; st.scanning = true;
-    (function step() {
-      st.theta += 0.035;
-      const g = currentGeometry();
-      if (g && g.Q && Math.abs(g.Q.x) < 2500 && Math.abs(g.Q.y) < 2500) st.trail.push(g.Q);
-      if (st.theta >= t0 + TAU) {
-        st.theta = t0; st.scanning = false; B.render(); return;
+    stop();
+    trail = [];
+    const from = angle;
+    let start;
+    let nextSample = 0;
+    function tick(now) {
+      start ??= now;
+      const motion = Math.min(1, (now - start) / 3200);
+      angle = from + Math.PI * motion;
+      if (motion >= nextSample) {
+        const g = geometry();
+        const point = g && toCanvas(frame, g.harmonic);
+        if (visible(B, point, 6)) trail.push(point);
+        nextSample = motion + .028;
       }
-      B.render(); B.raf(step);
-    })();
+      B.render();
+      if (motion < 1) B.raf(tick);
+      else stop();
+    }
+    B.raf(tick);
   }, { pri: true });
-  B.btn('清除轨迹', () => { st.trail.length = 0; B.render(); });
-  B.toggleBtn('显示理论极线', st.showPolar, v => { st.showPolar = v; B.render(); });
-  const chip1 = B.chip('P 的位置'), chip2 = B.chipM("$(U,V;P,Q')$"), chip3 = B.chipM("$d\\cdot d'/r^2$");
+  B.btn('清除轨迹', () => { stop(); trail = []; B.render(); });
+  B.btn('圆外点', () => { stop(); trail = []; angle = .18; P = toCanvas(frame, [1.55, .32, 1]); B.render(); });
+  B.btn('圆心', () => { stop(); trail = []; P = origin; B.render(); });
+  B.btn('复位', () => { stop(); trail = []; angle = .18; P = toCanvas(frame, [.7, .15, 1]); B.render(); });
+  B.toggleBtn('显示理论极线', show, v => { show = v; B.render(); });
+  const read = B.chipM("$(U,V;P,P')$"), scale = B.chipM("$d d'/r^2$"), state = B.chip('当前构造');
 
-  function currentGeometry() { // 当前割线方向下的 U, V, Q′
-    const dir = V(Math.cos(st.theta), Math.sin(st.theta));
-    const uv = lineConic(CIR, sub(st.P, mul(dir, 700)), add(st.P, mul(dir, 700)));
-    if (!uv) return null;
-    const Q = harmFourth(uv[0], uv[1], st.P);
-    return { uv, Q };
+  function geometry() {
+    const [x, y] = toLocal(frame, P), u = Math.cos(angle), v = Math.sin(angle);
+    const projection = x * u + y * v, level = x * x + y * y - 1;
+    const discriminant = projection * projection - level;
+    if (discriminant <= EPS || Math.abs(level) <= EPS) return null;
+    const t = -projection - Math.sqrt(discriminant), s = -projection + Math.sqrt(discriminant);
+    // 以 P 为割线参数原点，调和共轭的参数是 2ts/(t+s)，允许分母为 0。
+    const w = t + s, k = 2 * t * s;
+    return { t, s, harmonic: [x * w + k * u, y * w + k * v, w], parameter: [k, w] };
   }
 
   B.renderFn = () => {
-    const O = V(CIR.cx, CIR.cy);
-    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'rgba(92,173,255,.05)', stroke: '#3f5f8f', 'stroke-width': 2 }, B.dyn);
-    B.dot(O, 3.5, { fill: '#5c6a80' }); B.text(V(O.x, O.y - 8), 'O', { fill: '#93a1b5', 'font-size': 12 });
-    const d = dist(st.P, O), dp = R * R / d;
-    const inside = d < R - 3, on = d > R - 3 && d < R + 3;
-    chip1(inside ? '圆内 —— 极线在圆外（每条割线都有效）' : on ? '圆上 —— 极线退化为切线' : '圆外 —— 极线穿过圆内', inside ? '' : 'ok');
-    const g = currentGeometry();
-    if (g) {
-      const dir = V(Math.cos(st.theta), Math.sin(st.theta));
-      B.seg(sub(st.P, mul(dir, 700)), add(st.P, mul(dir, 700)), { stroke: '#7a5a30', 'stroke-width': 1, opacity: .7 });
-      const [u, v] = g.uv;
-      B.dot(u, 5, { fill: '#4ade80', stroke: '#fff', 'stroke-width': 1.6 });
-      B.dot(v, 5, { fill: '#4ade80', stroke: '#fff', 'stroke-width': 1.6 });
-      B.text(V(u.x, u.y - 11), 'U', { fill: '#4ade80', 'font-size': 11.5, 'font-weight': 700 });
-      B.text(V(v.x, v.y - 11), 'V', { fill: '#4ade80', 'font-size': 11.5, 'font-weight': 700 });
-      if (g.Q) {
-        B.dot(g.Q, 6.5, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 2 });
-        B.text(V(g.Q.x, g.Q.y - 13), 'P′', { fill: '#ffd166', 'font-size': 12.5, 'font-weight': 700 });
-        const cr = crOn(u, v, st.P, g.Q);
-        chip2(fmt(cr, 3), Math.abs(cr + 1) < 0.01 ? 'ok' : 'warn');
-      } else chip2('P 在 UV 中点 —— Q′ 在无穷远', 'warn');
-    } else chip2('该方向与圆不相交（虚割线）', 'warn');
-    if (st.trail.length) {
-      const pts = st.trail.map(p => `${fmt(p.x, 1)},${fmt(p.y, 1)}`).join(' ');
-      mk('polyline', { points: pts, fill: 'none', stroke: 'rgba(255,209,102,.55)', 'stroke-width': 1.6 }, B.dyn);
+    const point = toLocal(frame, P), [x, y] = point;
+    const d = Math.hypot(x, y), p = unitPolar(point);
+    drawEllipse(B, frame);
+    mark(B, origin, 'O', guide, -13, 17);
+    const handle = add(P, mul(direction(), 56));
+    B.inf(P, handle, lineStyle(guide, 1.2, '6 7'));
+    B.seg(P, handle, lineStyle(guide, 2));
+    if (show) {
+      drawLine(B, frame, p, lineStyle(blue, 2.4, '8 5'), 'p');
+      if (d > EPS) {
+        const foot = toCanvas(frame, [x / (d * d), y / (d * d), 1]);
+        B.seg(origin, foot, { ...lineStyle(blue, 1.3, '3 6'), opacity: .65 });
+        mark(B, foot, 'P*', blue, 13, 20);
+        scale(fmt(len(sub(P, origin)) * len(sub(foot, origin)) / (frame.a * frame.a), 3), 'ok');
+      } else scale('圆心的极线在无穷远');
+    } else scale('显示理论极线后读数');
+    trail.forEach(p => B.dot(p, 2.4, { fill: gold, opacity: .66 }));
+    const geometryOnLine = geometry();
+    if (!geometryOnLine) {
+      state(Math.abs(d - 1) < EPS ? 'P 在圆上 · 极线是切线' : '本方向没有两个不同的实交点');
+      read('—');
+      return;
     }
-    if (st.scanning) B.hint('扫描中：割线绕 P 旋转，黄色调和共轭点 P′ 正在落下…');
-    else if (st.trail.length > 40) B.hint('P′ 的轨迹连成了直线 —— 这就是 P 的极线。打开「显示理论极线」对照');
-    else B.hint('拖动橙色把手选割线方向，或点「开始扫描」');
-    const L = polarLine(CIR, st.P);
-    if (st.showPolar) {
-      const [a, b] = lineFromEq(L.A, L.B, L.D);
-      B.inf(a, b, { stroke: '#5cadff', 'stroke-width': 2, 'stroke-dasharray': '9 6' });
-      const Ps = add(O, mul(sub(st.P, O), R * R / (d * d)));
-      B.dot(Ps, 5, { fill: '#5cadff' }); B.text(V(Ps.x, Ps.y + 18), 'P* (反演像)', { fill: '#5cadff', 'font-size': 11 });
-    }
-    chip3(fmt(d * dp / (R * R), 4), Math.abs(d * dp / (R * R) - 1) < 0.001 ? 'ok' : 'warn');
+    const { t, s, harmonic, parameter } = geometryOnLine;
+    mark(B, add(P, mul(direction(), t * frame.a)), 'U', guide, -14, -12);
+    mark(B, add(P, mul(direction(), s * frame.a)), 'V', guide);
+    const conjugate = toCanvas(frame, harmonic);
+    mark(B, conjugate, 'P′', gold, 12, -14);
+    state(!conjugate ? 'P′ 在无穷远' : visible(B, conjugate, 6) ? 'P′ 在视窗内' : 'P′ 在视窗外');
+    const cr = projectiveCrossRatio([t, 1], [s, 1], [0, 1], parameter);
+    read(cr == null ? '—' : fmt(cr, 3), cr == null ? '' : 'ok');
   };
   B.render();
   return B;

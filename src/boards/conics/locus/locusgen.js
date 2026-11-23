@@ -1,11 +1,12 @@
 /* 图 P2 · 交轨法轨迹机：过 A(−a,0) 与 B(a,0) 的两直线斜率满足 k₁·k₂ = K（定值）
    K = −b²/a² → 椭圆；K = +b²/a² → 双曲线（平行的瞬间恰是渐近方向！）；K = −1 → 圆（Thales）
    拖动蓝线（或按「生成轨迹」），交点 P 的轨迹自动画出 —— D5 第三定义的构造版 */
-import { Board, mk, V, add, dist, fmt } from '../../../lib/board.js';
+import { mk, V, add, dist, fmt } from '../../../lib/board.js';
+import { createConicLab, plotInk } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 860, H = 470;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
   const Cy = 240, aa = 170;
   const A = V(430 - aa, Cy), Bp = V(430 + aa, Cy);
   const st = { mode: 'e', th: -0.65, run: false, sw: -1.5, pts: [] };
@@ -44,8 +45,8 @@ export function createBoard(root) {
   B.renderFn = () => {
     const K = tg(), b = MODES[st.mode].b;
     // 轴
-    B.seg(V(20, Cy), V(W - 20, Cy), { stroke: '#22314a', 'stroke-width': 1.3 });
-    B.seg(V(430, 20), V(430, H - 20), { stroke: '#22314a', 'stroke-width': 1 });
+    B.seg(V(20, Cy), V(W - 20, Cy), { stroke: plotInk.axis, 'stroke-width': 1.3 });
+    B.seg(V(430, 20), V(430, H - 20), { stroke: plotInk.axis, 'stroke-width': 1 });
     // 参考曲线（虚，验证轨迹用）
     const ref = [];
     if (st.mode === 'c') { for (let t = -Math.PI; t <= Math.PI + 1e-9; t += 0.04) ref.push(`${(430 + aa * Math.cos(t)).toFixed(1)},${(Cy + aa * Math.sin(t)).toFixed(1)}`); }
@@ -54,23 +55,23 @@ export function createBoard(root) {
         ref.push(`${(430 + aa * Math.cos(t)).toFixed(1)},${(Cy + b * Math.sin(t)).toFixed(1)}`);
     }
     if (st.mode !== 'h')
-      mk('polyline', { points: ref.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 1.2, 'stroke-dasharray': '6 6', opacity: 0.5 }, B.dyn);
+      mk('polyline', { points: ref.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 1.2, 'stroke-dasharray': '6 6', opacity: 0.5 }, B.dyn);
     else
       for (const s of [1, -1]) {
         const pts = [];
         for (let t = -1.35; t <= 1.35 + 1e-9; t += 0.03)
           pts.push(`${(430 + s * aa / Math.cos(t)).toFixed(1)},${(Cy + b * Math.tan(t)).toFixed(1)}`);
-        mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 1.2, 'stroke-dasharray': '6 6', opacity: 0.5 }, B.dyn);
+        mk('polyline', { points: pts.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 1.2, 'stroke-dasharray': '6 6', opacity: 0.5 }, B.dyn);
       }
     // A、B
     for (const [pt, nm] of [[A, 'A(−a, 0)'], [Bp, 'B(a, 0)']]) {
-      B.dot(pt, 5, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 1.6 });
-      B.text(V(pt.x, pt.y + 21), nm, { fill: '#ffd166', 'font-size': 11.5, 'font-weight': 700 });
+      B.dot(pt, 5, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 1.6 });
+      B.text(V(pt.x, pt.y + 21), nm, { fill: plotInk.amber, 'font-size': 11.5, 'font-weight': 700 });
     }
     // 两条联动直线
     const k = k1(), k2v = Math.abs(k) < 0.004 ? 1e4 : K / k;
-    B.inf(A, add(A, V(1, k)), { stroke: '#5cadff', 'stroke-width': 1.8 });
-    B.inf(Bp, add(Bp, V(1, k2v)), { stroke: '#ff9e4a', 'stroke-width': 1.8 });
+    B.inf(A, add(A, V(1, k)), { stroke: plotInk.blue, 'stroke-width': 1.8 });
+    B.inf(Bp, add(Bp, V(1, k2v)), { stroke: plotInk.copper, 'stroke-width': 1.8 });
     // 交点与轨迹
     const p = interP();
     if (p) {
@@ -90,9 +91,9 @@ export function createBoard(root) {
       }
       if (cur.length) segs.push(cur);
       for (const sgm of segs) if (sgm.length > 1)
-        mk('polyline', { points: sgm.join(' '), fill: 'none', stroke: 'rgba(255,209,102,.55)', 'stroke-width': 3.5 }, B.dyn);
-      B.dot(p, 6, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 2 });
-      B.text(V(p.x + 14, p.y - 8), 'P', { fill: '#ffd166', 'font-size': 12.5, 'font-weight': 700 });
+        mk('polyline', { points: sgm.join(' '), fill: 'none', stroke: plotInk.pulse, 'stroke-width': 3.5 }, B.dyn);
+      B.dot(p, 6, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 2 });
+      B.text(V(p.x + 14, p.y - 8), 'P', { fill: plotInk.amber, 'font-size': 12.5, 'font-weight': 700 });
     }
     // 读数
     cM(MODES[st.mode].lab + `，目标 K = ${fmt(K, 3)}`);
@@ -113,7 +114,7 @@ export function createBoard(root) {
       st.pts = [];   // 手动拖动时只看当前交点
       B.render();
     },
-    color: '#5cadff', r: 7, label: '拖我', lo: [9, -11],
+    color: plotInk.blue, r: 7, label: '拖我', lo: [9, -11],
   });
 
   B.render();

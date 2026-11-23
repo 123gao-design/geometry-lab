@@ -1,14 +1,14 @@
 <template>
   <ChPage :cur="5" no="L5" base="/conics/lin" :chapters="LIN_CHAPTERS"
-    title="定点 · 定值 · 最值：大题三宝" sub="解析几何大题的完结题型，全部建立在同一条流程上：设线 → 联立 → 韦达 → 把目标式对称化。本讲把三宝各自的判定机关拆开 —— 定点看「参数无关」，定值看「对偶阅读」，最值看「目标 + 约束」。"
-    :toc="[{ id: 'l5-lab', t: '定点机实验（图 L5）' }, { id: 'l5-fix', t: '定点 · 完整解法' }, { id: 'l5-const', t: '定值 · 对偶阅读' }, { id: 'l5-min', t: '最值 · 三条方法' }]">
+    title="定点 · 定值 · 最值：大题三宝" sub="解析几何大题的完结题型，全部建立在同一条流程上：设线 → 联立 → 韦达 → 把目标式对称化。本讲把三宝各自的判定依据拆开 —— 定点看「参数无关」，定值看「对偶阅读」，最值看「目标 + 约束」。"
+    :toc="[{ id: 'l5-lab', t: '定点问题（图 L5）' }, { id: 'l5-fix', t: '定点 · 完整解法' }, { id: 'l5-const', t: '定值 · 对偶阅读' }, { id: 'l5-min', t: '最值 · 三条方法' }]">
     <div class="note good"><strong>本讲主角</strong>：弦 <strong>AB</strong> 过定点问题。顶点视角最经典的版本：椭圆上两点 A、B 满足 <Katex tex="k_{VA}\cdot k_{VB}=K" />（V 为右顶点，K 为定值），则弦 <strong>AB</strong> 恒过 <strong>x 轴上一个定点</strong> —— 且定点坐标有闭式 <Katex tex="t=a\cdot\tfrac{K'+1}{K'-1}" />（<Katex tex="K'=K\tfrac{a^2}{b^2}" />）。斜率积换一个值，定点就在 x 轴上挪一个位置：从左顶点、中心（直径）到右焦点，一条 K 轴串起三种身份。</div>
 
-    <h3 class="sec" id="l5-lab">定点机实验</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createFixedPt" />
-      <div class="cap">图 L5 · <b>定点与定值</b>：橙色弦绕椭圆转（「扫弦」或拖 u），但所有弦都过金色定点 T，理论与实测读数同步变绿。滑 K：<strong>定点沿 x 轴滑过左顶点（<Katex tex="K\to 0^-" />）、中心（<Katex tex="K=-\tfrac{b^2}{a^2}" />，弦全是直径）、右焦点（<Katex tex="K=K^*" />）</strong>，右下角标签实时显示。</div>
-    </div>
+    <h3 class="sec" id="l5-lab">定点问题</h3>
+    <ConicFigure head="bottom" number="L5" title="保持斜率积，观察弦经过的定点" :factory="createFixedPt"
+      :legend="[['mint', '椭圆'], ['orange', '动弦'], ['gold', '定点 T', 'point']]">
+      橙色弦绕椭圆转（「扫弦」或拖 u），但所有弦都过金色定点 T，理论与实测读数同步变绿。滑 K：<strong>定点沿 x 轴滑过左顶点（<Katex tex="K\to 0^-" />）、中心（<Katex tex="K=-\tfrac{b^2}{a^2}" />，弦全是直径）、右焦点（<Katex tex="K=K^*" />）</strong>，右下角标签实时显示。
+    </ConicFigure>
 
     <h3 class="sec" id="l5-fix">定点：完整解法</h3>
     <p><strong>设线</strong>：把弦写成 <Katex tex="x=my+t" />（过点 <Katex tex="(t,\ 0)" />；m=1/k，竖直线由 m=0 自动覆盖 —— L2 的免退化技巧）。代入 <Katex tex="\tfrac{x^2}{a^2}+\tfrac{y^2}{b^2}=1" />：</p>
@@ -36,12 +36,12 @@
       </tbody>
     </table>
     <p>方法之间常有「先 ① 后 ②」的衔接：设线联立得到 <Katex tex="L(k)" /> 后，先由 <Katex tex="\Delta\ge0" /> 求 k 的可行域，再在域上做二次式最值 —— 两个工具都来自本子专题的前几讲。</p>
-    <p><strong>回收</strong>：L2 韦达与弦长（分母对消那一步就是本讲推导的核心）、L1 判别式（可行域的判据）、L4 曲线系（「恒过定点」的代数原形：<Katex tex="\varphi+k\psi=0" /> 两线找公共零点）、D5 第三定义（<Katex tex="K=-\tfrac{b^2}{a^2}" /> 的直径行）、P4 极坐标（焦点弦定值一步到位）、A3 割圆术（最值方法 ③ 的来源）。子专题六至此收线：判别式判定位置、韦达给出读数、点位确定身份、曲线系给出定点、三宝完成收束。</p>
+    <p><strong>回收</strong>：L2 韦达与弦长（分母对消那一步就是本讲推导的核心）、L1 判别式（可行域的判据）、L4 曲线系（「恒过定点」的代数原形：<Katex tex="\varphi+k\psi=0" /> 两线找公共零点）、D5 第三定义（<Katex tex="K=-\tfrac{b^2}{a^2}" /> 的直径行）、P4 极坐标（焦点弦定值一步到位）、A3 割圆术（最值方法 ③ 的来源）。子专题五至此收线：判别式判定位置、韦达给出读数、点位确定身份、曲线系给出定点、三宝完成收束。</p>
   </ChPage>
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createFixedPt } from '../../../boards/conics/lines/fixedpt.js';
 import { LIN_CHAPTERS } from './linnav.js';

@@ -1,9 +1,10 @@
 /* 图 D6 · 焦点三角形：S = b²·tan(θ/2)（椭圆）/ S = b²·cot(θ/2)（双曲线），θ 为 P 处张角 */
-import { Board, mk, V, dist, fmt } from '../../../lib/board.js';
+import { mk, V, dist, fmt } from '../../../lib/board.js';
+import { createConicLab, plotInk } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 800, H = 480;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
   const st = {
     mode: 'e', cx: 400, cy: 240,
     E: { a: 172, c: 98, t: 1.15 },   // 椭圆参数
@@ -45,7 +46,7 @@ export function createBoard(root) {
       mk('polyline', { points: pts.join(' '), fill: 'none', ...at }, B.dyn);
     } else {
       for (const dir of [V(a, b), V(a, -b)])
-        B.inf(V(st.cx, st.cy), V(st.cx + dir.x, st.cy + dir.y), { stroke: '#3a4a63', 'stroke-width': 1.2, 'stroke-dasharray': '6 6' });
+        B.inf(V(st.cx, st.cy), V(st.cx + dir.x, st.cy + dir.y), { stroke: plotInk.rule, 'stroke-width': 1.2, 'stroke-dasharray': '6 6' });
       for (const s of [1, -1]) {
         const q = [];
         for (let t = -1.32; t <= 1.32 + 1e-9; t += 0.03)
@@ -63,27 +64,26 @@ export function createBoard(root) {
     while (d < -Math.PI) d += 2 * Math.PI;
     const r = 24, pts = [];
     for (let i = 0; i <= 16; i++) { const a = a1 + d * i / 16; pts.push(`${P.x + r * Math.cos(a)},${P.y + r * Math.sin(a)}`); }
-    mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#ffd166', 'stroke-width': 1.8 }, B.dyn);
+    mk('polyline', { points: pts.join(' '), fill: 'none', stroke: plotInk.amber, 'stroke-width': 1.8 }, B.dyn);
     const am = a1 + d / 2;
-    B.text(V(P.x + (r + 17) * Math.cos(am), P.y + (r + 17) * Math.sin(am) + 4), 'θ', { fill: '#ffd166', 'font-size': 14, 'font-weight': 700 });
+    B.text(V(P.x + (r + 17) * Math.cos(am), P.y + (r + 17) * Math.sin(am) + 4), 'θ', { fill: plotInk.amber, 'font-size': 14, 'font-weight': 700 });
   };
 
   B.renderFn = () => {
     const { c } = cur(), b = bOf(), f1 = F1(), f2 = F2(), P = pt();
-    B.seg(V(24, st.cy), V(W - 24, st.cy), { stroke: '#22314a', 'stroke-width': 1.5 });
-    B.seg(V(st.cx, 18), V(st.cx, H - 18), { stroke: '#22314a', 'stroke-width': 1.5 });
-    drawCurve({ stroke: '#67e8f9', 'stroke-width': 2.4 });
+    B.seg(V(24, st.cy), V(W - 24, st.cy), { stroke: plotInk.axis, 'stroke-width': 1.5 });
+    B.seg(V(st.cx, 18), V(st.cx, H - 18), { stroke: plotInk.axis, 'stroke-width': 1.5 });
+    drawCurve({ stroke: plotInk.teal, 'stroke-width': 2.4 });
     // 焦点三角形
-    mk('polygon', { points: `${P.x},${P.y} ${f1.x},${f1.y} ${f2.x},${f2.y}`, fill: 'rgba(92,173,255,.05)', stroke: 'none' }, B.dyn);
-    B.seg(f1, f2, { stroke: '#5c6a80', 'stroke-width': 2 });
-    B.seg(f1, P, { stroke: '#5cadff', 'stroke-width': 2.4 });
-    B.seg(P, f2, { stroke: '#ff9e4a', 'stroke-width': 2.4 });
+    mk('polygon', { points: `${P.x},${P.y} ${f1.x},${f1.y} ${f2.x},${f2.y}`, fill: plotInk.soft, stroke: 'none' }, B.dyn);
+    B.seg(f1, f2, { stroke: plotInk.guide, 'stroke-width': 2 });
+    B.seg(f1, P, { stroke: plotInk.blue, 'stroke-width': 2.4 });
+    B.seg(P, f2, { stroke: plotInk.copper, 'stroke-width': 2.4 });
     for (const [f, nm] of [[f1, 'F₁'], [f2, 'F₂']]) {
-      B.dot(f, 6, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 2 });
-      B.text(V(f.x, f.y + 20), nm, { fill: '#ffd166', 'font-size': 13, 'font-weight': 700 });
+      B.dot(f, 6, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 2 });
+      B.text(V(f.x, f.y + 20), nm, { fill: plotInk.amber, 'font-size': 13, 'font-weight': 700 });
     }
-    B.dot(P, 6.5, { fill: '#67e8f9', stroke: '#fff', 'stroke-width': 2 });
-    B.text(V(P.x, P.y - 14), 'P', { fill: '#67e8f9', 'font-size': 13, 'font-weight': 700 });
+    B.dot(P, 6.5, { fill: plotInk.teal, stroke: plotInk.ink, 'stroke-width': 2 });
     arcAt(P, f1, f2);
     // 测量与公式对照
     const r1 = dist(P, f1), r2 = dist(P, f2);
@@ -110,7 +110,7 @@ export function createBoard(root) {
         P.t = Math.max(-1.3, Math.min(1.3, Math.atan((p.y - st.cy) / b)));
       }
     },
-    color: '#67e8f9', r: 9, label: 'P', lo: [10, -12],
+    color: plotInk.teal, r: 9, label: 'P', lo: [10, -12],
   });
 
   B.render();

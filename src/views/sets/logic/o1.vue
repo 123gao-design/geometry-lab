@@ -3,10 +3,9 @@
     title="全称量词与存在量词：∀ 与 ∃" sub="命题是能判断真假的陈述句；量词把开句变成命题 —— 全称量词 ∀ 断言每一个都成立，存在量词 ∃ 断言至少有一个成立。真假判据不对称：全称命题要真须证明一切，要假只须一个反例；存在命题要真只须一个见证，要假须论证无解。"
     :toc="[{ id: 'o1-def', t: '命题与量词' }, { id: 'o1-judge', t: '真假的判定：反例与见证' }, { id: 'o1-m', t: '前置集合 M 的限定' }, { id: 'o1-pit', t: '都、找不到与开句' }]">
     <div class="note good" id="o1-law"><strong>全称量词命题</strong>：<Katex tex="\forall x\in M,\ p(x)" /> —— 「对 M 内<strong>每一个</strong> x，p(x) 都成立」；<strong>存在量词命题</strong>：<Katex tex="\exists x\in M,\ p(x)" /> —— 「M 内<strong>至少有一个</strong> x 使 p(x) 成立」。全称命题为真 <Katex tex="\iff"/> M 内无反例；存在命题为真 <Katex tex="\iff"/> M 内有见证。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createQL" />
-      <div class="cap">图 O1 · <b>全称命题与存在命题</b>：数轴上方是满足情况带 —— 绿=满足、红=不满足、M 外留空；拖金探针逐点读数或点 ⏩ 扫轴看全带，再点「换量词」对照真假。看点：红处即反例（全称命题由一个点推翻）、绿处即见证（存在命题由一个点成立），而「真」的论证靠证明不靠数。</div>
-    </div>
+    <ConicFigure number="O1" title="全称命题与存在命题" head="bottom" :factory="createQL">
+      数轴上方是满足情况带 —— 绿=满足、红=不满足、M 外留空；拖金探针逐点读数或点 ⏩ 扫轴看全带，再点「换量词」对照真假。看点：红处即反例（全称命题由一个点推翻）、绿处即见证（存在命题由一个点成立），而「真」的论证靠证明不靠数。
+    </ConicFigure>
 
     <h3 class="sec" id="o1-def">命题与量词</h3>
     <p>「<Katex tex="x>2" />」不是命题 —— x 没有指定时无法判断真假，这样的式子叫<strong>开句</strong>（谓词）。给它挂上量词才成为命题：<Katex tex="\forall x\in\mathbb{R},\ x>2" />（假）与 <Katex tex="\exists x\in\mathbb{R},\ x>2" />（真）是两个不同的命题。同一个开句配不同的量词，真假可以完全不同 —— 量词是命题的组成部分，不是装饰。中文对应词也要认识：∀ 读作「任意」「每一个」，∃ 读作「存在」「至少有一个」。</p>
@@ -33,7 +32,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createQL } from '../../../boards/sets/logic/quants.js';
 import { O_CHAPTERS } from './onav.js';

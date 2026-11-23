@@ -7,6 +7,7 @@
       { id: 'm3-radius', t: '半径、周期与频率' },
       { id: 'm3-work', t: '洛伦兹力不做功，安培力为什么做功' },
       { id: 'm3-calc', t: '算一遍' },
+      { id: 'm3-helix', t: '速度与磁场不垂直：螺旋线' },
     ]">
     <div class="note good">
       运动电荷在磁场中受到的力叫<strong>洛伦兹力</strong>，大小 <Katex tex="F=qvB\sin\theta" />，<Katex tex="\theta" /> 是速度与磁场的夹角；速度与磁场垂直时 <Katex tex="F=qvB" />。方向用左手定则判断，正电荷的四指指向速度方向，负电荷则相反。洛伦兹力始终垂直于速度，只改变运动方向、不做功；在匀强磁场中垂直射入的电荷做匀速圆周运动，半径与周期分别是
@@ -62,6 +63,19 @@
     <p>约 0.13 μs。把速率加到两倍，半径翻倍、周期不动——图 电10a 那块板里把 <Katex tex="v" /> 从 3 拖到 6，画面上的圆直径变大，而读数栏里的 <Katex tex="T" /> 一行纹丝不动。</p>
     <p>读数栏还能逐行核对：它给出 <Katex tex="r" />、<Katex tex="T" />、<Katex tex="f" /> 与 <Katex tex="r\cdot B" />、<Katex tex="mv/q" /> 两行。后两行始终相等，因为由 <Katex tex="r=mv/(qB)" /> 两边乘 <Katex tex="B" /> 就得到 <Katex tex="rB=mv/q" />——把 <Katex tex="B" /> 拖来拖去，它推不动这两行。</p>
 
+    <h3 class="sec" id="m3-helix">速度与磁场不垂直：螺旋线</h3>
+    <p>前面几节都假定速度与磁场垂直。若质子以速度 <Katex tex="v" /> 斜着射入匀强磁场、与磁场方向成 <Katex tex="\alpha" /> 角，处理办法仍是分解，只是这次按磁场方向与垂直磁场的方向来分：</p>
+    <p style="text-align:center"><Katex tex="v_{\parallel}=v\cos\alpha,\qquad v_{\perp}=v\sin\alpha." display /></p>
+    <p>平行分量与磁场同向，<Katex tex="F=qv_{\parallel}B\sin0^\circ=0" />，不受洛伦兹力，沿磁感线保持匀速；垂直分量照旧受 <Katex tex="qv_{\perp}B" /> 的力，在垂直于磁场的平面里做匀速圆周运动。两者的分解互相独立，叠在一起就是一条<strong>螺旋线</strong>。圆的半径由垂直分量决定：</p>
+    <p style="text-align:center"><Katex tex="r=\frac{mv_{\perp}}{qB}=\frac{mv\sin\alpha}{qB}," display /></p>
+    <p>周期 <Katex tex="T=2\pi m/(qB)" /> 里只剩荷质比与磁场，斜射入时也是它。转完一圈的这段时间里，粒子沿磁场方向前进了</p>
+    <p style="text-align:center"><Katex tex="p=v_{\parallel}T=\frac{2\pi m v\cos\alpha}{qB}," display /></p>
+    <p>这个距离叫<strong>螺距</strong>。两式相除得 <Katex tex="p/r=2\pi\cot\alpha" />：螺距与半径的比只由夹角决定，磁场强弱与速度大小只把整条螺旋整体缩放——磁场越强，圈越紧越小；速度越大，圈与圈的间距一起舒展。</p>
+    <p>两端的退化情形把前面的结论接了回来：<Katex tex="\alpha=90^\circ" /> 时 <Katex tex="v_{\parallel}=0" />，螺距为零，螺旋退成平面上的圆；<Katex tex="\alpha=0^\circ" /> 时 <Katex tex="v_{\perp}=0" />，半径为零，粒子沿磁感线走直线、不受力。中间的角度给出介于两者之间的螺旋。地磁场困住带电粒子形成辐射带，质谱仪与磁约束装置里把束流导向目标，用的都是这条轨迹。</p>
+
+    <PhysicsDemo :def="DEMO3" />
+    <p class="cap">图 电10c · <b>洛伦兹力的螺旋线</b>：紫色小点沿蓝色螺旋线前进，灰色箭头是沿轴向的磁场 <Katex tex="\mathbf{B}" />，青色虚线是起点处的圆截面，橙色双箭头量出一圈前进的螺距 <Katex tex="p" />。粒子处画三支箭头：橙是沿磁场的 <Katex tex="v_{\parallel}" />、青是垂直磁场的 <Katex tex="v_{\perp}" />（两者垂直，随粒子一起转），绿是合速度 <Katex tex="\mathbf{v}" />，始终与螺旋线相切；青色虚线半径由轴线量到粒子。看点一：把「与 B 的夹角 α」往 90° 拖，螺距迅速缩短、圈变得扁平，往小拖则螺旋被拉长——读数栏的 <Katex tex="r" />、<Katex tex="p" /> 与画面上的比例同步变。看点二：拖「磁感应强度 B」或「速度 v」，读数栏的半径、周期、螺距一起按比例缩放，而画面形状不变，因为 <Katex tex="p/r" /> 只由 α 决定；粒子在画面上一圈所用的时间也不变，它只是示意用的时钟。看点三：读数栏最后一行把 <Katex tex="r\cdot B" /> 与 <Katex tex="mv_{\perp}/q" /> 并排列出，拖 B 时两数一起变、始终相等，正是半径公式的逐行核验。看点四：按住画面拖动可以转视角，正对磁场方向看时螺旋缩成圆，从侧面看时螺距才展得开。</p>
+
     <div class="note warn tip">
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">
@@ -83,4 +97,5 @@ import { demoOf } from '../../../physics/demos/index.js';
 
 const DEMO = demoOf('lorentz2');
 const DEMO2 = demoOf('lorentzwork');
+const DEMO3 = demoOf('helix');
 </script>

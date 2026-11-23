@@ -1,11 +1,12 @@
 /* 图 P3 · 焦点弦实验机：过焦点 F 的弦 P₁P₂，L = |P₁P₂| = 2ed/(1−e²cos²θ)
    θ=90° 是通径 L=2ed（三种曲线中最短的焦点弦）；θ→0 时 L→2a。
    以焦点弦为直径的圆 vs 准线：d(M, l) = L/(2e) vs 半径 L/2 → e<1 相离 / e=1 相切 / e>1 相交。 */
-import { Board, mk, V, dist, fmt } from '../../../lib/board.js';
+import { mk, V, dist, fmt } from '../../../lib/board.js';
+import { createConicLab, plotInk } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 860, H = 470;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
   const F = V(330, 240), LX = 450, d = LX - F.x;
   const st = { e: 0.55, th: 1.05, pulse: 0, run: true };
 
@@ -22,7 +23,7 @@ export function createBoard(root) {
   const r1 = () => { const q = 1 + st.e * Math.cos(st.th); return q > 0.02 ? ed() / q : null; };
   const r2 = () => { const q = 1 - st.e * Math.cos(st.th); return q > 0.02 ? ed() / q : null; };
 
-  const cType = B.chip('θ（与轴的夹角）'), cL = B.chip('弦长 L'), cLat = B.chip('通径（最短）'), cCirc = B.chip('圆（直径=P₁P₂）vs 准线');
+  const cType = B.chip('θ（与轴的夹角）'), cL = B.chip('弦长 L'), cLat = B.chip('通径'), cCirc = B.chip('圆（直径=P₁P₂）vs 准线');
   const sE = B.slider('离心率 e', 0.4, 1.8, 0.01, st.e, v => {
     st.e = v; clampTh();
     sT.value = st.th * 180 / Math.PI; sT.dispatchEvent(new Event('input'));
@@ -50,42 +51,42 @@ export function createBoard(root) {
 
   B.renderFn = () => {
     // 轴与准线
-    B.seg(V(20, F.y), V(W - 20, F.y), { stroke: '#22314a', 'stroke-width': 1.3 });
-    B.seg(V(LX, 18), V(LX, H - 18), { stroke: '#67e8f9', 'stroke-width': 1.8, 'stroke-dasharray': '8 6' });
-    B.text(V(LX, 32), '准线 l', { fill: '#67e8f9', 'font-size': 12.5 });
+    B.seg(V(20, F.y), V(W - 20, F.y), { stroke: plotInk.axis, 'stroke-width': 1.3 });
+    B.seg(V(LX, 18), V(LX, H - 18), { stroke: plotInk.teal, 'stroke-width': 1.8, 'stroke-dasharray': '8 6' });
+    B.text(V(LX, 32), '准线 l', { fill: plotInk.teal, 'font-size': 12.5 });
     // 曲线
     for (const path of traceSide(0))
-      if (path.length > 1) mk('polyline', { points: path.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 2.4 }, B.dyn);
+      if (path.length > 1) mk('polyline', { points: path.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 2.4 }, B.dyn);
     for (const path of traceSide(1))
-      if (path.length > 1) mk('polyline', { points: path.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 1.2, 'stroke-dasharray': '5 5', opacity: 0.5 }, B.dyn);
-    B.dot(F, 6, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 2 });
-    B.text(V(F.x, F.y + 20), 'F', { fill: '#ffd166', 'font-size': 13, 'font-weight': 700 });
+      if (path.length > 1) mk('polyline', { points: path.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 1.2, 'stroke-dasharray': '5 5', opacity: 0.5 }, B.dyn);
+    B.dot(F, 6, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 2 });
+    B.text(V(F.x, F.y + 20), 'F', { fill: plotInk.amber, 'font-size': 13, 'font-weight': 700 });
     // 焦点弦
     const R1 = r1(), R2 = r2();
     if (R1 !== null && R2 !== null) {
       const c = Math.cos(st.th), s = Math.sin(st.th);
       const P1 = V(F.x + R1 * c, F.y + R1 * s), P2 = V(F.x - R2 * c, F.y - R2 * s);
       const L = R1 + R2, M = V((P1.x + P2.x) / 2, (P1.y + P2.y) / 2);
-      B.seg(P1, P2, { stroke: '#fff', 'stroke-width': 2 });
+      B.seg(P1, P2, { stroke: plotInk.ink, 'stroke-width': 2 });
       // 以焦点弦为直径的圆
-      mk('circle', { cx: M.x, cy: M.y, r: L / 2, fill: 'rgba(255,209,102,.06)', stroke: '#ffd166', 'stroke-width': 1.6 }, B.dyn);
-      B.dot(M, 3.5, { fill: '#ffd166' });
-      B.text(V(M.x, M.y - 12), 'M（中点）', { fill: '#ffd166', 'font-size': 11 });
+      mk('circle', { cx: M.x, cy: M.y, r: L / 2, fill: plotInk.goldWash, stroke: plotInk.amber, 'stroke-width': 1.6 }, B.dyn);
+      B.dot(M, 3.5, { fill: plotInk.amber });
+      B.text(V(M.x, M.y - 12), 'M（中点）', { fill: plotInk.amber, 'font-size': 11 });
       // M 到准线的距离（虚线 + 直角标记）
       const foot = V(LX, M.y);
-      B.seg(M, foot, { stroke: '#ff7b8a', 'stroke-width': 1.4, 'stroke-dasharray': '5 4' });
+      B.seg(M, foot, { stroke: plotInk.rose, 'stroke-width': 1.4, 'stroke-dasharray': '5 4' });
       const ux = M.x < LX ? -1 : 1;
-      mk('path', { d: `M${foot.x + ux * 9},${foot.y}L${foot.x + ux * 9},${foot.y - 9}L${foot.x},${foot.y - 9}`, fill: 'none', stroke: '#ff7b8a', 'stroke-width': 1.1 }, B.dyn);
+      mk('path', { d: `M${foot.x + ux * 9},${foot.y}L${foot.x + ux * 9},${foot.y - 9}L${foot.x},${foot.y - 9}`, fill: 'none', stroke: plotInk.rose, 'stroke-width': 1.1 }, B.dyn);
       // 弦端
       for (const [p, nm] of [[P1, 'P₁'], [P2, 'P₂']]) {
-        B.dot(p, 5.5, { fill: '#fff', stroke: '#5cadff', 'stroke-width': 1.6 });
-        B.text(V(p.x + 10, p.y - 8), nm, { fill: '#fff', 'font-size': 11.5, 'font-weight': 700 });
+        B.dot(p, 5.5, { fill: plotInk.ink, stroke: plotInk.blue, 'stroke-width': 1.6 });
+        B.text(V(p.x + 10, p.y - 8), nm, { fill: plotInk.ink, 'font-size': 11.5, 'font-weight': 700 });
       }
       // 光脉冲沿弦穿过 F
       if (st.run) {
         const t = st.pulse % L;
         const q = t < R1 ? V(F.x + (R1 - t) * c, F.y + (R1 - t) * s) : V(F.x - (t - R1) * c, F.y - (t - R1) * s);
-        mk('circle', { cx: q.x, cy: q.y, r: 8, fill: 'rgba(255,209,102,.55)' }, B.dyn);
+        mk('circle', { cx: q.x, cy: q.y, r: 8, fill: plotInk.pulse }, B.dyn);
       }
       // 读数
       const Lf = 2 * ed() / (1 - st.e * st.e * Math.cos(st.th) ** 2);
@@ -99,7 +100,7 @@ export function createBoard(root) {
       cCirc('θ 靠近 0：圆也涨到无穷，拖回来看');
     }
     cType(`θ = ${fmt(st.th * 180 / Math.PI, 1)}°${st.e > 1 ? '（双曲线：同支弦限 |cosθ| < 1/e）' : ''}`);
-    cLat(`θ=90° 时 L = 2ed = ${fmt(2 * ed(), 1)}（= 2b²/a，最短焦点弦）`, 'ok');
+    cLat(`θ=90° 时 L = 2ed = ${fmt(2 * ed(), 1)}（当前同支范围内最短）`, 'ok');
     B.hint(Math.abs(st.e - 1) < 0.005
       ? 'e = 1：圆恰好与准线相切 —— 抛物线经典题；按「⊥ 对准通径」看最短弦 2p'
       : '转动 θ、滑动 e：金圆与准线的关系只由 e 的三段取值决定 —— 相离（椭圆）/ 相切（抛物线）/ 相交（双曲线）');
@@ -118,7 +119,7 @@ export function createBoard(root) {
       st.th = t; clampTh();
       sT.value = st.th * 180 / Math.PI; sT.dispatchEvent(new Event('input'));
     },
-    color: '#fff', r: 8, label: 'P₁', lo: [10, -12],
+    color: plotInk.ink, r: 8, label: 'P₁', lo: [10, -12],
   });
 
   B.render();

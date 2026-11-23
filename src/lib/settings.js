@@ -36,6 +36,8 @@ export const CHOICES = {
   physGrid: ['auto', 'on', 'off'],
   // 数学画板背景方格：不画 / 自动（板上有坐标网格时收起）/ 方格 / 点阵 / 横线
   boardGrid: ['off', 'auto', 'square', 'dots', 'lines'],
+  // 数学画板纸面：跟随主题 / 四档浅纸 / 四档深纸（与物理画板共用 lib/papers.js 那张表）
+  boardPaper: ['theme', 'paper', 'sand', 'mint', 'sakura', 'slate', 'abyss', 'forest', 'plum'],
 };
 
 // 「跟随主题」之外允许自带 '#rrggbb' 的项，白名单表达不了，单独校验
@@ -98,6 +100,7 @@ const DEFAULTS = {
   boardLineW: 1,                // 数学画板线条粗细倍率（0.6–2.5）；mk() 里统一乘，墨迹层不吃
   boardAxisW: 1,                // 数学画板坐标轴线宽倍率（0.6–3，绝对宽度）
   boardGrid: 'off',             // 数学画板背景方格默认不画：旧板版面保持原样，要纸面纹理在设置里选
+  boardPaper: 'theme',          // 数学画板纸面默认跟随主题（深色家族深纸、浅色家族浅纸，与原来一致）
 };
 
 export const PREFS = reactive({ ...DEFAULTS });

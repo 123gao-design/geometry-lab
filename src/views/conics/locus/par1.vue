@@ -1,27 +1,27 @@
 <template>
   <ChPage :cur="1" no="P1" base="/conics/par" :chapters="PAR_CHAPTERS"
     title="参数方程：离心角与三曲线" sub="让点随参数跑起来。椭圆的 t 是辅助圆上的离心角（不是极角）；双曲线的 t 站在圆外 —— 割线长与切线长；抛物线的 t 干脆就是时间。三种曲线，三种参数身份。"
-    :toc="[{ id: 'p1-lab', t: '辅助圆实验（图 P1）' }, { id: 'p1-e', t: '椭圆 · 离心角与双辅助圆' }, { id: 'p1-hb', t: '双曲线 · 割线与切线（图 P1b）' }, { id: 'p1-pb', t: '抛物线 · 时间参数（图 P1c）' }, { id: 'p1-f', t: '焦半径回收与速查表' }]">
+    :toc="[{ id: 'p1-lab', t: '辅助圆构造（图 P1）' }, { id: 'p1-e', t: '椭圆 · 离心角与双辅助圆' }, { id: 'p1-hb', t: '双曲线 · 割线与切线（图 P1b）' }, { id: 'p1-pb', t: '抛物线 · 时间参数（图 P1c）' }, { id: 'p1-f', t: '焦半径回收与速查表' }]">
     <div class="note good"><strong>参数方程</strong>：用第三个变量 t 把曲线上的点写成 <Katex tex="(x(t),\ y(t))" /> —— 每个时刻 t 给出一个点，点随 t 跑动就把曲线<strong>生成</strong>出来。它比普通方程多给出一样东西：<strong>点的到达顺序</strong>。这正是"轨迹问题"的本质。</div>
 
-    <h3 class="sec" id="p1-lab">辅助圆实验</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createAuxCircle" />
-      <div class="cap">图 P1 · <b>辅助圆与离心角</b>：拖动大圆上的 Q —— Q 竖直下落、小圆上的 R 水平推进，两条虚线交出的 P 恰好落在椭圆上。读数区并排显示离心角 t 与真正的极角 φ：<strong>它们几乎永远不相等</strong>。</div>
-    </div>
+    <h3 class="sec" id="p1-lab">辅助圆构造</h3>
+    <ConicFigure head="bottom" number="P1" title="用两个辅助圆构造椭圆点" :factory="createAuxCircle"
+      :legend="[['blue', '半径 a 的辅助圆'], ['green', '半径 b 的辅助圆'], ['mint', '椭圆']]">
+      拖动大圆上的 Q —— Q 竖直下落、小圆上的 R 水平推进，两条虚线交出的 P 恰好落在椭圆上。读数区并排显示离心角 t 与真正的极角 φ：<strong>它们几乎永远不相等</strong>。
+    </ConicFigure>
     <p>为什么 t ≠ φ？因为 P 的横纵坐标被<strong>不同幅度</strong>压缩（a 与 b），角度的均匀刻度被打乱。真正均匀转动的是 Q（大圆上），P 只是它的"影子"。这也解释了一个高频易错题：椭圆上"离心角相差 <Katex tex="\tfrac{\pi}{2}" /> 的两点"不是"互相垂直的半径端点"。</p>
 
     <h3 class="sec" id="p1-e">椭圆：离心角与双辅助圆</h3>
     <p>消参验证：<Katex tex="\cos^2 t+\sin^2 t=1" /> 一行就把参数方程压回标准方程 ——</p>
     <Katex tex="\left.\begin{aligned}x&=a\cos t\\y&=b\sin t\end{aligned}\right\}\ \Longrightarrow\ \frac{x^2}{a^2}+\frac{y^2}{b^2}=1" display />
-    <p>反过来读就是构造：作<strong>大辅助圆</strong> <Katex tex="x^2+y^2=a^2" /> 与<strong>小辅助圆</strong> <Katex tex="x^2+y^2=b^2" />。过大圆上的 Q(a cos t, a sin t) 作竖直线，过小圆上对应的 R(b cos t, b sin t) 作水平线，交点就是 P —— 图 P1 的机械全程在演这件事。这个双圆构造在"卡当椭圆"（P2 的杆子问题）里还会再登场。</p>
-    <p>顺带一提，A1 的伸缩机把这一切串起来了：P 就是 Q 被 <Katex tex="T_{b/a}" /> 压缩后的像。<strong>参数 t 是压缩前的世界（圆）里保留下来的角度</strong> —— 所以它才叫离心角，而不叫什么"椭圆上的角"。</p>
+    <p>反过来读就是构造：作<strong>大辅助圆</strong> <Katex tex="x^2+y^2=a^2" /> 与<strong>小辅助圆</strong> <Katex tex="x^2+y^2=b^2" />。过大圆上的 Q(a cos t, a sin t) 作竖直线，过小圆上对应的 R(b cos t, b sin t) 作水平线，交点就是 P —— 图 P1 全程演示的就是这件事。这个双圆构造在"卡当椭圆"（P2 的杆子问题）里还会再登场。</p>
+    <p>顺带一提，A1 的伸缩变换把这一切串起来了：P 就是 Q 被 <Katex tex="T_{b/a}" /> 压缩后的像。<strong>参数 t 是压缩前的世界（圆）里保留下来的角度</strong> —— 所以它才叫离心角，而不叫什么"椭圆上的角"。</p>
 
     <h3 class="sec" id="p1-hb">双曲线：割线与切线</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createHypParam" />
-      <div class="cap">图 P1b · <b>双曲线的参数方程</b>：竖直线过 <Katex tex="E=(a\sec t,\ 0)" />（x 轴上、永远在辅助圆外的"割线端"），水平线过 <Katex tex="G=(0,\ b\tan t)" />，交点 P 落在双曲线上。金色线段是从 E 向辅助圆所作的<strong>切线</strong> —— 切点恰好是辅助圆上离心角为 t 的点。t 逼近 <Katex tex="\pm 90^\circ" /> 时 P 沿渐近线趋向无穷：<strong>参数失效处正是渐近方向</strong>（大学里由 cosh/sinh 续写）。</div>
-    </div>
+    <ConicFigure head="bottom" number="P1b" title="用辅助圆的切线定位双曲线点" :factory="createHypParam"
+      :legend="[['blue', '辅助圆', 'dashed'], ['gold', '辅助圆切线'], ['mint', '双曲线']]">
+      竖直线过 <Katex tex="E=(a\sec t,\ 0)" />（x 轴上、永远在辅助圆外的"割线端"），水平线过 <Katex tex="G=(0,\ b\tan t)" />，交点 P 落在双曲线上。金色线段是从 E 向辅助圆所作的<strong>切线</strong> —— 切点恰好是辅助圆上离心角为 t 的点。t 逼近 <Katex tex="\pm 90^\circ" /> 时 P 沿渐近线趋向无穷：<strong>参数失效处正是渐近方向</strong>（大学里由 cosh/sinh 续写）。
+    </ConicFigure>
     <p>把恒等式换成 <Katex tex="\sec^2t-\tan^2t=1" />，消参一行完成：</p>
     <Katex tex="x=\frac{a}{\cos t},\qquad y=b\tan t\quad(\cos t\ne 0)" display />
     <p>更妙的是它的<strong>构造身份</strong>。在辅助圆 <Katex tex="x^2+y^2=a^2" /> 外取一点 <Katex tex="E=(a\sec t,\ 0)" />：从原点连 E 是一条<strong>割线</strong>，长 <Katex tex="OE=a\sec t" />；从 E 向圆作<strong>切线</strong>，切点恰是 <Katex tex="T=(a\cos t,\ a\sin t)" /> —— 辅助圆上离心角为 t 的点，切线长 <Katex tex="|ET|=a\tan t" />（勾股：<Katex tex="OE^2-OT^2=a^2(\sec^2t-1)=a^2\tan^2 t" />）。于是<strong>secant（割线）与 tangent（切线）的名字就有了出处</strong>：双曲线的参数方程里，横坐标取割线长、纵坐标取切线长再乘 <Katex tex="\tfrac{b}{a}" /> ——</p>
@@ -32,10 +32,10 @@
     </div>
 
     <h3 class="sec" id="p1-pb">抛物线：时间参数</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createParaParam" />
-      <div class="cap">图 P1c · <b>抛物线的参数方程与落点</b>：取 <Katex tex="x=2pt^2,\ y=2pt" />。把竖直方向当"时钟"（<Katex tex="y=2pt" /> 匀速走过），水平落点 <Katex tex="x=2pt^2" /> 按时间的<strong>平方</strong>膨胀 —— 轴上金色刻度按 <strong>1:3:5:7</strong> 拉开，这是伽利略斜面实验的奇数定律。抛物线的参数 t 不是任何角度，<strong>它是时间本身</strong>。</div>
-    </div>
+    <ConicFigure head="bottom" number="P1c" title="平移同一时间步，比较一次与二次位移" :factory="createParaParam"
+      :legend="[['mint', '抛物线'], ['green', '纵坐标'], ['orange', '横坐标']]">
+      取 <Katex tex="x=2pt^2,\ y=2pt" />。把竖直方向当"时钟"（<Katex tex="y=2pt" /> 匀速走过），水平落点 <Katex tex="x=2pt^2" /> 按时间的<strong>平方</strong>膨胀 —— 轴上金色刻度按 <strong>1:3:5:7</strong> 拉开，这是伽利略斜面实验的奇数定律。抛物线的参数 t 不是任何角度，<strong>它是时间本身</strong>。
+    </ConicFigure>
     <p>它的物理来源：抛体运动里，水平方向匀速 <Katex tex="x=v_0\tau" />，竖直方向匀加速 <Katex tex="y=\tfrac12 g\tau^2" /> —— 消去时间 τ 就得抛物线。反过来说，<Katex tex="y^2=2px" /> 上以 t 为参数的写法 <Katex tex="x=2pt^2,\ y=2pt" /> 恰好把"时间"直接写进了坐标：y 匀速（时钟），x 按平方膨胀（匀加速位移）。</p>
     <p>轴上 1:3:5:7 的来历不过一个平方差：</p>
     <Katex tex="2p(i\Delta)^2-2p\big((i-1)\Delta\big)^2=2p\Delta^2\,(2i-1)" display />
@@ -58,7 +58,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createAuxCircle } from '../../../boards/conics/locus/auxcircle.js';
 import { createBoard as createHypParam } from '../../../boards/conics/locus/hypparam.js';

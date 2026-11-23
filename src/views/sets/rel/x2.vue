@@ -3,10 +3,9 @@
     title="子集的个数：$2^n$ 家族" sub="三个元素的集合有几个子集？把每个元素的「留 / 去」当成一道独立的选择题，乘法原理直接清点出 8 个 —— 而且按「留下几个元素」分类陈列，恰好是杨辉三角的一行。真子集、非空子集、非空真子集三个口径，各减各的，一条核验线贯穿到底。"
     :toc="[{ id: 'x2-mult', t: '乘法原理：每个元素两道选题' }, { id: 'x2-acc', t: '四口径核验：各减各的' }, { id: 'x2-pit', t: '$2^n$ 不是 $2n$' }]">
     <div class="note good" id="x2-law"><strong>计数公式</strong>：n 元集合的子集 <Katex tex="2^n" /> 个；<strong>真子集</strong> <Katex tex="2^n-1" />（减去 A 本身）；<strong>非空子集</strong> <Katex tex="2^n-1" />（减去 ∅）；<strong>非空真子集</strong> <Katex tex="2^n-2" />（两者都减去）。按元素个数分类：<Katex tex="\mathrm{C}_n^0+\mathrm{C}_n^1+\cdots+\mathrm{C}_n^n=2^n" />（二项式定理在 x=y=1 的取值）。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createFam" />
-      <div class="cap">图 X2 · <b>子集的个数</b>：toggle 条逐个决定每个元素的「留 / 去」，网格按元素个数 k 分行陈列全部 <Katex tex="2^n"/> 个子集 —— n 滑到 4，1、4、6、4、1 的杨辉三角行直接显示；点卡片选定，四口径计数实时核验。</div>
-    </div>
+    <ConicFigure number="X2" title="子集的个数" head="bottom" :factory="createFam">
+      toggle 条逐个决定每个元素的「留 / 去」，网格按元素个数 k 分行陈列全部 <Katex tex="2^n"/> 个子集 —— n 滑到 4，1、4、6、4、1 的杨辉三角行直接显示；点卡片选定，四口径计数实时核验。
+    </ConicFigure>
 
     <h3 class="sec" id="x2-mult">乘法原理：每个元素两道选题</h3>
     <p>为什么偏偏是 <Katex tex="2^n"/>？图 X2 把「造一个子集」做成 n 道<strong>独立的二选一</strong>：元素 a 留还是去？b 留还是去？……每个元素 2 种、彼此互不干涉，按乘法原理共 <Katex tex="2\times2\times\cdots\times2=2^n" /> 种组合，每一种组合恰是一个子集 —— 「全部留下」得 A 本身，「全部去掉」得 ∅，谁也不多、谁也不少。n=3 的网格里 8 张卡正好排满；n 滑到 4，16 张卡重新排列。换个视角看同一件事：按「留下 k 个元素」分类，第 k 行有 <Katex tex="\mathrm{C}_n^k" /> 张卡 —— n=4 的五行 1、4、6、4、1 正是杨辉三角第五行，也是 <Katex tex="(1+1)^n"/> 展开式的系数表。组合学的第一课在这里预告：<strong>计数与杨辉三角是同一件事的两种表现</strong>。</p>
@@ -28,7 +27,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createFam } from '../../../boards/sets/rel/subfamily.js';
 import { X_CHAPTERS } from './xnav.js';

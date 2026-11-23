@@ -1,15 +1,15 @@
 <template>
   <ChPage :cur="4" no="A4" base="/conics/aff" :chapters="AFF_CHAPTERS"
     title="双曲线与反比例函数：母曲线" sub="$y=k/x$ 的图象就是双曲线 —— 不止如此：一切（标准位置的）中心双曲线都是它的仿射像。矩形被变换成平行四边形、两条坐标轴被变换成渐近线；等轴双曲线则只差一个旋转 $45^\circ$。仿射家族的母本谱系，在此立起 —— 后两讲再把它剪斜、一般化。"
-    :toc="[{ id: 'a4-lab', t: '反比例母机实验（图 A4）' }, { id: 'a4-der', t: '推导 · 把双曲线压回 $y=1/x$' }, { id: 'a4-eq', t: '等轴特例 · 旋转 $45^\circ$ 与 $e=\\sqrt2$' }, { id: 'a4-use', t: '速递与回收' }]">
+    :toc="[{ id: 'a4-lab', t: '反比例函数作母本（图 A4）' }, { id: 'a4-der', t: '推导 · 把双曲线压回 $y=1/x$' }, { id: 'a4-eq', t: '等轴特例 · 旋转 $45^\circ$ 与 $e=\\sqrt2$' }, { id: 'a4-use', t: '速递与回收' }]">
     <div class="note good"><strong>本讲主角</strong>：反比例函数 <Katex tex="y=\tfrac{k}{x}" />，即 <Katex tex="xy=k" />。它的图象是双曲线 —— 而且是整个双曲线家族的<strong>母本</strong>：对任意 <Katex tex="a,\ b>0" />，可逆线性变换 <Katex tex="T(u,v)=\big(\tfrac{a(u+v)}{2},\ \tfrac{b(u-v)}{2}\big)" /> 把 <Katex tex="uv=1" /> 逐点变换到 <Katex tex="\tfrac{x^2}{a^2}-\tfrac{y^2}{b^2}=1" /> 上。要找双曲线的性质？先在母本上考察。</div>
 
-    <h3 class="sec" id="a4-lab">反比例母机实验</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createRecipHyp" />
-      <div class="cap">图 A4 · <b>反比例函数与双曲线</b>：左是母本 <Katex tex="y=1/x" />（两条渐近线就是坐标轴），右是目标双曲线。拖动 Q 沿母本跑：面积恒为 1 的矩形被变换成平行四边形，<Katex tex="P=T(Q)" /> 始终落在双曲线上，两条坐标轴被变换成渐近线方向 <Katex tex="(a,\ \pm b)" />。把 a 拖到与 b 相等：渐近线夹角回到 <Katex tex="90^\circ" />，变换只剩正交变换+均匀放缩 —— <strong>相似</strong>；<Katex tex="a\ne b" /> 时夹角不保，必须真仿射。</div>
-    </div>
-    <p>这台机器是 A1 伸缩机的"斜切版"：伸缩机把<strong>圆</strong>变成椭圆（保住对称轴），这台机器把<strong>反比例函数</strong>变成双曲线（保住渐近线结构）。不变量清单（A1）在这里逐条兑现：相切、共线、平行、比例、中点全部保持，唯独角度与长度不保持 —— 所以母本里"垂直的两条渐近线"到像里可以不垂直。</p>
+    <h3 class="sec" id="a4-lab">反比例函数作母本</h3>
+    <ConicFigure head="bottom" number="A4" title="反比例函数与双曲线的点位对应" :factory="createRecipHyp"
+      :legend="[['green', '反比例函数'], ['mint', '双曲线'], ['gold', '对应面积']]">
+      左是母本 <Katex tex="y=1/x" />（两条渐近线就是坐标轴），右是目标双曲线。拖动 Q 沿母本跑：面积恒为 1 的矩形被变换成平行四边形，<Katex tex="P=T(Q)" /> 始终落在双曲线上，两条坐标轴被变换成渐近线方向 <Katex tex="(a,\ \pm b)" />。把 a 拖到与 b 相等：渐近线夹角回到 <Katex tex="90^\circ" />，变换只剩正交变换+均匀放缩 —— <strong>相似</strong>；<Katex tex="a\ne b" /> 时夹角不保，必须真仿射。
+    </ConicFigure>
+    <p>这一步是 A1 伸缩变换的"斜切版"：伸缩变换把<strong>圆</strong>变成椭圆（保住对称轴），这里的斜切把<strong>反比例函数</strong>变成双曲线（保住渐近线结构）。不变量清单（A1）在这里逐条兑现：相切、共线、平行、比例、中点全部保持，唯独角度与长度不保持 —— 所以母本里"垂直的两条渐近线"到像里可以不垂直。</p>
 
     <h3 class="sec" id="a4-der">推导：把双曲线压回 <Katex tex="y=1/x" /></h3>
     <p>对双曲线 <Katex tex="\tfrac{x^2}{a^2}-\tfrac{y^2}{b^2}=1" /> 作可逆线性替换（逆变换就是 T）：</p>
@@ -45,7 +45,7 @@
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createRecipHyp } from '../../../boards/conics/affine/reciphyp.js';
 import { AFF_CHAPTERS } from './affnav.js';

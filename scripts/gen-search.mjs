@@ -1,4 +1,4 @@
-/* 从 views/CheatSheet.vue 抽出定理速查的 376 条，生成 src/lib/cheatindex.js。
+/* 从 views/CheatSheet.vue 抽出定理速查条目，生成 src/lib/cheatindex.js。
    速查页是手写模板，条目就是 .topic-card 那一行；改完速查记得重跑：npm run gen:cheat
    （生成的文件要一起提交，运行时不该解析模板）。 */
 import fs from 'node:fs';

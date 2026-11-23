@@ -264,7 +264,7 @@ circle.hnd.drag{stroke-width:3}
 /* 画板操作条：右上角一排（缩放 / GeoGebra / 视频 / PNG），hover 才现身（触屏无 hover，常显） */
 .dlbar{position:absolute;top:8px;right:8px;z-index:6;display:flex;gap:6px}
 .dl{position:absolute;top:8px;right:8px;z-index:6;background:rgba(11,15,23,.72);border:1px solid var(--line);color:var(--mut);
-  border-radius:99px;padding:2px 11px;font-size:11.5px;cursor:pointer;font-family:inherit;opacity:0;transition:opacity .15s}
+  border-radius:7px;padding:2px 11px;font-size:11.5px;cursor:pointer;font-family:inherit;opacity:0;transition:opacity .15s}
 /* 条内按钮交给 flex 排布，不再各自定位；从左到右固定为
    ＋ － ｜ ◧ ⛶ 🔗 ｜ GeoGebra ｜ 视频 ｜ ▤ 底色 ｜ Aa 底注 ｜ PNG */
 .dlbar .dl{position:static;top:auto;right:auto}
@@ -281,6 +281,9 @@ circle.hnd.drag{stroke-width:3}
 .dlbar.out{position:static;top:auto;right:auto;z-index:auto;padding:0 2px 7px;justify-content:flex-end;flex-wrap:wrap}
 .dlbar.out.out-l{justify-content:flex-start}
 .dlbar.out .dl{opacity:1;background:var(--card)}
+/* 从卡片框（.conic-figure）里提出来的那一条：卡片自己带 24px 上边距，条与卡片之间会空出一大截，
+   用一段负下边距抵消，相邻外边距折叠后只剩十来像素，条仍贴着卡片上沿 */
+.dlbar.out.out-fig{margin-bottom:-18px}
 /* 半屏 / 全屏时板是 fixed 浮层，外面留不下这一条：条跟着回板内，作浮层顶部的工具条 */
 .board.bd-float .dlbar.out{order:-1;padding:6px 10px}
 .board.bd-float .dlbar.out .dl{background:transparent}

@@ -3,11 +3,12 @@
    约束 k_VA·k_VB = K（K<0）：用离心角半角参数 —— 顶点到点 (a cos t, b sin t) 的斜率 = −(b/a)cot(t/2)，
    约束化成 cot u·cot v = K'（u=t₁/2, v=t₂/2, K'=K a²/b²）→ 弦与 x 轴交点 x_T = a(K'+1)/(K'−1) 与弦位置无关。
    特殊刻度：K=0→左顶点；K=−b²/a²→中心（直径，D5）；K*=−(b²/a²)(1+e)/(1−e)→右焦点。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { createConicLab, plotInk } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 860, H = 470;
-  const B = new Board(root, W, H);
+  const B = createConicLab(root, W, H);
   const C = V(430, 245), a = 180, b = 112;
   const aa = a * a, bb = b * b, cc = aa - bb;
   const e = Math.sqrt(1 - bb / aa);
@@ -38,34 +39,34 @@ export function createBoard(root) {
 
   B.renderFn = () => {
     // 椭圆、轴、顶点、焦点
-    B.seg(V(20, C.y), V(W - 20, C.y), { stroke: '#22314a', 'stroke-width': 1.1 });
-    B.seg(V(C.x, 16), V(C.x, H - 16), { stroke: '#22314a', 'stroke-width': 1.1 });
+    B.seg(V(20, C.y), V(W - 20, C.y), { stroke: plotInk.axis, 'stroke-width': 1.1 });
+    B.seg(V(C.x, 16), V(C.x, H - 16), { stroke: plotInk.axis, 'stroke-width': 1.1 });
     const pts = [];
     for (let t = -Math.PI; t <= Math.PI + 1e-9; t += 0.03) pts.push(`${(C.x + a * Math.cos(t)).toFixed(1)},${(C.y + b * Math.sin(t)).toFixed(1)}`);
-    mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 2.2 }, B.dyn);
+    mk('polyline', { points: pts.join(' '), fill: 'none', stroke: plotInk.teal, 'stroke-width': 2.2 }, B.dyn);
     const Vp = V(C.x + a, C.y);
-    B.dot(Vp, 4.5, { fill: '#ff9e4a', stroke: '#fff', 'stroke-width': 1.4 });
-    B.text(V(Vp.x - 4, Vp.y - 14), '顶点 V(a,0)', { fill: '#ff9e4a', 'font-size': 11.5, 'text-anchor': 'end' });
+    B.dot(Vp, 4.5, { fill: plotInk.copper, stroke: plotInk.ink, 'stroke-width': 1.4 });
+    B.text(V(Vp.x - 4, Vp.y - 14), '顶点 V(a,0)', { fill: plotInk.copper, 'font-size': 11.5, 'text-anchor': 'end' });
     const F2 = V(C.x + Math.sqrt(cc), C.y);
-    B.dot(F2, 4, { fill: '#ff7b8a' });
-    B.text(V(F2.x, F2.y + 17), '右焦点', { fill: '#ff7b8a', 'font-size': 11 });
+    B.dot(F2, 4, { fill: plotInk.rose });
+    B.text(V(F2.x, F2.y + 17), '右焦点', { fill: plotInk.rose, 'font-size': 11 });
     // 定点 T（理论）
     const Kp = st.K * aa / bb, xT = a * (Kp + 1) / (Kp - 1);
     const T = V(C.x + xT, C.y);
-    B.dot(T, 6, { fill: '#ffd166', stroke: '#fff', 'stroke-width': 1.6 });
-    B.text(V(T.x, T.y + 19), '定点 T', { fill: '#ffd166', 'font-size': 12, 'font-weight': 700 });
+    B.dot(T, 6, { fill: plotInk.amber, stroke: plotInk.ink, 'stroke-width': 1.6 });
+    B.text(V(T.x, T.y + 19), '定点 T', { fill: plotInk.amber, 'font-size': 12, 'font-weight': 700 });
     // 弦扇（约束下的一族弦，全过 T）
     for (const uf of [15, 27, 39, 51, 63, 75]) {
       if (Math.abs(uf - st.u) < 4) continue;
       const { P, Q } = chord(uf);
-      B.inf(P, Q, { stroke: '#3a4a63', 'stroke-width': 1, opacity: 0.5 });
+      B.inf(P, Q, { stroke: plotInk.rule, 'stroke-width': 1, opacity: 0.5 });
     }
     // 当前弦
     const { P, Q } = chord(st.u);
-    B.inf(P, Q, { stroke: '#ff9e4a', 'stroke-width': 2.4 });
+    B.inf(P, Q, { stroke: plotInk.copper, 'stroke-width': 2.4 });
     [P, Q].forEach((p, i) => {
-      B.dot(p, 5, { fill: '#67e8f9', stroke: '#fff', 'stroke-width': 1.5 });
-      B.text(V(p.x, p.y - 12), i ? 'B' : 'A', { fill: '#67e8f9', 'font-size': 12.5, 'font-weight': 700 });
+      B.dot(p, 5, { fill: plotInk.teal, stroke: plotInk.ink, 'stroke-width': 1.5 });
+      B.text(V(p.x, p.y - 12), i ? 'B' : 'A', { fill: plotInk.teal, 'font-size': 12.5, 'font-weight': 700 });
     });
     // 实测：弦与 x 轴交点 + 斜率积
     const la = P.y - C.y, lb = Q.y - C.y;

@@ -64,8 +64,9 @@ const readAll = computed(() => (p.value ? p.value.chapters.filter(c => c.on && i
 
 // 实验章没有「力6」这样的章号，标签改标二维 / 三维；讲义章照旧读 labelOf
 const expOf = c => EXPERIMENTS.find(e => e.id === c.id) || null;
-const tagOf = c => (c.lab ? (expOf(c)?.dim === '3d' ? '三维' : '二维') : labelOf(c));
-const descOf = c => (c.lab ? expOf(c)?.blurb || '' : c.d || '');
+const isLab = c => Boolean(c.lab || c.an);
+const tagOf = c => (isLab(c) ? (expOf(c)?.dim === '3d' ? '三维' : '二维') : labelOf(c));
+const descOf = c => (isLab(c) ? expOf(c)?.blurb || '' : c.d || '');
 
 // 上一部分 / 下一部分按版面次序（课程部分在前、演示实验收在最后）
 const idx = computed(() => (p.value ? ORDERED_PARTS.findIndex(x => x.id === p.value.id) : -1));

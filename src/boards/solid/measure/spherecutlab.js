@@ -7,7 +7,7 @@ const X = v3(1, 0, 0), Y = v3(0, 1, 0);
 
 export function createBoard(root) {
   const W = 800, H = 470;
-  const B = new Board(root, W, H);
+  const B = new Board(root, W, H, { preciseSliders: true });
   const cam = makeCam({ cx: 270, cy: 235, s: 72, cz: 0 });
   const st = { R: 1.4, h: 0.6, dash: false, showSection: true };
   const fz = v => (Math.round(v * 100) / 100).toFixed(2);
