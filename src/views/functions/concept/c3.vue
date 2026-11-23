@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="3" no="C3" base="/functions/c" :chapters="C_CHAPTERS"
-    title="定义域与值域：解析式自带的限制" sub="定义域是函数的首要前提，值域是全部函数值 —— 一个由限制条件决定，一个要算不能猜。"
+    title="定义域与值域：解析式自带的限制" sub="定义域是允许的输入集合，值域是函数实际能取到的全部输出。"
     :toc="[{ id: 'c3-dom', t: '定义域从哪来（图 C3）' }, { id: 'c3-ex', t: '多重限制：解不等式组' }, { id: 'c3-methods', t: '求值域的方法阶梯' }, { id: 'c3-warn', t: '反解法的易错点' }]">
     <div class="note good" id="c3-dom"><strong>定义域</strong>：使解析式有意义的自变量取值全体。无实际背景时按"自然限制条件"确定：<strong>分母不为零</strong>、<strong>偶次根号下 <Katex tex="\ge 0" /></strong>、<strong>对数真数 <Katex tex="&gt; 0" /></strong>（底数 <Katex tex="&gt; 0" /> 且 <Katex tex="\ne 1" />）；有实际背景的（重量、人数、时间）还要依题意确定。<strong>值域</strong> <span class="term">(range)</span>：全体函数值构成的集合 —— 它由定义域与法则共同决定，是全部函数值的集合。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRangeSweep" />
-      <div class="cap">图 C3 · <b>求函数的值域</b>：四个预设各带一种定义域限制 —— ① 配方法型、② 根号限定下界、③ 观察法的渐近缺口、④ 分母挖点。绿色带画在 x 轴上是定义域；拖"扫描 x"（或按 ▶ 自动扫描），扫描点把 f(x) 沿虚线投影到 y 轴，刷出金色的"已取到的值"。看点：③ 的金带始终刷不到 0 —— 那个下界 0 是<strong>算出来</strong>的（分母 ≥ 1 ⟹ 0 &lt; y ≤ 1），不是扫出来的；④ 越过 x=1 时扫描点从 −∞ 侧跳到 +∞ 侧，0 恰是整个值域唯一的缺口。</div>
+      <div class="cap">图 C3 · <b>求函数的值域</b>。移动扫描点，观察函数值向纵轴投影。切换到有理函数，核对纵轴上取不到的 0。</div>
     </div>
 
     <h3 class="sec" id="c3-ex">多重限制：解不等式组</h3>
@@ -27,7 +27,7 @@
     <div class="note warn tip">
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">
-        <li><strong>提示一：反解 x 只在「一一对应」时可靠。</strong>比如 <Katex tex="y=x^2" /> 反解得 <Katex tex="x=\pm\sqrt{y}" /> —— 一个 y 配了两个 x，x 已经不是 y 的函数了。正确做法：先按单调性分区间（<Katex tex="x\ge 0" /> 与 <Katex tex="x&lt;0" />），各自反解，最后把两段值域<strong>取并集</strong>。</li>
+        <li><strong>提示一：反解时保留所有符合定义域的解。</strong>给定 y，只需判断是否至少存在一个允许的输入 x。例如 <Katex tex="x^2=y" /> 对任意 <Katex tex="y\ge0" /> 都有解，因此值域为 <Katex tex="[0,+\infty)" />。</li>
         <li><strong>提示二：值域不是「图上看到的 y」。</strong>图 C3 的扫描带只在屏幕范围内刷色，真正限制上下界的取不到的端点、无穷缺口，都要靠上面那架梯子算出来。</li>
       </ul>
     </div>

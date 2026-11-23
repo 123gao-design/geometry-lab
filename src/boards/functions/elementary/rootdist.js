@@ -5,11 +5,12 @@
    三项判据：Δ（根存在）→ 对称轴位置 → 端点符号 a·f(k)；经典「一根<k一根>k ⟺ a·f(k)<0」直接验证。
    从 R5 位置迁入 E2（与 E2 共享工具）：二次方程根的分布是二次函数专属内容，随「零点三语言」旁证收编。
    图象规范：B.isoFit 等单位取景；公式一律 B.tex/btnM/chipM；网格 / 轴标注 两开关；两根/顶点/端点为必采锚点。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // abc(v)：系数（随参数变）；pn 参数名；ur/v0 滑块档位；box 取景
   const PRESETS = [
@@ -56,7 +57,7 @@ export function createBoard(root) {
       r2 = Math.max((-b - s) / (2 * a), (-b + s) / (2 * a));
     }
     B.grid({ ...M, grid: st.grid, labs: st.labs });
-    B.tex(V(16, 24), P.eq, { size: 13.5, color: '#93a1b5', anchor: 'start' });
+    B.note(P.eq, '#93a1b5');
     // 参照区间 (1,3)：绿带 + 两端虚线
     mk('rect', { x: px(1), y: py(M.Y1), width: px(3) - px(1), height: py(M.Y0) - py(M.Y1), fill: '#4ade80', 'fill-opacity': .06 }, B.dyn);
     B.seg(V(px(1), py(0)), V(px(3), py(0)), { stroke: '#4ade80', 'stroke-width': 5, 'stroke-opacity': .55, 'stroke-linecap': 'butt' });
@@ -77,7 +78,7 @@ export function createBoard(root) {
     if (vy > M.Y0 && vy < M.Y1) B.dot(V(px(vx), py(vy)), 3.5, { fill: '#93a1b5' });
     if (real) for (const [r, lab] of [[r1, 'r_1'], [r2, 'r_2']]) {
       B.dot(V(px(r), py(0)), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
-      B.tex(V(px(r), py(0) + 20), `$${lab}$`, { size: 12, color: '#ffd166', anchor: 'mid' });
+      B.note(`$${lab}$`, '#ffd166');
     }
     // 徽章
     const [txt, cls] = classify(real ? r1 : 0, real ? r2 : 0, real);
@@ -98,7 +99,7 @@ export function createBoard(root) {
     B.render();
   }, { on: i === 0 }));
   B.graphToggles(st, ['grid', 'labs']);
-  B.hintM('根的分布三项判据：$\\Delta$（根存在）→ 对称轴位置 → 端点符号 $a\\cdot f(k)$；「一内一外」只看 $a\\cdot f(k)<0$');
+  B.hint("移动抛物线，观察实根通过参照区间端点的情形。");
   B.render();
   return B;
 }

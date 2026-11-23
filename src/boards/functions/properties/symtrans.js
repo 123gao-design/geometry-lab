@@ -3,11 +3,12 @@
    ④ 参数关（f(x)=x²+mx+1 要满足 ① 的式子，拖 m 验收：只有 m=−4 谈得拢 —— 自有轴 x=−m/2 必须与式子的轴重合）。
    探针 u：两翼端点 (u, f(u)) 与 (4−u, f(4−u)) 关于 x=2 等距 —— 等高读「轴对称」，等值反向读「中心对称」。
    图象规范：B.isoFit 等单位取景；公式一律 B.tex（KaTeX）渲染；网格 / 轴标注 两开关；marks 与接榫点为必采锚点。 */
-import { Board, V, fmt } from '../../../lib/board.js';
+import { V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // f 检验函数；box 取景框；marks 必采锚点（也是屏幕灰点）；mode：axis 轴 / ctr 中心 / half 半张翻译 / param 参数关
   const PRESETS = [
@@ -44,7 +45,7 @@ export function createBoard(root) {
     const P = PRESETS[st.p], M = MAPS[st.p];
     const { X0, X1, Y0, Y1 } = M;
     B.grid({ ...M, grid: st.grid, labs: st.labs });
-    B.tex(V(16, 24), P.eq, { size: 14, color: '#93a1b5', anchor: 'start' });
+    B.note(P.eq, '#93a1b5');
     // 式子翻译出的「隐形成分」：金色对称轴 / 对称中心
     if (P.axis != null) B.seg(V(px(P.axis), py(Y0)), V(px(P.axis), py(Y1)), { stroke: '#ffd166', 'stroke-width': 1.4, 'stroke-dasharray': '6 6', 'stroke-opacity': .75 });
     if (P.center) B.dot(V(px(P.center[0]), py(P.center[1])), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
@@ -53,14 +54,14 @@ export function createBoard(root) {
     if (P.mode === 'half') {
       B.plot(F, M, { dom: x => x >= P.halfAt, anchors: anc(), step: .04, stroke: '#5cadff', 'stroke-width': 2.4 });
       B.plot(F, M, { dom: x => x < P.halfAt, anchors: anc(), step: .04, stroke: '#ffd166', 'stroke-width': 2.4, 'stroke-dasharray': '7 5' });
-      B.tex(V(px(X0) + 12, py(-0.35)), '金虚线：翻译件 $f(4-x)$', { size: 12, color: '#ffd166', anchor: 'start' });
-      B.tex(V(px(2.55), py(-0.35)), '蓝实线：给定半支 $x\\ge 2$', { size: 12, color: '#5cadff', anchor: 'start' });
+      B.note('金虚线：翻译件 $f(4-x)$', '#ffd166');
+      B.note('蓝实线：给定半支 $x\\ge 2$', '#5cadff');
     } else B.plot(F, M, { anchors: anc(), step: .04, stroke: '#5cadff', 'stroke-width': 2.4 });
     for (const [mx, my] of P.marks) B.dot(V(px(mx), py(my)), 3.5, { fill: '#93a1b5' });
     if (P.mode === 'param') {   // 抛物线的自有轴 x=−m/2：拖 m 看它向式子要的轴（x=2）靠拢
       const vx = -st.m / 2;
       B.seg(V(px(vx), py(Math.max(Y0, P.f(vx, st.m)))), V(px(vx), py(Y1)), { stroke: '#5cadff', 'stroke-width': 1, 'stroke-dasharray': '2 5', 'stroke-opacity': .7 });
-      B.tex(V(px(vx) + 8, py(Y1) + 44), `自有轴 $x=${fmt(vx, 2)}$`, { size: 11.5, color: '#5cadff', anchor: 'start' });
+      B.note(`自有轴 $x=${fmt(vx, 2)}$`, '#5cadff');
       if (P.f(vx, st.m) > Y0 && P.f(vx, st.m) < Y1) B.dot(V(px(vx), py(P.f(vx, st.m))), 3.5, { fill: '#93a1b5' });
     }
     // 探针两翼：(u, f(u)) 与 (4−u, f(4−u)) 关于 x=2 等距 —— 连线读「等高（轴）/ 反向（中心）」
@@ -72,8 +73,8 @@ export function createBoard(root) {
       B.dot(V(px(4 - u), py(y2)), 5.5, { fill: '#ff9e4a', stroke: '#0a0d14', 'stroke-width': 1.4 });
       B.seg(V(px(u), py(y1)), V(px(u), py(0)), { stroke: '#3f5f8f', 'stroke-dasharray': '3 5', 'stroke-opacity': .6 });
       B.seg(V(px(4 - u), py(y2)), V(px(4 - u), py(0)), { stroke: '#3f5f8f', 'stroke-dasharray': '3 5', 'stroke-opacity': .6 });
-      B.text(V(px(u), py(0) - 8), `u=${fmt(u, 2)}`, { 'font-size': 11, fill: '#ff9e4a' });
-      B.text(V(px(4 - u), py(0) - 8), `4−u=${fmt(4 - u, 2)}`, { 'font-size': 11, fill: '#ff9e4a', 'text-anchor': 'end' });
+      B.note(`u=${fmt(u, 2)}`, '#ff9e4a');
+      B.note(`4−u=${fmt(4 - u, 2)}`, '#ff9e4a');
     }
     // 徽章：两翼读数 + 翻译判定
     const ctr = P.mode === 'ctr';
@@ -102,7 +103,7 @@ export function createBoard(root) {
   }, { on: i === 0 }));
   wrapOf(slM).style.display = 'none';
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('式子里的 1 和 3 不是轴 —— 轴在 (1+3)/2=2：两翼 (u, f(u)) 与 (4−u, f(4−u)) 等距；等高=轴对称，等值反向=中心对称');
+  B.hint("拖动取样点，比较对称位置的两个函数值。");
   B.render();
   return B;
 }

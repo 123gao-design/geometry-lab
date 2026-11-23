@@ -2,11 +2,12 @@
    拖墙高 M（金线）：徽章实时判定它是不是上界/下界、被哪个点穿透；「确界线」开关揭晓上确界/下确界
    —— ① 闭区间全取到（最大值=上确界）、② 开区间有界却取不到（界存在、最值不存在）、③ 无上界（渐近线冲上天）。
    图象规范：B.isoFit 等单位取景；网格 / 轴标注 / 渐近线 / 确界线 四开关；端点按开闭画实心/空心。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // box 取景框；de 定义域数值边沿；dom 定义域文本；sup/inf 上/下确界文本（含「取到与否」）；supV/infV 数值（Infinity = 无上界）
   // wall 墙滑块范围；ends 端点 [x,y,闭?]；asy 渐近线；maxmin 最值说明文本
@@ -91,18 +92,18 @@ export function createBoard(root) {
       const mkLine = (v, lab, att) => {
         if (!isFinite(v) || v <= Y0 || v >= Y1) return;
         B.seg(V(px(X0), py(v)), V(px(X1), py(v)), { stroke: '#67e8f9', 'stroke-width': 1.6, 'stroke-dasharray': '7 6', 'stroke-opacity': .85 });
-        B.text(V(px(X1) - 10, py(v) - 8), lab, { 'font-size': 11.5, fill: '#67e8f9', 'text-anchor': 'end' });
+        B.note(lab, '#67e8f9');
       };
       if (isFinite(P.supV)) mkLine(P.supV, `上确界 ${fmt(P.supV, 2)}（${P.sup.includes('取到') ? '取到' : '取不到'}）`, 1);
-      else B.text(V(px(X0) + 12, py(Y1) + 16), '无上界 —— 渐近线方向图象冲出画框', { 'font-size': 11.5, fill: '#67e8f9', 'text-anchor': 'start' });
+      else B.note('无上界 —— 渐近线方向图象冲出画框', '#67e8f9');
       mkLine(P.infV, `下确界 ${fmt(P.infV, 2)}`, 0);
-      B.text(V(70, 40), `定义域 ${P.dom}`, { 'font-size': 12, fill: '#4ade80', 'text-anchor': 'start' });
+      B.note(`定义域 ${P.dom}`, '#4ade80');
     }
     // 墙：金色横线 + 标签；判定它拦不拦得住
     const [bx, bv] = extreme(P, st.up);
     if (st.M > Y0 && st.M < Y1) {
       B.seg(V(px(X0), py(st.M)), V(px(X1), py(st.M)), { stroke: '#ffd166', 'stroke-width': 2.4 });
-      B.textM(V(px(X0) + 10, py(st.M) - 8), `墙 $M=${fmt(st.M, 2)}$（${st.up ? '上界墙：问 $f(x)\\le M$ 成立吗' : '下界墙：问 $f(x)\\ge M$ 成立吗'}）`, { 'font-size': 12, fill: '#ffd166', 'text-anchor': 'start' });
+      B.note(`墙 $M=${fmt(st.M, 2)}$（${st.up ? '上界墙：问 $f(x)\\le M$ 成立吗' : '下界墙：问 $f(x)\\ge M$ 成立吗'}）`, '#ffd166');
     }
     if (bx != null) {
       const bound = st.up ? bv <= st.M + 1e-9 : bv >= st.M - 1e-9;
@@ -139,7 +140,7 @@ export function createBoard(root) {
   const sl = B.slider('墙高 M', PRESETS[0].wall[0], PRESETS[0].wall[1], 0.05, PRESETS[0].wInit, v => { st.M = v; B.render(); }, 'M');
   B.graphToggles(st);
   B.toggleBtn('确界线', false, on => { st.sup = on; B.render(); });
-  B.hint('墙升到恰好拦住的位置就是确界；取得到墙的最值才是最值 —— ② 的墙永远差一点');
+  B.hint("改变水平界线，检查它是否限制住所有函数值。");
   B.render();
   return B;
 }

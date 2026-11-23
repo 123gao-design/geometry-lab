@@ -93,11 +93,15 @@ export const DEMOS = {
 
   vgraph: {
     title: 'x-t 图与 v-t 图：切线斜率、图线斜率与面积',
-    hint: '两张图共用同一条时间轴：上图 x-t 曲线的切线斜率是瞬时速度，下图 v-t 直线的斜率是加速度，直线到时间轴围出的面积是位移。把「加速度 a」拖成负值，上图抛物线翻向、下图直线向下倾斜，阴影越过时间轴后转为负值。',
+    hint: '上下两图共用时间轴。速度图的有向面积给出位移，各块面积的绝对值相加得到路程。点「观察掉头」比较转向和回到起点的时刻。',
     tall: true,
     params: [
       { k: 'v0', label: '初速度 v0', min: 0, max: 8, step: 0.1, value: 2, unit: 'm/s' },
       { k: 'a', label: '加速度 a', min: -3, max: 3, step: 0.1, value: 1, unit: 'm/s²' },
+    ],
+    presets: [
+      { label: '观察掉头', params: { v0: 2, a: -1 } },
+      { label: '定格 4 秒', params: { v0: 2, a: -1 }, time: 4 },
     ],
     load: () => import('./vgraph.js'),
   },

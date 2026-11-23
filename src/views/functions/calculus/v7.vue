@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="7" no="V7" base="/functions/v" :chapters="V_CHAPTERS"
-    title="从求和到积分：$n^2$ 到 $x^2$" sub="先把离散的平方和公式写下来，再整体除以 $n^3$ 铺回 [0,1] —— 金字塔变成矩形和，$n\to\infty$ 时趋于 $\int_0^1x^2\,\mathrm{d}x=\dfrac{1}{3}$。积分不是凭空引入的新运算，而是求和的极限。"
+    title="从求和到积分：$n^2$ 到 $x^2$" sub="把平方和除以 n³，得到 [0,1] 上 x² 的右端点黎曼和。"
     :toc="[{ id: 'v7-sum', t: '三个求和公式：差分累加' }, { id: 'v7-scale', t: '缩比：金字塔 ÷ $n^3$' }, { id: 'v7-limit', t: '极限就是面积' }, { id: 'v7-pit', t: '量纲与 $1/(\\alpha+1)$' }]">
     <div class="note good" id="v7-law"><strong>平方和及其缩比极限</strong>：<Katex tex="\sum_{k=1}^{n}k^2=\dfrac{n(n+1)(2n+1)}{6}" />；把 [0,1] 均分 n 份取右端点作矩形和，<Katex tex="R_n=\dfrac{1}{n^3}\sum_{k=1}^{n}k^2=\dfrac{(n+1)(2n+1)}{6n^2}=\dfrac{1}{3}+\dfrac{1}{2n}+\dfrac{1}{6n^2}\ \to\ \dfrac{1}{3}" />，而 <Katex tex="\dfrac{1}{3}=\int_0^1x^2\,\mathrm{d}x" /> —— 离散求和的极限就是积分。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSum" />
-      <div class="cap">图 V7 · <b>平方和与定积分</b>：上栏离散平方塔（第 k 根条高 <Katex tex="\propto k^2"/>），下栏 [0,1] 上的右端点矩形 —— 两栏逐列对齐、同一轮廓，中间隔一个 ÷<Katex tex="n^3"/>。拖大 n：高出曲线的金边消失，矩形和趋于绿区 <Katex tex="1/3"/>；「⏩ n 逐级翻倍」把误差减半的过程做成动画。</div>
+      <div class="cap">图 V7 · <b>平方和与定积分</b>。两图按列对齐。上图第 k 根条表示 k²，下图第 k 个矩形面积为 k²/n³。增大 n，观察右端点和如何接近 1/3。</div>
     </div>
 
     <h3 class="sec" id="v7-sum">三个求和公式：差分累加</h3>
@@ -30,7 +30,7 @@
         <li><strong>提示三：通式越界推广。</strong><Katex tex="\alpha=-1"/> 时 <Katex tex="\sum 1/k"/> 是调和级数（发散），<Katex tex="x^{-1}"/> 在 [0,1] 的积分也不存在 —— 括号里的「<Katex tex="\alpha>-1"/>」是硬约束，不是参考意见。</li>
       </ul>
     </div>
-    <p>下一讲正式开工积分：任意连续函数的黎曼和、面积曲线 F 与 <Katex tex="F'=f"/> 的互逆 —— 本讲算出的 <Katex tex="1/3"/> 将拿到正式名字「牛顿–莱布尼茨公式」，计算只需一个 <Katex tex="x^3/3"/>。</p>
+    <p>平方和公式使这个黎曼和可以直接计算。下一讲将用一般连续函数介绍同样的分割方法，并说明如何用原函数计算定积分。</p>
   </ChPage>
 </template>
 <script setup>

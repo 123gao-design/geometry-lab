@@ -2,11 +2,12 @@
    三个预设：① x²（对称回折）② x³−3x（增减交替）③ 1/x（跨定义域缺口的经典陷阱）。
    图象规范：各预设 B.isoFit 等单位取景（弦的倾角就是弦斜率的真方向）；把手只沿曲线拖（锁定定义域内）；
    顶点/临界点灰点标注；③ 的渐近线由开关隐藏；网格 / 轴标注 可隐藏。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 470;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // box 取景框；marks 特殊点 [x,y]（顶点/临界点）；asy 渐近线；snap：把手吸离缺口
   const PRESETS = [
@@ -72,8 +73,8 @@ export function createBoard(root) {
     if (P.d(st.x1)) B.seg(V(px(st.x1), py(fa)), V(px(st.x1), py(0)), { stroke: '#3f5f8f', 'stroke-dasharray': '3 5', 'stroke-opacity': .7 });
     if (P.d(st.x2)) B.seg(V(px(st.x2), py(fb)), V(px(st.x2), py(0)), { stroke: '#3f5f8f', 'stroke-dasharray': '3 5', 'stroke-opacity': .7 });
     if (P.d(st.x1) && P.d(st.x2)) B.seg(V(px(st.x1), py(fa)), V(px(st.x2), py(fb)), { stroke: '#ffd166', 'stroke-width': 2, 'stroke-dasharray': '6 4' });
-    if (P.d(st.x1)) B.textM(V(px(st.x1), py(0) - 10), `$x_1=${fmt(st.x1, 2)}$`, { 'font-size': 11, fill: '#ffd166' });
-    if (P.d(st.x2)) B.textM(V(px(st.x2), py(0) - 10), `$x_2=${fmt(st.x2, 2)}$`, { 'font-size': 11, fill: '#ff9e4a' });
+    if (P.d(st.x1)) B.note(`$x_1=${fmt(st.x1, 2)}$`, '#ffd166');
+    if (P.d(st.x2)) B.note(`$x_2=${fmt(st.x2, 2)}$`, '#ff9e4a');
     // 徽章
     const ok1 = P.d(st.x1), ok2 = P.d(st.x2);
     cA(ok1 ? `f(${fmt(st.x1, 2)}) = ${fmt(fa, 2)}` : 'x₁ 不在定义域内', ok1 ? '' : 'warn');
@@ -98,7 +99,7 @@ export function createBoard(root) {
     B.render();
   }, { on: i === 0 }));
   B.graphToggles(st);
-  B.hint('把手只能沿曲线走：两点只是「例证」，定义要的是区间内任取两点都成立 —— 试试 ① 拖出 x₁=−2, x₂=1');
+  B.hint("拖动两个点。单调性要求区间内任意两点都满足同一关系。");
   B.render();
   return B;
 }

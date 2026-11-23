@@ -3,11 +3,12 @@
    下栏（y≥327）：[0,1] 上的 y=x²，右端点矩形宽 1/n、高 (k/n)² —— 与上栏同一轮廓、逐列对齐。
    两栏共用列位（k 格同 x），缩比关系一眼可见：R_n=(1/n³)Σk²=(n+1)(2n+1)/(6n²)=1/3+1/(2n)+1/(6n²)→1/3。
    下栏映射：px=120+680x、py=540−190y（各向比例尺，量纲不同的双面板先例 C4）；绿区=精确面积 1/3，金矩形=黎曼和（右端点高估）。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 560;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
   const st = { n: 8, grid: true, labs: true };
 
   // 上栏离散平方塔
@@ -21,7 +22,7 @@ export function createBoard(root) {
   B.renderFn = () => {
     const n = st.n, slot = (X_R - X_L) / n;
     // 上栏
-    B.tex(V(24, 36), `上栏 · 离散平方塔：第 k 根条高 $\\propto k^2$（n=${n} 根）`, { size: 13, color: '#93a1b5', anchor: 'start', w: 500 });
+    B.note(`上栏 · 离散平方塔：第 k 根条高 $\\propto k^2$（n=${n} 根）`, '#93a1b5');
     B.seg(V(X_L - 10, TOP_BASE), V(X_R + 10, TOP_BASE), { stroke: '#8fa3bd', 'stroke-width': 1.8 });
     let S = 0;
     for (let k = 1; k <= n; k++) {
@@ -30,11 +31,11 @@ export function createBoard(root) {
       mk('rect', { x: xL + (slot - w) / 2, y: TOP_BASE - h, width: w, height: h, fill: '#5cadff', 'fill-opacity': .38, stroke: '#5cadff', 'stroke-width': 1.2 }, B.dyn);
       if (st.labs) {
         if (n <= 12 || k % 5 === 0) B.text(V(xL + slot / 2, TOP_BASE + 16), String(k), { 'font-size': 10.5, fill: '#5c6a80', 'text-anchor': 'middle' });
-        if (n <= 8) B.tex(V(xL + slot / 2, TOP_BASE - h - 9), `${k * k}`, { size: 11, color: '#5cadff', anchor: 'mid', w: 40 });
+        if (n <= 8) B.text(V(xL + slot / 2, TOP_BASE - h - 9), String(k * k), { fill: '#5cadff' });
       }
     }
     // 下栏
-    B.tex(V(24, 316), `下栏 · 连续 [0,1]：右端点矩形宽 $1/n$、高 $(k/n)^2$ —— 与上栏同一轮廓，整体 $\\div n^3$`, { size: 13, color: '#93a1b5', anchor: 'start', w: 640 });
+    B.note(`下栏 · 连续 [0,1]：右端点矩形宽 $1/n$、高 $(k/n)^2$ —— 与上栏同一轮廓，整体 $\\div n^3$`, '#93a1b5');
     B.grid({ ...M, grid: st.grid, labs: st.labs, sx: 0.25, sy: 0.25, lx: 0.5, ly: 0.5, axLab: 'x', ayLab: 'y' });
     // 绿区：曲线下精确面积 1/3
     const xs = [];
@@ -84,7 +85,7 @@ export function createBoard(root) {
   autoBtn = B.toggleBtn('⏩ n 逐级翻倍', false, on => { autoOn = on; fr = 0; if (on) B.raf(tick); });
   const sl = B.slider('份数 n', 1, 60, 1, 8, v => { st.n = Math.round(v); B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hintM('上栏每根条 ÷n³ = 下栏一格矩形：拖大 n，金边消失、矩形和趋于绿区 $\\tfrac{1}{3}$ —— 离散求和的极限就是积分');
+  B.hint("增大 n，看右端点黎曼和趋近 1/3。");
   B.render();
   return B;
 }

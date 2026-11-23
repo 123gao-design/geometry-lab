@@ -2,11 +2,12 @@
    蓝曲线=目标函数，金曲线=部分和 P_n（拖「阶数」一项项长上来），灰虚=各项单独曲线（虚线逐项）；
    检验点 x_q 竖线量误差：e^x/sin 收敛飞快，ln(1+x) 越过收敛半径 1 直接发散。
    各原图量级不同，按 E4/E7 先例各用比例尺（mapFit）；网格步长 gx/gy 按原图传给 B.grid。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const fact = k => { let r = 1; for (let i = 2; i <= k; i++) r *= i; return r; };
   const PRESETS = [
@@ -65,7 +66,7 @@ export function createBoard(root) {
   B.renderFn = () => {
     const P = PRESETS[st.p], M = MAPS[st.p];
     B.grid({ ...M, grid: st.grid, labs: st.labs, sx: P.gx, sy: P.gy, lx: P.lx, ly: P.ly });
-    B.tex(V(20, 28), P.corner, { size: 13.5, color: '#93a1b5', anchor: 'start', w: 380 });
+    B.note(P.corner, '#93a1b5');
 
     const inDom = P.dom == null || st.xq > P.dom;
     // 目标曲线（蓝）：分段折线，出定义域断笔
@@ -137,7 +138,7 @@ export function createBoard(root) {
   const slQ = B.slider('检验点 x', -2.2, 2.2, 0.05, 1, v => { st.xq = v; B.render(); });
   B.toggleBtn('虚线逐项', false, on => { st.ghost = on; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('拖「阶数」看金多项式一项项长成蓝曲线：0 处每多对齐一阶导数，检验点误差骤减');
+  B.hint("逐步增加阶数，比较同一个检验点的近似误差。");
   B.render();
   return B;
 }

@@ -1,16 +1,16 @@
 <template>
   <ChPage :cur="5" no="E5" base="/functions/e" :chapters="E_CHAPTERS"
-    title="对数函数：增速递减" sub="$y=\log_a x$ —— 增长无上界，增速却一直减小：$f'=1/(x\ln a)$ 递减。与指数互为反演：两者增速皆由底数定。"
+    title="对数函数：增速递减" sub="a＞1 时，对数函数递增且增速减小。0＜a＜1 时，函数递减并逐渐变平。"
     :toc="[{ id: 'e5-def', t: '定义与五条性质（图 E5）' }, { id: 'e5-slow', t: '慢的定量：f′ 递减与「慢过一切幂」' }, { id: 'e5-ops', t: '运算律与换底公式' }]">
     <div class="note good" id="e5-def"><strong>对数函数</strong>：<Katex tex="y=\log_a x\ (a&gt;0,\ a\ne 1)" />，当 <Katex tex="a^y=x" /> 时称 y 为「以 a 为底 x 的对数」。性质五条（与指数函数的五条性质整列互换）：定义域 <Katex tex="(0,+\infty)" />、值域 <Katex tex="\mathbb{R}" />、恒过 (1,0)、a&gt;1 时递增 / 0&lt;a&lt;1 时递减、y 轴（x=0）是竖直渐近线。<strong>真数必须为正</strong> —— 零和负数取不了对数，这是定义域的首要限制。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSlow" />
-      <div class="cap">图 E5 · <b>对数函数</b>：<Katex tex="y=\log_a x" /> 单栏全景 —— 探针向两轴作投影垂线直读坐标，徽章里 <Katex tex="f'=1/(x\ln a)" /> 递减（导数不另占一栏），增长无上界，但增速递减。④ 预设 <Katex tex="a=1" /> 看排除；③ <Katex tex="a=e" /> 即自然对数 <Katex tex="\ln" /> 的底。</div>
+      <div class="cap">图 E5 · <b>对数函数</b>。切换底数并移动探针。对照两种底数下导数的符号及其向 0 变化的方向。</div>
     </div>
 
     <h3 class="sec" id="e5-slow">慢的定量：f′ 递减与「慢过一切幂」</h3>
-    <p>「增速递减」可以定量：<Katex tex="f'(x)=\dfrac{1}{x\ln a}" />（<Katex tex="a>1" /> 时恒正但随 x 递减）。对数无上界（值域是 R），但每一步的增速都比上一步小 —— 图 E5 探针右移时 <Katex tex="f'" /> 读数一路走低，把「增速递减」画成了看得见的现象。更强的结论是：<strong>对数慢过一切正幂</strong> —— 哪怕 <Katex tex="\alpha" /> 小到 0.1，<Katex tex="x^{0.1}" /> 也终将超过 <Katex tex="\ln x" />，只是交点非常远（在 <Katex tex="x\approx 3.4\times 10^{15}" /> 处）。这就是「对数尺度」能压缩天文数字的原因：数字翻十倍，对数只加一。</p>
-    <p>与 E4 对读：指数的 <Katex tex="f'" /> 与 <Katex tex="f" /> 成正比，对数的 <Katex tex="f'" /> 与 <Katex tex="x" /> 成反比 —— 一个与函数值成正比、一个与自变量成反比，两句话概括两条曲线的全部特性。而 <Katex tex="0<a<1" /> 时 <Katex tex="f'<0" /> 且趋于 0：曲线下降而逐渐变平，向右以 x 轴为渐近线。</p>
+    <p>导数为 <Katex tex="f'(x)=1/(x\ln a)" />。若 <Katex tex="a>1" />，导数为正且逐渐减小，函数值仍可增长到任意大。对任意 <Katex tex="\alpha>0" />，比值 <Katex tex="\ln x/x^\alpha" /> 在 x 趋于正无穷时趋于零。</p>
+    <p>当 <Katex tex="0<a<1" /> 时，导数为负并向 0 增大，函数值本身趋于负无穷。两种底数对应的曲线都以 <Katex tex="x=0" /> 为竖直渐近线。</p>
 
     <h3 class="sec" id="e5-ops">运算律与换底公式</h3>
     <p>对数把乘法降维成加法：<Katex tex="\log_a(MN)=\log_a M+\log_a N" />、<Katex tex="\log_a\dfrac{M}{N}=\log_a M-\log_a N" />、<Katex tex="\log_a M^n=n\log_a M" />（M,N&gt;0）—— 它们是指数律 <Katex tex="a^{s+t}=a^s a^t" /> 的逆运算（E6 将把这台「互逆机器」画成镜面）。换底公式 <Katex tex="\log_b c=\dfrac{\log_a c}{\log_a b}" /> 让不同底的对数互相换算；特别地 <Katex tex="\lg N=\dfrac{\ln N}{\ln 10}" />。指对恒等式 <Katex tex="a^{\log_a x}=x" />（x&gt;0）是「先正运算再逆运算，回到原地」的代数表述。</p>

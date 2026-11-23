@@ -3600,18 +3600,22 @@ export class Board {
     b.textContent = label;
     if (math) b.innerHTML = texMix(label);
     let on = init;
-    const sync = () => b.classList.toggle('on', on);
+    const sync = () => {
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', String(on));
+    };
     sync();
     const set = v => { on = !!v; sync(); fn(on); };
     b.addEventListener('click', () => { set(!on); scheduleQuerySync(); }); this.ctrl.appendChild(b);
     const key = 't' + (this.toggles.length + 1);
     this.toggles.push({ key, label, get: () => (on ? 1 : 0), set });
-    return { set };
+    return { set, button: b };
   }
   slider(label, min, max, step, val, fn, key) {
     const w = hEl('label', { class: 'slider' });
     const s = hEl('input', { type: 'range', min, max, step, value: val }); w.appendChild(s);
-    const t = hEl('span', {}, w); t.textContent = `${label} ${fmt(val, 1)}`;
+    const digits = Math.max(1, (String(step).split('.')[1] || '').length);
+    const t = hEl('span', {}, w); t.textContent = `${label} ${fmt(val, digits)}`;
     // URL 键：默认取标签首个拉丁/希腊字母（θ→th 等），无字母则 p1/p2；同板冲突加序号；第 7 参可显式指定
     const base = () => key || sliderKey(label, this.sliders.length);
     let k = base();
@@ -3619,12 +3623,12 @@ export class Board {
     this._keys.add(k);
     this.sliders.push({ s, key: k, min, max, label });
     s.addEventListener('input', () => {
-      t.textContent = `${label} ${fmt(+s.value, 1)}`;
+      t.textContent = `${label} ${fmt(+s.value, digits)}`;
       fn(+s.value);
       scheduleQuerySync(); // 防抖后把整页滑块状态写进 hash query
     });
     // 程序化同步滑块 UI 与标签：不触发 fn、不把值读回（range 的 value 可能被浏览器按 step 整化）
-    s.sync = v => { s.value = v; t.textContent = `${label} ${fmt(+v, 1)}`; };
+    s.sync = v => { s.value = v; t.textContent = `${label} ${fmt(+v, digits)}`; };
     this.ctrl.appendChild(w); return s;
   }
   chip(label) { // 返回 update(text, cls)
@@ -3943,20 +3947,39 @@ export class Board {
   }
   handle(st) { // st:{get,set,drag,color,r,label,lo,clamp,thin}
     const r = st.r || 7;
-    const c = mk('circle', { class: 'hnd', r, fill: st.color || '#fff', stroke: '#fff', 'stroke-width': 2 }, this.hd);
+    const c = mk('circle', { class: 'hnd', r, fill: st.color || '#fff', stroke: '#fff', 'stroke-width': 2,
+      tabindex: 0, 'aria-label': st.label ? `可移动点 ${st.label}` : '可移动点',
+      'aria-description': '用方向键移动，按住 Shift 加大步长' }, this.hd);
     if (st.thin) c.setAttribute('fill-opacity', .55);
     const lbl = st.label ? mk('text', { class: 'hndlbl', 'font-size': 13, 'font-weight': 700 }, this.hd) : null;
     this.handles.push({ c, lbl, st });
+    const moveTo = p => {
+      if (st.clamp) p = st.clamp(p);
+      else { p.x = Math.max(14, Math.min(this.w - 14, p.x)); p.y = Math.max(14, Math.min(this.h - 14, p.y)); }
+      st.set(p); this.sync(); st.drag && st.drag(); this.render();
+    };
+    c.addEventListener('keydown', ev => {
+      if (ev.altKey || ev.ctrlKey || ev.metaKey) return;
+      const dx = Number(ev.key === 'ArrowRight') - Number(ev.key === 'ArrowLeft');
+      const dy = Number(ev.key === 'ArrowDown') - Number(ev.key === 'ArrowUp');
+      if (!dx && !dy) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (this._inkOn) return;
+      const p = st.get(), step = ev.shiftKey ? 20 : 5;
+      moveTo(V(p.x + dx * step, p.y + dy * step));
+    });
     c.addEventListener('pointerdown', ev => {
       ev.preventDefault(); c.setPointerCapture(ev.pointerId); c.classList.add('drag');
-      const move = e2 => {
-        let p = this.px(e2);
-        if (st.clamp) p = st.clamp(p);
-        else { p.x = Math.max(14, Math.min(this.w - 14, p.x)); p.y = Math.max(14, Math.min(this.h - 14, p.y)); }
-        st.set(p); this.sync(); st.drag && st.drag(); this.render();
+      const move = e2 => moveTo(this.px(e2));
+      const up = () => {
+        c.classList.remove('drag');
+        c.removeEventListener('pointermove', move);
+        c.removeEventListener('pointerup', up);
+        c.removeEventListener('pointercancel', up);
       };
-      const up = () => { c.classList.remove('drag'); c.removeEventListener('pointermove', move); c.removeEventListener('pointerup', up); };
       c.addEventListener('pointermove', move); c.addEventListener('pointerup', up);
+      c.addEventListener('pointercancel', up);
     });
     return c;
   }

@@ -2,11 +2,12 @@
    两栏共用同一 px（x 严格对齐）：一根扫描线竖向贯穿两栏，对应同一 x：f 的切线斜率 = f′(x)。
    每栏的 y 各按自身取景框配比（量程宽于横跨时等单位会裁掉曲线主体，故选偏 x 对齐：上栏切线方向按像素比例折算，不宣称 45°=f′=1）。
    坐标约定：SVG 原生方向 u∈[0,860] 向右、v∈[0,520] 向下。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 520;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // f/fp：解析式与导数；xa..xb 公共 x 视野；fy 上栏（f）取景框、dy 下栏（f′）取景框；crits 临界点 [x, f(x)]；lv 单调区间列表
   const PRESETS = [
@@ -83,12 +84,12 @@ export function createBoard(root) {
     plotSign(P, 1, { stroke: '#4ade80', 'stroke-width': 2.2 }, T);
     plotSign(P, -1, { stroke: '#ff7b8a', 'stroke-width': 2.2 }, T);
     for (const [cx, cy] of P.crits) B.dot(V(T.px(cx), T.py(cy)), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
-    B.text(V(14, 16), '上栏 f 的图象（绿=单增段、红=单减段）', { 'font-size': 12.5, fill: '#93a1b5', 'text-anchor': 'start' });
+    B.note('上栏 f 的图象（绿=单增段、红=单减段）', '#93a1b5');
     // 下栏：f′ 的网格与图象（f′=0 的位置与上栏临界点同 x —— 扫描线一起读）
     B.grid({ ...Bm, ayLab: 'y′', grid: st.grid, labs: st.labs });
     plotDer(P, { stroke: '#c084fc', 'stroke-width': 2.2 }, Bm);
     for (const [cx] of P.crits) B.dot(V(Bm.px(cx), Bm.py(0)), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
-    B.textM(V(14, pad + H2 + gap / 2 + 4), "下栏 $f'$ 的图象（在 x 轴上方 $\\iff$ f 增）", { 'font-size': 12.5, fill: '#93a1b5', 'text-anchor': 'start' });
+    B.note("下栏 $f'$ 的图象（在 x 轴上方 $\\iff$ f 增）", '#93a1b5');
     // 一根扫描线贯穿两栏 + 切线 + 两点读数（同一 x）
     const x0 = st.x, y = P.f(x0), dv = P.fp(x0);
     B.seg(V(T.px(x0), 0), V(T.px(x0), H), { stroke: '#3f5f8f', 'stroke-dasharray': '3 5', 'stroke-opacity': .8 });
@@ -96,17 +97,20 @@ export function createBoard(root) {
       B.dot(V(T.px(x0), T.py(y)), 5.5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.5 });
       // 切线：沿 (sx, −syA·f′) 像素方向 ±130px（上栏 x/y 刻度无可比性，方向按折算）
       const Lg = Math.hypot(T.sx, T.sy * dv) || 1;
-      const dx = T.sx / Lg * 130, dy = T.sy * dv / Lg * 130;
+      const dx = T.sx / Lg * 130, dy = -T.sy * dv / Lg * 130;
       B.seg(V(T.px(x0) - dx, T.py(y) - dy), V(T.px(x0) + dx, T.py(y) + dy), { stroke: '#ffd166', 'stroke-width': 2 });
     }
     if (isFinite(dv) && dv > Bm.Y0 && dv < Bm.Y1) {
       B.dot(V(Bm.px(x0), Bm.py(dv)), 5.5, { fill: '#c084fc', stroke: '#0a0d14', 'stroke-width': 1.5 });
     }
     // 徽章
-    cF(`$f(${fmt(st.x, 2)}) = ${fmt(y, 2)}$`, '');
-    cD(`$f'(${fmt(st.x, 2)}) = ${fmt(dv, 2)}$`, dv > 1e-9 ? 'ok' : dv < -1e-9 ? 'warn' : '');
-    cV(dv > 1e-9 ? "$f'>0$：此处上升（f 为绿段）" : dv < -1e-9 ? "$f'<0$：此处下降（f 为红段）"
-      : "$f'=0$：临界点 —— 单调性在此转折，要看两侧变号才作数", dv > 1e-9 ? 'ok' : dv < -1e-9 ? 'warn' : '');
+    const defined = Number.isFinite(dv);
+    cF(Number.isFinite(y) ? `$f(${fmt(st.x, 2)})=${fmt(y, 2)}$` : '此处无定义');
+    cD(defined ? `$f'(${fmt(st.x, 2)})=${fmt(dv, 2)}$` : '此处无定义');
+    cV(!defined ? '定义域在此断开'
+      : dv > 1e-9 ? "$f'>0$ · 递增段"
+      : dv < -1e-9 ? "$f'<0$ · 递减段"
+      : "$f'=0$ · 检查两侧的导数符号");
     cLv(P.lv, '');
   };
 
@@ -119,7 +123,7 @@ export function createBoard(root) {
   }, { on: i === 0 }));
   const sl = B.slider('切点 x', -1.35, 3.35, 0.05, 0.5, v => { st.x = v; B.render(); });
   B.graphToggles(st);
-  B.hintM("下栏 $f'$ 在 x 轴上方 $\\iff$ 上栏 f 为绿段：拖扫描线，上下双栏在同一 x 处同步变化");
+  B.hint("拖动扫描线，对照同一个 x 处的函数切线和导数。");
   B.render();
   return B;
 }

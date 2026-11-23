@@ -3,11 +3,12 @@
    两种证法落到同一个点（都在徽章里对读，不占图面）。橙线 y=c 拖动判根（Δ=c²−4ab）回收 R 系列。
    奇函数（S3 回收）：左支 = 右支绕原点转半圈；渐近线 x=0 与斜渐近线 y=ax。
    对勾 y 方向量纲不同（E4 先例）：mapFit 各用比例尺。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 520;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const M = B.mapFit(-4, 4, -7.5, 7.5, [0, 0, W, H]);
   const st = { a: 1, b: 1, c: 3, grid: true, labs: true, asym: true };
@@ -30,7 +31,7 @@ export function createBoard(root) {
     if (st.asym) {
       B.asym(M, [{ v: 0 }]);
       B.seg(V(M.px(M.X0), M.py(a * M.X0)), V(M.px(M.X1), M.py(a * M.X1)), { stroke: '#c084fc', 'stroke-width': 1.3, 'stroke-dasharray': '7 6', 'stroke-opacity': .8 });
-      B.text(V(M.px(M.X1) - 30, M.py(a * M.X1) - 8), `y=${fmt(a, 2)}x`, { 'font-size': 11, fill: '#c084fc', 'text-anchor': 'end' });
+      B.note(`y=${fmt(a, 2)}x`, '#c084fc');
     }
     plot2(f, { stroke: '#5cadff', 'stroke-width': 2.2 }, [r]);
     // 顶点（金）：(√(b/a), 2√(ab))；左支对称点（奇函数）
@@ -38,10 +39,10 @@ export function createBoard(root) {
       const vx = s * r, vy = s * mn;
       if (vx > M.X0 && vx < M.X1 && vy > M.Y0 && vy < M.Y1) {
         B.dot(V(M.px(vx), M.py(vy)), 5.5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.5 });
-        B.tex(V(M.px(vx), M.py(vy) + (s > 0 ? 20 : -20)), `$(${fmt(vx, 2)},\\ ${fmt(vy, 2)})$`, { size: 11, color: '#ffd166', anchor: 'mid', w: 110 });
+        B.note(`$(${fmt(vx, 2)},\\ ${fmt(vy, 2)})$`, '#ffd166');
       }
     }
-    B.tex(V(14, 18), `$f(x)=${fmt(a, 2)}x+\\dfrac{${fmt(b, 2)}}{x}$ —— 对勾：奇函数，左支=右支转半圈`, { size: 13, color: '#93a1b5', anchor: 'start', w: 430 });
+    B.note(`$f(x)=${fmt(a, 2)}x+\\dfrac{${fmt(b, 2)}}{x}$ —— 对勾：奇函数，左支=右支转半圈`, '#93a1b5');
     // 水平线 y=c（橙虚线）：判根探针
     B.seg(V(M.px(M.X0), M.py(c)), V(M.px(M.X1), M.py(c)), { stroke: '#ff9e4a', 'stroke-width': 1.4, 'stroke-dasharray': '6 5', 'stroke-opacity': .9 });
     const D = c * c - 4 * a * b;
@@ -66,7 +67,7 @@ export function createBoard(root) {
   const slB = B.slider('b', 0.5, 3, 0.1, 1, v => { st.b = v; B.render(); });
   B.slider('判根线 c', -6, 8, 0.1, 3, v => { st.c = v; B.render(); });
   B.graphToggles(st);
-  B.hintM("双证一致：导数算出顶点 $\\sqrt{b/a}$，均值不等式等号也在 $\\sqrt{b/a}$ —— 拖橙线 $y=c$ 试根数（R 系列回收）");
+  B.hint("拖动水平线，观察它与正支的交点个数。");
   B.render();
   return B;
 }

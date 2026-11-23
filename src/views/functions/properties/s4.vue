@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="4" no="S4" base="/functions/s" :chapters="S_CHAPTERS"
-    title="有界性与最值" sub="界是「拦得住」，最值是「取得到」—— 拦得住的界未必取得到，取得到才是最值。"
+    title="有界性与最值" sub="上界和下界约束函数值。取到上确界或下确界时，才有相应的最大值或最小值。"
     :toc="[{ id: 's4-def', t: '定义（图 S4）' }, { id: 's4-thm', t: '最值定理与确界' }, { id: 's4-warn', t: '三处易错' }]">
     <div class="note good" id="s4-def"><strong>上界</strong>：存在常数 <Katex tex="M" />，使得对定义域 D 内<strong>任意</strong> <Katex tex="x" /> 都有 <Katex tex="f(x)\le M" />（下界把不等号反过来）。既有上界又有下界称 f <strong>有界</strong>。<strong>最大值</strong>：存在 <Katex tex="x_0\in D" /> 使 <Katex tex="f(x_0)\ge f(x)" /> 对任意 <Katex tex="x\in D" /> 成立 —— 关键在 <Katex tex="x_0" /> <strong>真的取到</strong>。最小上界叫<strong>上确界</strong>：取到了，上确界就是最大值；取不到，就只有界没有最值。</div>
     <div class="board-wrap">
       <BoardMount :factory="createBoundWall" />
-      <div class="cap">图 S4 · <b>函数的有界性与最值</b>：拖金色的墙 <Katex tex="M" />，徽章实时判定它是上界还是下界、被哪个点穿透（红点标在穿透处）；「确界线」开关揭晓答案 —— ① <Katex tex="x^2" /> 在 [−2,2]：墙降到 4 恰好拦住，且被 <Katex tex="x=\pm 2" /> <strong>取到</strong>，上确界=最大值；② x 在 (0,1)：墙降到 1 拦住了，却永远差一点取不到 —— <strong>有界而无最值</strong>，取不到的端点就是原因；③ <Katex tex="1/x^2" /> 在 (0,2]：多高的墙都拦不住（渐近线方向冲出画框），无上界，但下界 <Katex tex="1/4" /> 在 <Katex tex="x=2" /> 处取到 —— 最小值照常存在。看点：端点的实心/空心点，就是「取得到/取不到」的直接证据。</div>
+      <div class="cap">图 S4 · <b>函数的有界性与最值</b>。拖动水平界线，对比闭区间的实心端点和开区间的空心端点，再观察无上界的倒数平方函数。</div>
     </div>
 
     <h3 class="sec" id="s4-thm">最值定理与确界的区分</h3>
@@ -21,7 +21,7 @@
         <li><strong>提示三：无上界时硬找最大值。</strong>③ 的 <Katex tex="1/x^2" /> 在 <Katex tex="(0,2]" /> 上，图象沿渐近线 <Katex tex="x=0" /> 趋于无穷 —— 最大值不存在；但下界 <Katex tex="1/4" /> 恰在 <Katex tex="x=2" /> 取到。<strong>有上界、有下界、有最值是三件独立的事</strong>，不要合并成「有界所以有最值」。</li>
       </ul>
     </div>
-    <p>回收与预告：C3 的值域在这里换了个说法 —— 值域有最大元素 <Katex tex="\iff" /> 有最大值，值域有上界 <Katex tex="\iff" /> 函数有上界；S1/S2 的单调区间直接给出「最值在端点」的传送门；E2 二次函数区间最值是本章主路的第一场硬仗；V3 极值点判据（<Katex tex="f'" /> 左正右负）则是临界点路线的成文法。</p>
+    <p>闭区间上的连续函数一定取到最大值和最小值。开区间上的函数是否取到界，则需要检查达到界的输入是否属于定义域。</p>
   </ChPage>
 </template>
 <script setup>

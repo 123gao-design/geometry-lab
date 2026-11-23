@@ -4,11 +4,12 @@
    ③ x³−2x+2 从 x₀=0 循环（0→1→0→1）—— 初值选取不当，牛顿法不收敛，弦截法同样失效。
    金线 = 牛顿切线台阶，橙线 = 弦截连线台阶；护栏：先用 R3 二分缩小区间，再用牛顿法加速。
    图象规范：B.isoFit 等单位取景；公式一律 B.tex/btnM/chipM；网格 / 轴标注 两开关；零点为必采锚点。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // fp 解析导数；nt0 牛顿起点；sc 弦截起点对；zero 真零点；w0 对比用二分初始区间宽
   const PRESETS = [
@@ -60,7 +61,7 @@ export function createBoard(root) {
     const P = PRESETS[st.p], M = MAPS[st.p];
     const { Y0, Y1 } = M;
     B.grid({ ...M, grid: st.grid, labs: st.labs });
-    B.tex(V(16, 24), P.eq, { size: 13.5, color: '#93a1b5', anchor: 'start' });
+    B.note(P.eq, '#93a1b5');
     // 曲线（蓝）+ 真零点（灰）
     const xs = [];
     for (let x = M.X0; x <= M.X1 + 0.001; x += 0.04) xs.push(x);
@@ -89,7 +90,6 @@ export function createBoard(root) {
       if (cur) {
         if (p0.x > -3000 && p0.x < 5000) {
           B.dot(p0, 5.5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
-          B.text(V(a > b ? p0.x + 8 : p0.x - 8, p0.y - 10), '切线', { 'font-size': 11.5, fill: '#ffd166', 'text-anchor': a > b ? 'start' : 'end' });
         }
         const nb = P.f(b);   // 交点再竖线弹回曲线，凑成「作切线→落轴→回曲线」完整一步
         if (nb > Y0 && nb < Y1) B.seg(V(px(b), py(0)), V(px(b), py(nb)), { stroke: '#ffd166', 'stroke-width': 1.4, 'stroke-dasharray': '4 4' });
@@ -109,11 +109,13 @@ export function createBoard(root) {
         const x = arr[i], y = P.f(x);
         if (y > Y0 && y < Y1 && px(x) > -3000 && px(x) < 5000) {
           B.dot(V(px(x), py(y)), 4.5, { fill: cc, stroke: '#0a0d14', 'stroke-width': 1.3 });
-          B.text(V(px(x) + 5, py(y) - 8), String(i), { 'font-size': 10, fill: cc, 'text-anchor': 'start' });
+          if (i === arr.length - 1) B.text(V(px(x) + 12, py(y) - 10), 'x_' + i, { fill: cc, 'text-anchor': 'start' });
         }
       }
     // 当前牛顿点：竖直参考
     const xn = st.nt[st.nt.length - 1], fx = P.f(xn);
+    B.note('牛顿法 · 金色切线', '#ffd166');
+    B.note('弦截法 · 橙色虚线', '#ff9e4a');
     if (px(xn) > -3000 && px(xn) < 5000)
       B.seg(V(px(xn), py(Y0)), V(px(xn), py(Y1)), { stroke: '#3f5f8f', 'stroke-dasharray': '4 6', 'stroke-opacity': .5 });
     // 徽章
@@ -150,7 +152,7 @@ export function createBoard(root) {
   B.btnM('弦截一步', () => { scStep(); B.render(); });
   B.btnM('⟲ 重来', () => { reset(); B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('牛顿用切线（要导数）换速度，弦截用连线（免导数）换方便，二分最稳健 —— ③ 是它们的失败情形');
+  B.hint("点「切线一步」或「弦截一步」，观察下一次近似如何得到。");
   B.render();
   return B;
 }

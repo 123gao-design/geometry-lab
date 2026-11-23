@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="7" no="E7" base="/functions/e" :chapters="E_CHAPTERS"
-    title="对勾函数：一形两证" sub="$f(x)=ax+\frac{b}{x}$（$a,b>0$）—— 对勾形右支的顶点 $\left(\sqrt{b/a},\ 2\sqrt{ab}\right)$，导数与均值不等式两条路在此得出同一结果；判根 $\Delta=c^2-4ab$ 则与 R 系列相互核验。"
+    title="对勾函数：一形两证" sub="在正半轴上，导数判据与均值不等式给出相同的最小值。"
     :toc="[{ id: 'e7-shape', t: '对勾的形状（图 E7）' }, { id: 'e7-proof', t: '一形两证：导数 × 均值' }, { id: 'e7-root', t: '判根与区间最值' }]">
     <div class="note good" id="e7-shape"><strong>对勾函数</strong>：<Katex tex="f(x)=ax+\dfrac{b}{x}" />（a,b&gt;0），定义域 <Katex tex="x\ne 0" />，渐近线 x=0 与斜渐近线 y=ax。<strong>奇函数</strong>（S3）：左支 = 右支绕原点转半圈。右支在 <Katex tex="\left(0,\sqrt{\tfrac{b}{a}}\right]" /> 递减、<Katex tex="\left[\sqrt{\tfrac{b}{a}},+\infty\right)" /> 递增，最小值 <Katex tex="f\left(\sqrt{\tfrac{b}{a}}\right)=2\sqrt{ab}" /> —— 两段一支勾，形状像对勾。</div>
     <div class="board-wrap">
       <BoardMount :factory="createHook" />
-      <div class="cap">图 E7 · <b>对勾函数的最值</b>：<Katex tex="f=ax+\frac{b}{x}" /> 单栏全景（导数不另占一栏，双证全在徽章上核验）—— 金点 = 顶点 <Katex tex="\left(\sqrt{b/a},\ 2\sqrt{ab}\right)" />，导数证的驻点与均值证的等号条件落到同一个点。橙线 <Katex tex="y=c" /> 拖动判根（<Katex tex="\Delta=c^2-4ab" />）：两根、相切（切点=金点）、无解三态。</div>
+      <div class="cap">图 E7 · <b>对勾函数的最值</b>。移动水平线 y=c，观察正半轴上从无交点到相切、再到两个交点的变化。</div>
     </div>
 
     <h3 class="sec" id="e7-proof">一形两证：导数 × 均值</h3>
@@ -21,7 +21,7 @@
         <li><strong>提示三：均值取等 <Katex tex="\ne" /> 导数为零的混淆。</strong>两者在对勾上恰好同点，但在一般函数上是相互独立的条件 —— 不要把「等号条件」当成万能的驻点条件。</li>
       </ul>
     </div>
-    <p>回收与预告：S3 的奇偶镜像管左支；E2 的区间最值在此升级；R 系列的判根语言（<Katex tex="\Delta" />、交点数）整章回收。conics 模块 A 系列早已给出伏笔 —— 对勾函数是等轴双曲线 <Katex tex="xy=1" /> 的剪切像，<Katex tex="e=\sec(\psi/2)" /> 把两支的夹角定形；V 系列正式开讲后，「<Katex tex="f'" /> 过零换挡」将对勾、抛物线、对数统一进同一张单调性总表。</p>
+    <p>正支有最小值。整个函数为奇函数，因此负支有相应的最大值。限制到某个闭区间时，还需比较端点。</p>
   </ChPage>
 </template>
 <script setup>

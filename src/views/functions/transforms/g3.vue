@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="3" no="G3" base="/functions/g" :chapters="G_CHAPTERS"
-    title="变换顺序与由图反演" sub="$f(ax\pm b)$ 一律先提因子；先移后压与先压后移顺序可换、平移量必换算 —— 由图反演则反过来：从特殊点读参数，把图象翻译回解析式。"
+    title="变换顺序与由图反演" sub="把 ax−h 写成 a(x−h/a)，即可读出横向伸缩比例与位移。"
     :toc="[{ id: 'g3-fact', t: '提因子纪律（图 G3）' }, { id: 'g3-order', t: '顺序可换、平移量必换算' }, { id: 'g3-detect', t: '由图反演：读图三步' }]">
     <div class="note good" id="g3-fact"><strong>提因子纪律</strong>：<Katex tex="f(ax+b)=f\!\left(a\left(x+\dfrac{b}{a}\right)\right)" /> —— 括号里的加法必须先提因子再读：真正的平移量是 <Katex tex="\dfrac{b}{a}" />，不是 b。复合变换 <Katex tex="y=b\,f(a(x-h))+k" /> 的读法拆解：括号内管横（先右移 h、再压到 <Katex tex="\dfrac{1}{a}" />），括号外管竖（纵缩 b 倍、再上移 k）。</div>
     <div class="board-wrap">
       <BoardMount :factory="createOrder" />
-      <div class="cap">图 G3 · <b>变换的先后顺序</b>：模式一「顺序对比」—— 金线是提因子后的正确读法、红虚线是把 h 直接当平移量的误读，两个起笔点 (h,k) 与 <Katex tex="(h/a,\,k)"/> 直接分离；模式二「由图反演」—— 出题按钮发一条金目标曲线，拖 a、h、b、k 把橙线贴上去，最大偏差小于 0.06 即求解。</div>
+      <div class="cap">图 G3 · <b>变换的先后顺序</b>。对照两种读法的起点。切到反演模式，用目标曲线的起点和另一个特征点估计参数。</div>
     </div>
 
     <h3 class="sec" id="g3-fact">提因子纪律</h3>
@@ -25,7 +25,7 @@
         <li><strong>提示三：反演只对一个点。</strong>一个特殊点只给两个方程，四参数至少要两个点 —— 用第二个特征点锁缩放，再用形状复核兜底。</li>
       </ul>
     </div>
-    <p>回收与预告：G1 的平移、G2 的伸缩在此合并成完整流程；S5「由一半写另一半」是反演的对称版本；R 系列由零点反推参数是反演在方程方向的应用。函数模块的图象方法至此完整 —— V 系列将把「读图」升级成「读变化率」：切线与极值的判定方法，都从本章的图象语言展开。</p>
+    <p>由图求式时，先找能独立确定参数的特征，如端点、对称轴、水平渐近线，再用其他点验证。</p>
   </ChPage>
 </template>
 <script setup>

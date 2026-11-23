@@ -213,8 +213,54 @@ svg foreignObject{cursor:move}
 .board .bd-tex-ink{color:var(--bd-ink,var(--ink)) !important}
 circle.hnd{cursor:grab;transition:r .12s}
 circle.hnd:hover,circle.hnd.drag{r:9px;cursor:grabbing}
+circle.hnd:focus-visible{outline:2px solid var(--bd-ink,var(--ink));outline-offset:3px}
 circle.hnd.drag{stroke-width:3}
 .hndlbl{pointer-events:none;user-select:none}
+
+/* 函数实验：绘图区、图例和参数读数各占一行。 */
+.board.fn-board{display:grid;grid-template-columns:minmax(0,1fr);container-type:inline-size;border-radius:16px;
+  border-color:color-mix(in srgb,var(--blue) 30%,var(--line));
+  box-shadow:0 12px 28px color-mix(in srgb,var(--bg) 75%,transparent)}
+.fn-board>svg{background:radial-gradient(ellipse at 50% 25%,color-mix(in srgb,var(--blue) 10%,transparent),transparent 70%)}
+.fn-board svg text{pointer-events:none;stroke-width:2px}
+.fn-board>.dlbar:not(.out){grid-row:1;order:-1;position:static;flex-wrap:wrap;justify-content:flex-end;
+  gap:4px;padding:6px 10px;border-bottom:1px solid var(--line)}
+.fn-board .ctrl{gap:7px;padding:10px 12px}
+.fn-board .ctrl .btn{min-height:32px;border-color:var(--line)}
+.fn-board .ctrl .btn.on{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 14%,var(--bg2))}
+.fn-board .slider{max-width:100%;min-width:0}
+.fn-board .slider input{min-width:48px;accent-color:var(--blue)}
+.fn-board .chips .chip{max-width:100%;min-width:0;align-items:baseline;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.fn-board .chip>span{min-width:0;max-width:100%;overflow:auto;overflow-wrap:anywhere}
+.fn-board-notes{display:flex;flex-wrap:wrap;gap:6px 9px;padding:9px 12px;border-top:1px solid var(--line)}
+.fn-board-notes[hidden]{display:none}
+.fn-board-note{--tone:var(--mut);min-width:0;max-width:100%;padding:5px 8px;line-height:1.6;
+  border-inline-start:2px solid var(--tone);border-radius:4px;background:color-mix(in srgb,var(--tone) 9%,var(--bg2));
+  color:var(--ink);font-size:.875rem;overflow:auto;overflow-wrap:anywhere}
+.fn-board-note[data-tone="blue"]{--tone:var(--blue)}
+.fn-board-note[data-tone="cyan"]{--tone:var(--cyan,var(--blue))}
+.fn-board-note[data-tone="green"]{--tone:var(--green)}
+.fn-board-note[data-tone="orange"]{--tone:var(--orange,var(--yellow))}
+.fn-board-note[data-tone="yellow"]{--tone:var(--yellow)}
+.fn-board-note[data-tone="red"]{--tone:var(--red,var(--orange))}
+.fn-board-note[data-tone="purple"]{--tone:var(--purple,var(--blue))}
+.fn-board-guide{margin:0;padding:9px 12px 12px;color:var(--mut);font-size:.875rem;line-height:1.6;
+  overflow:auto;overflow-wrap:anywhere}
+.board-wrap:has(>.fn-board)>.cap{margin:9px 2px 18px;color:var(--mut)}
+@container (max-width:500px){
+  .fn-board svg text{font-size:max(var(--bd-fs,12px),19px)}
+}
+@container (max-width:390px){
+  .fn-board svg text{font-size:max(var(--bd-fs,12px),23px)}
+}
+@media (max-width:650px){
+  .fn-board .ctrl,.fn-board-notes,.fn-board-guide{padding-inline:8px}
+  .fn-board .ctrl .btn{max-width:100%;white-space:normal}
+}
+@media print{
+  .fn-board{box-shadow:none!important}
+  .fn-board>.dlbar{display:none}
+}
 /* 画板操作条：右上角一排（缩放 / GeoGebra / 视频 / PNG），hover 才现身（触屏无 hover，常显） */
 .dlbar{position:absolute;top:8px;right:8px;z-index:6;display:flex;gap:6px}
 .dl{position:absolute;top:8px;right:8px;z-index:6;background:rgba(11,15,23,.72);border:1px solid var(--line);color:var(--mut);

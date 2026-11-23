@@ -2,11 +2,12 @@
    P 锁在曲线上（切点 x0），Q 由 Δx 驱动：橙割线 vs 金切线（斜率 f′(x0)）。
    Δx 可正可负（两侧逼近都可走）；Δx=0 割线排除 —— 极限管「趋近」不管「抵达」。
    「⏩ Q 滑向 P」动画：|Δx| 每帧 ×0.92 收缩到 0.02 停，读数滑向 f′。整框 isoFit 等单位。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const PRESETS = [
     { name: '① $f=x^2$', f: x => x * x, fp: x => 2 * x, xa: -1.7, xb: 3.4, ya: -1.3, yb: 11.9, lo: -1.4, hi: 3.1 },
@@ -44,26 +45,24 @@ export function createBoard(root) {
     if (!bad && xq > M.X0 && xq < M.X1 && yq > M.Y0 && yq < M.Y1) {
       B.seg(V(M.px(x0), M.py(y0)), V(M.px(xq), M.py(y0)), { stroke: '#3f5f8f', 'stroke-dasharray': '4 4', 'stroke-width': 1.2 });
       B.seg(V(M.px(xq), M.py(y0)), V(M.px(xq), M.py(yq)), { stroke: '#3f5f8f', 'stroke-dasharray': '4 4', 'stroke-width': 1.2 });
-      B.tex(V((M.px(x0) + M.px(xq)) / 2, M.py(y0) + 17), `$\\Delta x=${fmt(st.dx, 2)}$`, { size: 12.5, color: '#93a1b5', anchor: 'mid', w: 110 });
-      B.tex(V(M.px(xq) + (st.dx >= 0 ? 36 : -36), (M.py(y0) + M.py(yq)) / 2), `$\\Delta y=${fmt(yq - y0, 2)}$`, { size: 12.5, color: '#93a1b5', anchor: 'mid', w: 110 });
+      B.note(`$\\Delta x=${fmt(st.dx, 2)}$`, '#93a1b5');
+      B.note(`$\\Delta y=${fmt(yq - y0, 2)}$`, '#93a1b5');
       // 割线：沿 QP 方向长画
       const ux = M.px(xq) - M.px(x0), uy = M.py(yq) - M.py(y0);
       const Lg = Math.hypot(ux, uy) || 1;
       B.seg(V(M.px(xq) - ux / Lg * 210, M.py(yq) - uy / Lg * 210), V(M.px(xq) + ux / Lg * 60, M.py(yq) + uy / Lg * 60), { stroke: '#ff9e4a', 'stroke-width': 2 });
       B.dot(V(M.px(xq), M.py(yq)), 5.5, { fill: '#ff9e4a', stroke: '#0a0d14', 'stroke-width': 1.5 });
-      // 「割线」名牌：沿割线离 P 132px、法向偏 14px（与切线名牌分居两侧，Δx→0 也不挤）
-      const sux = ux / Lg, suy = uy / Lg;
-      B.text(V(M.px(x0) + sux * 132 + suy * 14, M.py(y0) + suy * 132 - sux * 14), '割线', { fill: '#ff9e4a', 'font-size': 13, 'font-weight': 600 });
+      B.note('割线 · 橙色', '#ff9e4a');
+      B.text(V(M.px(xq) + 12, M.py(yq) - 11), 'Q', { fill: '#ff9e4a' });
     }
     // P 点 + 切线（金）：isoFit 等单位 → 像素方向即数学方向
     if (y0 > M.Y0 && y0 < M.Y1) {
       const ux = M.px(1) - M.px(0), uy = M.py(1) - M.py(0);
       const Lg = Math.hypot(ux, uy * d0) || 1;
       B.seg(V(M.px(x0) - ux / Lg * 155, M.py(y0) - uy * d0 / Lg * 155), V(M.px(x0) + ux / Lg * 155, M.py(y0) + uy * d0 / Lg * 155), { stroke: '#ffd166', 'stroke-width': 2 });
-      // 「切线」名牌：法向另一侧偏 14px —— P 处、割线的极限位置，预先画出作为对照
-      const tux = ux / Lg, tuy = -uy * d0 / Lg;
-      B.text(V(M.px(x0) + tux * 132 - tuy * 14, M.py(y0) + tuy * 132 + tux * 14), '切线', { fill: '#ffd166', 'font-size': 13, 'font-weight': 600 });
+      B.note('切线 · 金色', '#ffd166');
       B.dot(V(M.px(x0), M.py(y0)), 5.5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.5 });
+      B.text(V(M.px(x0) - 13, M.py(y0) - 11), 'P', { fill: '#ffd166' });
     }
 
     // 徽章
@@ -104,7 +103,7 @@ export function createBoard(root) {
   const sl = B.slider('切点 x0', -1.4, 3.1, 0.05, 1, v => { st.x0 = v; B.render(); });
   const slDx = B.slider('增量 dx', -2.5, 2.5, 0.05, 1.5, v => { st.dx = v; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('橙=割线（P、Q 两点连线），金=切线（P 处，割线的极限位置）—— 拖 Δx 看橙线贴合到金线');
+  B.hint("把 Δx 从正、负两侧拖向 0，比较割线和切线的斜率。");
   B.render();
   return B;
 }

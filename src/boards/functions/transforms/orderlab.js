@@ -5,11 +5,12 @@
    模式二「由图反演」—— 出题按钮发一条金目标曲线（四参数藏起），拖 a/h/b/k 把橙变形线贴上去，
    最大偏差 < 0.06 判求解。读图三步：起笔点定 h、k → 特征点定 a、b → 形状复核。
    原图固定 √x（不对称、起笔 (0,0)、过 (1,1)），坐标约定见 isoFit。 */
-import { Board, V, fmt } from '../../../lib/board.js';
+import { V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 520;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const f = x => Math.sqrt(x);
   const st = { mode: 0, a: 2, h: 1, b: 1, k: 0, qi: 0, solved: false, grid: true, labs: true };
@@ -42,7 +43,7 @@ export function createBoard(root) {
       if (h > M.X0 && h < M.X1 && k > M.Y0 && k < M.Y1) B.dot(V(px(h), py(k)), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
       const hx = h / a;
       if (hx > M.X0 && hx < M.X1 && k > M.Y0 && k < M.Y1) B.dot(V(px(hx), py(k)), 5, { fill: '#0a0d14', stroke: '#ff7b8a', 'stroke-width': 1.8 });
-      B.tex(V(14, 18), `模式一 · 顺序对比：金线提因子 vs 红虚线误读`, { size: 13, color: '#93a1b5', anchor: 'start', w: 300 });
+      B.note(`模式一 · 顺序对比：金线提因子 vs 红虚线误读`, '#93a1b5');
       cE(`提因子：括号内 $=${fmt(a, 2)}x ${a * h >= 0 ? '-' : '+'} ${fmt(Math.abs(a * h), 2)}$，真平移量 $h=${fmt(h, 2)}$（右为正）`, 'ok');
       cM(`误读线其实 $=f(${fmt(a, 2)}(x ${h / a >= 0 ? '-' : '+'} ${fmt(Math.abs(h / a), 2)}))$：真平移 ${fmt(h / a, 2)} —— 把 $h$ 直接当平移量，差了 $a$ 倍`, Math.abs(a - 1) < 1e-9 ? 'warn' : '');
       cD(Math.abs(a - 1) < 1e-9
@@ -64,7 +65,7 @@ export function createBoard(root) {
         if (isFinite(yp) && isFinite(yt)) diff = Math.max(diff, Math.abs(yp - yt));
       }
       st.solved = diff < 0.06;
-      B.tex(V(14, 18), `模式二 · 由图反演（第 ${st.qi + 1} 题）：拖橙线贴金线`, { size: 13, color: '#93a1b5', anchor: 'start', w: 300 });
+      B.note(`模式二 · 由图反演（第 ${st.qi + 1} 题）：拖橙线贴金线`, '#93a1b5');
       cE(`目标金线：$a=?$，$h=?$，$b=?$，$k=?$ —— ${st.solved ? `求解！最大偏差 ${fmt(diff, 3)} —— 四参数全部对上` : `还差 ${fmt(diff, 2)} —— 参数概不透露`}`, st.solved ? 'ok' : 'warn');
       cM('读图三步：① 起笔点 $(0,0)\\to(h,k)$ 先定 h、k ② 特征点 $(1,1)\\to(h+\\dfrac{1}{a},\\ k+b)$ 再定 a、b ③ 形状走向复核', '');
       cD(st.solved ? '四参数全部对上 —— 读图三步的完整走法，再来一题巩固' : '先对起笔点定 h、k，再对第二个特征点定 a、b —— 橙金两线贴住才算数', st.solved ? 'ok' : 'warn');
@@ -100,7 +101,7 @@ export function createBoard(root) {
   const slB = B.slider('纵向缩放 b', 0.25, 3, 0.05, 1, v => { st.b = v; B.render(); });
   const slK = B.slider('竖移 k', -2, 3, 0.05, 0, v => { st.k = v; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('模式一：金线（提因子）vs 红虚线（直接读加法）看起笔点分离；模式二：先读起笔点、再对特征点，橙线贴上金线即求解');
+  B.hint("先对比两种变换的起点，再尝试由图恢复参数。");
   B.render();
   return B;
 }

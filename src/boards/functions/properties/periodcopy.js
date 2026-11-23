@@ -4,11 +4,12 @@
    ③ 轴+中心推周期：对称轴与对称中心相距 d → T=4d（轴心交替排列）；
    ④ 周期延拓：只给基本段 [0,2)，f(x)=f(x−2k) 把全轴延拓出来 —— 探针直接演示化归链。
    图象规范：B.isoFit 等单位取景；公式一律 B.tex（KaTeX）；网格 / 轴标注 两开关；marks 与单元边沿为必采锚点。 */
-import { Board, V, fmt } from '../../../lib/board.js';
+import { V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // f 检验函数（mod 折叠到基本段）；T 基本周期；marks 必采锚点；seps 单元边沿；axes/centers 金色对称轴/中心（②③）
   const PRESETS = [
@@ -46,13 +47,13 @@ export function createBoard(root) {
     const P = PRESETS[st.p], M = MAPS[st.p];
     const { X0, X1, Y0, Y1 } = M;
     B.grid({ ...M, grid: st.grid, labs: st.labs });
-    B.tex(V(16, 24), P.eq, { size: 14, color: '#93a1b5', anchor: 'start' });
+    B.note(P.eq, '#93a1b5');
     // 周期的判定依据（金）：单元边沿（①④）/ 对称轴与对称中心（②③）
     for (const a of P.seps) B.seg(V(px(a), py(Y0)), V(px(a), py(Y1)), { stroke: '#ffd166', 'stroke-width': 1.2, 'stroke-dasharray': '5 6', 'stroke-opacity': .45 });
     for (const a of P.axes) B.seg(V(px(a), py(Y0)), V(px(a), py(Y1)), { stroke: '#ffd166', 'stroke-width': 1.4, 'stroke-dasharray': '6 6', 'stroke-opacity': .75 });
-    if (P.axes.length) B.text(V(px(P.axes[0]) + 6, py(Y1) + 16), `x=${fmt(P.axes[0], 0)}`, { 'font-size': 11.5, fill: '#ffd166' });
+    if (P.axes.length) B.note(`x=${fmt(P.axes[0], 0)}`, '#ffd166');
     for (const c of P.centers) B.dot(V(px(c), py(0)), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
-    if (P.centers.length) B.text(V(px(P.centers[0]) + 8, py(0) - 10), `(${fmt(P.centers[0], 0)}, 0)`, { 'font-size': 11.5, fill: '#ffd166' });
+    if (P.centers.length) B.note(`(${fmt(P.centers[0], 0)}, 0)`, '#ffd166');
     // 曲线（蓝）；④ 基本段金描边压上（基本段与延拓像）
     B.plot(P.f, M, { anchors: anc(), step: .04, stroke: '#5cadff', 'stroke-width': 2.2 });
     if (st.p === 3) B.plot(P.f, M, { dom: x => x >= 0 && x < 2, anchors: anc(), step: .04, stroke: '#ffd166', 'stroke-width': 3 });
@@ -109,7 +110,7 @@ export function createBoard(root) {
   }, { on: i === 0 }));
   wrapOf(slU).style.display = 'none';
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('周期说的是「平移后完全重合」：② 轴间距 d → T=2d、③ 轴心距 d → T=4d —— 对称信息换算出周期');
+  B.hint("改变平移量，检查平移图象是否与原图重合。");
   B.render();
   return B;
 }

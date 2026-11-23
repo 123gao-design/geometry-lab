@@ -2,11 +2,12 @@
    t>0：两驻点，极大 2t^{3/2}、极小 −2t^{3/2}（奇函数互为镜像）→ 三个零点 x=0, ±√(3t)；
    t=0：驻点不变号、三重零点；t<0：全程单增、唯一零点 —— 参数大题「先分类再画表」工作流的典型例子。
    曲线按 f′ 符号染色（S2 复用）。整框 isoFit 等单位。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 520;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const st = { t: 1, grid: true, labs: true };
   const f = x => x * x * x - 3 * st.t * x;
@@ -78,7 +79,7 @@ export function createBoard(root) {
   }, { pri: i === 0, on: i === 0 }));
   const sl = B.slider('参数 t', -0.5, 2, 0.05, 1, v2 => { st.t = v2; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('t 扫过 0：两金点相遇成红空圈再消失，零点三个并一个再剩一个 —— 分类讨论的必要性直接呈现');
+  B.hint("让 t 经过 0，对照驻点和零点的数目。");
   B.render();
   return B;
 }

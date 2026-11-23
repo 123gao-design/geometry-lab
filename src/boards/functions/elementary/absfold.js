@@ -4,11 +4,12 @@
    两句结论：|f| 零点不多不少（|f(x)|=0 ⟺ f(x)=0），f(|x|) 必偶（右半的复制）。
    预设：① x²−2x（下沉抛物线：|f| 翻出 W）② (x−1)²（右移抛物线：|f| 不动、f(|x|) 翻出 W）
         ③ x−1（直线：两个变换给出同一个 V —— 巧合在此出现）④ e^x−2（指数情形：E4 回收）。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const PRESETS = [
     { name: '① $x^2-2x$', f: x => x * x - 2 * x, box: [-2.6, 4.4, -1.6, 5.2] },
@@ -75,7 +76,7 @@ export function createBoard(root) {
       peng = false;
     }
     mk('path', { d: dg, fill: 'none', stroke: '#ffd166', 'stroke-width': 2.4 }, B.dyn);
-    B.tex(V(14, 18), `${PRESETS[st.p].name} 的 ${mode.name}`, { size: 13, color: '#93a1b5', anchor: 'start', w: 420 });
+    B.note(`${PRESETS[st.p].name} 的 ${mode.name}`, '#93a1b5');
     // 徽章：核验都用「折毕成品」算（t 无关）
     const g1 = x => mode.morph(x, 1, P.f)[1];
     const z0 = zerosOf(P.f, X0, X1), z1 = zerosOf(g1, X0, X1);
@@ -103,7 +104,7 @@ export function createBoard(root) {
   }, { on: i === 1 }));
   B.slider('折叠 t', 0, 1, 0.01, 0, v => { st.t = v; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('|f| 沿 x 轴翻上（零点不变）、f(|x|) 沿 y 轴折拢（必偶、零点可翻倍）—— ③ 直线两折给出同一个 V');
+  B.hint("用进度滑块区分横轴翻折和纵轴镜像。");
   B.render();
   return B;
 }

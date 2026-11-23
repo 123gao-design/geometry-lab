@@ -1,16 +1,16 @@
 <template>
   <ChPage :cur="5" no="C5" base="/functions/c" :chapters="C_CHAPTERS"
-    title="机器观与位移：f(x)+h 与 f(x+h)" sub="把 f 想成一台机器：输出端改装让图竖着走，输入端改装让图横着走 —— 「左加右减」不再靠死记。"
+    title="机器观与位移：f(x)+h 与 f(x+h)" sub="在函数值上加 h 改变纵坐标，在自变量上加 h 改变对应点的横坐标。"
     :toc="[{ id: 'c5-machine', t: '机器观：两个改装端口' }, { id: 'c5-board', t: '双机器改装台（图 C5）' }, { id: 'c5-why', t: '左加右减的代数原理' }, { id: 'c5-dom', t: '定义域跟着谁走' }]">
     <div class="note good" id="c5-machine"><strong>机器观</strong>：把 f 想成一台机器 —— 喂进 x，吐出 f(x)。它有两个改装端口：<strong>输出端</strong>改装 <Katex tex="f(x)+h" /> 是在出口加装一台升降机，图象<strong>上下</strong>平移 |h|（上加下减）；<strong>输入端</strong>改装 <Katex tex="f(x+h)" /> 是在进口加装一台传送带，图象<strong>左右</strong>平移 |h|（左加右减）。同一个 +h，作用方向一竖一横 —— 这是本章要关注的唯一现象。</div>
 
     <div class="board-wrap">
       <BoardMount :factory="createMachine" />
-      <div class="cap">图 C5 · <b>f(x)+h 与 f(x+h) 的图象</b>：一个 h 滑块同时驱动两条变形曲线 —— 金色 <strong><Katex tex="f(x)+h" /></strong> 竖着走、蓝色 <strong><Katex tex="f(x+h)" /></strong> 横着走，灰色虚线是基准 f。三个基准切换：① 抛物线看<strong>顶点</strong>：金点沿 y 轴爬、蓝点沿 x 轴滑；② <Katex tex="\sqrt{x}" /> 看<strong>端点</strong>：输出端改装定义域纹丝不动，输入端改装把整个定义域抬走（蓝端点横着走）；③ <Katex tex="1/x" /> 看<strong>渐近线</strong>：输入端改装挪动竖直渐近线，输出端改装挪动水平渐近线 —— 各自只动自己那一侧。</div>
+      <div class="cap">图 C5 · <b>f(x)+h 与 f(x+h) 的图象</b>。拖动 h，比对灰色原图、金色竖移和蓝色横移。用根式的起点检查横移后的定义域。</div>
     </div>
 
     <h3 class="sec" id="c5-why">左加右减的代数原理</h3>
-    <p>「+h 却左移」不是约定，是解方程解出来的。设 <Katex tex="g(x)=f(x+h)" />，问：f 原来在 b 处的读数，现在出现在哪里？只要 <Katex tex="g(a)=f(b)" />，即 <Katex tex="a+h=b" />，所以：</p>
+    <p>设 <Katex tex="g(x)=f(x+h)" />。原图在 b 处的点对应新图在 <Katex tex="a=b-h" /> 处的点，因为 <Katex tex="a+h=b" /> 时，g 调用的是 f 在 b 处的值：</p>
     <Katex tex="a=b-h" display />
     <p>f 的图象上每一个横坐标为 b 的点，在 g 的图象上出现在横坐标 b − h 处 —— <strong>所有点一致向左挪了 h</strong>。输入端的加法之所以"反直觉"，是因为传送带的方向与位移方向恰好相反：x+h 是"提前 h 报到"，提前报到等于把队伍往左挪。</p>
 

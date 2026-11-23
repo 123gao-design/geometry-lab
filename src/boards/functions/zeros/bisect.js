@@ -3,11 +3,12 @@
    ① 二分求出 √2（x²−2，区间 [1,2]）；② R1 ② 的无理根（x³−3x+1）；③ R2 ④ 的唯一零点（x³+x−1）。
    ▶ 二分一步 / ⏩ 连续二分 / ⟲ 重来 / 精度 ε 滑块 —— n 步后宽 = 初始宽 × 2⁻ⁿ（对数收敛，稳但不快）。
    图象规范：双面板各传各的 rect 给 B.isoFit；公式一律 B.tex/btnM/chipM；网格 / 轴标注 两开关；端点与零点为必采锚点。 */
-import { Board, V, fmt } from '../../../lib/board.js';
+import { V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 520;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // a/b 初始异号区间；zero 真零点（灰点，显微镜里看金中点怎么贴近它）
   const PRESETS = [
@@ -18,7 +19,7 @@ export function createBoard(root) {
     { name: '③ $x^3+x-1$', eq: 'R2 ④ 的唯一零点：$f(x)=x^3+x-1$，区间 $[0,1]$',
       f: x => x * x * x + x - 1, a: 0, b: 1, zero: 0.68232780, box: [-0.5, 1.5, -1.4, 1.4] },
   ];
-  const LMAPS = PRESETS.map(P => B.isoFit(...P.box, [0, 0, 430, 520], 20));
+  const LMAPS = PRESETS.map(P => B.isoFit(...P.box, [20, 45, 390, 455], 20));
   const st = { p: 0, a: 1, b: 2, n: 0, last: null, hit: null, eps: 0.05, grid: true, labs: true };
   const cI = B.chipM('当前区间'), cM = B.chipM('中点判定'), cN = B.chipM('步数'), cV = B.chipM('判定');
 
@@ -50,42 +51,35 @@ export function createBoard(root) {
     const P = PRESETS[st.p], M = LMAPS[st.p];
     const px = x => M.px(x), py = y => M.py(y);
     const w = st.b - st.a, w0 = P.b - P.a;
+    B.seg(V(430, 30), V(430, 500), { stroke: '#2e3d57', 'stroke-width': 1.2 });
+    B.text(V(35, 29), '原图区间', { 'text-anchor': 'start', fill: '#93a1b5' });
+    B.text(V(465, 29), '当前区间放大', { 'text-anchor': 'start', fill: '#93a1b5' });
     // ── 左栏：全景 ──
     B.grid({ ...M, grid: st.grid, labs: st.labs });
-    B.tex(V(16, 24), P.eq, { size: 13.5, color: '#93a1b5', anchor: 'start' });
+    B.note(P.eq, '#93a1b5');
     B.plot(P.f, M, { anchors: anc(), n: 140, stroke: '#5cadff', 'stroke-width': 2.2 });
     B.dot(V(px(P.zero), py(0)), 4, { fill: '#93a1b5' });
     B.seg(V(px(st.a), py(0)), V(px(st.b), py(0)), { stroke: '#ffd166', 'stroke-width': 5, 'stroke-opacity': .55, 'stroke-linecap': 'butt' });
-    // a/b 标签：区间足够宽时分列两端；相邻 <70px 后并拢成一枚 [a, b]，避免两个标签叠字
-    const fa = fmt(st.a, 4), fb = fmt(st.b, 4);
-    if (px(st.b) - px(st.a) > 70) {
-      B.text(V(px(st.a), py(0) - 12), `a=${fa}`, { 'font-size': 11, fill: '#ffd166', 'text-anchor': 'start' });
-      B.text(V(px(st.b), py(0) - 12), `b=${fb}`, { 'font-size': 11, fill: '#ffd166', 'text-anchor': 'end' });
-    } else {
-      B.text(V((px(st.a) + px(st.b)) / 2, py(0) - 12), `[${fa}, ${fb}]`, { 'font-size': 11, fill: '#ffd166', 'text-anchor': 'middle' });
-    }
+    B.note('左图 · 完整区间，金线标出保留范围', '#ffd166');
     // ── 右栏：显微镜（放大当前区间）──
     const pad = Math.max(0.08, w * 0.5);
     const xa = st.a - pad, xb = st.b + pad;
     let ymin = 1e9, ymax = -1e9;
     for (let i = 0; i <= 40; i++) { const y = P.f(xa + (xb - xa) * i / 40); ymin = Math.min(ymin, y); ymax = Math.max(ymax, y); }
     const ypad = Math.max((ymax - ymin) * 0.18, 0.12);
-    const R = B.isoFit(xa, xb, ymin - ypad, ymax + ypad, [430, 0, 430, 520], 20);
+    const R = B.mapFit(xa, xb, ymin - ypad, ymax + ypad, [450, 45, 390, 455], 20);
     const rx = x => R.px(x), ry = y => R.py(y);
     B.grid({ ...R, sx: nice(xb - xa), sy: nice(ymax - ymin + 2 * ypad), grid: st.grid, labs: st.labs });
-    B.text(V(446, 24), '显微镜：当前区间', { 'font-size': 13, fill: '#93a1b5' });
+    B.note('右图 · 当前区间放大', '#5cadff');
     B.plot(P.f, R, { dom: x => x >= xa - 1e-9 && x <= xb + 1e-9, anchors: anc(), n: 140, stroke: '#5cadff', 'stroke-width': 2.2 });
     B.dot(V(rx(P.zero), ry(0)), 4, { fill: '#93a1b5' });
     B.seg(V(rx(st.a), ry(R.Y0)), V(rx(st.a), ry(R.Y1)), { stroke: '#3f5f8f', 'stroke-dasharray': '3 5', 'stroke-opacity': .6 });
     B.seg(V(rx(st.b), ry(R.Y0)), V(rx(st.b), ry(R.Y1)), { stroke: '#3f5f8f', 'stroke-dasharray': '3 5', 'stroke-opacity': .6 });
-    B.text(V(rx(st.a), ry(R.Y0) - 10), `a=${fmt(st.a, 4)}`, { 'font-size': 11, fill: '#93a1b5', 'text-anchor': 'start' });
-    B.text(V(rx(st.b), ry(R.Y0) - 10), `b=${fmt(st.b, 4)}`, { 'font-size': 11, fill: '#93a1b5', 'text-anchor': 'end' });
     if (st.last) {
       const { m, fm } = st.last;
       B.seg(V(rx(m), ry(R.Y0)), V(rx(m), ry(R.Y1)), { stroke: '#ffd166', 'stroke-width': 1.6, 'stroke-dasharray': '6 5' });
       if (fm > R.Y0 && fm < R.Y1) {
         B.dot(V(rx(m), ry(fm)), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
-        B.tex(V(rx(m) + 8, ry(fm) - 10), `$f(m)=${fmt(fm, 3)}$`, { size: 12, color: '#ffd166', anchor: 'start' });
       }
     }
     // 徽章
@@ -121,7 +115,7 @@ export function createBoard(root) {
   };
   B.slider('精度 ε', 0.005, 0.4, 0.005, 0.05, v => { st.eps = v; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hintM('每步误差对半：n 步后宽 = 初始宽×$2^{-n}$ —— 精度按对数速度累积，不挑函数不需求导（对比 R4 牛顿）');
+  B.hint("点「二分一步」，比较每次保留的区间和中点的符号。");
   B.render();
   return B;
 }

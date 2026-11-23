@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="6" no="V6" base="/functions/v" :chapters="V_CHAPTERS"
-    title="泰勒展开：从拟合到 e" sub="切线只对齐「值与斜率」，抛物线再匹配一条二阶导数……多项式在 0 处逐阶匹配函数，匹配到第 n 阶就是麦克劳林多项式 $P_n$。令 $x=1$、$f=e^x$，$P_n(1)$ 一路奔向 $e$ —— 级数 $\sum 1/k!$ 与复利极限 $\lim(1+1/n)^n$ 是同一对象的两种表达。"
+    title="泰勒展开：从拟合到 e" sub="麦克劳林多项式在 0 处逐阶匹配函数及其导数。级数的收敛范围需单独判断。"
     :toc="[{ id: 'v6-fit', t: '拟合：从切线到逐阶对齐' }, { id: 'v6-e', t: 'e 的两种表达：级数与复利' }, { id: 'v6-table', t: '常用麦克劳林展开速查表' }, { id: 'v6-pit', t: '收敛半径与滥用' }]">
     <div class="note good" id="v6-law"><strong>麦克劳林公式（x₀=0 处的泰勒）</strong>：与 f 在 0 处同值、同各阶导数（直到 n 阶）的多项式是 <Katex tex="P_n(x)=\sum_{k=0}^{n}\dfrac{f^{(k)}(0)}{k!}\,x^k" /> —— 阶乘来自求导计数：x^k 连求 k 次导得 k!。e^x 求导不变形 ⟹ 展开系数全是 1/k!：<Katex tex="e^x=1+x+\dfrac{x^2}{2!}+\dfrac{x^3}{3!}+\cdots" />；令 x=1 得 <Katex tex="e=\sum_{k=0}^{\infty}\dfrac{1}{k!}\approx 2.71828" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFit" />
-      <div class="cap">图 V6 · <b>泰勒多项式逼近</b>：蓝=目标函数，金=部分和 <Katex tex="P_n"/> —— 拖「阶数」看金曲线一项项逼近蓝曲线，检验点误差徽章同步骤减（<Katex tex="e^x"/> 例 <Katex tex="x=1"/>：误差从 <Katex tex="n=0"/> 的 1.72 降到 <Katex tex="n=6"/> 的 0.0002）；「虚线逐项」看每一项各自的形状。第三原图把检验点拖过 1：越出 <Katex tex="\ln(1+x)"/> 的收敛半径，加阶数也无法弥补。</div>
+      <div class="cap">图 V6 · <b>泰勒多项式逼近</b>。提高近似阶数，对照目标曲线与多项式。切到 ln(1+x)，把探针移到收敛区间之外，观察误差变化。</div>
     </div>
 
     <h3 class="sec" id="v6-fit">拟合：从切线到逐阶对齐</h3>
@@ -25,12 +25,12 @@
     <div class="note warn tip">
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">
-        <li><strong>提示一：把展开当恒等式。</strong><Katex tex="P_n"/> 只是近似，严格的等号要靠余项 <Katex tex="R_n"/> 或取极限；用 <Katex tex="P_3"/> 代 <Katex tex="e^x"/> 算小数第四位，误差 0.05 起步 —— 精度以检验点误差为准。</li>
+        <li><strong>提示一：估计截断误差。</strong>泰勒多项式近似的精度取决于阶数和取值位置。例如用 <Katex tex="P_3(1)" /> 近似 e，误差约为 0.052。</li>
         <li><strong>提示二：无视收敛半径。</strong><Katex tex="\ln(1+x)"/> 的级数只在 <Katex tex="-1<x\le 1"/> 收敛，<Katex tex="x=2"/> 时部分和随项数增加偏离更大（图 V6 第三原图）；出了半径，多项式与函数不再相关，增加阶数也无济于事。</li>
         <li><strong>提示三：以为「逼近」全局有效。</strong>泰勒展开以展开点为中心：离 0 越远需要的阶数越多；要逼近远处的值得换展开中心 <Katex tex="x_0\ne 0"/>（一般泰勒，高中不要求，但「中心」这个观念值得注意）。</li>
       </ul>
     </div>
-    <p>下一讲把「多项式的加法」换成「矩形的加法」：从 <Katex tex="\sum k^2"/> 的金字塔出发，÷<Katex tex="n^3"/> 铺回 [0,1]，看离散求和的极限怎样成为 <Katex tex="\int_0^1 x^2\,\mathrm{d}x=\dfrac{1}{3}"/> —— 积分由求和的极限导出。</p>
+    <p>泰勒多项式适用于局部近似。若要把级数和原函数等同，还需要确定收敛区间，并单独检查端点。</p>
   </ChPage>
 </template>
 <script setup>

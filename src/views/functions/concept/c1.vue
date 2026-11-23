@@ -1,12 +1,12 @@
 <template>
   <ChPage :cur="1" no="C1" base="/functions/c" :chapters="C_CHAPTERS"
-    title="映射与函数：对应的纪律" sub="一个输入只许配一个输出 —— 这是整个函数世界的第一条纪律。"
+    title="映射与函数：对应的纪律" sub="从 A 到 B 的映射给 A 中每个元素指定唯一的像。"
     :toc="[{ id: 'c1-map', t: '映射的定义（图 C1）' }, { id: 'c1-req', t: '三要求逐条核验' }, { id: 'c1-fn', t: '函数：数集上的映射' }, { id: 'c1-why', t: '为什么高中要换定义' }]">
-    <p>初中给函数的定义是"变量说"：在一个变化过程中，y 随 x 变化而变化，y 叫做 x 的函数。这句话有直觉、有画面，但仔细追问就答不上来：出租车计价器里"金额随里程变化"，算函数吗？离散的、分段跳变的、写不出解析式的对应，算不算？高中的做法是把定义建立在更可靠的基础上 —— <strong>对应</strong>。</p>
+    <p>邮资表、分段公式和图象都可以表示函数。判定时检查定义域中的每个输入是否有唯一的输出。</p>
     <div class="note good" id="c1-map"><strong>映射</strong>：设 A、B 是两个<strong>非空集合</strong>，如果按某个确定的对应法则 f，使得对 A 中<strong>任意</strong>一个元素 x，在 B 中都有<strong>唯一确定</strong>的元素 y 与之对应，那么称 f 为从集合 A 到集合 B 的一个映射 <span class="term">(mapping)</span>，记作 <Katex tex="f:A\to B" />，并写 <Katex tex="x\mapsto y=f(x)" />。y 叫做 x 的<strong>像</strong>，x 叫做 y 的<strong>原像</strong>。</div>
     <div class="board-wrap">
       <BoardMount :factory="createArrowMap" />
-      <div class="cap">图 C1 · <b>映射的四种对应</b>：四种对应方式逐一检验 —— ①一对一、②多对一、③一对多、④有输入没输出。右上四个判定徽章实时点亮或熄灭：③ 违反"像唯一"（单值性），④ 违反"每个输入都有像"（完整性），均不构成函数；② 合法 —— 函数允许多对一，不允许一对多与无像。拖"输入 x"看选中的那条箭头：f(3) 是谁、有没有像，一目了然。</div>
+      <div class="cap">图 C1 · <b>映射的四种对应</b>。切换四种对应，拖动输入滑块追踪箭头。检查每个输入是否恰好有一条出发箭头。</div>
     </div>
 
     <h3 class="sec" id="c1-req">三要求逐条核验</h3>

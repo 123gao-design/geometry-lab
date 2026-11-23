@@ -1,15 +1,15 @@
 <template>
   <ChPage :cur="1" no="V1" base="/functions/v" :chapters="V_CHAPTERS"
-    title="割线与切线：导数的诞生" sub="平均变化率 $\Delta y/\Delta x$ 的极限就是瞬时变化率 —— $f'(x_0)$ 不是除以 0，是把 Q 无限拖近 P。导数在 S2、R4、E7 三次借场干活之后，终于领到自己的正式定义，并直接推掉一批常见函数。"
+    title="割线与切线：导数的诞生" sub="两点趋向同一点且割线斜率有极限时，这个极限就是导数。"
     :toc="[{ id: 'v1-def', t: '定义与记号：一切由极限定义' }, { id: 'v1-basic', t: '用定义推常见函数的导数' }, { id: 'v1-mean', t: '几何与物理双解说' }, { id: 'v1-pit', t: '0/0、左右与存在性' }]">
     <div class="note good" id="v1-law"><strong>导数定义</strong>：函数 <Katex tex="y=f(x)"/> 在 <Katex tex="x_0"/> 处的导数 <Katex tex="f'(x_0)=\lim_{\Delta x\to 0}\dfrac{f(x_0+\Delta x)-f(x_0)}{\Delta x}" /> —— 当极限存在时，称 f 在 <Katex tex="x_0"/> 处<strong>可导</strong>。平均变化率的极限 = 瞬时变化率；割线斜率的极限 = 切线斜率。</div>
     <div class="board-wrap">
       <BoardMount :factory="createTan" />
-      <div class="cap">图 V1 · <b>割线趋于切线</b>：橙线与金线各自挂名牌 —— <b>橙=割线</b>（P、Q 两点的连线，跟着 Q 转）、<b>金=切线</b>（P 处，割线的极限位置，预先画出作为对照）。拖 <Katex tex="\Delta x"/> 从正负两侧缩向 0，橙割线贴合到金切线，割线斜率读数随之一路逼近 <Katex tex="f'(x_0)"/>。「⏩ Q 滑向 P」动画把极限过程直接演出来；<Katex tex="\Delta x=0"/> 割线直接排除 —— 极限管趋近不管抵达。</div>
+      <div class="cap">图 V1 · <b>割线趋于切线</b>。从正负两侧缩小 Δx，对比割线和切线。Δx=0 时割线与差商退出，切线保留作极限参照。</div>
     </div>
 
     <h3 class="sec" id="v1-def">定义与记号：一切由极限定义</h3>
-    <p>图 V1 里最值得盯的是那行读数：<Katex tex="\Delta x=1.50"/> 时割线斜率 3.50，<Katex tex="\Delta x=0.05"/> 时滑到 2.05，与 <Katex tex="f'(1)=2"/> 只差 0.05 —— 差值随 <Katex tex="|\Delta x|"/> 一路归零。把这句话翻译成代数，就是定义本身：<Katex tex="\dfrac{\Delta y}{\Delta x}=2+\Delta x" />（以 <Katex tex="f=x^2"/>、<Katex tex="x_0=1"/> 为例），除法永远除的是<strong>非零</strong>的 <Katex tex="\Delta x"/>，极限只问「<Katex tex="\Delta x"/> 缩小过程中比值奔向哪里」。这就是微积分的第一课：<strong>先定义除法、再取极限</strong>，从头到尾没有除以 0。</p>
+    <p>以 <Katex tex="f(x)=x^2" /> 和 <Katex tex="x_0=1" /> 为例，对非零的 <Katex tex="\Delta x" />，差商等于 <Katex tex="2+\Delta x" />。当 <Katex tex="\Delta x=0.05" /> 时，割线斜率为 2.05。把横坐标增量从正侧或负侧缩小，差商都趋于 2。</p>
     <p>记号两套并记：<Katex tex="f'(x_0)" />（拉格朗日）与 <Katex tex="\dfrac{\mathrm{d}y}{\mathrm{d}x}\Big|_{x=x_0}" />（莱布尼茨，大学主用）。用定义验算一次最踏实：<Katex tex="f=x^3" /> 在 1 处，比值 <Katex tex="\dfrac{(1+\Delta x)^3-1}{\Delta x}=3+3\Delta x+(\Delta x)^2\to 3" />，与「<Katex tex="f'=3x^2"/> 代入 <Katex tex="x=1"/>」完全重合 —— 图 V1 的第二原图现场核验。</p>
 
     <h3 class="sec" id="v1-basic">用定义推常见函数的导数</h3>

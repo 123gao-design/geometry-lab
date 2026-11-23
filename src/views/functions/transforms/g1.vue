@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="1" no="G1" base="/functions/g" :chapters="G_CHAPTERS"
-    title="平移：左加右减的代数原理" sub="y=f(x−h)+k —— 图象整体平移 (h,k)：横移加在括号里、竖移加在括号外，「左加右减」是输入端的补偿方向，不是口诀。"
+    title="平移：左加右减的代数原理" sub="在 y=f(x−h)+k 中，图象上的每个点横坐标增加 h，纵坐标增加 k。"
     :toc="[{ id: 'g1-law', t: '平移定理与方向记录（图 G1）' }, { id: 'g1-why', t: '为什么横移要反着写' }, { id: 'g1-pit', t: '一字之差与易错点' }]">
     <div class="note good" id="g1-law"><strong>平移定理</strong>：函数 <Katex tex="y=f(x)" /> 的图象向右平移 <Katex tex="h" /> 个单位、再向上平移 <Katex tex="k" /> 个单位，所得新图象的解析式是 <Katex tex="y=f(x-h)+k" />（<Katex tex="h,k" /> 可正可负，负号自动改方向）。图上每个点 <Katex tex="(x_0,y_0)" /> 都移到 <Katex tex="(x_0+h,\ y_0+k)" /> —— 特殊点（顶点、起笔点、渐近线）随图象整体平移，是读图定位的第一锚。</div>
     <div class="board-wrap">
       <BoardMount :factory="createShift" />
-      <div class="cap">图 G1 · <b>图象的平移</b>：拖 h、k 两个滑块看原图平移；探针 P 锁在原图上、金点 <Katex tex="P'"/> 是它的像，橙色分解路径「先横 h 后竖 k」把平移向量画在图上。三张原图（<Katex tex="\sqrt{x}"/> / <Katex tex="x^2"/> / <Katex tex="e^x"/>）换着平移：起笔点、顶点、渐近线各自记录。</div>
+      <div class="cap">图 G1 · <b>图象的平移</b>。拖动 h、k，沿两段位移找到 P 对应的 P′。换成指数函数后，观察渐近线如何移动。</div>
     </div>
 
     <h3 class="sec" id="g1-why">为什么横移要反着写</h3>
@@ -21,7 +21,7 @@
         <li><strong>提示三：平移不改变形状。</strong>坡度、开口、对称性原样保留 —— 被平移的只有位置；E8 的折缝（x 轴、y 轴）与本章的平移是两类变换，别混。</li>
       </ul>
     </div>
-    <p>回收与预告：C5 双机器改装台是本章的前传（那时只有单向滑轨，这里 h、k 双向联动）；S5 的对称轴 <Katex tex="f(a+x)=f(b-x)" /> 平移后轴跟着移动；E8 的 <Katex tex="f(|x|)" /> 把右半「复制」而非平移。往后 G2 把加减升级成乘除（伸缩翻折），G3 把多步变换串成流程 —— 三章合起来就是「由式作图、由图反演」的全部规则。</p>
+    <p>平移使定义域整体移动 h，值域整体移动 k。伸缩的坐标关系也可以通过对应点推导。</p>
   </ChPage>
 </template>
 <script setup>

@@ -2,11 +2,12 @@
    看点：分段点的实心/空心点由区间开闭决定；跳变还是连惯，拖探针到分段点直接验明。
    图象规范：①② 横纵是克/元两种量纲，各用各的比例尺（如实标注刻度）；③ 纯数学函数用 B.isoFit 等单位取景。
    网格 / 轴标注 两开关可隐藏。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
   const st = { p: 0, x: 120, grid: true, labs: true };
 
   // lo/hi：该段左/右端点是否闭（决定实心/空心点）；k：斜率标签（衔接分析用）
@@ -57,15 +58,15 @@ export function createBoard(root) {
     const P = PRESETS[st.p], M = MAPS[st.p];
     // 网格 + 坐标轴 + 刻度（gx/gy 为网格步长，xt/yt 为显式刻度）
     B.grid({ ...M, sx: P.gx, sy: P.gy, xt: P.xt, yt: P.yt, grid: st.grid, labs: st.labs });
-    B.text(V(px(P.xb) - 4, py(0) + 32), P.xLab, { 'font-size': 11.5, fill: '#93a1b5', 'text-anchor': 'end' });
-    B.text(V(px(0) + 10, py(P.yb) + 20), P.yLab, { 'font-size': 11.5, fill: '#93a1b5', 'text-anchor': 'start' });
+    B.note(P.xLab, '#93a1b5');
+    B.note(P.yLab, '#93a1b5');
     // 分段折线：当前段高亮金色，其余蓝
     const act = pieceAt(P, st.x);
     for (const pc of P.pieces) {
       B.seg(V(px(pc.a), py(pc.f(pc.a))), V(px(pc.b), py(pc.f(pc.b))), {
         stroke: pc === act ? '#ffd166' : '#5cadff', 'stroke-width': pc === act ? 2.8 : 2.2,
       });
-      B.text(V(px((pc.a + pc.b) / 2), py(pc.f((pc.a + pc.b) / 2)) - 14), pc.tag, { 'font-size': 11.5, fill: pc === act ? '#ffd166' : '#93a1b5' });
+      B.note(pc.tag);
     }
     // 分段点端点：两侧值不同 → 按开闭画实心/空心（跳变）；值相同 → 单个实心点（连惯）
     for (let i = 0; i < P.breaks.length; i++) {
@@ -110,7 +111,7 @@ export function createBoard(root) {
   }, { on: i === 0 }));
   const sl = B.slider('自变量 x', 0, 500, 1, 120, v => { st.x = v; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('邮资的分段点跳 4 元：左段实心、右段空心；个税与 |x−1| 的分段点完全重合 —— 连贯，但斜率突变');
+  B.hint("移动到分界点，对照实心点与空心点。");
   B.render();
   return B;
 }

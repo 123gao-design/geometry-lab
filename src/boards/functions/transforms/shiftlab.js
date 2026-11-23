@@ -3,11 +3,12 @@
    探针 P 锁在原图上，P′=(x₀+h, y₀+k) 跟着走：先横后竖的分解路径把 (h,k) 画成看得见的向量。
    原图三选：√x（起笔 (0,0)）、x²（顶点 (0,0)）、e^x（不对称 + 渐近线 y=0 随手平移）。
    回收：C5 机器观（f(x)+k 竖走 vs f(x+h) 横走）在这里全量核验；E8 的折缝是 k=0 的特例。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 520;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const BASES = [
     { name: '$\\sqrt{x}$', f: x => Math.sqrt(x), tex: (s, kk) => `\\sqrt{${s}}${kk}`, box: [-2.6, 6.4, -2.2, 5.2], anch: [[0, 0], [1, 1], [4, 2]], asym: [] },
@@ -56,12 +57,12 @@ export function createBoard(root) {
         B.seg(V(px(x0), py(y0)), V(px(x1), py(y0)), { stroke: '#ff9e4a', 'stroke-width': 1.4, 'stroke-dasharray': '4 4', 'stroke-opacity': .75 });
         B.seg(V(px(x1), py(y0)), V(px(x1), py(y1)), { stroke: '#ff9e4a', 'stroke-width': 1.4, 'stroke-dasharray': '4 4', 'stroke-opacity': .75 });
         B.seg(V(px(x0), py(y0)), V(px(x1), py(y1)), { stroke: '#93a1b5', 'stroke-width': 1, 'stroke-opacity': .5 });
-        if (Math.abs(h) > 0.4) B.tex(V(px((x0 + x1) / 2), py(y0) + 13), `$h=${fmt(h, 2)}$`, { size: 11, color: '#ff9e4a', anchor: 'mid', w: 70 });
-        if (Math.abs(k) > 0.4) B.tex(V(px(x1) + 8, py((y0 + y1) / 2)), `$k=${fmt(k, 2)}$`, { size: 11, color: '#ff9e4a', anchor: 'start', w: 70 });
+        if (Math.abs(h) > 0.4) B.note(`$h=${fmt(h, 2)}$`, '#ff9e4a');
+        if (Math.abs(k) > 0.4) B.note(`$k=${fmt(k, 2)}$`, '#ff9e4a');
         B.dot(V(px(x1), py(y1)), 5.5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.5 });
       }
     }
-    B.tex(V(14, 18), `$y=${P.tex(`x ${h >= 0 ? '-' : '+'} ${fmt(Math.abs(h), 2)}`, (k >= 0 ? '+' : '-') + fmt(Math.abs(k), 2))}$ —— 原图 ${P.name}（蓝淡）与平移后的像（金）`, { size: 13, color: '#93a1b5', anchor: 'start', w: 520 });
+    B.note(`$y=${P.tex(`x ${h >= 0 ? '-' : '+'} ${fmt(Math.abs(h), 2)}`, (k >= 0 ? '+' : '-') + fmt(Math.abs(k), 2))}$ —— 原图 ${P.name}（蓝淡）与平移后的像（金）`, '#93a1b5');
     // 徽章
     cE(`$y=${P.tex(`x ${h >= 0 ? '-' : '+'} ${fmt(Math.abs(h), 2)}`, (k >= 0 ? '+' : '-') + fmt(Math.abs(k), 2))}$：横移 $h$ 写进括号里、竖移 $k$ 写在函数外`, '');
     cP(isFinite(y0) ? `P $(${fmt(x0, 2)},\\ ${fmt(y0, 2)}) \\to$ P′ $(${fmt(x1, 2)},\\ ${fmt(y1, 2)})$ —— 横坐标加 $h$、纵坐标加 $k$，全体点一起平移` : '探针落在定义域外 —— 拖回有效区', isFinite(y0) ? '' : 'warn');
@@ -94,7 +95,7 @@ export function createBoard(root) {
     color: '#ff9e4a', r: 6, label: 'P', lo: [-14, -14],
   });
   B.graphToggles(st);
-  B.hint('探针 P 锁在原图上、金点 P′ 是它的像：橙色分解路径先横 h 后竖 k —— 全体点平移同一个向量');
+  B.hint("拖动 h 和 k，沿横向与纵向位移找到对应点。");
   B.render();
   return B;
 }

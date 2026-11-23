@@ -103,6 +103,9 @@
       <div class="pd-play">
         <button type="button" @click="paused = !paused">{{ paused ? '继续' : '暂停' }}</button>
         <button type="button" @click="restart">重置</button>
+        <button v-for="preset in def.presets" :key="preset.label" type="button" :disabled="!ready" @click="pickPreset(preset)">
+          {{ preset.label }}
+        </button>
         <label class="pd-spd" title="播放速度倍数（0.1× 到 3×，双击回 1×）" @dblclick="speed = 1">
           <span>速度</span>
           <input v-model.number="speed" type="range" min="0.1" max="3" step="0.05" />
@@ -246,6 +249,14 @@ function pickMode(k) {
   if (pv[modeKey.value] === k) return;
   pv[modeKey.value] = k;
   restart();
+}
+function pickPreset(preset) {
+  Object.assign(pv, preset.params);
+  restart();
+  if (preset.time !== undefined && api?.seek) {
+    api.seek(preset.time);
+    paused.value = true;
+  }
 }
 
 /* 板内标签可拖动（与数学画板同一条习惯）：标注重叠时按住挪开，双击复原。

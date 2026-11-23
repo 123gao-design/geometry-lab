@@ -1,17 +1,17 @@
 <template>
   <ChPage :cur="2" no="积2" base="/solid/m" :chapters="SM_CHAPTERS"
     title="球的体积、表面积与截面"
-    sub="球没有展开图，它的两个公式靠分割求和的极限得到：S=4πR²、V=(4/3)πR³。用平面截球，截面永远是圆，球心到截面的距离 d、截面圆半径 r 与球半径 R 组成直角三角形，r²=R²−d²。"
+    sub="平面到球心的距离决定截面。相交时，截面圆的半径满足 r²=R²−d²。相切时只有一个公共点。"
     :toc="[{ id: 'm2-formula', t: '两个公式' }, { id: 'm2-section', t: '截面圆' }, { id: 'm2-tangent', t: '相切、相交与过球心' }, { id: 'm2-apply', t: '外接球与内切球' }, { id: 'm2-pit', t: '半径、距离与相似比' }]">
-    <div class="note good">球的半径为 <Katex tex="R" />，则表面积与体积分别是 <Katex tex="S=4\pi R^2" /> 与 <Katex tex="V=\dfrac{4}{3}\pi R^3" />。用平面去截球，截面是一个圆；设球心到截面的距离为 <Katex tex="d" />，截面圆半径为 <Katex tex="r" />，则 <Katex tex="r^2=R^2-d^2" />，当且仅当 <Katex tex="d=0" /> 时截面是过球心的大圆。</div>
+    <div class="note good">半径为 <Katex tex="R" /> 的球，表面积与体积分别为 <Katex tex="S=4\pi R^2" /> 与 <Katex tex="V=\dfrac{4}{3}\pi R^3" />。若球心到平面的距离 <Katex tex="d<R" />，截面的半径满足 <Katex tex="r^2=R^2-d^2" />。在球面上看到截面圆，实心球的截面是该圆所围的圆盘。</div>
 
     <h3 class="sec" id="m2-formula">两个公式</h3>
     <div class="board-wrap">
       <BoardMount :factory="createSphereCutLab" />
-      <div class="cap">图 积2 · <b>球的体积、表面积与截面</b>：<Katex tex="R" /> 滑块改球半径，<Katex tex="d" /> 滑块把紫色截面平面沿轴抬起。金色圆是截面圆，橙色段 <Katex tex="P_0A" /> 是截面圆半径、绿色段 <Katex tex="OA" /> 是球半径、虚线 <Katex tex="OP_0" /> 是球心到截面的距离，<Katex tex="P_0" /> 处画直角标记。看点：把 <Katex tex="d" /> 推向 0，截面圆张成最大的大圆；把 <Katex tex="d" /> 推到 <Katex tex="R" />，截面圆缩成一点；拖动画面旋转，紫色平面与金色圆始终保持为平面与圆。</div>
+      <div class="cap">图 积2 · <b>球的截面</b>。拖动平面高度 <Katex tex="h" />，在轴截面正视图上比较球半径 <Katex tex="R" />、距离 <Katex tex="d=|h|" /> 和截面半径 <Katex tex="r" />。点击「过球心」或「上侧相切」，比较大圆和切点。</div>
     </div>
     <p>球的表面积可以用「分割—近似」来理解。把球面切成许多块小曲面，每块足够小时近似为平面小片，以球心为顶点、小片为底面拼成许多个小锥体。每个小锥的高都等于 <Katex tex="R" />，所有小锥的体积之和是 <Katex tex="\tfrac13R\cdot S" />，这个和就是球的体积 <Katex tex="\tfrac43\pi R^3" />，于是 <Katex tex="S=4\pi R^2" />。</p>
-    <p>体积公式另一个常见来源是用圆柱与圆锥作差：以 <Katex tex="R" /> 为底半径、以 <Katex tex="R" /> 为高的圆柱挖去两个同样的圆锥，剩下的部分（牟合方盖的截面法）恰好与半球等体积，从而 <Katex tex="V=\tfrac23\pi R^3\times2" />。这两条思路都说明：球的公式是极限结果，不是初等拼补的结果，这也解释了它为什么没有展开图。</p>
+    <p>也可以用圆柱与圆锥求半球体积。取底半径和高均为 <Katex tex="R" /> 的圆柱，从中去掉一个同底等高的圆锥，使圆锥尖端与半球的球心同高。离该高度 <Katex tex="z" /> 处，圆柱减圆锥的截面积为 <Katex tex="\pi R^2-\pi z^2" />，等于半球同高度处的截面积。由截面积相等得半球体积为 <Katex tex="\pi R^3-\tfrac13\pi R^3" />，乘以 2 即得球的体积。</p>
 
     <h3 class="sec" id="m2-section">截面圆</h3>
     <p>设球心为 <Katex tex="O" />，截面圆心为 <Katex tex="P_0" />，<Katex tex="A" /> 是截面圆周上一点。连 <Katex tex="OP_0" />、<Katex tex="P_0A" />、<Katex tex="OA" />。因为 <Katex tex="OP_0" /> 垂直于截面，它垂直于截面内每一条过 <Katex tex="P_0" /> 的直线，所以 <Katex tex="OP_0\perp P_0A" />，三角形 <Katex tex="OP_0A" /> 在 <Katex tex="P_0" /> 处为直角。</p>

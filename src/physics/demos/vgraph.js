@@ -14,18 +14,22 @@ const HS = 0.45;   // 斜率三角形的 Δt，只要一小段
 export function create(st) {
   let t = 0;
   let last = '';
+  let pendingTime;
 
-  const reset = () => { t = 0; };
-  reset();
+  const reset = () => { t = 0; pendingTime = undefined; };
+  const seek = time => { pendingTime = clamp(time, 0, TEND); };
 
   function frame(dt) {
     const p = st.params;
     const v0 = clamp(Number(p.v0) || 0, -8, 8);
     const a = clamp(Number(p.a) || 0, -6, 6);
     const key = v0 + '|' + a;
-    if (key !== last) { last = key; reset(); }
+    if (key !== last) { last = key; t = 0; }
 
-    if (dt > 0) {
+    if (pendingTime !== undefined) {
+      t = pendingTime;
+      pendingTime = undefined;
+    } else if (dt > 0) {
       t += dt;
       if (t > TEND) t = 0;
     }
@@ -37,31 +41,36 @@ export function create(st) {
     if (!w || !h) return;
     ctx.clearRect(0, 0, w, h);
 
-    const v = v0 + a * t;
-    const x = v0 * t + 0.5 * a * t * t;
+    const velocity = u => v0 + a * u;
+    const position = u => (v0 + 0.5 * a * u) * u;
+    const v = velocity(t), x = position(t);
+    const turn = a === 0 ? 0 : -v0 / a;
+    const returns = 2 * turn;
+    const turnInView = turn > 0 && turn <= XMAX;
+    const split = turn > 0 && turn < t ? turn : t;
+    const distance = Math.abs(position(split)) + Math.abs(x - position(split));
 
     /* ── 两块面板：上 x-t、下 v-t，横轴共用同一段 [0, XMAX] ── */
     const padL = 62;
     const padR = 34;
     const gap = 30;
     const pw = Math.max(160, w - padL - padR);
-    const ph = Math.max(78, (h - 16 - 22 - gap) / 2);
-    const rA = { x: padL, y: 16, w: pw, h: ph };
-    const rB = { x: padL, y: 16 + ph + gap, w: pw, h: ph };
+    const top = turnInView ? 47 : 18;
+    const ph = Math.max(65, (h - top - 22 - gap) / 2);
+    const rA = { x: padL, y: top, w: pw, h: ph };
+    const rB = { x: padL, y: top + ph + gap, w: pw, h: ph };
     const xr = [0, XMAX];
 
     /* 取景：抛物线的两端与顶点都留在框里，a 变号也不会画到框外 */
-    const xEnd = v0 * XMAX + 0.5 * a * XMAX * XMAX;
-    const xCand = [0, xEnd];
-    const tv = a < 0 ? -v0 / a : -1;
-    if (tv > 0 && tv < XMAX) xCand.push(v0 * tv + 0.5 * a * tv * tv);
+    const xCand = [0, position(XMAX)];
+    if (turnInView) xCand.push(position(turn));
     let xlo = Math.min(...xCand);
     let xhi = Math.max(...xCand);
     const xpad = Math.max((xhi - xlo) * 0.14, 0.4);
     xlo -= xpad;
     xhi += xpad;
 
-    const vEnd = v0 + a * XMAX;
+    const vEnd = velocity(XMAX);
     let vlo = Math.min(0, v0, vEnd);
     let vhi = Math.max(0, v0, vEnd);
     const vpad = Math.max((vhi - vlo) * 0.16, 0.4);
@@ -70,14 +79,31 @@ export function create(st) {
 
     const gA = panel(ctx, rA, xr, [xlo, xhi], pal, { xlab: 't / s', ylab: 'x / m', nx: 6, ny: 4 });
     const gB = panel(ctx, rB, xr, [vlo, vhi], pal, { xlab: 't / s', ylab: 'v / (m/s)', nx: 6, ny: 4 });
+    const primary = pal.indigo || pal.blue;
+    const negative = pal.sienna || pal.orange;
+    const labelEvent = (u, caption, color, y) => {
+      const px = gA.X(u);
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = 0.58;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.moveTo(px, y + 4);
+      ctx.lineTo(px, rB.y + rB.h);
+      ctx.stroke();
+      ctx.restore();
+      label(ctx, caption + ' ' + fmt(u, 2) + ' s', clamp(px, rA.x + 32, rA.x + rA.w - 45), y, color, 'center', 12);
+    };
+    if (turnInView) labelEvent(turn, '转向', pal.green, 16);
+    if (turnInView && returns <= XMAX) labelEvent(returns, '回到起点', negative, 34);
 
     /* ── 上图：x-t 曲线，切线斜率 = 瞬时速度 ── */
     const curve = [];
     for (let i = 0; i <= 120; i++) {
       const u = (i / 120) * XMAX;
-      curve.push([u, v0 * u + 0.5 * a * u * u]);
+      curve.push([u, position(u)]);
     }
-    poly(ctx, gA.X, gA.Y, curve, pal.blue, 2.4);
+    poly(ctx, gA.X, gA.Y, curve, primary, 3);
 
     /* 切线：两端按视野上下沿收住，速度大时不会冲出面板 */
     const vAbs = Math.abs(v);
@@ -90,32 +116,20 @@ export function create(st) {
     }
 
     /* ── 下图：v-t 图线，0..t 的有向面积 = 位移 ── */
-    if (t > 0.004) {
-      fillSigned(ctx, gB, u => v0 + a * u, t, pal.blue, 0.18);
-      /* 面积够宽才标字，起跑那头太窄，文字会溢到框外 */
-      if (gB.X(t) - gB.X(0) > 96) {
-        label(
-          ctx,
-          '面积 = 位移',
-          (gB.X(0) + gB.X(t)) / 2,
-          clamp(gB.Y((v0 + v) / 2) + 2, rB.y + 12, rB.y + rB.h - 10),
-          pal.blue,
-          'center',
-          13,
-        );
-      }
-    }
+    fillArea(ctx, gB, 0, split, v0, velocity(split), primary, negative);
+    fillArea(ctx, gB, split, t, velocity(split), v, primary, negative);
 
     /* 整条 v-t 直线：右端用 v = v0 + at 的准确值，
        与阴影的上沿同一条线，不会再各走各的 */
-    poly(ctx, gB.X, gB.Y, [[0, v0], [XMAX, vEnd]], pal.blue, 2.4);
+    poly(ctx, gB.X, gB.Y, [[0, 0], [XMAX, 0]], pal.graphite || pal.mut, 1.6);
+    poly(ctx, gB.X, gB.Y, [[0, v0], [XMAX, vEnd]], primary, 3);
 
     /* 斜率三角形：取紧挨着当前时刻的一小段，整块落在蓝色区域里 */
     let slope = a;
     if (t > 0.12) {
       const hs = Math.min(HS, t);
       const t1 = t - hs;
-      const v1 = v0 + a * t1;
+      const v1 = velocity(t1);
       slope = (v - v1) / hs;
       ctx.save();
       ctx.strokeStyle = pal.orange;
@@ -159,7 +173,12 @@ export function create(st) {
     ctx.stroke();
     ctx.restore();
 
-    spot(ctx, gA.X(t), gA.Y(x), 5, pal.blue, pal.bg2);
+    if (turnInView) {
+      spot(ctx, gA.X(turn), gA.Y(position(turn)), 3.5, pal.green, pal.bg2);
+      spot(ctx, gB.X(turn), gB.Y(0), 3.5, pal.green, pal.bg2);
+      if (returns <= XMAX) spot(ctx, gA.X(returns), gA.Y(0), 3.5, negative, pal.bg2);
+    }
+    spot(ctx, gA.X(t), gA.Y(x), 5, primary, pal.bg2);
     spot(ctx, gB.X(t), gB.Y(v), 5, pal.orange, pal.bg2);
 
     /* 两块面板各留一行小注，说明这条线在看什么 */
@@ -169,6 +188,7 @@ export function create(st) {
     st.readout([
       ['时间 t', fmt(t, 2) + ' s'],
       ['位移 x', fmt(x, 2) + ' m'],
+      ['路程 s', fmt(distance, 2) + ' m'],
       ['速度 v', fmt(v, 2) + ' m/s'],
       ['平均速度 x/t', t > 1e-6 ? fmt(x / t, 2) + ' m/s' : '—'],
       ['加速度 a', fmt(a, 2) + ' m/s²'],
@@ -176,42 +196,26 @@ export function create(st) {
     ]);
   }
 
-  /** 把图线与时间轴之间的有向面积分块填出来：跨过时间轴时分上下两块各自闭合，
-      负面积不会把正面积抵掉（一块多边形自己绕回去会画成蝴蝶结） */
-  function fillSigned(ctx, g, f, tEnd, color, alpha) {
-    const N = 48;
-    let run = [[0, f(0)]];
-    let prev = run[0];
+  function fillArea(ctx, g, start, end, vStart, vEnd, positive, negative) {
+    const meanVelocity = (vStart + vEnd) / 2;
+    if (end - start < 0.004 || Math.abs(meanVelocity) < 1e-9) return;
+    const color = meanVelocity < 0 ? negative : positive;
     ctx.save();
-    ctx.globalAlpha = alpha;
+    ctx.globalAlpha = 0.22;
     ctx.fillStyle = color;
-    const flush = () => {
-      if (run.length > 1) {
-        ctx.beginPath();
-        ctx.moveTo(g.X(run[0][0]), g.Y(0));
-        for (const q of run) ctx.lineTo(g.X(q[0]), g.Y(q[1]));
-        ctx.lineTo(g.X(run[run.length - 1][0]), g.Y(0));
-        ctx.closePath();
-        ctx.fill();
-      }
-      run = [];
-    };
-    for (let i = 1; i <= N; i++) {
-      const u = (i / N) * tEnd;
-      const y = f(u);
-      if (prev[1] * y < 0) {
-        const tc = prev[0] + ((u - prev[0]) * (0 - prev[1])) / (y - prev[1]);
-        run.push([tc, 0]);
-        flush();
-        run = [[tc, 0], [u, y]];
-      } else {
-        run.push([u, y]);
-      }
-      prev = [u, y];
-    }
-    flush();
+    ctx.beginPath();
+    ctx.moveTo(g.X(start), g.Y(0));
+    ctx.lineTo(g.X(start), g.Y(vStart));
+    ctx.lineTo(g.X(end), g.Y(vEnd));
+    ctx.lineTo(g.X(end), g.Y(0));
+    ctx.closePath();
+    ctx.fill();
     ctx.restore();
+    if (g.X(end) - g.X(start) > 32 && Math.abs(g.Y(meanVelocity) - g.Y(0)) > 19) {
+      label(ctx, meanVelocity < 0 ? '−' : '+', g.X((start + end) / 2),
+        g.Y(meanVelocity / 2) + 4, color, 'center', 15);
+    }
   }
 
-  return { frame, reset };
+  return { frame, reset, seek };
 }

@@ -2,11 +2,12 @@
    预设 α = 2、3、½、⅓、−1（⅓ 用 cbrt 才有左支）；滑块 α 以 1/12 步进连续变形。
    规则：整指数（或 ⅓）负半轴才开得出支，其余只在 x>0 —— 负底数开偶次方无定义是首要限制。
    α<0 双渐近线 x=0、y=0；全族恒过 (1,1)：交点左 α 大者低、交点右 α 大者高。 */
-import { Board, V, fmt } from '../../../lib/board.js';
+import { V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const GHOSTS = [-2, -1, -0.5, 1 / 3, 0.5, 1, 2, 3];
   // α 身份色（用户拍板：不同 α 不同颜色；均为 COLOR 表内语义色号）
@@ -41,7 +42,7 @@ export function createBoard(root) {
     B.dot(V(M.px(1), M.py(1)), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
     if (a > 0 && M.X0 < 0 && M.X1 > 0) B.dot(V(M.px(0), M.py(0)), 3.5, { fill: '#93a1b5' });
     if (a === 0) B.dot(V(M.px(0), M.py(1)), 4, { fill: '#0a0d14', stroke: '#93a1b5', 'stroke-width': 1.6 }); // x=0 挖去
-    B.tex(V(14, 18), `$y=x^{${atex}}$ —— 拖 α 看曲线族变形`, { size: 13, color: '#93a1b5', anchor: 'start', w: 300 });
+    B.note(`$y=x^{${atex}}$ —— 拖 α 看曲线族变形`, '#93a1b5');
     // 徽章
     const nm = a > 1 ? '抛物线型（α>1）：越走越陡' : a === 1 ? '直线：45° 均速' : a > 0 ? '根式型（0<α<1）：越走越缓，起步陡' : a === 0 ? '常数：y=1（x≠0）—— 幂家族的扁成员' : '双曲线型（α<0）：x 越大越贴近 0';
     cA(`$\\alpha=${atex}$ —— ${nm}`, a < 0 ? '' : 'ok');
@@ -62,7 +63,7 @@ export function createBoard(root) {
   });
   B.graphToggles(st);
   B.toggleBtn('曲线族', true, on => { st.ghosts = on; B.render(); });
-  B.hintM('每条 $\\alpha$ 一色：全族恒过金点 $(1,1)$，交点左 $\\alpha$ 大者低、交点右 $\\alpha$ 大者高 —— 拖 α 看身份变色');
+  B.hint("比较指数变化时定义域、渐近线和公共点。");
   B.render();
   return B;
 }

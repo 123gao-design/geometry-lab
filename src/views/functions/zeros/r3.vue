@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="3" no="R3" base="/functions/r" :chapters="R_CHAPTERS"
-    title="二分法：对半缩区间" sub="维护一个异号区间，每步取中点判定、留下变号的那半 —— n 步后 $\text{宽}=\text{初始宽}\times 2^{-n}$，误差随步数指数递减，不挑函数、不需求导。"
+    title="二分法：对半缩区间" sub="二分法逐次用中点把异号区间缩短一半，直到达到给定精度。"
     :toc="[{ id: 'r3-alg', t: '算法与显微镜（图 R3）' }, { id: 'r3-err', t: '误差与步数：对数关系' }, { id: 'r3-scope', t: '适用范围与易错点' }]">
     <div class="note good" id="r3-alg"><strong>二分法</strong>：设 <Katex tex="f" /> 在 <Katex tex="[a,b]" /> 上连续且 <Katex tex="f(a)f(b)<0" />。循环四步 —— ① 取中点 <Katex tex="m=\dfrac{a+b}{2}" />；② 算 <Katex tex="f(m)" />（若恰为 0，零点就是 m，直接完成）；③ 判定：<Katex tex="f(m)" /> 与 <Katex tex="f(a)" /> 异号则零点在 <Katex tex="[a,m]" />、同号则在 <Katex tex="[m,b]" />；④ 留下变号的那半，回到 ①。每一步的依据都来自 R2 的定理：<strong>留下的半区间端点依旧异号、函数依旧连续，所以零点一定还在里面</strong> —— 二分法是存在性定理的算法化。</div>
     <div class="board-wrap">
       <BoardMount :factory="createBisect" />
-      <div class="cap">图 R3 · <b>二分法</b>：左栏全景金带 = 当前异号区间，右栏放大视图自动放大它 —— 看中点 m 与 <Katex tex="f(m)"/> 的符号判定、金线一步步贴近灰点（真零点）。① 求出 <Katex tex="\sqrt{2}"/>；② 求 R1 ② 的无理根 0.347…；③ 求 R2 ④ 的唯一零点 0.682…。「二分一步」单步看判定，「连续二分」自动跑到精度 ε，步数徽章实时记着 <Katex tex="\text{宽}=\text{初始宽}\times 2^{-n}"/>。</div>
+      <div class="cap">图 R3 · <b>二分法</b>。点「二分一步」，同时观察全局图和当前区间的放大图。比较中点与两端的符号，找出保留的一半。</div>
     </div>
 
     <h3 class="sec" id="r3-err">误差与步数：对数关系</h3>
@@ -14,7 +14,7 @@
     <p>这是<strong>对数关系</strong>：ε 每缩小 10 倍，步数只多约 3.3 步（<Katex tex="\log_2 10\approx 3.32" />）。区间宽 1 缩到 0.05 要 5 步；缩到百万分之一也只要 21 步 —— 收敛虽慢、步数增长极缓。图 R3 的步数徽章把这条对数曲线实时呈现：ε 滑块越拖越小，「还差约 k 步」增长极为缓慢。</p>
 
     <h3 class="sec" id="r3-scope">适用范围与易错点</h3>
-    <p>二分法的<strong>前提</strong>只要「连续 + 异号」：不用导数、不用公式、不挑函数复杂程度 —— R4 的牛顿法快得多，但依赖函数与初值的选择；二分法适用范围最广。代价是它只认<strong>变号零点</strong>：R1 ④ 的二重零点两侧同号，f(a)f(b)&lt;0 永不成立，二分法无法进行 —— 这类零点要用因式分解或 V 系列的极值工具处理。</p>
+    <p>二分法需要函数在保留区间上连续且两端异号。偶重根两侧可以同号，仅靠端点变号可能漏掉这种零点。</p>
     <div class="note warn tip">
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">

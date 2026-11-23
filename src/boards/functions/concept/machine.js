@@ -2,11 +2,12 @@
    同一个滑块 h 同时驱动两条变形曲线：金色竖着走、蓝色横着走 —— 「左加右减」的代数真相。
    图象规范：各预设 B.isoFit 等单位取景（真实比例，抛物线/双曲线不变形）；③ 的渐近线按角色配色（灰基准/蓝输入/金输出），
    由「渐近线」开关统一隐藏；网格 / 轴标注 可隐藏。 */
-import { Board, V, fmt } from '../../../lib/board.js';
+import { V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const PRESETS = [
     { name: '① $f(x)=x^2$', d: () => true, f: x => x * x, box: [-3.2, 3.2, -1, 8.6], edge: 0, base: '基准 $f(x)=x^2$',
@@ -41,24 +42,24 @@ export function createBoard(root) {
       B.dot(V(px(0), py(P.f(0))), 4.5, { fill: '#5c6a80' });
       B.dot(V(px(0), py(P.f(0) + h)), 4.5, { fill: '#ffd166' });
       B.dot(V(px(-h), py(P.f(0))), 4.5, { fill: '#5cadff' });
-      B.text(V(px(-h) + 12, py(P.f(0)) + 18), `(${fmt(-h, 2)}, 0)`, { 'font-size': 11, fill: '#5cadff', 'text-anchor': 'start' });
+      B.note(`(${fmt(-h, 2)}, 0)`, '#5cadff');
     } else if (st.asym) {
       // ③：渐近线 —— 输入端平移挪竖直渐近线，输出端平移挪水平渐近线（颜色与曲线角色一一对应）
       B.inf(V(px(0), py(Y0)), V(px(0), py(Y1)), { stroke: '#5c6a80', 'stroke-dasharray': '4 5', 'stroke-opacity': .6 });
       B.inf(V(px(-h), py(Y0)), V(px(-h), py(Y1)), { stroke: '#5cadff', 'stroke-dasharray': '4 5', 'stroke-opacity': .7 });
       B.inf(V(px(X0), py(h)), V(px(X1), py(h)), { stroke: '#ffd166', 'stroke-dasharray': '4 5', 'stroke-opacity': .7 });
-      B.text(V(px(-h), py(Y1) + 14), `x=${fmt(-h, 2)}`, { 'font-size': 11, fill: '#5cadff' });
+      B.note(`x=${fmt(-h, 2)}`, '#5cadff');
     }
     // 图例 + 位移矢量箭头（金竖、蓝横，方向随 h 正负翻转）
-    B.tex(V(70, 30), P.base, { size: 13, color: '#93a1b5', anchor: 'start' });
+    B.note(P.base, '#93a1b5');
     const ax = 116, ay = 70, L = h * 26;
     B.seg(V(ax, ay), V(ax, ay - L), { stroke: '#ffd166', 'stroke-width': 3 });
     B.dot(V(ax, ay - L), 3, { fill: '#ffd166' });
-    B.tex(V(ax + 12, ay - L / 2 - 1), `$f(x)${sgn(h)}${abs(h)}$：${h >= 0 ? '上' : '下'}移`, { size: 13, color: '#ffd166', anchor: 'start' });
+    B.note(`$f(x)${sgn(h)}${abs(h)}$：${h >= 0 ? '上' : '下'}移`, '#ffd166');
     const bx = 330;
     B.seg(V(bx, ay), V(bx - L, ay), { stroke: '#5cadff', 'stroke-width': 3 });
     B.dot(V(bx - L, ay), 3, { fill: '#5cadff' });
-    B.tex(V(bx + 12, ay - 1), `$f(x${sgn(h)}${abs(h)})$：${h >= 0 ? '左' : '右'}移`, { size: 13, color: '#5cadff', anchor: 'start' });
+    B.note(`$f(x${sgn(h)}${abs(h)})$：${h >= 0 ? '左' : '右'}移`, '#5cadff');
     // 徽章
     cOut(P.out(h), '');
     cIn(P.inn(h), '');
@@ -73,7 +74,7 @@ export function createBoard(root) {
   }, { on: i === 0 }));
   B.slider('位移 h', -2, 2, 0.05, 0.5, v => { st.h = v; B.render(); });
   B.graphToggles(st);
-  B.hint('同一个 +h：输出端竖着付（f(x)+h 上移），输入端横着付（f(x+h) 左移）——「左加右减」反直觉，根源在输入端');
+  B.hint("拖动 h 比较竖直移动与水平移动。");
   B.render();
   return B;
 }

@@ -2,11 +2,12 @@
    ① 动区间：f=x²，把手 p、q 拖区间；② 动轴：f=¼(x−t)²，滑块 t 拖顶点、区间 [1,4] 固定；③ 开口向下 f=1−(x−1)²。
    判定口诀：轴在区间内 → 开口向上 min 在顶点（向下 max 在顶点）；轴在外 → 近端点取最值；另一头必在端点（距轴较远者）。
    图象规范：B.isoFit 等单位；顶点/端点为必采锚点；区间色带压在图象下。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // dyn：t 参数驱动（②）；drag：把手拖区间（①③）；vx 顶点横坐标（② 用 t 表达）
   const PRESETS = [
@@ -80,9 +81,9 @@ export function createBoard(root) {
     for (const [pt, cc, lab] of [[J.n, '#4ade80', 'min'], [J.xM, '#ff7b8a', 'max']])
       if (pt[0] > X0 && pt[0] < X1 && pt[1] > Y0 && pt[1] < Y1) {
         B.dot(V(px(pt[0]), py(pt[1])), 5.5, { fill: cc, stroke: '#0a0d14', 'stroke-width': 1.5 });
-        B.tex(V(px(pt[0]), py(pt[1]) + (cc === '#4ade80' ? 20 : -20)), `$(${fmt(pt[0], 2)},\\ ${fmt(pt[1], 2)})$`, { size: 11, color: cc, anchor: 'mid', w: 110 });
+        B.note(`$(${fmt(pt[0], 2)},\\ ${fmt(pt[1], 2)})$`);
       }
-    B.tex(V(14, 18), P.vx ? `$f(x)=\\dfrac{1}{4}(x-${fmt(st.t, 2)})^2$，区间 $[1,4]$ 固定 —— 拖顶点` : (P.a > 0 ? `$f(x)=x^2$，轴 $x=0$ 固定 —— 拖把手 p、q` : `$f(x)=1-(x-1)^2$ —— 开口向下，判定完全对调`), { size: 13, color: '#93a1b5', anchor: 'start', w: 420 });
+    B.note(P.vx ? `$f(x)=\\dfrac{1}{4}(x-${fmt(st.t, 2)})^2$，区间 $[1,4]$ 固定 —— 拖顶点` : (P.a > 0 ? `$f(x)=x^2$，轴 $x=0$ 固定 —— 拖把手 p、q` : `$f(x)=1-(x-1)^2$ —— 开口向下，判定完全对调`), '#93a1b5');
     // 徽章
     cI(`$[${fmt(p, 2)},\\ ${fmt(q, 2)}]$`, '');
     cV(`$x*=${fmt(vx, 2)}$，$f(x*)=${fmt(fv, 2)}$${J.inV ? '（轴在区间内）' : '（轴在区间外）'}`, J.inV ? 'ok' : '');
@@ -128,7 +129,7 @@ export function createBoard(root) {
   for (const P of PRESETS) if (P.dyn)
     slT = B.slider(P.dyn.lab, P.dyn.min, P.dyn.max, 0.05, P.dyn.v0, v => { st.t = v; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('口诀：轴在区间内顶点定最值，轴在外近端点取最值；另一头必在端点 —— 由距轴较远者取最值（③ 开口向下时全部对调）');
+  B.hint("改变顶点或区间端点，检查取得最值的位置。");
   B.render();
   return B;
 }

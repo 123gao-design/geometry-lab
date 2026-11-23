@@ -3,11 +3,12 @@
    镜像开关同时画两个假设：金虚线 = 偶假设 f(−x)、橙虚线 = 奇假设 −f(−x)，逐点验证谁重合；
    平移开关画紫虚线 f(x−T)，拖候选 T 看谁完全重合。四块徽章 = 四项检验。
    图象规范：B.isoFit 等单位取景；公式一律 B.tex（KaTeX）；网格 / 轴标注 两开关；marks 与对称轴为必采锚点。 */
-import { Board, V, fmt } from '../../../lib/board.js';
+import { V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // f 待检函数；marks 必采锚点；ax 对称轴（③ 常驻金虚线）；supV/infV 界线（null = 无界）；supHit/infHit 界是否取到
   // o/m/b/p：奇偶 / 单调 / 界与最值 / 周期 四项检验（开对应开关时追加逐点验证）
@@ -49,7 +50,7 @@ export function createBoard(root) {
     const P = PRESETS[st.p], M = MAPS[st.p];
     const { X0, X1, Y0, Y1 } = M;
     B.grid({ ...M, grid: st.grid, labs: st.labs });
-    B.tex(V(16, 24), P.eq, { size: 14, color: '#93a1b5', anchor: 'start' });
+    B.note(P.eq, '#93a1b5');
     // ③ 的对称轴常驻（金虚线）—— 周期的判定依据先显示
     for (const a of P.ax) B.seg(V(px(a), py(Y0)), V(px(a), py(Y1)), { stroke: '#ffd166', 'stroke-width': 1.4, 'stroke-dasharray': '6 6', 'stroke-opacity': .75 });
     // 曲线：分段模式按 f′ 符号拆段；其余整条蓝
@@ -61,7 +62,7 @@ export function createBoard(root) {
     if (st.mirror) {
       B.plot(x => P.f(-x), M, { anchors: anc(), step: .04, stroke: '#ffd166', 'stroke-width': 2, 'stroke-dasharray': '7 5' });
       B.plot(x => -P.f(-x), M, { anchors: anc(), step: .04, stroke: '#ff9e4a', 'stroke-width': 2, 'stroke-dasharray': '7 5' });
-      B.tex(V(16, 46), '金虚线：偶假设 $f(-x)$　橙虚线：奇假设 $-f(-x)$', { size: 12, color: '#93a1b5', anchor: 'start' });
+      B.note('金虚线：偶假设 $f(-x)$　橙虚线：奇假设 $-f(-x)$', '#93a1b5');
       let eE = 0, eO = 0;
       for (let x = X0; x <= X1; x += 0.05) { eE = Math.max(eE, Math.abs(P.f(-x) - P.f(x))); eO = Math.max(eO, Math.abs(-P.f(-x) - P.f(x))); }
       oTxt += ` —— 逐点验收：偶差 ${fmt(eE, 2)}、奇差 ${fmt(eO, 2)}，${eE < 0.02 ? '偶假设重合' : eO < 0.02 ? '奇假设重合' : '两个假设都错位'}`;
@@ -72,7 +73,7 @@ export function createBoard(root) {
     let pTxt = P.p, pCls = '';
     if (st.shift) {
       B.plot(x => P.f(x - st.T), M, { anchors: anc(), step: .04, stroke: '#c084fc', 'stroke-width': 2, 'stroke-dasharray': '7 5' });
-      B.tex(V(16, 46), `紫虚线：平移假设 $f(x-${fmt(st.T, 1)})$`, { size: 12, color: '#93a1b5', anchor: 'start' });
+      B.note(`紫虚线：平移假设 $f(x-${fmt(st.T, 1)})$`, '#93a1b5');
       let e2 = 0;
       for (let x = X0; x <= X1; x += 0.05) e2 = Math.max(e2, Math.abs(P.f(x - st.T) - P.f(x)));
       const fit = e2 < 0.02;
@@ -85,10 +86,10 @@ export function createBoard(root) {
       const line = (v, lab) => {
         if (v <= Y0 || v >= Y1) return;
         B.seg(V(px(X0), py(v)), V(px(X1), py(v)), { stroke: '#67e8f9', 'stroke-width': 1.6, 'stroke-dasharray': '7 6', 'stroke-opacity': .85 });
-        B.text(V(px(X1) - 10, py(v) - 8), lab, { 'font-size': 11.5, fill: '#67e8f9', 'text-anchor': 'end' });
+        B.note(lab, '#67e8f9');
       };
       if (P.supV != null) { line(P.supV, `上确界 ${fmt(P.supV, 2)}${P.supHit ? '（取到=最大值）' : '（取不到）'}`); line(P.infV, `下确界 ${fmt(P.infV, 2)}${P.infHit ? '（取到=最小值）' : '（取不到）'}`); }
-      else B.text(V(px(X0) + 12, py(Y1) + 18), '无上界无下界 —— 界线画不出来', { 'font-size': 11.5, fill: '#67e8f9', 'text-anchor': 'start' });
+      else B.note('无上界无下界 —— 界线画不出来', '#67e8f9');
     }
     cB(P.b, P.bCls);
     cM(P.m, '');
@@ -105,7 +106,7 @@ export function createBoard(root) {
   B.toggleBtn('确界线', false, on => { st.bound = on; B.render(); });
   B.slider('候选 T', 0.5, 5, 0.1, 4, v => { st.T = v; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('四项检验各配开关：分段=单调、镜像=奇偶、平移=周期、界线=最值 —— 一条曲线，全套性质直接复检');
+  B.hint("一次打开一项检验，比较图象和读数。");
   B.render();
   return B;
 }

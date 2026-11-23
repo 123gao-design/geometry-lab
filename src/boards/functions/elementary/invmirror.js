@@ -3,11 +3,12 @@
    反演回代：log_a(a^t)=t —— 指数是正运算、对数是逆运算（C1 机器观的回收）。
    两曲线单调同号（同增同减）、定义域值域互换：exp 的值域 (0,+∞) 恰是 log 的定义域。
    镜面是 y=x：必须等单位取景（isoFit），否则 45° 的折缝不能保证。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 520;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const PRESETS = [
     { a: 2, name: '① $a=2$：$2^x$ vs $\\log_2 x$' },
@@ -42,7 +43,7 @@ export function createBoard(root) {
     if (st.asym) B.asym(M, [{ v: 0, t: 'x=0（log 渐近线）' }]);
     // 折缝 y=x（金虚线）：反演镜面
     B.seg(V(px(M.X0), py(M.X0)), V(px(M.X1), py(M.X1)), { stroke: '#ffd166', 'stroke-width': 1.2, 'stroke-dasharray': '7 6', 'stroke-opacity': .6 });
-    B.tex(V(px(3.2) + 26, py(3.2) - 6), '$y=x$', { size: 13, color: '#ffd166', anchor: 'start', w: 60 });
+    B.note('$y=x$', '#ffd166');
     // 指数（蓝）
     let d = '', pen = false;
     for (let x = M.X0; x <= M.X1 + 0.001; x += 0.025) {
@@ -73,7 +74,7 @@ export function createBoard(root) {
     if (mx > M.X0 && mx < M.X1 && my > M.Y0 && my < M.Y1)
       B.dot(V(px(mx), py(my)), 5.5, { fill: '#ff9e4a', stroke: '#0a0d14', 'stroke-width': 1.5 });
     const ab = a === 0.5 ? '\\dfrac{1}{2}' : a === Math.SQRT2 ? '\\sqrt{2}' : String(a);
-    B.tex(V(14, 18), `$y=${ab}^{x}$（蓝）与 $y=\\log_{${ab}} x$（橙）`, { size: 13, color: '#93a1b5', anchor: 'start', w: 420 });
+    B.note(`$y=${ab}^{x}$（蓝）与 $y=\\log_{${ab}} x$（橙）`, '#93a1b5');
     // 徽章
     const back = g(ft);
     cB(`$a=${ab}$ —— 同底成对，单调同号（${a > 1 ? '同增' : '同减'}）`, a > 1 ? 'ok' : '');
@@ -89,7 +90,7 @@ export function createBoard(root) {
     B.render();
   }, { on: i === 0 }));
   B.graphToggles(st);
-  B.hint('把蓝线沿金折缝 y=x 翻折就是橙线：横纵坐标对调 —— 指数正向、对数逆向，一台机器两个方向');
+  B.hint("拖动指数曲线上的点，对照镜像点的两项坐标。");
   B.render();
   return B;
 }

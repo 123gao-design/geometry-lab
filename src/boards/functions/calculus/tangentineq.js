@@ -2,11 +2,12 @@
    上凸曲线位于切线下方（f≤l 恒成立），x³ 的切线出凹凸区间即穿越（不等式只在区间内成立）。
    竖向「间隙着色」把差函数画出来：绿=曲线高于切线、红=切线更高；f″(x₀) 徽章读二阶判据；
    恒成立的临界条件=相切。三原图量级 x/y 不同，按 E4/E7 先例各用比例尺（mapFit）；切线按像素方向画。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const PRESETS = [
     { name: '① $f=e^x$：下凸', f: x => Math.exp(x), fp: x => Math.exp(x), fpp: x => Math.exp(x), xa: -2.3, xb: 2.7, ya: -1.6, yb: 10, lo: -1.6, hi: 2.2, conv: 1 },
@@ -65,12 +66,18 @@ export function createBoard(root) {
     let iTxt, iCls;
     if (P.conv > 0) { iTxt = `下凸：曲线位于切线上方 —— $f\\ge l$ 全程成立（$x_0=0$ 给出经典 $e^x\\ge x+1$）`; iCls = 'ok'; }
     else if (P.conv < 0) { iTxt = `上凸：曲线位于切线下方 —— $f\\le l$ 全程成立（$x_0=1$ 给出经典 $\\ln x\\le x-1$）`; iCls = 'ok'; }
-    else if (Math.abs(x0) < 0.005) { iTxt = '拐点切线：$x_0=0$ 恰居中 —— 两侧各穿越一次，一半 $f\\ge l$ 一半 $f\\le l$（不等式失效）'; iCls = 'warn'; }
-    else if (x0 > 0) { iTxt = `$x_0>0$：凹区间 $(0,+\\infty)$ 内 $f\\ge l$ 成立（右半绿色带），进入左半轴变红 —— 切线放缩只在凹凸区间内有效`; iCls = 'warn'; }
-    else { iTxt = `$x_0<0$：凸区间 $(-\\infty,0)$ 内 $f\\le l$ 成立（左半红色带），进入右半轴变绿 —— 区间外失效`; iCls = 'warn'; }
+    else {
+      const cross = -2 * x0;
+      iTxt = `交点横坐标 $x=${fmt(cross, 2)}$。其左侧 $f\\le l$，右侧 $f\\ge l$。`;
+      iCls = '';
+      if (cross > M.X0 && cross < M.X1 && l(cross) > M.Y0 && l(cross) < M.Y1) {
+        B.dot(V(M.px(cross), M.py(l(cross))), 5, { fill: '#ff9e4a', stroke: '#0a0d14', 'stroke-width': 1.5 });
+      }
+    }
     cI(iTxt, iCls);
     cD(`差函数 $g=f-l$：$g(x_0)=0$、$g'(x_0)=0$ —— 恒成立 $\\Leftrightarrow$ $g$ 的最小值 $\\ge 0$（下凸）或最大值 $\\le 0$（上凸）`, '');
-    cH(`恒成立求参：临界条件 = 相切 —— 联立 $f(x_0)=a x_0+b$ 与 $f'(x_0)=a$ 解出临界，再判断哪一侧成立`, '');
+    cH(P.conv ? '若临界直线在内点接触曲线，该点的函数值和导数应分别等于直线在该点的值和斜率。'
+      : `$f(x)-l(x)=(x-x_0)^2(x+2x_0)$，颜色在 $x=-2x_0$ 处变化。`, '');
   };
 
   const btns = PRESETS.map((p, i) => B.btnM(p.name, () => {
@@ -83,7 +90,7 @@ export function createBoard(root) {
   const sl = B.slider('切点 x0', -1.6, 2.2, 0.05, 0, v2 => { st.x0 = v2; B.render(); });
   B.toggleBtn('间隙着色', true, on => { st.gap = on; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('绿=曲线在切线上方、红=下方：凸性定方向，穿越处变红 —— 恒成立的边界是切线');
+  B.hint("拖动切点，观察曲线和切线之间的差如何变号。");
   B.render();
   return B;
 }

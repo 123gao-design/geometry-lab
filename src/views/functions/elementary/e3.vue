@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="3" no="E3" base="/functions/e" :chapters="E_CHAPTERS"
-    title="幂函数：α 曲线族" sub="$y=x^{\alpha}$ —— 一个 $\alpha$ 走遍全族：抛物线、直线、根式、常数、双曲线五种类型，全部在 $(1,1)$ 交汇；负底数开不出偶次方，是定义域的首要限制。"
+    title="幂函数：α 曲线族" sub="幂指数决定曲线的形状，也影响负底数能否取幂。"
     :toc="[{ id: 'e3-family', t: '五档分类与恒过点（图 E3）' }, { id: 'e3-neg', t: '负底数：定义域的首要限制' }, { id: 'e3-cmp', t: '(1,1) 交点：曲线高低的次序规律' }]">
     <div class="note good" id="e3-family"><strong>幂函数</strong>：<Katex tex="y=x^{\alpha}" />（形如「底是自变量、指数是常数」）。全族无论 <Katex tex="\alpha" /> 取多少，都<strong>恒过 <Katex tex="(1,1)" /></strong>；<Katex tex="\alpha>0" /> 的还过 <Katex tex="(0,0)" />。按 <Katex tex="\alpha" /> 分五档：<Katex tex="\alpha>1" /> 抛物线型（越走越陡）、<Katex tex="\alpha=1" /> 直线（<Katex tex="45^\circ" />）、<Katex tex="0<\alpha<1" /> 根式型（起步陡、越走越缓）、<Katex tex="\alpha=0" /> 常数 <Katex tex="y=1" />（<Katex tex="x\ne 0" />）、<Katex tex="\alpha<0" /> 双曲线型（x 越大越贴 0，双渐近线 <Katex tex="x=0" />、<Katex tex="y=0" />）。在 (0,+∞) 上：<Katex tex="\alpha>0" /> 全体递增、<Katex tex="\alpha<0" /> 递减。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFamily" />
-      <div class="cap">图 E3 · <b>幂函数曲线族</b>：单栏全景，每条 α 曲线一个身份色 —— 拖滑块 α 变形，选中成员加粗亮出本命色。滑块 α 连续变形（⅓ 用立方根才有左支），「曲线族」开关淡显 α=−2…3 的八位成员；α&lt;0 时渐近线现身。</div>
+      <div class="cap">图 E3 · <b>幂函数曲线族</b>。拖动指数，观察曲线都经过 (1,1)。选择立方根和平方根，对比负半轴上是否有定义。</div>
     </div>
 
     <h3 class="sec" id="e3-neg">负底数：定义域的首要限制</h3>
@@ -21,7 +21,7 @@
         <li><strong>提示三：负指数在 <Katex tex="x=0" /> 处无定义。</strong><Katex tex="\alpha<0" /> 时 <Katex tex="x=0" /> 是竖直渐近线，「恒过 <Katex tex="(0,0)" />」只属于 <Katex tex="\alpha>0" /> 的成员。</li>
       </ul>
     </div>
-    <p>回收与预告：C3 的定义域限制、S3 的奇偶判据都在本章复发（整数与奇分母指数的情形才可能具有对称性）；E2 的根分布主角 <Katex tex="y=x^2" /> 只是 <Katex tex="\alpha=2" /> 的特例。往前看：E4、E5 则把底数固定下来 —— <Katex tex="x^{\alpha}" /> 与 <Katex tex="a^x" /> 一字之差，一个指数动、一个底数动，性质截然不同；<Katex tex="x^{\alpha}" /> 对 <Katex tex="\alpha" /> 的连续变形在 <Katex tex="\alpha=0" /> 处断开，V 系列的 <Katex tex="\ln x" /> 正是从这一断开处引入的。</p>
+    <p>幂函数固定指数、改变底数，指数函数固定底数、改变指数。比较曲线位置时也要注明讨论的定义域。</p>
   </ChPage>
 </template>
 <script setup>

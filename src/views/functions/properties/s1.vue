@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="1" no="S1" base="/functions/s" :chapters="S_CHAPTERS"
-    title="单调性：增减的规则" sub="关键在「任取」：区间内随便抓两点都要服从 —— 抽查只是例证，作差才是证明。"
+    title="单调性：增减的规则" sub="严格单调性比较的是同一区间内任意两个有序输入的函数值。"
     :toc="[{ id: 's1-def', t: '定义（图 S1）' }, { id: 's1-proof', t: '作差法证明模板' }, { id: 's1-warn', t: '三处易错' }]">
-    <div class="note good" id="s1-def"><strong>单调递增</strong>：设函数 f(x) 的定义域为 D，区间 <Katex tex="I\subseteq D" /> —— 若对任意 <Katex tex="x_1,x_2\in I" />，当 <Katex tex="x_1&lt;x_2" /> 时都有 <Katex tex="f(x_1)&lt;f(x_2)" />，则称 f(x) 在区间 I 上单调递增，I 叫单调递增区间。把不等号反过来即<strong>单调递减</strong>。两个关键词：<strong>区间</strong>（单调性是局部属性，离开区间没有意义）与<strong>任取</strong>（验证两个点不算数，必须对所有点成立）。</div>
+    <div class="note good" id="s1-def"><strong>严格单调递增</strong>：若区间 <Katex tex="I\subseteq D" /> 中任意两个点 <Katex tex="x_1&lt;x_2" /> 都满足 <Katex tex="f(x_1)&lt;f(x_2)" />，则 f 在 I 上严格递增。若函数值的不等号反向，则严格递减。</div>
     <div class="board-wrap">
       <BoardMount :factory="createMonoRead" />
-      <div class="cap">图 S1 · <b>单调性的定义</b>：两个把手沿曲线任取 <Katex tex="x_1" />、<Katex tex="x_2" /> —— 弦连两点、虚线引到 x 轴，徽章实时核验。① <Katex tex="x^2" /> 默认摆出 <Katex tex="x_1=-2" />、<Katex tex="x_2=2" />：等高！对称回折让"抽查"直接失效；② <Katex tex="x^3-3x" /> 增减交替，多点抽查才知道哪段单调；③ <Katex tex="1/x" /> 把两点拖到缺口两侧：样本支持"增"，判定却显示异常 —— 定义只对<strong>整个落在定义域内的区间</strong>成立。看点：判定徽章永远写着"抽查不是证明"。</div>
+      <div class="cap">图 S1 · <b>单调性的定义</b>。在同一段内拖动两点，再把点放到 1/x 的两支上，对比哪一组能用于判断区间单调性。</div>
     </div>
 
     <h3 class="sec" id="s1-proof">作差法证明模板</h3>

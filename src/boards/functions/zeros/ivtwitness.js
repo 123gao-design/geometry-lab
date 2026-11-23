@@ -4,11 +4,12 @@
    ④ 严格单调 + 异号 → 存在且唯一（单调是唯一性的来源）。
    两把手 a、b 锁曲线拖（只改横坐标）：绿带是区间、灰点是零点实况 —— 定理只说「有」，个数位置另算。
    图象规范：B.isoFit 等单位取景；公式一律 B.tex/btnM/chipM；网格 / 轴标注 两开关；零点与跳变点为必采锚点。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // cont 连续；mono 严格单调；zeros 静态零点（画灰点 + 采样锚点）；a/b 开场档位；jump 跳变点（③）
   const PRESETS = [
@@ -68,7 +69,7 @@ export function createBoard(root) {
     const P = PRESETS[st.p], M = MAPS[st.p];
     const { X0, X1, Y0, Y1 } = M;
     B.grid({ ...M, grid: st.grid, labs: st.labs });
-    B.tex(V(16, 24), P.eq, { size: 14, color: '#93a1b5', anchor: 'start' });
+    B.note(P.eq, '#93a1b5');
     // 曲线（③ 分两支画 + 跳变点：左极限空心、右取值实心）；零点与跳变点为必采锚点
     const xs = [];
     for (let x = M.X0; x <= M.X1 + 0.001; x += 0.04) xs.push(x);
@@ -102,8 +103,8 @@ export function createBoard(root) {
     const fa = P.f(st.a), fb = P.f(st.b);
     for (const [k, v, c] of [[st.a, fa, '#ffd166'], [st.b, fb, '#ff9e4a']])
       B.seg(V(px(k), py(v)), V(px(k), py(0)), { stroke: '#3f5f8f', 'stroke-dasharray': '3 5', 'stroke-opacity': .7 });
-    B.text(V(px(st.a), py(0) - 12), `a=${fmt(st.a, 2)}`, { 'font-size': 11, fill: '#ffd166', 'text-anchor': st.a > st.b ? 'end' : 'start' });
-    B.text(V(px(st.b), py(0) - 12), `b=${fmt(st.b, 2)}`, { 'font-size': 11, fill: '#ff9e4a', 'text-anchor': st.b < st.a ? 'end' : 'start' });
+    B.note(`a=${fmt(st.a, 2)}`, '#ffd166');
+    B.note(`b=${fmt(st.b, 2)}`, '#ff9e4a');
     // 徽章
     cA(`$f(a)=${fmt(fa, 2)}$`, '');
     cB(`$f(b)=${fmt(fb, 2)}$`, '');
@@ -132,7 +133,7 @@ export function createBoard(root) {
     B.render();
   }, { on: i === 0 }));
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('存在性定理只给「有」，不给「几个」也不给「在哪」—— ①里数一数，③里看跳变，④里要唯一加单调');
+  B.hint("拖动两个端点，分别核对连续性、端点符号和零点数。");
   B.render();
   return B;
 }

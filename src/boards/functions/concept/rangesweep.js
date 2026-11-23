@@ -2,11 +2,12 @@
    四个预设各带一种定义域限制（无 / 根号 / 分母 / 渐近缺口），扫描线扫过定义域，把 f(x) 投影到 y 轴上刷出「已取到的值」色带。
    图象规范：各预设 B.isoFit 等单位取景；绿带压 x 轴=定义域、金带压 y 轴=值域投影；特殊点（顶点/起点/最大点）金点标注；
    网格 / 轴标注 / 渐近线 三开关可隐藏。 */
-import { Board, mk, V } from '../../../lib/board.js';
+import { mk, V } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 500;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // 预设：box 取景框 [xa,xb,ya,yb]、[s0,s1] 扫描区间；f 解析式、d 定义域判定、dt/rt 定义域值域文本、how 求法、end 扫完点评
   // marks 特殊点 [x,y,标签]；asy 渐近线
@@ -86,7 +87,7 @@ export function createBoard(root) {
     swept(P);
     for (const [mx, my, mt] of P.marks) {
       B.dot(V(px(mx), py(my)), 4.5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
-      B.text(V(px(mx) + 14, py(my) - 10), mt, { 'font-size': 11, fill: '#ffd166', 'text-anchor': 'start' });
+      B.note(mt, '#ffd166');
     }
     // 扫描线 + 扫描点 + 投影虚线
     if (P.d(st.x)) {
@@ -96,7 +97,7 @@ export function createBoard(root) {
         B.dot(V(px(st.x), py(y)), 5.5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.5 });
         B.seg(V(px(st.x), py(y)), V(px(0), py(y)), { stroke: '#ffd166', 'stroke-dasharray': '4 4', 'stroke-opacity': .7 });
         B.dot(V(px(0), py(y)), 4, { fill: '#ffd166' });
-        B.text(V(px(st.x), py(y) - 12), `(${st.x.toFixed(1)}, ${y.toFixed(2)})`, { 'font-size': 11, fill: '#ffd166' });
+        B.note(`(${st.x.toFixed(1)}, ${y.toFixed(2)})`, '#ffd166');
       }
     }
     // 徽章
@@ -105,7 +106,7 @@ export function createBoard(root) {
     cVal(inView ? `f(${st.x.toFixed(2)}) = ${P.f(st.x).toFixed(3)}` : (P.d(st.x) ? `f(${st.x.toFixed(2)}) 越出视野` : `x=${st.x.toFixed(2)} 不在定义域内`), P.d(st.x) ? '' : 'warn');
     cRg(st.done ? `理论值域 ${P.rt}` : (st.min < st.max ? `已扫出 y∈[${Math.max(Y0, st.min).toFixed(2)}, ${Math.min(Y1, st.max).toFixed(2)}]（屏内所见）` : '拖「扫描 x」或按 ▶ 自动扫描'), st.done ? 'ok' : '');
     cHow(P.how, '');
-    if (st.done) B.text(V(70, 76), '· 扫描点评：' + P.end, { 'font-size': 12.5, fill: '#4ade80', 'text-anchor': 'start' });
+    if (st.done) B.note('· 扫描点评：' + P.end, '#4ade80');
   };
 
   const btns = PRESETS.map((p, i) => B.btnM(p.name, () => {
@@ -141,7 +142,7 @@ export function createBoard(root) {
     B.raf(step);
   });
   B.graphToggles(st);
-  B.hint('拖「扫描 x」或按 ▶ 自动扫描：扫描点把 f(x) 投影到 y 轴，读出已取到的值域');
+  B.hint("拖动扫描点，观察 y 轴上能取到的值。");
   B.render();
   return B;
 }

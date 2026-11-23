@@ -4,11 +4,12 @@
    曲线按 f 的符号分色（绿正红负）—— 颜色交界的穿轴处就是零点；二重零点不分色，R2 的坑在此提前出现。
    图象规范：B.isoFit 等单位取景；公式一律 B.tex/btnM/chipM（tex 段内禁中文）；
    网格 / 轴标注 / 渐近线三开关；零点为必采锚点（曲线精确踩到金点上）。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // zeros：零点（必采锚点）；asy 渐近线；sInit/ur：探针初始档位与滑块范围；zTag 零点清单附注
   const PRESETS = [
@@ -61,7 +62,7 @@ export function createBoard(root) {
     const { X0, X1, Y0, Y1 } = M;
     B.grid({ ...M, grid: st.grid, labs: st.labs });
     if (st.asym && P.asy.length) B.asym(M, P.asy);
-    B.tex(V(16, 24), P.eq, { size: 14, color: '#93a1b5', anchor: 'start' });
+    B.note(P.eq, '#93a1b5');
     plot(1, { stroke: '#4ade80', 'stroke-width': 2.2 });
     plot(-1, { stroke: '#ff7b8a', 'stroke-width': 2.2 });
     for (const z of P.zeros) B.dot(V(px(z), py(0)), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
@@ -76,7 +77,7 @@ export function createBoard(root) {
           ? (Math.abs(near - Math.round(near)) < 1e-9 ? `($${fmt(near, 0)}$, 0)` : `(≈ $${fmt(near, 2)}$, 0)`)
           : `($${fmt(x, 2)}$, ${fmtY(y)})`;
         B.dot(V(px(x), py(y)), 5.5, { fill: '#ff9e4a', stroke: '#0a0d14', 'stroke-width': 1.4 });
-        B.tex(V(px(x) + 9, py(y) - 10), t, { size: 12.5, color: '#ff9e4a', anchor: 'start' });
+        B.note(t, '#ff9e4a');
       }
     }
     // 三语言读数：命中（离某零点 < 0.07）则同时点亮；整根用 =，无理根只能 ≈
@@ -117,7 +118,7 @@ export function createBoard(root) {
     B.render();
   }, { on: i === 0 }));
   B.graphToggles(st);
-  B.hint('零点是数不是点：f(c)=0 ⇔ f(x)=0 的根 ⇔ 交点横坐标 —— 判定只认第一个，写答案时零点用数表示');
+  B.hint("比较穿过横轴和只接触横轴的零点。");
   B.render();
   return B;
 }

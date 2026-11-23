@@ -1,11 +1,12 @@
 /* 图 V3 · 极值最值判定机：f′=0 找驻点、两侧变号定极值、闭区间把端点并入候选点集。
    曲线按 f′ 符号染色（S2 复用：绿=增、红=减）；驻点变号→金点，驻点不变号→红空圈排除；
    区间 [p,q] 虚线围栏，候选点 = 极值点 ∪ 端点，逐个比较得最大最小。整框 isoFit 等单位。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   const PRESETS = [
     { name: '① $f=x^3-3x$', f: x => x * x * x - 3 * x, fp: x => 3 * x * x - 3, crits: [-1, 1], xa: -2.6, xb: 2.6, ya: -4.4, yb: 4.4 },
@@ -88,7 +89,7 @@ export function createBoard(root) {
   const slP = B.slider('区间左端 p', -2.45, -0.05, 0.05, -1.8, v2 => { st.a = v2; B.render(); });
   const slQ = B.slider('区间右端 q', 0.05, 2.45, 0.05, 1.8, v2 => { st.b = v2; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint('找极值看驻点两侧变号；找最值把端点也请进候选 —— 金点出极值，灰点端点完结');
+  B.hint("移动区间端点，检查最大值和最小值的候选点。");
   B.render();
   return B;
 }

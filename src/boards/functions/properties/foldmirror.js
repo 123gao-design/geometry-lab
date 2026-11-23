@@ -2,11 +2,12 @@
    折叠滑块 t 从 0 到 1：右半曲线连续翻转（金），折毕与左半（蓝）完全重合 ⇔ f(−x)=f(x)（偶）或 f(−x)=−f(x)（奇）。
    五个预设：① x²（偶）② x³（奇）③ 1/x（奇·带渐近线）④ √x（定义域不对称，前提不满足）⑤ x²+x（对称却非奇非偶）。
    图象规范：B.isoFit 等单位取景；网格 / 轴标注 / 渐近线 三开关可隐藏；特殊点灰点标注。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
+import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
-  const B = new Board(root, W, H);
+  const B = new FunctionBoard(root, W, H);
 
   // box 取景框；mode 'ref' 沿 y 轴翻折（偶）/ 'rot' 绕原点旋转（奇）；marks 特殊点；asy 渐近线；ver 判定文案
   const PRESETS = [
@@ -90,7 +91,7 @@ export function createBoard(root) {
     const imX = k * st.x0, imY = P.mode === 'ref' ? y0 : k * y0;
     B.seg(V(px(st.x0), py(y0)), V(px(imX), py(imY)), { stroke: '#ff9e4a', 'stroke-dasharray': '4 4', 'stroke-opacity': .8 });
     B.dot(V(px(imX), py(imY)), 5, { fill: '#ff9e4a' });
-    if (st.t > 0.01) B.text(V(px(imX), py(imY) - 12), `像 (${fmt(imX, 2)}, ${fmt(imY, 2)})`, { 'font-size': 11, fill: '#ff9e4a' });
+    if (st.t > 0.01) B.note(`像 (${fmt(imX, 2)}, ${fmt(imY, 2)})`, '#ff9e4a');
     // 徽章
     const ok0 = P.d(st.x0), okm = P.d(-st.x0);
     cF(ok0 ? `f(${fmt(st.x0, 2)}) = ${fmt(y0, 2)}` : 'x₀ 不在定义域内', ok0 ? '' : 'warn');
@@ -118,7 +119,7 @@ export function createBoard(root) {
   }, { on: i === 0 }));
   const sl = B.slider('折叠 t', 0, 1, 0.01, 0, v => { st.t = v; B.render(); });
   B.graphToggles(st);
-  B.hint('t 拖到 1：金色半张折过去 —— 沿 y 轴折拢=验偶，绕原点转半圈=验奇；折不拢就都不是');
+  B.hint("将变换进度拖到末端，检查两部分是否重合。");
   B.render();
   return B;
 }

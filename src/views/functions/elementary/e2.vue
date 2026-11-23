@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="2" no="E2" base="/functions/e" :chapters="E_CHAPTERS"
-    title="二次函数：区间最值与根的分布" sub="抛物线在全轴上有顶点，但考题问的是闭区间 [p,q] 上 —— 顶点是否落在区间内，决定最值由顶点还是端点取得；同样一套顶点+端点的工具，再问实根相对参照区间落在哪。定轴动区间、动轴定区间、根的分布三项判据，一并验证。"
+    title="二次函数：区间最值与根的分布" sub="闭区间内的二次函数最值取决于顶点和端点。判断根的位置还需检查判别式。"
     :toc="[{ id: 'e2-thm', t: '区间最值定理（图 E2）' }, { id: 'e2-dyn', t: '双动态：两类大题型' }, { id: 'e2-pos', t: '根的分布（图 E2b）' }, { id: 'e2-pit', t: '距离语言与易错点' }]">
     <div class="note good" id="e2-thm"><strong>区间最值（a&gt;0）</strong>：设对称轴 <Katex tex="x^*=-\dfrac{b}{2a}" />、区间 <Katex tex="[p,q]" />。①轴在区间内（<Katex tex="p\le x^*\le q" />）：min 在顶点 <Katex tex="f(x^*)=\dfrac{4ac-b^2}{4a}" />，max 在距轴较远的端点；②轴在左外（<Katex tex="x^*&lt;p" />）：min=f(p)、max=f(q)；③轴在右外（<Katex tex="x^*&gt;q" />）：min=f(q)、max=f(p)。开口向下（a&lt;0）时全部对调：顶点管 max，端点压 min。</div>
     <div class="board-wrap">
       <BoardMount :factory="createQuadmin" />
-      <div class="cap">图 E2 · <b>闭区间上的最值</b>：① 定轴动区间 —— 拖把手 p、q 扫过轴；② 动轴定区间 —— 滑块 t 拖顶点穿过 [1,4]；③ 开口向下时判定相反。绿点=min 位点、红点=max 位点，徽章实时核验；蓝带 = 区间，金点 = 顶点。</div>
+      <div class="cap">图 E2 · <b>闭区间上的最值</b>。移动顶点或端点，比较顶点与两端的函数值，观察最值点何时切换。</div>
     </div>
 
     <h3 class="sec" id="e2-dyn">双动态：两类大题型</h3>
@@ -16,7 +16,7 @@
     <div class="note good"><strong>根分布</strong>：已知 <Katex tex="ax^2+bx+c=0" />（<Katex tex="a\ne 0" />），问实根相对某个参照位置（点 k 或参照区间 <Katex tex="(1,3)" />）落在哪侧/之内。全部工具与最值共用，只有三项：① <strong>Δ</strong> —— 根存在吗（<Katex tex="\Delta=b^2-4ac\ge 0" /> 是一切讨论的前提，无根则不必讨论分布）；② <strong>对称轴</strong> <Katex tex="x=-\dfrac{b}{2a}" /> —— 根的「平均位置」（两根之和的一半），轴在哪，两根整体就在哪；③ <strong>端点符号 a·f(k)</strong> —— k 在两根之内还是之外，一个乘积即可判定。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRootDist" />
-      <div class="cap">图 E2b · <b>一元二次方程根的分布</b>：绿带是参照区间 (1,3)、金点是两根 r₁ r₂、灰点是顶点。① 顶点滑动：拖 t 看两根经历「左外 → 一内一外 → 都在内 → 右外」；② 顶点固定在左端点 x=1 上：无实根（悬空）、c=1 双根压线、一内一外 —— 压线情形单独讨论；③ 开口向下 a=−1：同样的五态，但 a·f(k) 的符号跟着对调。判定徽章实时分类，k 检验徽章直接验证 a·f(1)、a·f(3)。</div>
+      <div class="cap">图 E2b · <b>一元二次方程根的分布</b>。移动顶点与纵向位置，对照无实根、重根及根落在区间内外的情形。端点函数值为零时，该端点本身是根。</div>
     </div>
     <p>最常用的一条判据：<strong>一根小于 <Katex tex="k" />、一根大于 <Katex tex="k" /> <Katex tex="\iff" /> <Katex tex="a\cdot f(k)<0" /></strong>。推导只有一行 —— 设两根 <Katex tex="r_1\le r_2" />，把 <Katex tex="f" /> 写成因式分解形，代入 <Katex tex="k" />：</p>
     <Katex tex="f(k)=a(k-r_1)(k-r_2)\quad\Longrightarrow\quad a\cdot f(k)=a^2(k-r_1)(k-r_2)" display />
@@ -38,7 +38,7 @@
         <li><strong>提示一：忘 Δ。</strong>无根则不必讨论分布 —— 先查 <Katex tex="\Delta" /> 再动笔（图 E2b ② 的悬空态）。</li>
         <li><strong>提示二：忘开口方向。</strong>记「f(k)&gt;0」而不带 a 是常见错误：判据是 <strong>a·f(k)</strong> 的符号，开口向下时全部对调（图 E2b ③）。</li>
         <li><strong>提示三：压线情形。</strong>根恰好落在端点（双根压线、或单根压线）时开闭区间口径不同 —— 图 E2b ② c=1 的双根恰好压在 1 上，判定徽章单独提示，答题时「等号要不要并进」要看题目的开闭。</li>
-        <li><strong>提示四：把「一根 &gt; k」当「两根 &gt; k」。</strong>前者只需查 a·f(k)&lt;0 的反面，后者要三查齐全 —— 读题分清「恰有一根」与「两根都」。</li>
+        <li><strong>提示四：区分分居两侧与两根在同侧。</strong><Katex tex="a f(k)<0" /> 表示两根严格分居 k 两侧。两根都大于 k 时，还要结合判别式、端点值和对称轴所在的一侧来判断。</li>
       </ul>
     </div>
     <p>回收与预告：S4 的界墙机问「值域有没有墙」—— 本章在闭区间上把墙的上下界落实为 <Katex tex="\max/\min" />；S2 的顶点与对称轴在本章先是「最值的位置」，再充当根分布里「根的平均位置」，同一根对称轴的两种用法。E7 对勾函数在区间上的最值是它的推广（顶点不在原点、还带渐近线）；V3 将用 <Katex tex="f'=0" /> 统一「确定最值点」这件事 —— 那时「轴在不在区间内」会变成「驻点在不在区间内」。</p>

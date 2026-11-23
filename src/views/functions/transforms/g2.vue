@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="2" no="G2" base="/functions/g" :chapters="G_CHAPTERS"
-    title="伸缩与翻折：横除纵乘" sub="$y=b\cdot f(ax)$ —— 横向压到 $1/a$、纵向拉到 $b$ 倍；负号自带翻折：$a<0$ 沿 y 轴、$b<0$ 沿 x 轴。横是除、纵是乘，又一对方向相反的算术。"
+    title="伸缩与翻折：横除纵乘" sub="在 y=b f(ax) 中，横坐标除以非零的 a，纵坐标乘以 b。负号对应轴反射。"
     :toc="[{ id: 'g2-law', t: '伸缩定理：为什么横是除（图 G2）' }, { id: 'g2-sign', t: '负号：翻折就是乘 −1' }, { id: 'g2-pit', t: '横纵混淆与易错点' }]">
     <div class="note good" id="g2-law"><strong>伸缩定理</strong>：<Katex tex="y=f(ax)" /> 把 <Katex tex="y=f(x)" /> 的图象横向变为原来的 <Katex tex="\dfrac{1}{a}" />（a&gt;1 压缩、0&lt;a&lt;1 拉伸）；<Katex tex="y=b\,f(x)" /> 纵向变为原来的 b 倍。图上的点 <Katex tex="(x_0,y_0)" /> 变到 <Katex tex="\left(\dfrac{x_0}{a},\ b\,y_0\right)" /> —— 横坐标除、纵坐标乘，方向相反。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFold" />
-      <div class="cap">图 G2 · <b>伸缩与翻折</b>：原图 <Katex tex="\sqrt{x}"/> 固定，a、b 两个滑块从正拖到负 —— 曲线先塌缩再从另一侧展开，翻折由符号一并决定，无需另设开关。特征点 (1,1)、(4,2) 与它们的像实时核验；探针连线读出「横除纵乘」。</div>
+      <div class="cap">图 G2 · <b>伸缩与翻折</b>。从正值切到负值，观察根式图象移到哪一侧。用对应点核对变换后的坐标。</div>
     </div>
 
     <h3 class="sec" id="g2-law">伸缩定理：为什么横是除</h3>
@@ -13,7 +13,7 @@
     <p>横纵记录对照 G1 一张表收齐：<strong>平移用加减（横内竖外）、伸缩翻折用乘除（横内竖外）</strong> —— 位置变用加减、形状变用乘除；写在括号里管横、写在括号外管纵。这两句把 G1+G2 的所有公式装订成册。</p>
 
     <h3 class="sec" id="g2-sign">负号：翻折就是乘 −1</h3>
-    <p><Katex tex="f(-x)" />：a=−1 的横向伸缩 —— 输入端乘 −1，图象沿 <strong>y 轴</strong>翻折（S3 的偶函数判据、E8 的 <Katex tex="f(|x|)" /> 都是它的对应形式）；<Katex tex="-f(x)" />：b=−1 的纵向伸缩 —— 输出端乘 −1，图象沿 <strong>x 轴</strong>翻折（E8 的 <Katex tex="|f|" /> 翻上来的镜像对偶）。翻折不必单独背：它就是「乘 −1 的伸缩」，<strong>符号管镜像、绝对值管幅度</strong> —— 图 G2 把 a 从 2 拖到 −2，曲线连续地压扁、塌缩、再从左边展开，翻折是伸缩连续过渡的结果，不是另一次跳变。</p>
+    <p><Katex tex="f(-x)" /> 的图象由原图关于 y 轴反射得到，<Katex tex="-f(x)" /> 的图象由原图关于 x 轴反射得到。一般地，横向比例为 <Katex tex="1/|a|" />，纵向比例为 <Katex tex="|b|" />。系数为零时需单独检查定义域及退化后的表达式。</p>
 
     <h3 class="sec" id="g2-pit">横纵混淆与易错点</h3>
     <div class="note warn tip">
