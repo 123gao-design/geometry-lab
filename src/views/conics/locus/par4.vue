@@ -1,10 +1,10 @@
 <template>
   <ChPage :cur="4" no="P4" base="/conics/par" :chapters="PAR_CHAPTERS"
     title="极坐标方程：把焦点放在原点" sub="换个坐标，统一定义被压缩成一行：$\rho(1-e\cos\theta)=ed$。三种曲线共用同一串字符，只有 e 在变 —— 顶点、通径、焦点弦公式全部直接得到。"
-    :toc="[{ id: 'p4-lab', t: '极坐标机实验（图 P4）' }, { id: 'p4-der', t: '推导 · 统一定义的直译' }, { id: 'p4-rec', t: '回收直角坐标 · 三曲线' }, { id: 'p4-use', t: '焦点弦 · 倒数和恒为常数' }]">
+    :toc="[{ id: 'p4-lab', t: '极坐标方程（图 P4）' }, { id: 'p4-der', t: '推导 · 统一定义的直译' }, { id: 'p4-rec', t: '回收直角坐标 · 三曲线' }, { id: 'p4-use', t: '焦点弦 · 倒数和恒为常数' }]">
     <div class="note good"><strong>本讲主角</strong>：以焦点 <Katex tex="F" /> 为极点、极轴<strong>背对准线</strong>的极坐标方程。记 <Katex tex="d" /> 为焦点到准线的距离，则圆锥曲线的统一定义 <Katex tex="|PF|=e\cdot d(P,\,l)" /> 逐字翻译成 <Katex tex="\rho(1-e\cos\theta)=ed" />，即 <Katex tex="\rho=\dfrac{ed}{1-e\cos\theta}" />。</div>
 
-    <h3 class="sec" id="p4-lab">极坐标机实验</h3>
+    <h3 class="sec" id="p4-lab">极坐标方程</h3>
     <div class="board-wrap">
       <BoardMount :factory="createPolarCon" />
       <div class="cap">图 P4 · <b>圆锥曲线的极坐标方程</b>：拖 θ 看统一定义重现 —— <strong>|PF| 与 P 到准线的垂线段实时读数，比值固定为 e</strong>。滑 e 穿过 1：椭圆 → 抛物线 → 双曲线连续变形（D4 的变化过程换一种坐标重新呈现），中心从极点右侧滑向无穷、再从左侧回来。绿色对径点 Q 与 P 构成焦点弦，右下角倒数和恒为 <Katex tex="\tfrac{2}{ed}" />。</div>
@@ -36,7 +36,7 @@
     <p>倒数相加，分母恰好对消：</p>
     <Katex tex="\frac{1}{\rho_1}+\frac{1}{\rho_2}=\frac{1}{ed}\Big[(1-e\cos\theta)+(1+e\cos\theta)\Big]=\frac{2}{ed}" display />
     <p><strong>与方向 θ 无关</strong> —— 每条焦点弦都被焦点切成「倒数和恒定」的两段（调和平均）。两个直接推论：<strong>①</strong> 弦长 <Katex tex="L=\rho_1+\rho_2=\tfrac{2ed}{1-e^2\cos^2\theta}" />，P3 焦点弦公式由两行极坐标代数直接得出；<strong>②</strong> 最短在 <Katex tex="\theta=90^\circ" />（通径），P3 的最值结论在此免证。</p>
-    <p><strong>回收</strong>：D4 统一定义（同一定义、另一种坐标 —— e 的连续变形在这里尤其直观）、D3 抛物线（e=1 那一行）、P3 焦点弦与通径（公式不用韦达定理）、子专题一的调和点列（倒数和恒定的分割正是调和的度量形式）、P1 参数（θ 是「从焦点看出去」的第三种参数视角）。</p>
+    <p><strong>回收</strong>：D4 统一定义（同一定义、另一种坐标 —— e 的连续变形在这里尤其直观）、D3 抛物线（e=1 那一行）、P3 焦点弦与通径（公式不用韦达定理）、子专题六的调和点列（倒数和恒定的分割正是调和的度量形式）、P1 参数（θ 是「从焦点看出去」的第三种参数视角）。</p>
   </ChPage>
 </template>
 <script setup>

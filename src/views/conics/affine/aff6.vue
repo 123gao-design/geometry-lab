@@ -1,10 +1,10 @@
 <template>
   <ChPage :cur="6" no="A6" base="/conics/aff" :chapters="AFF_CHAPTERS"
     title="一般二次方程：移轴、转轴与分类" sub="任意 $Ax^2+Bxy+Cy^2+Dx+Ey+F=0$ 都是圆锥曲线（或其退化）—— 三步考古把它挖回标准形：$B^2-4AC$ 定类型、一阶偏导找中心移轴、$\tan 2\theta=B/(A-C)$ 转轴消交叉项。新系数就是特征值，A5 的对勾函数在这里直接核验。"
-    :toc="[{ id: 'a6-lab', t: '考古机实验（图 A6）' }, { id: 'a6-type', t: '第一步 · $B^2-4AC$ 定类型' }, { id: 'a6-move', t: '移轴与转轴 · 消一次项与交叉项' }, { id: 'a6-std', t: '标准形 · e 的统一公式与核验' }]">
+    :toc="[{ id: 'a6-lab', t: '化简全流程（图 A6）' }, { id: 'a6-type', t: '第一步 · $B^2-4AC$ 定类型' }, { id: 'a6-move', t: '移轴与转轴 · 消一次项与交叉项' }, { id: 'a6-std', t: '标准形 · e 的统一公式与核验' }]">
     <div class="note good"><strong>本讲主角</strong>：一般二次曲线 <Katex tex="Ax^2+Bxy+Cy^2+Dx+Ey+F=0" />（<Katex tex="A,B,C" /> 不全为零）。三步考古步骤：<strong>①</strong> <Katex tex="B^2-4AC" /> 的符号定类型（旋转、平移都不改它）；<strong>②</strong> 若 <Katex tex="4AC-B^2\ne0" />（有心曲线），解一阶条件找中心、移轴消一次项；<strong>③</strong> 取 <Katex tex="\tan 2\theta=\tfrac{B}{A-C}" /> 转轴消交叉项，新系数即特征值 <Katex tex="\lambda_\pm=\tfrac{(A+C)\pm\sqrt{(A-C)^2+B^2}}2" />。抛物型（<Katex tex="4AC-B^2=0" />）没有中心，步骤对调：先转轴、再配方。</div>
 
-    <h3 class="sec" id="a6-lab">考古机实验</h3>
+    <h3 class="sec" id="a6-lab">化简全流程</h3>
     <div class="board-wrap">
       <BoardMount :factory="createQuadDig" />
       <div class="cap">图 A6 · <b>一般二次方程的化简</b>：滑六个系数看曲线形态改变，读数区把三个步骤全部列出 —— 类型 → 中心 → 特征值 → 标准形（e 与焦点自动给出）。预设按钮一键回到典型曲线：按下「对勾」，读数区给出 <strong><Katex tex="e\approx 1.082" /></strong>、转轴角 <Katex tex="67.5^\circ" />、半轴 2.20 与 0.91 —— 与 A5 的 <Katex tex="\sec(\psi/2)" /> 一字不差。</div>

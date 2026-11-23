@@ -1,10 +1,10 @@
 <template>
   <ChPage :cur="3" no="P3" base="/conics/par" :chapters="PAR_CHAPTERS"
     title="焦点弦与通径" sub="过焦点的弦有多长？$L=2ed/(1-e^2\cos^2\theta)$：$\theta=90^\circ$ 最短（通径），$\theta\to 0$ 最长；以焦点弦为直径的圆与准线只隔着 e 的三段取值。"
-    :toc="[{ id: 'p3-lab', t: '焦点弦实验机（图 P3）' }, { id: 'p3-der', t: '弦长公式 · 极坐标两行' }, { id: 'p3-cor', t: '推论 · 调和平均与三态定理' }, { id: 'p3-par', t: '抛物线经典题清单' }]">
+    :toc="[{ id: 'p3-lab', t: '焦点弦（图 P3）' }, { id: 'p3-der', t: '弦长公式 · 极坐标两行' }, { id: 'p3-cor', t: '推论 · 调和平均与三态定理' }, { id: 'p3-par', t: '抛物线经典题清单' }]">
     <div class="note good"><strong>焦点弦</strong>：过焦点的弦。它是三种圆锥曲线共享的高频考点 —— 因为 D4 的极坐标公式 <Katex tex="r=\dfrac{ed}{1+e\cos\theta}" /> 在这里直接发挥作用。</div>
 
-    <h3 class="sec" id="p3-lab">焦点弦实验机</h3>
+    <h3 class="sec" id="p3-lab">焦点弦</h3>
     <div class="board-wrap">
       <BoardMount :factory="createFocalChord" />
       <div class="cap">图 P3 · <b>焦点弦</b>：金色光脉冲沿弦 P₁P₂ 穿过焦点；以焦点弦为直径的圆与准线的<strong>关系只由 e 决定</strong> —— 拖 e 滑块连续变形，看圆从与准线相离，跨过恰好相切，变成与准线相交。</div>

@@ -1,10 +1,10 @@
 <template>
   <ChPage :cur="2" no="L2" base="/conics/lin" :chapters="LIN_CHAPTERS"
     title="韦达定理与弦长公式" sub="联立之后别急着求根：对称多项式 $x_1+x_2$、$x_1x_2$ 把「根」整包取走 —— 弦长、中点、面积全都不需要知道根本身。流程第二道步骤。"
-    :toc="[{ id: 'l2-lab', t: '弦长机实验（图 L2）' }, { id: 'l2-der', t: '推导 · 韦达四件套与弦长' }, { id: 'l2-mid', t: '中点与点差法' }, { id: 'l2-use', t: '速用三则' }]">
+    :toc="[{ id: 'l2-lab', t: '弦长公式（图 L2）' }, { id: 'l2-der', t: '推导 · 韦达四件套与弦长' }, { id: 'l2-mid', t: '中点与点差法' }, { id: 'l2-use', t: '速用三则' }]">
     <div class="note good"><strong>本讲主角</strong>：联立消元得 <Katex tex="Ax^2+Bx+C=0" /> 后，韦达定理立刻奉上 <Katex tex="x_1+x_2=-\tfrac{B}{A}" /> 与 <Katex tex="x_1x_2=\tfrac{C}{A}" />。凡目标式对称（只含 <Katex tex="x_1+x_2" />、<Katex tex="x_1x_2" />），就不必求根 —— 这是整条解析几何流程最省力的一步。</div>
 
-    <h3 class="sec" id="l2-lab">弦长机实验</h3>
+    <h3 class="sec" id="l2-lab">弦长公式</h3>
     <div class="board-wrap">
       <BoardMount :factory="createChordLen" />
       <div class="cap">图 L2 · <b>弦长公式</b>：拖直线扫过椭圆，弦 AB、中点 M 实时读数。读数区把两套弦长公式并排亮出：<strong>实测弦长 <Katex tex="=\tfrac{\sqrt{\Delta}}{|A|}" />（沿线参数）<Katex tex="=\sqrt{1+k^2}\cdot|x_1-x_2|" /></strong>，中点读数则实时验证 <strong><Katex tex="k_{\text{chord}}\cdot k_{OM}=-\tfrac{b^2}{a^2}" /></strong>（A2 的点差法在此 live）。</div>

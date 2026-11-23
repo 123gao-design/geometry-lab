@@ -1,54 +1,59 @@
-/* 图 5 · 完全四点形造极线：旋转割线，极线纹丝不动 */
-import { Board, mk, V, add, sub, mul, len, dist, lineConic, interLL, polarLine, plEval, lineFromEq, fmt } from '../../../lib/board.js';
+/* 图 5 · 两条割线构造自配极三角形 */
+import { V, add, sub, len, mul, dist, lineConic, fmt } from '../../../lib/board.js';
+import { cross3, dot3, infinityLine, unitPolar } from '../../../lib/projective/homogeneous.js';
+import { blue, gold, guide, ink, pink, lineStyle, createDiagram, drawEllipse, drawLine, mark, pointStatus, toCanvas, toLocal } from '../../../lib/projective/diagram.js';
 
 export function createBoard(root) {
-  const B = new Board(root, 800, 540);
-  const E = { cx: 400, cy: 270, a: 170, b: 115 };
-  const st = { P: V(610, 120), t1: 2.6, t2: 1.05, showPolar: true };
-  B.handle({ get: () => st.P, set: p => { st.P = p; }, color: '#fff', r: 8, label: 'P', lo: [11, -12] });
-  for (const k of ['t1', 't2'])
-    B.handle({ get: () => add(st.P, mul(V(Math.cos(st[k]), Math.sin(st[k])), 85)),
-      set: p => { const d = sub(p, st.P); if (len(d) > 18) st[k] = Math.atan2(d.y, d.x); },
-      color: '#ff9e4a', r: 6, thin: true, lo: [10, -10] });
-  B.toggleBtn('显示公式极线（对照）', st.showPolar, v => { st.showPolar = v; B.render(); });
-  const chip1 = B.chip('割线'), chip2 = B.chip('|QR − 公式极线|');
-  const cut = th => { const dir = V(Math.cos(th), Math.sin(th));
-    return lineConic(E, sub(st.P, mul(dir, 800)), add(st.P, mul(dir, 800))); };
+  const B = createDiagram(root, 720, 440, '旋转两条割线，观察 Q、R 确定的极线');
+  const frame = { cx: 345, cy: 220, a: 153, b: 108 };
+  const initial = V(547, 169);
+  let P = initial, angles = [2.3, 2.78], show = true;
+  const direction = t => V(Math.cos(t), Math.sin(t));
+  B.handle({ get: () => P, set: p => { P = p; }, color: ink, label: 'P', lo: [12, 19] });
+  angles.forEach((_, i) => B.handle({ get: () => add(P, mul(direction(angles[i]), 61)),
+    set: p => {
+      const d = sub(p, P);
+      if (len(d) > 12) angles[i] = Math.atan2(d.y, d.x);
+    }, color: gold, thin: true }));
+  const reset = (point, t) => { P = point; angles = t; B.render(); };
+  B.btn('外点构造', () => reset(initial, [2.3, 2.78]));
+  B.btn('中心构造', () => reset(V(frame.cx, frame.cy), [2.3, 2.78]));
+  B.toggleBtn('叠加公式极线', show, value => { show = value; B.render(); });
+  const status = B.chip('对角点'), check = B.chip('构造线 QR');
+
   B.renderFn = () => {
-    mk('ellipse', { cx: E.cx, cy: E.cy, rx: E.a, ry: E.b, fill: 'rgba(92,173,255,.05)', stroke: '#3f5f8f', 'stroke-width': 2 }, B.dyn);
-    const c1 = cut(st.t1), c2 = cut(st.t2);
-    const Lp = polarLine(E, st.P);
-    const bad = (!c1 || !c2 || Math.abs(Math.sin(st.t1 - st.t2)) < 0.04);
-    if (bad) { chip1('割线退化（相切 / 两线重合 / 虚割线）—— 转动橙色把手即可', 'warn'); chip2('—'); }
-    else {
-      const [A, Bl] = c1, [C, Dd] = c2;
-      chip1('两条实割线：交出 A, B 与 C, D', 'ok');
-      // 四条“交叉”连线
-      const q = interLL(A, C, Bl, Dd), r = interLL(A, Dd, Bl, C);
-      for (const [p1, p2] of [[A, C], [Bl, Dd], [A, Dd], [Bl, C]]) {
-        if (p1 && p2 && q && r && dist(p1, p2) > 0) B.inf(p1, p2, { stroke: '#8a6a3a', 'stroke-width': 1, 'stroke-dasharray': '4 4', opacity: .6 });
-      }
-      // 割线
-      const d1 = V(Math.cos(st.t1), Math.sin(st.t1)), d2 = V(Math.cos(st.t2), Math.sin(st.t2));
-      B.seg(sub(st.P, mul(d1, 800)), add(st.P, mul(d1, 800)), { stroke: '#7a5a30', 'stroke-width': 1, opacity: .55 });
-      B.seg(sub(st.P, mul(d2, 800)), add(st.P, mul(d2, 800)), { stroke: '#7a5a30', 'stroke-width': 1, opacity: .55 });
-      // A,B,C,D
-      const lab = ['A', 'B', 'C', 'D'], pts = [A, Bl, C, Dd];
-      pts.forEach((p, i) => { B.dot(p, 4.5, { fill: '#8fa3bd', stroke: '#fff', 'stroke-width': 1.4 });
-        B.text(V(p.x, p.y - 10), lab[i], { fill: '#93a1b5', 'font-size': 11, 'font-weight': 700 }); });
-      // Q, R 与 QR
-      if (q && r) {
-        B.inf(q, r, { stroke: '#ff7b8a', 'stroke-width': 2.8 });
-        for (const [pt, nm] of [[q, 'Q'], [r, 'R']]) {
-          if (Math.abs(pt.x) < 800 && Math.abs(pt.y) < 600) { B.dot(pt, 5.5, { fill: '#ff7b8a', stroke: '#fff', 'stroke-width': 2 });
-            B.text(V(pt.x, pt.y - 12), nm, { fill: '#ff7b8a', 'font-size': 12, 'font-weight': 700 }); } }
-        const dev = Math.max(Math.abs(plEval(Lp, q)), Math.abs(plEval(Lp, r)));
-        chip2(`${fmt(dev, 2)} px（理论为 0）`, dev < 0.5 ? 'ok' : 'warn');
-      }
-      B.hint('拖动两个橙色把手旋转割线 —— 粉线 QR（P 的极线）纹丝不动；拖动 P 本身，它才移动');
+    drawEllipse(B, frame);
+    const d = angles.map(direction);
+    const cuts = d.map(dir => lineConic(frame, P, add(P, dir)));
+    d.forEach(dir => {
+      B.inf(P, add(P, dir), { ...lineStyle(gold, 1.25, '4 7'), opacity: .66 });
+      B.seg(P, add(P, mul(dir, 61)), lineStyle(gold, 2));
+    });
+    const p = unitPolar(toLocal(frame, P));
+    if (show) drawLine(B, frame, p, lineStyle(blue, 2.2, '7 6'));
+    if (cuts.some(pair => !pair || dist(...pair) < 1e-4)
+      || Math.abs(Math.sin(angles[1] - angles[0])) < 1e-6
+      || Math.abs(dot3(toLocal(frame, P), p)) < 1e-10) {
+      status('需要两条不同的实割线及四个不同的交点', 'warn');
+      check('请调整割线或移动 P');
+      return;
     }
-    if (st.showPolar) { const [a, b] = lineFromEq(Lp.A, Lp.B, Lp.D);
-      B.inf(a, b, { stroke: '#5cadff', 'stroke-width': 1.6, 'stroke-dasharray': '9 6' }); }
+    const canvasPoints = cuts.flat(), [a, b, c, dPoint] = canvasPoints.map(point => toLocal(frame, point));
+    const sides = [[a, c], [b, dPoint], [a, dPoint], [b, c]].map(pair => cross3(...pair));
+    sides.forEach(l => drawLine(B, frame, l, { ...lineStyle(guide, 1.3), opacity: .58 }));
+    const q = cross3(sides[0], sides[1]), r = cross3(sides[2], sides[3]);
+    const qr = cross3(q, r);
+    const drawn = drawLine(B, frame, qr, lineStyle(pink, 2.6), 'QR');
+    if (show && drawn) drawLine(B, frame, p, lineStyle(blue, 1.6, '7 6'));
+    canvasPoints.forEach((point, i) => mark(B, point, 'ABCD'[i], gold, i % 2 ? 13 : -12, -12));
+    mark(B, toCanvas(frame, q), 'Q', pink);
+    mark(B, toCanvas(frame, r), 'R', pink, 13, 19);
+    status(`Q ${pointStatus(B, frame, q)} · R ${pointStatus(B, frame, r)}`);
+    if (!qr) check('构造未确定', 'warn');
+    else {
+      const e = Math.max(Math.abs(dot3(q, p)), Math.abs(dot3(r, p)));
+      check(`${infinityLine(qr) ? '无穷远直线' : drawn ? '与理论极线重合' : '极线在视窗外'} · 残差 ${fmt(e, 6)}`, e < 1e-8 ? 'ok' : 'warn');
+    }
   };
   B.render();
   return B;

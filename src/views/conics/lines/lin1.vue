@@ -1,10 +1,10 @@
 <template>
   <ChPage :cur="1" no="L1" base="/conics/lin" :chapters="LIN_CHAPTERS"
     title="判别式一览：相交、相切、相离（与第四态）" sub="解析几何的主力流程：联立消元 → 判别式定状态 → 韦达定读数。本讲把「直线与圆锥曲线」的三种位置关系一表归纳，并指出判别式失效的第四态 —— 双曲线的渐近线方向与抛物线的对称轴方向。"
-    :toc="[{ id: 'l1-lab', t: '线弦机实验（图 L1）' }, { id: 'l1-der', t: '推导 · 消元与 Δ' }, { id: 'l1-4', t: '第四态 · 双曲线与抛物线' }, { id: 'l1-table', t: '结论表与回收' }]">
-    <div class="note good"><strong>本讲主角</strong>：直线与圆锥曲线的位置关系，一台读数机全包。把直线写成 <Katex tex="y=kx+m" /> 代入曲线方程，消元得一个二次方程 <Katex tex="At^2+Bt+C=0" /> —— <strong>Δ 的符号就是位置关系的判据</strong>：Δ&gt;0 相交（两点）、Δ=0 相切（一点）、Δ&lt;0 相离（零点）。整个子专题六就是围绕这条流程的三道步骤：判别式（本讲）→ 韦达定理与弦长（L2）→ 点位与极线（L3）。</div>
+    :toc="[{ id: 'l1-lab', t: '判别式与位置关系（图 L1）' }, { id: 'l1-der', t: '推导 · 消元与 Δ' }, { id: 'l1-4', t: '第四态 · 双曲线与抛物线' }, { id: 'l1-table', t: '结论表与回收' }]">
+    <div class="note good"><strong>本讲主角</strong>：直线与圆锥曲线的位置关系，一块画板就能全部读出。把直线写成 <Katex tex="y=kx+m" /> 代入曲线方程，消元得一个二次方程 <Katex tex="At^2+Bt+C=0" /> —— <strong>Δ 的符号就是位置关系的判据</strong>：Δ&gt;0 相交（两点）、Δ=0 相切（一点）、Δ&lt;0 相离（零点）。整个子专题五就是围绕这条流程的三道步骤：判别式（本讲）→ 韦达定理与弦长（L2）→ 点位与极线（L3）。</div>
 
-    <h3 class="sec" id="l1-lab">线弦机实验</h3>
+    <h3 class="sec" id="l1-lab">判别式与位置关系</h3>
     <div class="board-wrap">
       <BoardMount :factory="createLineConic" />
       <div class="cap">图 L1 · <b>直线与圆锥曲线的位置关系</b>：拖「拖我」平移直线、滑块换倾角，三种曲线一键切换。读数区实时显示 Δ、二次项系数 A 与斜率对照。切到双曲线把倾角接近渐近线（36°）、切到抛物线把倾角调到 0° —— <strong>判别式突然失效</strong>：二次项归零，一次方程只交一点，这是三态之外的<strong>第四态</strong>。</div>

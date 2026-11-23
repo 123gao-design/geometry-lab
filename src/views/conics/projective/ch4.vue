@@ -1,48 +1,61 @@
 <template>
-  <ChPage :cur="4" title="极点与极线：由调和点列构造出来" sub="极线 = 调和共轭点的轨迹 —— 一条由无数个 −1 确定的直线。"
-    :toc="[{ id: 'c4-def', t: '极线的调和定义' }, { id: 'c4-t1', t: '实验一 · 扫描出极线（图 4）' }, { id: 'c4-t2', t: '实验二 · 完全四点形造极线（图 5）' }, { id: 'c4-t3', t: '实验三 · 极线全景（图 6）' }, { id: 'c4-lh', t: 'La Hire 定理（图 7）' }]">
-    <p>现在可以回答标题里的问题了：<strong>极线到底是什么？它是从哪里“变”出来的？</strong>答案只有一句话，而且 §2 的一切都为它做好了铺垫：</p>
-    <div class="note good" id="c4-def"><strong>极线的定义（调和版本）</strong>：给定二次曲线 C 与一点 P。过 P 引一条动割线，交 C 于 U, V；在这条割线上取 P 关于 U, V 的调和共轭点 P′ —— 即 (U, V; P, P′) = −1。当割线方向转过所有可能时，P′ 描出的轨迹就是 P 的<strong>极线</strong> <span class="term">(polar)</span>，P 则称为这条线关于曲线的<strong>极点</strong> <span class="term">(pole)</span>。</div>
-    <p>这个定义里没有出现任何度量操作：求交点、找调和共轭，全是射影的。它天然有两个值得亲手验证的问题 —— 轨迹真的是直线吗？这条直线长什么样？下面两个实验台依次回答。</p>
+  <ChPage :cur="4" title="极点与极线" sub="固定一个极点，每条实割线都给出一个调和共轭点。"
+    :toc="[{ id: 'c4-def', t: '二次曲线为什么产生调和' }, { id: 'c4-t1', t: '在圆上看见极线' }, { id: 'c4-t2', t: '用四点形作图' }, { id: 'c4-t3', t: '内点、曲线上与外点' }, { id: 'c4-lh', t: 'La Hire 互易' }]">
+    <h3 class="sec" id="c4-def">二次曲线为什么自然产生调和点对？</h3>
+    <p>§2 给出了一条直线上的配对方法，§3 给出了一种作图。对一条非退化二次曲线 <Katex tex="\mathcal C" />，实割线与曲线的两个不同交点 <Katex tex="U,V" />，就为这条线选定了调和的基点。固定一个不在曲线上的点 <Katex tex="P" />，换不同割线、得到不同的 <Katex tex="U,V" />，为什么各自算出的共轭点 <Katex tex="P'" /> 还能连成一条线？</p>
+    <p><strong>先把曲线限制在一条割线上。</strong> 用齐次坐标表示，由 <Katex tex="U,V" /> 确定的点可写成 <Katex tex="sU+tV" />。设曲线方程为 <Katex tex="F(X)=0" />。由于 <Katex tex="U,V" /> 都在曲线上，<Katex tex="F(sU+tV)" /> 展开后，<Katex tex="s^2,t^2" /> 两项的系数都是零，只剩 <Katex tex="st" /> 的交叉项。</p>
+    <p><strong>再把一个点的两个系数拆开比较。</strong> 定义 <Katex tex="B(P,X)=\tfrac12\bigl(F(P+X)-F(P)-F(X)\bigr)" />，也就是二次式里从 <Katex tex="P,X" /> 各取一次的那一部分的一半。交换两个点，<Katex tex="B" /> 的值不变。若 <Katex tex="P=sU+tV,\ X=uU+vV" />，则两项分别取自 <Katex tex="U,V" /> 的组合给出</p>
+    <Katex tex="B(P,X)=(sv+tu)\,B(U,V)." display />
+    <p><Katex tex="B(U,V)\ne0" />，否则交叉项也为零，整条割线都会落在曲线上。因此 <Katex tex="B(P,X)=0" /> 要求 <Katex tex="sv+tu=0" />，唯一的解是 <Katex tex="[u:v]=[s:-t]" />。由 §2，这恰好就是 <Katex tex="P" /> 关于 <Katex tex="U,V" /> 的调和共轭。</p>
+    <div class="note good"><strong>回到整个平面。</strong> 固定 <Katex tex="P" /> 后，<Katex tex="B(P,X)=0" /> 是关于 <Katex tex="X" /> 的同一个线性方程。曲线非退化保证它给出一条直线，称为 <Katex tex="P" /> 的<strong>极线</strong>。在任一条过 <Katex tex="P" /> 的实割线上，极线的交点就是该割线确定的调和共轭。反过来，要找这个共轭点，只需求割线与极线的交点。</div>
+    <p>实割线能采到极线的哪一段，取决于极点的位置。例如圆外点的实割线只采到切点弦内部，切点由割线趋于切线时的极限得到。若 <Katex tex="P" /> 本身在曲线上，极线就是该点的切线，图 4 可以直接比较圆内点与圆外点扫出的范围。</p>
 
-    <h3 class="sec" id="c4-t1">实验一：亲自把极线“扫”出来</h3>
-    <div class="board-wrap">
-      <BoardMount :factory="createTrace" />
-      <div class="cap">图 4 · <b>扫描出极线</b>：拖动 P，再点“开始扫描” —— 割线绕 P 匀速转动，黄色调和共轭点 P′ 一粒一粒落下。当点连成线，打开“显示理论极线”对照：轨迹与蓝色虚线完全重合。拖动 P 逼近圆心，极线奔向无穷远 —— 圆心恰好是圆的极线 <Katex tex="l_\infty" /> 的极点。</div>
-    </div>
-    <p>扫出这条直线后，它和圆心 O 的关系水落石出。设 P 与圆心距离为 d（<Katex tex="d>0" />），则 P 的极线垂直于 OP，且与 O 的距离恰为 <Katex tex="r^2/d" /> —— 也就是：</p>
-    <Katex tex="d\cdot d'=r^2" display />
-    <p>其中 <Katex tex="d'" /> 是 O 到极线的距离。这正是<strong>反演</strong> <span class="term">(inversion)</span> 的公式：极线在 OP 上的垂足 <Katex tex="P^*" />，就是 P 关于圆的反演像。在图 4 中拖动 P，注意角落里那个乘积读数 —— d 与 <Katex tex="d'" /> 的乘积恒等于 <Katex tex="r^2" />。度量视角与调和视角在此合流：一条直线，同时是“调和共轭点的轨迹”与“反演像的垂线”。</p>
+    <ProjectiveFigure id="c4-t1" number="4" title="逐点扫描极线" :factory="createTrace"
+      :legend="[['guide', '割线 UV', 'dashed'], ['gold', '调和共轭点 P′', 'point'], ['blue', '理论极线 p', 'dashed']]">
+      转动割线把手，或点「开始扫描」。打开「显示理论极线」检查赭色采样点的位置。试试「圆外点」，再点「圆心」观察所有 <Katex tex="P'" /> 如何成为方向点。
+    </ProjectiveFigure>
 
-    <h3 class="sec" id="c4-t2">实验二：用完全四点形构造极线（不依赖任何度量）</h3>
-    <p>极线也可以完全用 §3 的机器造出来：<strong>过 P 作两条割线</strong>，分别交椭圆于 A, B 与 C, D。于是 P = AB∩CD 本身就是一个对角点；令 Q = AC∩BD、R = AD∩BC 为另外两个对角点 —— 那么直线 QR 就是 P 的极线。这就是<strong>自配极三角形</strong> <span class="term">(self-polar triangle)</span>：对角三角形的每个顶点的极线，恰是它对面的那条边。</p>
-    <div class="board-wrap">
-      <BoardMount :factory="createQuadPolar" />
-      <div class="cap">图 5 · <b>完全四点形造极线</b>：拖动 P 上的两个箭头把手，任意旋转两条割线 —— 粉色直线（QR，即 P 的极线）纹丝不动。这一“怎么转都不动”正是定理的内容。叠加的蓝色虚线是公式算出的极线，两者重合。拖动 P 本身，极线则随之移动。</div>
-    </div>
-    <p>请注意这个构造的纯射影特征：全程只有“连线、求交”，不涉及长度。这解释了为什么极点极线理论能严格建立在射影几何框架内，也预示了它的用法 —— 后面 Pascal 定理的配极证明走的正是这条路。</p>
+    <p>对以原点为圆心的圆，<Katex tex="B(P,X)=0" /> 也可以用韦达定理直接算出来。令割线上的点写成 <Katex tex="\mathbf p+t\mathbf u" />，其中 <Katex tex="\mathbf p=\overrightarrow{OP}" />，<Katex tex="\mathbf u" /> 是单位方向。两个交点的参数根 <Katex tex="t_1,t_2" /> 之和为 <Katex tex="-2\mathbf p\cdot\mathbf u" />，乘积为 <Katex tex="\|\mathbf p\|^2-r^2" />。将 <Katex tex="(t_1,t_2;0,t^{\prime})=-1" /> 展开，共轭点参数为 <Katex tex="t'=2t_1t_2/(t_1+t_2)" />。代入得到</p>
+    <Katex tex="\mathbf p\cdot(\mathbf p+t'\mathbf u)=r^2." display />
+    <p>这正是一直线方程。<Katex tex="P\ne O" /> 时，它垂直于 <Katex tex="OP" />，垂足 <Katex tex="P^*" /> 满足 <Katex tex="OP\cdot OP^*=r^2" />，因此 <Katex tex="P^*" /> 是 <Katex tex="P" /> 的圆反演像。若根之和为零，<Katex tex="P'" /> 是割线方向的无穷远点。对圆心 <Katex tex="P=O" />，每条割线都有这项性质，所以极线是 <Katex tex="l_\infty" />。</p>
 
-    <h3 class="sec" id="c4-t3">实验三：极线的全景（内、上、外）与切点弦</h3>
-    <p>对椭圆 <Katex tex="\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1" />，点 P = (x₀, y₀) 的极线有统一的公式（对圆即 <Katex tex="xx_0+yy_0=r^2" />）：</p>
-    <Katex tex="\dfrac{xx_0}{a^2}+\dfrac{yy_0}{b^2}=1" display />
-    <p>在下面的实验台里拖动 P 巡视三个区域，右侧状态行会实时给出该区域的几何含义：</p>
-    <div class="board-wrap">
-      <BoardMount :factory="createPoleLab" />
-      <div class="cap">图 6 · <b>极点与极线</b>：P 在曲线<strong>外</strong>时，极线是两条真实切线的<strong>切点弦</strong>（这也是极线最常见的应用题型）；P 在曲线<strong>上</strong>时，极线退化为该点处的切线；P 在曲线<strong>内</strong>时切线不存在（方程无实根，即“虚切线”），但极线依然真实存在 —— 调和定义不依赖切线是否可见。顶部的方程读数即上面公式。</div>
-    </div>
+    <h3 class="sec" id="c4-t2">用两条割线作出极线</h3>
+    <p>过 <Katex tex="P" /> 的两条实割线分别交椭圆于 <Katex tex="A,B" /> 和 <Katex tex="C,D" />，四点互不相同。令 <Katex tex="Q=AC\cap BD,\ R=AD\cap BC" />。由 §3，直线 <Katex tex="QR" /> 与 <Katex tex="AB,\ CD" /> 的交点分别是 <Katex tex="P" /> 关于 <Katex tex="A,B" /> 和 <Katex tex="C,D" /> 的调和共轭点。因此 <Katex tex="QR" /> 就是 <Katex tex="P" /> 的极线。把同一个论证用在 <Katex tex="Q,R" /> 上，便得到<strong>自配极三角形</strong>：每个顶点的极线都是对边。</p>
+    <ProjectiveFigure number="5" title="旋转两条割线，保留同一条极线" :factory="createQuadPolar"
+      :legend="[['gold', '两条割线', 'dashed'], ['pink', '作图得到的 QR'], ['blue', '公式极线', 'dashed']]">
+      固定 <Katex tex="P" />、转动任一赭色把手，观察 <Katex tex="Q,R" /> 的位置。点「中心构造」可看到两组对边平行时，<Katex tex="Q,R" /> 同在无穷远直线上。
+    </ProjectiveFigure>
 
-    <h3 class="sec" id="c4-lh">La Hire 定理：极点与极线互为镜像</h3>
-    <p>配极理论的核心对称性由 <strong>La Hire 定理</strong> <span class="term">(La Hire's theorem)</span> 给出：</p>
-    <div class="note good"><strong>Q 落在 P 的极线上 &nbsp;<Katex tex="\iff" />&nbsp; P 落在 Q 的极线上。</strong>这样的点对称为关于曲线的<strong>共轭</strong>点对。判定“点在谁的极线上”可以双向进行 —— 这正是配极能把“共线”翻译成“共点”的原因（§5）。</div>
-    <div class="board-wrap">
-      <BoardMount :factory="createLaHire" />
-      <div class="cap">图 7 · <b>La Hire 定理实验</b>：拖动 P, Q 两个点。判定框实时检查“Q ∈ p”与“P ∈ q” —— 两个判定永远同时通过。交点 M = p∩q：打开“显示 M 的极线”，它是恰好穿过 P 和 Q 的那条直线 —— 交点的极线是连线，这就是对偶性的具体体现。</div>
-    </div>
+    <h3 class="sec" id="c4-t3">同一条极线的三种表现</h3>
+    <p>用 <Katex tex="u=x/a,\ v=y/b" /> 将椭圆缩放成单位圆，圆的公式立刻给出椭圆 <Katex tex="x^2/a^2+y^2/b^2=1" /> 关于 <Katex tex="P=(x_0,y_0)" /> 的极线：</p>
+    <Katex tex="\frac{x_0x}{a^2}+\frac{y_0y}{b^2}=1." display />
+    <p>对曲线上一点 <Katex tex="T" />，沿方向 <Katex tex="D" /> 展开 <Katex tex="F(T+tD)" />。常数项为零，若一次项 <Katex tex="2tB(T,D)" /> 也为零，交点参数 <Katex tex="t=0" /> 就是重根。这给出切线条件 <Katex tex="B(T,D)=0" />，对应的直线恰好是 <Katex tex="T" /> 的极线。于是 <Katex tex="T" /> 是过 <Katex tex="P" /> 的切点，当且仅当 <Katex tex="T" /> 同时在曲线和 <Katex tex="P" /> 的极线上。</p>
+    <table><thead><tr><th>P 的位置</th><th>过 P 的实切线</th><th>极线的表现</th></tr></thead><tbody>
+      <tr><td>椭圆外</td><td>2 条</td><td>经过两个切点，是切点弦所在直线</td></tr>
+      <tr><td>椭圆上</td><td>1 条</td><td>P 处的切线</td></tr>
+      <tr><td>椭圆内</td><td>0 条</td><td>极线与椭圆无实交点，中心的极线为无穷远直线</td></tr>
+    </tbody></table>
+    <ProjectiveFigure number="6" title="极点跨过曲线时，两个切点如何变化" :factory="createPoleLab"
+      :legend="[['ink', '极点 P', 'point'], ['blue', '极线 p'], ['gold', '过 P 的两条切线段']]">
+      先点「外点」，再拖动 <Katex tex="P" /> 靠近曲线，观察两切点如何合并。四个预设可以直接到达曲线上、曲线内和中心等特殊位置。方程读数采用归一化坐标 <Katex tex="u,v" />。
+    </ProjectiveFigure>
+
+    <p><strong>把三种观点用在同一个例子里。</strong> 对椭圆 <Katex tex="x^2/4+y^2=1" />，取 <Katex tex="P=(4,0)" />。极线公式给出 <Katex tex="x=1" />，与椭圆联立得到两个切点 <Katex tex="T_\pm=(1,\pm\sqrt3/2)" />。再看过 <Katex tex="P" /> 的水平割线，它在椭圆上截出 <Katex tex="U=(-2,0),V=(2,0)" />。按 §2 的中点乘积公式，<Katex tex="P" /> 的共轭点横坐标满足 <Katex tex="4x=2^2" />，同样落在 <Katex tex="x=1" /> 上。</p>
+
+    <h3 class="sec" id="c4-lh">La Hire 定理：极点和极线的互易关系</h3>
+    <p>记 <Katex tex="p=\operatorname{polar}(P),\ q=\operatorname{polar}(Q)" />。前面证明中的 <Katex tex="B(P,Q)=B(Q,P)" /> 说明 <Katex tex="Q" /> 在 <Katex tex="p" /> 上与 <Katex tex="P" /> 在 <Katex tex="q" /> 上是同一个条件。对椭圆，取两个有限点的齐次坐标末项为 1，就得到</p>
+    <Katex tex="\begin{gathered}Q\in p\ \iff\ B(P,Q)=0\ \iff\ P\in q\\[2pt] B(P,Q)=\frac{x_Px_Q}{a^2}+\frac{y_Py_Q}{b^2}-1.\end{gathered}" display />
+    <p>两个命题同真或同假。成立时称 <Katex tex="P,Q" /> 为<strong>共轭点</strong>。若两条极线相交于 <Katex tex="M" />，对 <Katex tex="M\in p" /> 和 <Katex tex="M\in q" /> 各用一次互易定理，就知道 <Katex tex="M" /> 的极线同时经过 <Katex tex="P,Q" />。</p>
+    <ProjectiveFigure number="7" title="让两个关联判定同真或同假" :factory="createLaHire"
+      :legend="[['blue', 'P 与极线 p'], ['gold', 'Q 与极线 q', 'dashed'], ['mint', 'M 的极线 PQ', 'dashed']]">
+      依次选择「共轭点对」与「非共轭点对」，比较两个命题和代入值。打开「显示 M 与 PQ」，再点「两极线平行」，此时 <Katex tex="M" /> 位于无穷远处，它的极线仍是 <Katex tex="PQ" />。
+    </ProjectiveFigure>
+    <p>对一个交点用两次互易，就能得到一条连线。下一节把同一思路推广到一整束弦或切线，直接解决定点与轨迹问题。</p>
   </ChPage>
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ProjectiveFigure from '../../../components/ProjectiveFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createTrace } from '../../../boards/conics/projective/trace.js';
 import { createBoard as createQuadPolar } from '../../../boards/conics/projective/quadpolar.js';

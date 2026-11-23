@@ -50,7 +50,7 @@ const TZ3 = () => import('./views/trig/solve/z3.vue');
 const TK1 = () => import('./views/trig/synth/k1.vue');
 const TK2 = () => import('./views/trig/synth/k2.vue');
 const ConicsHome = () => import('./views/conics/ConicsHome.vue');
-// 子专题一 · 极点极线与配极理论
+// 子专题六 · 极点极线与配极理论
 const Ch1 = () => import('./views/conics/projective/ch1.vue');
 const Ch2 = () => import('./views/conics/projective/ch2.vue');
 const Ch3 = () => import('./views/conics/projective/ch3.vue');
@@ -58,31 +58,31 @@ const Ch4 = () => import('./views/conics/projective/ch4.vue');
 const Ch5 = () => import('./views/conics/projective/ch5.vue');
 const Ch6 = () => import('./views/conics/projective/ch6.vue');
 const Ch7 = () => import('./views/conics/projective/ch7.vue');
-// 子专题二 · 圆锥曲线的定义与标准方程
+// 子专题一 · 圆锥曲线的定义与标准方程
 const Def1 = () => import('./views/conics/definitions/def1.vue');
 const Def2 = () => import('./views/conics/definitions/def2.vue');
 const Def3 = () => import('./views/conics/definitions/def3.vue');
 const Def4 = () => import('./views/conics/definitions/def4.vue');
 const Def5 = () => import('./views/conics/definitions/def5.vue');
-// 子专题三 · 光学性质与切线
+// 子专题二 · 光学性质与切线
 const Opt1 = () => import('./views/conics/optics/opt1.vue');
 const Opt2 = () => import('./views/conics/optics/opt2.vue');
 const Opt3 = () => import('./views/conics/optics/opt3.vue');
 const Opt4 = () => import('./views/conics/optics/opt4.vue');
-// 子专题四 · 仿射变换看圆锥曲线
+// 子专题三 · 仿射变换看圆锥曲线
 const Aff1 = () => import('./views/conics/affine/aff1.vue');
 const Aff2 = () => import('./views/conics/affine/aff2.vue');
 const Aff3 = () => import('./views/conics/affine/aff3.vue');
 const Aff4 = () => import('./views/conics/affine/aff4.vue');
 const Aff5 = () => import('./views/conics/affine/aff5.vue');
 const Aff6 = () => import('./views/conics/affine/aff6.vue');
-// 子专题五 · 参数方程与轨迹
+// 子专题四 · 参数方程与轨迹
 const Par1 = () => import('./views/conics/locus/par1.vue');
 const Par2 = () => import('./views/conics/locus/par2.vue');
 const Par3 = () => import('./views/conics/locus/par3.vue');
 const Par4 = () => import('./views/conics/locus/par4.vue');
 const Par5 = () => import('./views/conics/locus/par5.vue');
-// 子专题六 · 直线与圆锥曲线
+// 子专题五 · 直线与圆锥曲线
 const Lin1 = () => import('./views/conics/lines/lin1.vue');
 const Lin2 = () => import('./views/conics/lines/lin2.vue');
 const Lin3 = () => import('./views/conics/lines/lin3.vue');
@@ -522,6 +522,8 @@ const PhysicsPart = () => import('./views/PhysicsPart.vue');
 const PhysicsLab = () => import('./views/PhysicsLab.vue');
 // 电路实验台（三段 /physics/lab/circuit，自搭元件、自连线、实时解电路）
 const CircuitLab = () => import('./views/physics/CircuitLab.vue');
+// 原生 anatomy 生成的演示（/physics/anatomy/<id>，iframe 载 public/anatomy 下的自包含 HTML）
+const AnatomyLab = () => import('./views/physics/AnatomyLab.vue');
 // 物理讲义章（/physics/ch/<id> 三段，与上面的 /physics/:id 不冲突）
 const PM1 = () => import('./views/physics/mech/motion1.vue');
 const PM2 = () => import('./views/physics/mech/motion2.vue');
@@ -626,6 +628,7 @@ export default [
   // 物理讲义的部分页（首页 → 部分 → 章），与数学的模块主页同一层；三段，不与下面的 /physics/:id 撞
   { path: '/physics/p/:part', name: 'physics-part', component: PhysicsPart },
   { path: '/physics/lab/circuit', name: 'physics-circuit-lab', component: CircuitLab },
+  { path: '/physics/anatomy/:id', name: 'physics-anatomy', component: AnatomyLab },
   { path: '/physics/:id', name: 'physics-lab', component: PhysicsLab },
   // 物理讲义 · 一 力学 · 运动的描述与匀变速直线运动
   { path: '/physics/ch/motion1', component: PM1 },
@@ -772,7 +775,7 @@ export default [
   { path: '/trig/k1', component: TK1 },
   { path: '/trig/k2', component: TK2 },
   { path: '/conics', name: 'conics', component: ConicsHome },
-  // 子专题一 · 极点极线与配极理论
+  // 子专题六 · 极点极线与配极理论
   { path: '/conics/ch1', component: Ch1 },
   { path: '/conics/ch2', component: Ch2 },
   { path: '/conics/ch3', component: Ch3 },
@@ -780,31 +783,31 @@ export default [
   { path: '/conics/ch5', component: Ch5 },
   { path: '/conics/ch6', component: Ch6 },
   { path: '/conics/ch7', component: Ch7 },
-  // 子专题二 · 圆锥曲线的定义与标准方程
+  // 子专题一 · 圆锥曲线的定义与标准方程
   { path: '/conics/def1', component: Def1 },
   { path: '/conics/def2', component: Def2 },
   { path: '/conics/def3', component: Def3 },
   { path: '/conics/def4', component: Def4 },
   { path: '/conics/def5', component: Def5 },
-  // 子专题三 · 光学性质与切线
+  // 子专题二 · 光学性质与切线
   { path: '/conics/opt1', component: Opt1 },
   { path: '/conics/opt2', component: Opt2 },
   { path: '/conics/opt3', component: Opt3 },
   { path: '/conics/opt4', component: Opt4 },
-  // 子专题四 · 仿射变换看圆锥曲线
+  // 子专题三 · 仿射变换看圆锥曲线
   { path: '/conics/aff1', component: Aff1 },
   { path: '/conics/aff2', component: Aff2 },
   { path: '/conics/aff3', component: Aff3 },
   { path: '/conics/aff4', component: Aff4 },
   { path: '/conics/aff5', component: Aff5 },
   { path: '/conics/aff6', component: Aff6 },
-  // 子专题五 · 参数方程与轨迹
+  // 子专题四 · 参数方程与轨迹
   { path: '/conics/par1', component: Par1 },
   { path: '/conics/par2', component: Par2 },
   { path: '/conics/par3', component: Par3 },
   { path: '/conics/par4', component: Par4 },
   { path: '/conics/par5', component: Par5 },
-  // 子专题六 · 直线与圆锥曲线
+  // 子专题五 · 直线与圆锥曲线
   { path: '/conics/lin1', component: Lin1 },
   { path: '/conics/lin2', component: Lin2 },
   { path: '/conics/lin3', component: Lin3 },

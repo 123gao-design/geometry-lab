@@ -1,10 +1,10 @@
 <template>
   <ChPage :cur="1" no="P1" base="/conics/par" :chapters="PAR_CHAPTERS"
     title="参数方程：离心角与三曲线" sub="让点随参数跑起来。椭圆的 t 是辅助圆上的离心角（不是极角）；双曲线的 t 站在圆外 —— 割线长与切线长；抛物线的 t 干脆就是时间。三种曲线，三种参数身份。"
-    :toc="[{ id: 'p1-lab', t: '辅助圆实验（图 P1）' }, { id: 'p1-e', t: '椭圆 · 离心角与双辅助圆' }, { id: 'p1-hb', t: '双曲线 · 割线与切线（图 P1b）' }, { id: 'p1-pb', t: '抛物线 · 时间参数（图 P1c）' }, { id: 'p1-f', t: '焦半径回收与速查表' }]">
+    :toc="[{ id: 'p1-lab', t: '辅助圆构造（图 P1）' }, { id: 'p1-e', t: '椭圆 · 离心角与双辅助圆' }, { id: 'p1-hb', t: '双曲线 · 割线与切线（图 P1b）' }, { id: 'p1-pb', t: '抛物线 · 时间参数（图 P1c）' }, { id: 'p1-f', t: '焦半径回收与速查表' }]">
     <div class="note good"><strong>参数方程</strong>：用第三个变量 t 把曲线上的点写成 <Katex tex="(x(t),\ y(t))" /> —— 每个时刻 t 给出一个点，点随 t 跑动就把曲线<strong>生成</strong>出来。它比普通方程多给出一样东西：<strong>点的到达顺序</strong>。这正是"轨迹问题"的本质。</div>
 
-    <h3 class="sec" id="p1-lab">辅助圆实验</h3>
+    <h3 class="sec" id="p1-lab">辅助圆构造</h3>
     <div class="board-wrap">
       <BoardMount :factory="createAuxCircle" />
       <div class="cap">图 P1 · <b>辅助圆与离心角</b>：拖动大圆上的 Q —— Q 竖直下落、小圆上的 R 水平推进，两条虚线交出的 P 恰好落在椭圆上。读数区并排显示离心角 t 与真正的极角 φ：<strong>它们几乎永远不相等</strong>。</div>
@@ -14,8 +14,8 @@
     <h3 class="sec" id="p1-e">椭圆：离心角与双辅助圆</h3>
     <p>消参验证：<Katex tex="\cos^2 t+\sin^2 t=1" /> 一行就把参数方程压回标准方程 ——</p>
     <Katex tex="\left.\begin{aligned}x&=a\cos t\\y&=b\sin t\end{aligned}\right\}\ \Longrightarrow\ \frac{x^2}{a^2}+\frac{y^2}{b^2}=1" display />
-    <p>反过来读就是构造：作<strong>大辅助圆</strong> <Katex tex="x^2+y^2=a^2" /> 与<strong>小辅助圆</strong> <Katex tex="x^2+y^2=b^2" />。过大圆上的 Q(a cos t, a sin t) 作竖直线，过小圆上对应的 R(b cos t, b sin t) 作水平线，交点就是 P —— 图 P1 的机械全程在演这件事。这个双圆构造在"卡当椭圆"（P2 的杆子问题）里还会再登场。</p>
-    <p>顺带一提，A1 的伸缩机把这一切串起来了：P 就是 Q 被 <Katex tex="T_{b/a}" /> 压缩后的像。<strong>参数 t 是压缩前的世界（圆）里保留下来的角度</strong> —— 所以它才叫离心角，而不叫什么"椭圆上的角"。</p>
+    <p>反过来读就是构造：作<strong>大辅助圆</strong> <Katex tex="x^2+y^2=a^2" /> 与<strong>小辅助圆</strong> <Katex tex="x^2+y^2=b^2" />。过大圆上的 Q(a cos t, a sin t) 作竖直线，过小圆上对应的 R(b cos t, b sin t) 作水平线，交点就是 P —— 图 P1 全程演示的就是这件事。这个双圆构造在"卡当椭圆"（P2 的杆子问题）里还会再登场。</p>
+    <p>顺带一提，A1 的伸缩变换把这一切串起来了：P 就是 Q 被 <Katex tex="T_{b/a}" /> 压缩后的像。<strong>参数 t 是压缩前的世界（圆）里保留下来的角度</strong> —— 所以它才叫离心角，而不叫什么"椭圆上的角"。</p>
 
     <h3 class="sec" id="p1-hb">双曲线：割线与切线</h3>
     <div class="board-wrap">

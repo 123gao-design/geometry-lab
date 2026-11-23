@@ -1,19 +1,22 @@
 <template>
-  <ChPage :cur="1" title="平行线的“交点”：无穷远点与消点" sub="照片里的平行线为何相交？—— 因为它们本来就相交。">
-    <p>先观察一张透视照片里发生了什么：地面的砖缝本是<strong>互相平行</strong>的，但在像片上，它们分明汇交于同一点。中心投影（也就是“打灯光、拍照”）不保持长度、不保持角度、更不保持平行性 —— 平行这件事，在投影下<strong>失效</strong>了。</p>
-    <p>射影几何的应对方式干脆利落：<strong>既然平行线的像总要交于一点，那就干脆承认它们本来就相交 —— 交在一个新添出来的点上。</strong> 我们约定：</p>
-    <div class="note">每一族平行直线共用<strong>一个无穷远点</strong>（方向决定族，族决定点）；两条不同直线要么交于普通点，要么平行 —— 而平行不过就是“相交于自己的无穷远点”。平面上所有无穷远点组成一条<strong>无穷远直线 <Katex tex="l_\infty" /></strong>。欧氏（仿射）平面添上这条直线，就得到<strong>射影平面 <Katex tex="P^2" /></strong>：在这里，<em>任何两条直线都恰好交于一点</em>，平行与相交被统一成一个陈述。</div>
-    <p>无穷远点被中心投影“拍”到像平面上的普通位置，就成了画透视画时的<strong>消点</strong> <span class="term">(vanishing point)</span>。下面的实验台里，你在左侧俯视图拖动橙色箭头改变地面平行线族的方向，右侧画布是相机“拍”到的像 —— 注视橙色直线族的像：<strong>它们永远汇交于一点</strong>，且这个点恰好落在所有水平方向共有的那条<strong>地平线</strong>上。</p>
+  <ChPage :cur="1" title="平行线的交点：无穷远点与消点" sub="在照片里找到平行线的共同方向。"
+    :toc="[{ id: 'c1-persp', t: '透视投影' }, { id: 'c1-coord', t: '用齐次坐标记下方向' }]">
+    <p>道路的两条边线在地面上平行，照片里的延长线却常常相交。对同一组平行线来说，这个交点只取决于它们的方向和相机的成像设置。射影几何把这个共同方向记作一个<strong>无穷远点</strong>，它落在像平面上的有限位置时就成了<strong>消点</strong>。</p>
+    <p>平面里每个方向对应一个无穷远点，方向相反的两根箭头代表同一点。所有方向点组成<strong>无穷远直线</strong> <Katex tex="l_\infty" />。给仿射平面添上它，就得到实射影平面 <Katex tex="\mathbb{RP}^2" />，其中任意两条<strong>不同的直线</strong>恰好交于一点。</p>
 
-    <div class="board-wrap">
-      <BoardMount :factory="createBoard" />
-      <div class="cap">图 1 · <b>透视投影</b>：左为地面俯视图（含平行线方向把手与相机 S 的位置），右为竖直像平面上的像。拖动方向把手，观察消点如何沿地平线滑动；把方向转到与像平面平行时，消点趋向无穷远，像中的直线族恢复平行。相机高度 h 决定地平线的高度。</div>
-    </div>
+    <ProjectiveFigure id="c1-persp" number="1" title="地面方向与消点" :factory="createBoard"
+      :legend="[['mint', '地平线', 'dashed'], ['gold', '消点', 'point']]">
+      拖动左图的赭色方向把手，观察右图的消点。点「正对相机」把消点带到地平线中间，再点「转到与画面平行」，比较消点在视窗外和消点在无穷远这两种状态。相机高度 <Katex tex="h" /> 控制地平线的高度。
+    </ProjectiveFigure>
+
+    <h3 class="sec" id="c1-coord">用齐次坐标记下方向</h3>
+    <p>用三个数记一个点 <Katex tex="[X:Y:W]" />。三个数同时乘任意非零常数，仍代表同一点。当 <Katex tex="W\ne0" /> 时，普通坐标是 <Katex tex="(X/W,Y/W)" />。当 <Katex tex="W=0" /> 时，<Katex tex="[X:Y:0]" /> 代表方向 <Katex tex="(X,Y)" />。因此无穷远直线的方程就是 <Katex tex="W=0" />。</p>
+    <p>例如，直线 <Katex tex="y=2x+1" /> 和 <Katex tex="y=2x-3" /> 的齐次方程可以写成 <Katex tex="Y-2X=W" /> 与 <Katex tex="Y-2X=-3W" />。联立得 <Katex tex="W=0,\ Y=2X" />，交点就是 <Katex tex="[1:2:0]" />。到了 <router-link to="/conics/ch5">§5</router-link>，同一种写法还能算出无穷远点的极线。</p>
   </ChPage>
 </template>
 <script setup>
 import ChPage from '../../../components/ChPage.vue';
-import BoardMount from '../../../components/BoardMount.vue';
+import ProjectiveFigure from '../../../components/ProjectiveFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard } from '../../../boards/conics/projective/persp.js';
 </script>

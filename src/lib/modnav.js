@@ -1,6 +1,6 @@
 /* 模块大纲：讲解页左栏「章节导航」列本模块的全部章节（按子专题分组，用户 2026-11-12 要求）。
    章名与路由前缀一律取自各子专题的 xxxnav.js（唯一来源，勿在别处另抄一份）；
-   这里只登记「模块 → 子专题顺序 → 组名」。conics 子专题一没有 nav 文件，用 nav-defaults 的默认表。 */
+   这里只登记「模块 → 子专题顺序 → 组名」。conics 的极点极线一组没有 nav 文件，用 nav-defaults 的默认表。 */
 import { DEFAULT_CHAPTERS, DEFAULT_BASE } from '../components/nav-defaults.js';
 
 const NAVS = import.meta.glob('../views/**/*nav.js', { eager: true });
@@ -16,7 +16,7 @@ const SPEC = {
   sequences: { t: '数列', groups: [['concept', '数列的概念与表示'], ['diff', '等差数列'], ['geo', '等比数列'], ['sum', '数列求和的方法'], ['recur', '递推与构造'], ['induct', '数学归纳法'], ['apply', '数列的应用']] },
   linecircle: { t: '直线与圆', groups: [['line', '直线的方程'], ['circle', '圆的方程'], ['theorem', '圆的性质与定理'], ['apply', '综合应用']] },
   polar: { t: '极坐标与参数方程', groups: [['coords', '极坐标系与互化'], ['curves', '曲线的极坐标方程'], ['param', '参数方程'], ['apply', '参数方程的应用']] },
-  conics: { t: '圆锥曲线', groups: [[null, '极点极线与配极理论'], ['definitions', '定义与标准方程'], ['optics', '光学性质与切线'], ['affine', '仿射变换看圆锥曲线'], ['locus', '参数方程与轨迹'], ['lines', '直线与圆锥曲线']] },
+  conics: { t: '圆锥曲线', groups: [['definitions', '定义与标准方程'], ['optics', '光学性质与切线'], ['affine', '仿射变换看圆锥曲线'], ['locus', '参数方程与轨迹'], ['lines', '直线与圆锥曲线'], [null, '极点极线与配极理论']] },
   solid: { t: '立体几何', groups: [['recog', '认识空间几何体'], ['measure', '体积与表面积'], ['relation', '空间中的位置关系'], ['coords', '空间直角坐标系与向量']] },
   combinatorics: { t: '组合学与二项式定理', groups: [['counting', '计数原理'], ['permcomb', '排列与组合'], ['binomial', '二项式定理'], ['identity', '组合恒等式与应用']] },
   probability: { t: '概率与统计', groups: [['sample', '随机事件与概率'], ['cond', '条件概率与独立性'], ['rv', '随机变量与分布'], ['num', '数字特征'], ['stat', '统计'], ['test', '统计推断与检验']] },

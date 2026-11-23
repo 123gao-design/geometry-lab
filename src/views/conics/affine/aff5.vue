@@ -1,10 +1,10 @@
 <template>
   <ChPage :cur="5" no="A5" base="/conics/aff" :chapters="AFF_CHAPTERS"
     title="对勾函数：剪出来的双曲线" sub="$y=ax+b/x$ 的图象是货真价实的双曲线 —— A4 母本经「剪切」的像。离心率有一个十分简洁的公式：$e=\sec(\psi/2)$，只看勾的倾角 a，与 b 无关。对勾函数的高考考点（均值不等式）与双曲线的解析几何身份在此结合。"
-    :toc="[{ id: 'a5-lab', t: '对勾函数机实验（图 A5）' }, { id: 'a5-der', t: '推导 · 渐近线与剪切来源' }, { id: 'a5-e', t: '离心率 · 只看倾角' }, { id: 'a5-use', t: '勾底 ≠ 顶点 · 速递与回收' }]">
+    :toc="[{ id: 'a5-lab', t: '对勾函数与剪切（图 A5）' }, { id: 'a5-der', t: '推导 · 渐近线与剪切来源' }, { id: 'a5-e', t: '离心率 · 只看倾角' }, { id: 'a5-use', t: '勾底 ≠ 顶点 · 速递与回收' }]">
     <div class="note good"><strong>本讲主角</strong>：对勾函数（耐克函数）<Katex tex="y=ax+\dfrac{b}{x}\ (a>0,\ b>0)" />。移项得 <Katex tex="xy=ax^2+b" /> —— 一个二次型方程，双曲线。它是 A4 母本 <Katex tex="uv=b" /> 经<strong>剪切变换</strong> <Katex tex="T(u,v)=(u,\ v+au)" /> 的像（代回验证：<Katex tex="xy-a x^2=uv=b" /> ✓）。至此三种基本仿射变换集齐：<strong>伸缩</strong>（A1，圆→椭圆）、<strong>旋转</strong>（A4，反比例→等轴）、<strong>剪切</strong>（A5，反比例→对勾）。</div>
 
-    <h3 class="sec" id="a5-lab">对勾函数机实验</h3>
+    <h3 class="sec" id="a5-lab">对勾函数与剪切</h3>
     <div class="board-wrap">
       <BoardMount :factory="createHookHyp" />
       <div class="cap">图 A5 · <b>对勾函数与双曲线</b>：焦点、实轴、顶点全套实时画出 —— 这不是示意图，是按公式直接生成的真双曲线。拖 P（或按「换支」换到另一支）验证第一定义（<Katex tex="|r_1-r_2|=2A" />），按「演化」看 a 从 0 增到 2.5：渐近线夹角 <Katex tex="\psi" /> 逐渐变窄，e 从 <Katex tex="\sqrt2" /> 递减到 1。注意绿点勾底与金点顶点<strong>不是同一个点</strong>。</div>

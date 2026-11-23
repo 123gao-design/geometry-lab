@@ -1,7 +1,7 @@
 <template>
   <ChPage :cur="5" no="D5" base="/conics/def" :chapters="DEF_CHAPTERS"
     title="第三定义与焦点三角形" sub="斜率之积 = $\pm b^2/a^2$；焦点三角形面积 = $b^2\cdot\tan(\theta/2)$ —— 两个最常考的推论。"
-    :toc="[{ id: 'd5-def', t: '第三定义与实验台（图 D5）' }, { id: 'd5-deriv', t: '第三定义的推导与逆命题' }, { id: 'd5-tri', t: '焦点三角形面积（图 D6）' }, { id: 'd5-sum', t: '五种定义一览' }]">
+    :toc="[{ id: 'd5-def', t: '第三定义（图 D5）' }, { id: 'd5-deriv', t: '第三定义的推导与逆命题' }, { id: 'd5-tri', t: '焦点三角形面积（图 D6）' }, { id: 'd5-sum', t: '五种定义一览' }]">
     <p>前四个定义都离不开"量距离"。第三定义换了角度：只看动点与两个定点连线的<strong>斜率</strong>。它常以"轨迹题"的形式出现在试卷上，本质仍是圆锥曲线。</p>
     <div class="note good" id="d5-def"><strong>第三定义</strong>：设 <Katex tex="A(-a,\ 0)" />、<Katex tex="B(a,\ 0)" /> 为两定点，动点 P 满足直线 PA 与 PB 的斜率之积为定值 <Katex tex="\lambda" />（<Katex tex="\lambda \ne 0" />）。则 <Katex tex="\lambda < 0" /> 时轨迹为<strong>椭圆</strong>（<Katex tex="\lambda = -1" /> 时恰为圆），<Katex tex="\lambda > 0" /> 时轨迹为<strong>双曲线</strong>（均需去掉 A、B 两个退化点）。当 A、B 恰为长轴（实轴）顶点时，<Katex tex="\lambda = -b^2/a^2" />（椭圆）、<Katex tex="\lambda = +b^2/a^2" />（双曲线）。</div>
     <div class="board-wrap">
@@ -38,7 +38,7 @@
         <tr><td>焦点三角形</td><td>S 与 <Katex tex="\theta = \angle F_1PF_2" /></td><td><Katex tex="S = b^2\cdot\tan(\theta/2)" /></td><td><Katex tex="S = b^2\cdot\cot(\theta/2)" /></td><td>—</td></tr>
       </tbody>
     </table>
-    <p>五种刻画指向同族曲线，这正是"数形结合"的深意：<strong>解题时选最合适的那个定义</strong>。距离和差找第一定义，比值问题找第二定义，斜率条件找第三定义，面积与角度找焦点三角形。本专题的子专题一（极点极线）则展示了第六种刻画 —— 射影几何视角。</p>
+    <p>五种刻画指向同族曲线，这正是"数形结合"的深意：<strong>解题时选最合适的那个定义</strong>。距离和差找第一定义，比值问题找第二定义，斜率条件找第三定义，面积与角度找焦点三角形。本专题的子专题六（极点极线）则展示了第六种刻画 —— 射影几何视角。</p>
   </ChPage>
 </template>
 <script setup>

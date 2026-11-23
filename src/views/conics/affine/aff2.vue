@@ -1,10 +1,10 @@
 <template>
   <ChPage :cur="2" no="A2" base="/conics/aff" :chapters="AFF_CHAPTERS"
     title="从垂径定理到点差法" sub="圆的「平行弦中点共垂线」压扁后变成椭圆的「平行弦中点共轭直径」—— 代数上就是点差法，几何上正是 D5 的第三定义。"
-    :toc="[{ id: 'a2-lab', t: '平行弦中点机（图 A2）' }, { id: 'a2-der', t: '点差法 · 两行推导' }, { id: 'a2-aff', t: '仿射解读：垂径定理的遗言' }, { id: 'a2-app', t: '实战与一个易错点' }]">
-    <div class="note good"><strong>圆的垂径定理</strong>：一族平行弦的中点，全都落在一条过圆心、且与弦垂直的直径上（圆心与弦中点的连线垂直于弦）。椭圆没有"垂直"了 —— 但实验会告诉你，"中点共线、斜率乘积定值"这部分原封不动地活着。</div>
+    :toc="[{ id: 'a2-lab', t: '平行弦的中点（图 A2）' }, { id: 'a2-der', t: '点差法 · 两行推导' }, { id: 'a2-aff', t: '仿射解读：垂径定理的遗言' }, { id: 'a2-app', t: '实战与一个易错点' }]">
+    <div class="note good"><strong>圆的垂径定理</strong>：一族平行弦的中点，全都落在一条过圆心、且与弦垂直的直径上（圆心与弦中点的连线垂直于弦）。椭圆没有"垂直"了 —— 但下面的画板会告诉你，"中点共线、斜率乘积定值"这部分原封不动地活着。</div>
 
-    <h3 class="sec" id="a2-lab">平行弦中点机</h3>
+    <h3 class="sec" id="a2-lab">平行弦的中点</h3>
     <div class="board-wrap">
       <BoardMount :factory="createChordMid" />
       <div class="cap">图 A2 · <b>平行弦的中点与点差法</b>：红色是椭圆的一族平行弦（转 α 滑块换方向），金色中点严格排成一条过中心的直线 —— 共轭直径。虚线圆是"压扁前"的对照：那里中点直径与弦垂直（灰色的直角标记），压扁后只剩斜率乘积 <Katex tex="k_{\text{弦}}\cdot k_{\text{径}}=-\tfrac{b^2}{a^2}" />。「扫描一条弦」看中点沿直径爬行。</div>
@@ -27,7 +27,7 @@
     <p>为什么点差法的答案长得像垂径定理？因为它<strong>就是</strong>垂径定理被 <Katex tex="T_k" /> 压扁后的样子。圆内平行弦中点共线于垂直直径：<Katex tex="k_{\text{弦}}\cdot k_{\text{径}}=-1" />。<Katex tex="T_k" /> 下斜率变成原来的 k 倍（<Katex tex="\text{slope}=\tfrac{y}{x}\mapsto\tfrac{ky}{x}" />），于是</p>
     <Katex tex="\big(k\,k_{\text{弦}}\big)\cdot\big(k\,k_{\text{径}}\big)=k^2\cdot(-1)=-\frac{b^2}{a^2}" display />
     <p>垂直（乘积 −1）不再保持，乘积为常数（<Katex tex="-\tfrac{b^2}{a^2}" />）保持了下来 —— 仿射不变量的标准特征。而 D5 已经证明：斜率乘积 <Katex tex="-\tfrac{b^2}{a^2}" /> 的点全体恰好构成椭圆 ——<strong>第三定义（过两顶点的弦）与点差法（平行弦中点）是同一结论的两种形式</strong>：前者把弦端取在顶点，后者让弦自由平行。</p>
-    <div class="note good"><strong>双曲线版</strong>：同样的两行相减给出 <Katex tex="k_{\text{弦}}\cdot k_{OM}=+\tfrac{b^2}{a^2}" />（差一个符号，正如 D5 里那样）；令 a = b 退回圆 = −1。三曲线共用一台"平行弦机器"。</div>
+    <div class="note good"><strong>双曲线版</strong>：同样的两行相减给出 <Katex tex="k_{\text{弦}}\cdot k_{OM}=+\tfrac{b^2}{a^2}" />（差一个符号，正如 D5 里那样）；令 a = b 退回圆 = −1。三种情形共用同一个乘积判据。</div>
 
     <h3 class="sec" id="a2-app">实战，以及点差法最著名的易错点</h3>
     <p><strong>例（中点弦问题）</strong>：椭圆 <Katex tex="\tfrac{x^2}{4}+\tfrac{y^2}{3}=1" /> 的弦被点 M(1, 1) 平分，求弦所在直线方程。点差法两行：<Katex tex="k\cdot\tfrac{1}{1}=-\tfrac{3}{4}" />，得 <Katex tex="k=-\tfrac{3}{4}" />，直线 <Katex tex="y-1=-\tfrac34(x-1)" />，即 3x + 4y − 7 = 0。</p>

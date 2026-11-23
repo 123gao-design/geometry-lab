@@ -1,7 +1,7 @@
 <template>
   <ChPage :cur="2" no="D2" base="/conics/def" :chapters="DEF_CHAPTERS"
     title="双曲线：距离之差的绝对值" sub="第一定义 $\bigl||PF_1| - |PF_2|\bigr| = 2a$ —— 一支追不上，就裂成两支。"
-    :toc="[{ id: 'd2-def', t: '第一定义与实验台（图 D2）' }, { id: 'd2-deriv', t: '标准方程的推导' }, { id: 'd2-asym', t: '推论 · 渐近线' }, { id: 'd2-radius', t: '推论 · 焦半径与退化情形' }]">
+    :toc="[{ id: 'd2-def', t: '第一定义（图 D2）' }, { id: 'd2-deriv', t: '标准方程的推导' }, { id: 'd2-asym', t: '推论 · 渐近线' }, { id: 'd2-radius', t: '推论 · 焦半径与退化情形' }]">
     <p>椭圆问的是"距离之和为定值"。自然的对偶问题是：<strong>距离之差为定值</strong>呢？经验立刻提醒：<Katex tex="|PF_1| - |PF_2|" /> 可正可负，而"等于 <Katex tex="2a" />"与"等于 <Katex tex="-2a" />"描述的是对称的两半 —— 所以定义里必须带上绝对值，或者说，曲线天生就是<strong>两支</strong>。</p>
     <div class="note good" id="d2-def"><strong>双曲线的第一定义</strong>：平面内到两个定点 <Katex tex="F_1" />、<Katex tex="F_2" /> 的距离之差的绝对值为常数 <Katex tex="2a" />（要求 <Katex tex="0 < 2a < |F_1F_2|" />）的点 P 的轨迹，称为<strong>双曲线</strong> <span class="term">(hyperbola)</span>。<Katex tex="F_1" />、<Katex tex="F_2" /> 为焦点，<Katex tex="|F_1F_2| = 2c" /> 为焦距；离 <Katex tex="F_2" /> 近的那支（右支）上 <Katex tex="|PF_1| - |PF_2| = +2a" />，左支上为 <Katex tex="-2a" />。</div>
     <div class="board-wrap">

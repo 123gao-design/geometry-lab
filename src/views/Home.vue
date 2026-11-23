@@ -70,7 +70,7 @@
     <router-link class="topic-card" to="/conics">
       <span class="tag">已上线</span>
       <h3>圆锥曲线</h3>
-      <p>极点极线与配极理论、五种定义与标准方程、光学性质与切线、仿射变换、参数方程与轨迹、直线与圆锥曲线。</p>
+      <p>五种定义与标准方程、光学性质与切线、仿射变换、参数方程与轨迹、直线与圆锥曲线、极点极线与配极理论。</p>
       <span class="prog-box">已读 {{ conicsRead() }} / 32</span>
     </router-link>
     <router-link class="topic-card" to="/solid">

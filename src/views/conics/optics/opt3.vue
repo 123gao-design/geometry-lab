@@ -1,7 +1,7 @@
 <template>
   <ChPage :cur="3" no="T3" base="/conics/opt" :chapters="OPT_CHAPTERS"
     title="抛物线：把平行光拧成一束" sub="平行于轴的光反射后全部汇聚于焦点 —— 卫星锅、探照灯、太阳灶的几何原理。"
-    :toc="[{ id: 't3-st', t: '定理陈述与实验（图 T3）' }, { id: 't3-proof', t: '证明 · 倍角恒等式' }, { id: 't3-app', t: '真实应用' }]">
+    :toc="[{ id: 't3-st', t: '定理陈述与画板（图 T3）' }, { id: 't3-proof', t: '证明 · 倍角恒等式' }, { id: 't3-app', t: '真实应用' }]">
     <div class="note good" id="t3-st"><strong>抛物线的光学性质</strong>：平行于抛物线轴的光线，经抛物线反射后，必经过焦点；反过来，从焦点发出的光经抛物线反射后，必平行于轴射出。等价几何陈述：<strong>切线平分"焦点线 PF 与轴向平行线"的夹角</strong>。</div>
     <div class="board-wrap">
       <BoardMount :factory="createDishRefl" />

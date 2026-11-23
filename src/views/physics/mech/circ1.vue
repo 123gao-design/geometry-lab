@@ -5,6 +5,7 @@
       { id: 'c1-desc', t: '描述圆周运动的物理量' },
       { id: 'c1-acc', t: '速度的变化与向心加速度' },
       { id: 'c1-force', t: '向心力与供需关系' },
+      { id: 'c1-cone', t: '圆锥摆：重力与拉力的合力' },
       { id: 'c1-trans', t: '传动关系' },
     ]">
     <div class="note good">
@@ -46,6 +47,19 @@
     <p style="text-align:center"><Katex tex="F_{\text{供}}=F_{\text{需}}\ \text{做圆周运动},\qquad F_{\text{供}}>F_{\text{需}}\ \text{做近心运动},\qquad F_{\text{供}}<F_{\text{需}}\ \text{做离心运动}." display /></p>
     <p>这里说的「供」指该位置实际能提供的最大径向力，与半径方向垂直的力不计入。三种情形中，圆周运动只是恰好相等的那一种，另外两种是把力与运动关系摆正之后自然得到的结果，力18 会专门讨论。</p>
 
+    <h3 class="sec" id="c1-cone">圆锥摆：重力与拉力的合力</h3>
+    <p>把绳的一端系在固定点，让小球在水平面内匀速转圈，绳在空间中扫出一个圆锥面，这样的装置叫<strong>圆锥摆</strong>。小球只受两个力：重力 <Katex tex="mg" /> 竖直向下，绳的拉力 <Katex tex="T" /> 沿绳指向悬点，两者不共线，合力不指向圆心之外的任何别处。设绳与竖直方向的夹角为 <Katex tex="\theta" />，悬点到圆心的距离为 <Katex tex="H=L\cos\theta" />，圆的半径即 <Katex tex="r=L\sin\theta" />。</p>
+    <p>小球在水平面内转，在竖直方向上没有位移、也没有加速度，所以两个力的竖直分量必须抵消：</p>
+    <p style="text-align:center"><Katex tex="T\cos\theta=mg." display /></p>
+    <p>水平方向上拉力有一个指向圆心的分量 <Katex tex="T\sin\theta" />，再没有别的力与它平衡，它就是这个圆周运动的向心力：</p>
+    <p style="text-align:center"><Katex tex="T\sin\theta=m\omega^2r=m\frac{v^2}{r}." display /></p>
+    <p>两式相除，拉力与质量一起消去，只剩一个只含几何量的关系：</p>
+    <p style="text-align:center"><Katex tex="\tan\theta=\frac{\omega^2r}{g}=\frac{\omega^2L\sin\theta}{g},\qquad \omega=\sqrt{\frac{g}{L\cos\theta}}." display /></p>
+    <p>结论值得单独记：<strong>角速度只由悬点高度 <Katex tex="H=L\cos\theta" /> 决定</strong>，与小球质量无关。绳放得越长、偏角越小，转得越慢；把偏角拖大，悬点高度变矮，角速度随之变大。张力 <Katex tex="T=\dfrac{mg}{\cos\theta}" /> 比重力大，偏角越大超出得越多。这与下一章竖直平面内的圆周运动是两种不同的情形：圆锥摆的绳始终绷紧、张力不可能为零，因为它的竖直分量一直在托住重力。</p>
+
+    <PhysicsDemo :def="DEMO2" />
+    <p class="cap">图 力16b · <b>圆锥摆</b>：紫色虚线圆是小球运动的水平圆，灰色斜面虚线是悬点向圆周上各点张开的锥面，青线是从圆心量到摆球的半径 <Katex tex="r" />。摆球上画三支箭头：蓝是张力 <Katex tex="T" /> 沿绳指向悬点，橙是重力 <Katex tex="mg" /> 竖直向下，绿是合力 <Katex tex="m\omega^2r" /> 水平指向圆心；橙色虚线是 <Katex tex="T" /> 的竖直分量，与 <Katex tex="mg" /> 等长反向，虚线补成的平行四边形说明绿箭头正是蓝箭头的水平分量。看点一：把「偏角 θ」拖大，圆半径变大、悬点变矮，读数栏的角速度与张力同时上升，而「T cosθ / mg」两数始终相等。看点二：单独拖「摆长 L」，角速度按 <Katex tex="\sqrt{g/(L\cos\theta)}" /> 变，张力与周期随之调整。看点三：拖「质量 m」，张力与重力按同一比例变大，读数栏的角速度、圆半径、周期三行纹丝不动——运动学量只与几何有关。看点四：按住画面拖动，可以从侧面看清锥面与水平圆的关系，转到正对时圆压成一条线，转到俯视时圆恢复为圆。图中圆的大小按 <Katex tex="L\sin\theta" /> 实时换算，真值一律看读数栏。</p>
+
     <h3 class="sec" id="c1-trans">传动关系</h3>
     <p>多个轮子连在一起转动时，先分清是哪一种连接，再决定哪个量相同：</p>
     <p><strong>同轴转动</strong>（皮带轮与它的轴、齿轮与它的轴）：各点随同一个轴一起转，角速度相同，<Katex tex="\omega_1=\omega_2" />。由于 <Katex tex="v=\omega r" />，半径大的位置线速度大，轮缘的速度比轮心附近大。</p>
@@ -72,4 +86,5 @@ import Katex from '../../../components/Katex.vue';
 import { demoOf } from '../../../physics/demos/index.js';
 
 const DEMO = demoOf('circ1');
+const DEMO2 = demoOf('cone');
 </script>
