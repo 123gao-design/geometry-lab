@@ -205,6 +205,7 @@ const PJ2 = () => import('./views/polar/coords/j2.vue');
 // 子专题二 · 曲线的极坐标方程
 const PQ1 = () => import('./views/polar/curves/q1.vue');
 const PQ2 = () => import('./views/polar/curves/q2.vue');
+const PQ3 = () => import('./views/polar/curves/q3.vue');
 // 子专题三 · 参数方程
 const PS1 = () => import('./views/polar/param/s1.vue');
 const PS2 = () => import('./views/polar/param/s2.vue');
@@ -925,6 +926,7 @@ export default [
   { path: '/polar/j2', component: PJ2 },
   { path: '/polar/q1', component: PQ1 },
   { path: '/polar/q2', component: PQ2 },
+  { path: '/polar/q3', component: PQ3 },
   { path: '/polar/s1', component: PS1 },
   { path: '/polar/s2', component: PS2 },
   { path: '/polar/s3', component: PS3 },

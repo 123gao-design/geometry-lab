@@ -51,8 +51,8 @@ export function createBoard(root) {
         const fx = k * Math.PI / 2, fy = Math.cos(fx);
         B.seg(V(m.px(fx), m.py(0)), V(m.px(fx), m.py(fy)), { stroke: '#93a1b5', 'stroke-width': 1, 'stroke-dasharray': '3 4' });
         B.dot(V(m.px(fx), m.py(fy)), 3.4, { fill: '#ffd166' });
-        if (st.labs) B.text(V(m.px(fx), m.py(fy) + (fy > 0.5 ? -12 : fy < -0.5 ? 18 : 16)),
-          `(${piLab(fx)}, ${fy > 0.5 ? '1' : fy < -0.5 ? '-1' : '0'})`, { 'font-size': 11, fill: '#5c6a80', 'text-anchor': 'middle' });
+        if (st.labs && Math.abs(fy) > 0.5) B.text(V(m.px(fx), m.py(fy) + (fy > 0 ? -12 : 18)),
+          `(${piLab(fx)}, ${fy > 0 ? '1' : '-1'})`, { 'font-size': 11, fill: '#5c6a80', 'text-anchor': 'middle' });
       }
       B.tex(V(m.px(m.X0) + 12, m.py(1.5)), '$y=\\cos x$', { size: 14, color: '#ff9e4a', anchor: 'start', w: 140 });
     } else {                                                                     // 平移等价：x₀ 处两点恒等高

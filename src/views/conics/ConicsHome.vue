@@ -2,7 +2,7 @@
   <div>
     <div class="chapter-head">
       <h1>圆锥曲线专题</h1>
-      <p class="sub">解析几何的核心内容。当前上线六个子专题：<strong>定义与标准方程</strong>（数形结合 · 5 章 · 8 块画板）、<strong>光学性质与切线</strong>（4 章 · 4 块画板）、<strong>仿射变换看圆锥曲线</strong>（6 章 · 6 块画板）、<strong>参数方程与轨迹</strong>（5 章 · 7 块画板）、<strong>直线与圆锥曲线</strong>（联立与判别式 · 5 章 · 5 块画板）与<strong>极点极线与配极理论</strong>（射影几何视角 · 8 章 · 18 块画板），共 33 章 · 48 块画板。</p>
+      <p class="sub">解析几何的核心内容。当前上线六个子专题：<strong>定义与标准方程</strong>（数形结合 · 5 章 · 9 块画板）、<strong>光学性质与切线</strong>（4 章 · 4 块画板）、<strong>仿射变换看圆锥曲线</strong>（6 章 · 6 块画板）、<strong>参数方程与轨迹</strong>（5 章 · 7 块画板）、<strong>直线与圆锥曲线</strong>（联立与判别式 · 5 章 · 5 块画板）与<strong>极点极线与配极理论</strong>（射影几何视角 · 8 章 · 18 块画板），共 33 章 · 49 块画板。</p>
       <div class="readall">学习进度：已读 {{ totalRead() }} / 33 章</div>
     </div>
 

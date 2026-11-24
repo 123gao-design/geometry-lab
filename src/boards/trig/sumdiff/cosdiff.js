@@ -40,8 +40,9 @@ export function createBoard(root) {
     // 橙弦 PQ
     B.seg(P, Q, { stroke: '#ff9e4a', 'stroke-width': 2.6 });
     B.text(V((P.x + Q.x) / 2, (P.y + Q.y) / 2 - 12), 'd', { 'font-size': 13, fill: '#ff9e4a' });
-    // 右栏：两种表达式 + 结论
-    const X = 468;
+    // 右栏：两种表达式 + 结论。竖栏起在 500：Q 的坐标标签贴着圆外往右伸，
+    // 按 468 起栏时它会探进「② 余弦定理」那一行的字里去
+    const X = 500;
     B.tex(V(X, 92), '① 两点距离公式（U1 坐标展开）', { size: 14, color: '#5cadff', anchor: 'start', w: 380 });
     B.tex(V(X, 124), '$d^2=(\\cos\\alpha-\\cos\\beta)^2+(\\sin\\alpha-\\sin\\beta)^2$', { size: 14, anchor: 'start', w: 380 });
     B.tex(V(X, 150), '$\\;\\;=2-2(\\cos\\alpha\\cos\\beta+\\sin\\alpha\\sin\\beta)$', { size: 14, anchor: 'start', w: 380 });

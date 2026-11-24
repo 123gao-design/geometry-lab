@@ -1,13 +1,25 @@
 <template>
   <ChPage :cur="3" no="D3" base="/conics/def" :chapters="DEF_CHAPTERS"
     title="抛物线：等距离的平衡" sub="|PF| = d(P, l) —— 一个焦点、一条准线，不多不少刚好相等。"
-    :toc="[{ id: 'd3-def', t: '抛物线的定义（图 D3）' }, { id: 'd3-deriv', t: '标准方程的推导' }, { id: 'd3-latus', t: '推论 · 焦半径与通径' }, { id: 'd3-four', t: '四种朝向' }]">
+    :toc="[{ id: 'd3-def', t: '抛物线的定义（图 D3）' }, { id: 'd3-gap', t: '有符号的距离差' }, { id: 'd3-deriv', t: '标准方程的推导' }, { id: 'd3-latus', t: '推论 · 焦半径与通径' }, { id: 'd3-four', t: '四种朝向' }]">
     <p>椭圆和双曲线都需要两个焦点。抛物线换了一套配置：<strong>一个定点配一条定直线</strong>，动点到两者的距离精确相等。生活中它无处不在 —— 抛出的篮球、喷泉的水柱、卫星天线锅的剖面，都是这条曲线。</p>
     <div class="note good" id="d3-def"><strong>抛物线的定义</strong>：平面内到一个定点 F 与一条定直线 l（F 不在 l 上）距离相等的点的轨迹，称为<strong>抛物线</strong> <span class="term">(parabola)</span>。F 称为<strong>焦点</strong>，l 称为<strong>准线</strong> <span class="term">(directrix)</span>；F 到 l 的距离记为 p（焦参数），焦点与顶点的距离为 p/2。</div>
     <ConicFigure head="bottom" number="D3" title="比较焦半径与到准线的垂距" :factory="createParaDef"
       :legend="[['mint', '抛物线'], ['orange', '焦半径'], ['blue', '垂距']]">
       拖动 P，橙线 |PF| 与蓝线 |PQ|（P 到准线的垂距）永远一样长，差值读数恒为 0。滑块 p 控制开口大小；打开「显示通径」可看过焦点垂直于轴的那条弦 —— 它的长度恰为 2p。
     </ConicFigure>
+
+    <h3 class="sec" id="d3-gap">到焦点的距离减去到直线的距离</h3>
+    <p>固定直线 x = 0 和焦点 F = (2, 0)。设 PF 减去 P 到直线的距离等于非负常数 k，原方程就是 <Katex tex="\sqrt{(x-2)^2+y^2}=|x|+k" />。</p>
+    <ConicFigure number="D3b" title="固定焦点，比较非负距离差的轨迹" :factory="createDistanceGap"
+      :legend="[['mint','满足方程的轨迹'],['blue','到原直线的垂距','dashed'],['gold','到焦点的距离','dashed']]">
+      默认 k = 2。把 P 放在左侧水平射线上，或放在右侧抛物线上，比较两处的距离差。分别点 k = 1 和 k = 3，观察轨迹在原直线左侧如何变化。
+    </ConicFigure>
+    <p>因为 <Katex tex="k\ge0" />，所以 <Katex tex="|x|+k\ge0" />，两边平方是等价变形。按 x 的正负拆开绝对值，得到</p>
+    <Katex tex="y^2=\begin{cases}(4+2k)x+k^2-4,&amp;x\ge0,\\(4-2k)x+k^2-4,&amp;x&lt;0.\end{cases}" display />
+    <p><strong>0 ≤ k &lt; 2。</strong>当 x &lt; 0 时，第二式右端为负，没有实点。第一式给出一条向右开口的抛物线，顶点为 <Katex tex="(1-k/2,0)" />。其中 k = 0 就是普通的等距定义。</p>
+    <p><strong>k = 2。</strong>右侧得到 <Katex tex="y^2=8x" />，左侧得到 <Katex tex="y=0" />。原点也满足条件，所以轨迹是这条抛物线与从原点向左的闭射线的并集。</p>
+    <p><strong>k &gt; 2。</strong>两式在各自的半平面内都给出正的 <Katex tex="y^2" />。每个 x 对应一上一下两个点，形成彼此分开的两支。每支各由左右两段抛物线弧拼成，两处拼接点为 <Katex tex="(0,\pm\sqrt{k^2-4})" />。</p>
 
     <h3 class="sec" id="d3-deriv">标准方程的推导：只需平方一次</h3>
     <p>取过 F 且垂直于 l 的直线为 x 轴，F 与 l 的垂线段中点为原点（这样曲线顶点恰在原点，方程最简）。设焦参数为 p，则 <Katex tex="F(p/2,\ 0)" />，准线 l：<Katex tex="x = -p/2" />。定义给出：</p>
@@ -40,5 +52,6 @@ import ChPage from '../../../components/ChPage.vue';
 import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as createParaDef } from '../../../boards/conics/definitions/paradef.js';
+import { createBoard as createDistanceGap } from '../../../boards/conics/definitions/distanceGap.js';
 import { DEF_CHAPTERS } from './defnav.js';
 </script>

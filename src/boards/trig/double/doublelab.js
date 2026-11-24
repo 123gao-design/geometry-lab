@@ -32,10 +32,10 @@ export function createBoard(root) {
     B.seg(O, P, { stroke: '#ffd166', 'stroke-width': 2.2 });
     B.dot(P, 4.5, { fill: '#ffd166' });
     B.textM(V(P.x + (P.x > O.x ? 10 : -10), P.y - 12), '$P(\\cos\\alpha,\\ \\sin\\alpha)$', { 'font-size': 11, fill: '#ffd166', 'text-anchor': P.x > O.x ? 'start' : 'end' });
-    // α 弧（青）
+    // α 弧（青）—— 弧 r40、字 r54，与金的 2α 弧之间留出空档
     if (a > 0.02) {
-      mk('polyline', { points: arcPts(0, a, 42), fill: 'none', stroke: '#67e8f9', 'stroke-width': 1.8 }, B.dyn);
-      B.text(V(O.x + 60 * Math.cos(a / 2), O.y - 60 * Math.sin(a / 2)), 'α', { 'font-size': 12, fill: '#67e8f9' });
+      mk('polyline', { points: arcPts(0, a, 40), fill: 'none', stroke: '#67e8f9', 'stroke-width': 1.8 }, B.dyn);
+      B.text(V(O.x + 54 * Math.cos(a / 2), O.y - 54 * Math.sin(a / 2)), 'α', { 'font-size': 12, fill: '#67e8f9' });
     }
     // 内接矩形：宽 2cosα、高 sinα —— 只在第一象限存在（0 < α < π/2）
     const onRect = st.rect && ca > 0.02 && sa > 0.02;
@@ -46,10 +46,15 @@ export function createBoard(root) {
       B.textM(V(O.x, O.y + 16), '宽 $2\\cos\\alpha$', { 'font-size': 11, fill: '#5cadff' });
       B.textM(V(O.x + R * ca + 8, O.y - R * sa / 2), '高 $\\sin\\alpha$', { 'font-size': 11, fill: '#5cadff', 'text-anchor': 'start' });
     }
-    // 2α 弧（金）—— 一圈为限（α ≤ π）
-    if (st.arc && 2 * a <= TAU + 1e-9 && 2 * a > 0.04) {
-      mk('polyline', { points: arcPts(0, 2 * a, 66), fill: 'none', stroke: '#ffd166', 'stroke-width': 1.8 }, B.dyn);
-      B.text(V(O.x + 84 * Math.cos(a), O.y - 84 * Math.sin(a)), '2α', { 'font-size': 12, fill: '#ffd166' });
+    // 2α 弧（金）—— 每满一圈外推一环（半径 84+16j），余弧落在最外圈，2α 超过 2π 也不消失
+    if (st.arc && 2 * a > 0.04) {
+      const sweep = 2 * a, rings = Math.floor((sweep - 1e-9) / TAU), rest = sweep - rings * TAU;
+      for (let j = 0; j < rings; j++)
+        mk('polyline', { points: arcPts(0, TAU, 84 + 16 * j), fill: 'none', stroke: '#ffd166', 'stroke-width': 1.8 }, B.dyn);
+      if (rest > 0.04)
+        mk('polyline', { points: arcPts(0, rest, 84 + 16 * rings), fill: 'none', stroke: '#ffd166', 'stroke-width': 1.8 }, B.dyn);
+      const mid = rest > 0.04 ? rest / 2 : Math.PI / 2, lr = 84 + 16 * rings + 13;
+      B.text(V(O.x + lr * Math.cos(mid), O.y - lr * Math.sin(mid)), '2α', { 'font-size': 12, fill: '#ffd166' });
     }
     // 右栏：β=α 代入 M1 的三行推导
     const X = 552;

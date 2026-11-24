@@ -6,6 +6,7 @@ import { initTheme, initAnim } from './lib/theme.js';
 import { loadDefaultLabels, defaultUrl } from './lib/labelstore.js';
 import { PREFS } from './lib/settings.js';
 import './styles/global.css';
+import './styles/xref.css';   // 章间内链 .xref（正文跨章引用写成那一节的标题 + 可点跳转）
 import 'katex/dist/katex.min.css';
 
 initTheme(); // 须在任何画板构造前

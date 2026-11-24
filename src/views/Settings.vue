@@ -49,6 +49,26 @@
       </div>
       <div class="set-row">
         <div class="set-label">
+          <strong>显示思考过程</strong>
+          <span>推理模型返回的思考链默认折叠展示；关掉后只留最终回答。聊天窗底部也有一个开关。</span>
+        </div>
+        <div class="seg" role="group" aria-label="显示思考过程">
+          <button v-for="o in ONS" :key="o.v" type="button" :class="{ on: PREFS.chatThink === o.v }"
+            @click="setPref('chatThink', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
+          <strong>整屏对话列表</strong>
+          <span>整屏时左侧是否常驻历史对话；关掉后仍可从聊天窗顶部「记录」下拉里翻。</span>
+        </div>
+        <div class="seg" role="group" aria-label="整屏对话列表">
+          <button v-for="o in ONS" :key="o.v" type="button" :class="{ on: PREFS.chatHist === o.v }"
+            @click="setPref('chatHist', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
           <strong>画布半屏方向</strong>
           <span>画布（右下铅笔钮）开成半屏时贴哪一边，正文自动让出那一半；顶栏「✏ 画布」打开的始终是整屏。</span>
         </div>
@@ -181,7 +201,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>操作条位置</strong>
-          <span>画板右上角那一排按钮（缩放、半屏、底色、导出等）放哪儿。选板外时它们排到画板上方的一条里，不再压住图形；半屏/全屏展示时自动收回板内顶部。物理讲义的演示画板同此设置。</span>
+          <span>画板操作条放在板外还是板内；半屏、全屏时自动收回板内。</span>
         </div>
         <div class="seg" role="group" aria-label="画板操作条位置">
           <button v-for="o in DL_POS" :key="o.v" type="button" :class="{ on: PREFS.dlPos === o.v }"
@@ -191,7 +211,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>物理画板纸面</strong>
-          <span>讲义演示与实验页那块画板的底色、方格与墨色。默认跟随主题——深色家族是一方深板岩纸，浅色家族是一张暖米色的纸；另有四档浅纸（纸白 · 浅蓝、暖沙 · 米黄、青瓷 · 薄荷、樱粉 · 淡桃）与四档深纸（深板岩、墨蓝、林深、紫夜），每档自带一整套墨色与语义色，暗色主题下选浅纸也照样看得清。画板操作条上的「▦ 纸面」是同一项。</span>
+          <span>讲义演示与实验页的画板底色，默认跟随主题。操作条上的「▦ 纸面」是同一项。</span>
         </div>
         <div class="seg wide" role="group" aria-label="物理画板纸面">
           <button v-for="o in PAPERS" :key="o.v" type="button" :class="{ on: PREFS.physPaper === o.v }"
@@ -200,8 +220,18 @@
       </div>
       <div class="set-row">
         <div class="set-label">
+          <strong>数学画板纸面</strong>
+          <span>各章 SVG 画板的底色，默认跟随主题；选定后所有画板统一换过去。</span>
+        </div>
+        <div class="seg wide" role="group" aria-label="数学画板纸面">
+          <button v-for="o in PAPERS" :key="o.v" type="button" :class="{ on: PREFS.boardPaper === o.v }"
+            @click="setPref('boardPaper', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
           <strong>画板字号</strong>
-          <span>画板里所有图内文字（读数、刻度、公式符号与单位）的字号倍率。数字与公式走 KaTeX 的衬线数学体，带汉字的说明仍用系统字体。</span>
+          <span>画板内文字（读数、刻度、公式）的字号倍率。</span>
         </div>
         <div class="ink-slide">
           <input class="ink-range" type="range" min="0.8" max="1.6" step="0.05" :value="PREFS.physFont"
@@ -212,7 +242,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>画板线条粗细</strong>
-          <span>图里曲线、箭头、辅助线与物体轮廓的粗细倍率，100% 是原来的画法。觉得线太细往右拉；拖动即刻生效，不会重播实验。</span>
+          <span>曲线、箭头与物体轮廓的粗细倍率，拖动即刻生效。</span>
         </div>
         <div class="ink-slide">
           <input class="ink-range" type="range" min="0.6" max="2.5" step="0.05" :value="PREFS.physLineW"
@@ -223,7 +253,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>坐标轴线宽</strong>
-          <span>坐标图里两条轴的粗细，是绝对倍率、不与「线条粗细」叠乘。刻度短线与网格线仍随线条粗细走。</span>
+          <span>坐标轴的粗细，独立于线条粗细。</span>
         </div>
         <div class="ink-slide">
           <input class="ink-range" type="range" min="0.6" max="3" step="0.05" :value="PREFS.physAxisW"
@@ -234,7 +264,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>画板背景网格</strong>
-          <span>板底那层纸面方格。自动：演示里有坐标网格时先收起来，免得两套线条叠在一起互相咬；显示：始终画；隐藏：完全不画。方格会跟着缩放平移一起走，与图上的坐标网格同一个相位。</span>
+          <span>板底纸面方格：自动时遇到坐标网格就收起，也可固定显示或隐藏。</span>
         </div>
         <div class="seg" role="group" aria-label="画板背景网格">
           <button v-for="o in GRID_MODES" :key="o.v" type="button" :class="{ on: PREFS.physGrid === o.v }"
@@ -243,18 +273,8 @@
       </div>
       <div class="set-row">
         <div class="set-label">
-          <strong>数学画板纸面</strong>
-          <span>各章 SVG 演示台那块画板的底色与墨色。默认跟随主题——深色家族是一方深纸、浅色家族是一张浅纸，随顶栏的 🎨 一起换；另有四档浅纸（纸白 · 浅蓝、暖沙 · 米黄、青瓷 · 薄荷、樱粉 · 淡桃）与四档深纸（深板岩、墨蓝、林深、紫夜），每档自带一整套墨色，暗色主题下选浅纸也照样看得清。选定后所有画板统一换到这一档；画板操作条上的「▤ 外观」也能改，那一处只改点它的那一块板，在此再动一次即全部交还。</span>
-        </div>
-        <div class="seg wide" role="group" aria-label="数学画板纸面">
-          <button v-for="o in PAPERS" :key="o.v" type="button" :class="{ on: PREFS.boardPaper === o.v }"
-            @click="setPref('boardPaper', o.v)">{{ o.t }}</button>
-        </div>
-      </div>
-      <div class="set-row">
-        <div class="set-label">
           <strong>数学画板字号</strong>
-          <span>数学画板（各章的 SVG 演示台）里图内文字的字号倍率。数字、拉丁与希腊字母、运算符一律排成 KaTeX 的数学体，变量斜体、函数名与数字正体，汉字仍用系统字体；100% 与原来的版面一致。</span>
+          <span>数学画板内文字的字号倍率。</span>
         </div>
         <div class="ink-slide">
           <input class="ink-range" type="range" min="0.8" max="1.6" step="0.05" :value="PREFS.boardFont"
@@ -265,7 +285,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>数学画板线条粗细</strong>
-          <span>图里曲线、辅助线、网格与图形轮廓的粗细倍率，100% 是原来的画法。批注墨迹与把手不吃这一项。</span>
+          <span>曲线、辅助线与图形轮廓的粗细倍率。</span>
         </div>
         <div class="ink-slide">
           <input class="ink-range" type="range" min="0.6" max="2.5" step="0.05" :value="PREFS.boardLineW"
@@ -276,7 +296,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>数学画板坐标轴线宽</strong>
-          <span>函数图象板两条坐标轴的粗细，是绝对倍率、不与「线条粗细」叠乘；箭头与轴字母跟着一起变。刻度短线与网格线仍随线条粗细走。</span>
+          <span>坐标轴的粗细，独立于线条粗细。</span>
         </div>
         <div class="ink-slide">
           <input class="ink-range" type="range" min="0.6" max="3" step="0.05" :value="PREFS.boardAxisW"
@@ -287,7 +307,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>数学画板背景纸格</strong>
-          <span>垫在整块画板底下的一层纸纹。自动：板上有坐标网格时收起，免得两套线条叠在一起；方格、点阵、横线：始终铺。纸格跟着画板缩放平移一起走，导出图里也带着它。画布页自己选的纸面不受这一项影响。画板操作条上的「▤ 外观」面板里有同一个开关。</span>
+          <span>板底纸纹：自动、方格、点阵或横线，跟随画板缩放。</span>
         </div>
         <div class="seg wide" role="group" aria-label="数学画板背景纸格">
           <button v-for="o in MATH_GRID" :key="o.v" type="button" :class="{ on: PREFS.boardGrid === o.v }"
@@ -297,7 +317,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>画布工具条</strong>
-          <span>自动收回：在画布空白处点一下，工具条收成一个小钮（工具条右侧的图钉可以随手切换）；常驻：一直留在原位，点空白也不会收。</span>
+          <span>自动收回还是常驻；自动时点画布空白即收起。</span>
         </div>
         <div class="seg" role="group" aria-label="画布工具条">
           <button v-for="o in BAR_MODES" :key="o.v" type="button" :class="{ on: PREFS.inkBar === o.v }"
@@ -361,8 +381,8 @@
     <h3 class="sec">模型与 API</h3>
     <div class="set-card">
       <div class="md-hint">
-        <p>按 OpenAI 兼容格式调用，接口地址填到 <code>/v1</code> 这一层即可。密钥只存在本机浏览器里，明文保存，用公用电脑请自己留意。</p>
-        <p>浏览器直连要求对方允许跨域（CORS）；被拦下时换成自建代理或本地服务的地址。</p>
+        <p>按 OpenAI 兼容格式调用：接口地址填到 <code>/v1</code> 这一层，直接粘整条端点也可以。密钥只存在本机浏览器里，明文保存，公用电脑请留意。</p>
+        <p>浏览器直连要求对方允许跨域（CORS）。配好后点卡片里的「测试连接」，能直接看到是网络、鉴权还是地址的问题。</p>
       </div>
       <div class="md-presets">
         <span class="md-presets-t">快速添加：</span>
@@ -373,37 +393,57 @@
       <p v-if="!MODELS.list.length" class="md-empty">还没有模型。点上面任意一个先加进来，再填密钥。</p>
 
       <div v-for="m in MODELS.list" :key="m.id" class="md-card" :class="{ on: m.id === MODELS.active }">
-        <div class="md-row">
-          <label class="md-name">
-            <input :value="m.name" @input="edit(m.id, { name: $event.target.value })" placeholder="显示名称" />
-          </label>
+        <button class="md-sum" type="button" :aria-expanded="isOpen(m)" @click="toggleOpen(m)">
+          <span class="md-caret" :class="{ open: isOpen(m) }">▸</span>
+          <strong class="md-sum-name">{{ m.name || '未命名模型' }}</strong>
           <span class="md-model">{{ m.model || '未填模型名' }}</span>
           <span class="md-sp" />
-          <button class="md-btn" type="button" :class="{ on: m.id === MODELS.active }"
-            @click="setActiveModel(m.id)">{{ m.id === MODELS.active ? '使用中' : '用它' }}</button>
-          <button class="md-btn danger" type="button" @click="askRemove(m)">删除</button>
-        </div>
-        <div class="md-grid">
-          <label class="md-f">
-            <span>接口地址</span>
-            <input :value="m.baseUrl" spellcheck="false" placeholder="https://api.example.com/v1"
-              @input="edit(m.id, { baseUrl: $event.target.value })" />
-          </label>
-          <label class="md-f">
-            <span>模型名</span>
-            <input :value="m.model" spellcheck="false" placeholder="gpt-4o-mini"
-              @input="edit(m.id, { model: $event.target.value })" />
-          </label>
-          <label class="md-f wide">
-            <span>API Key</span>
-            <input :value="m.key" type="password" spellcheck="false" placeholder="sk-…（本地模型可留空）"
-              @input="edit(m.id, { key: $event.target.value })" />
-          </label>
-          <label class="md-f">
-            <span>温度 {{ Number(m.temp).toFixed(1) }}</span>
-            <input class="md-range" type="range" min="0" max="1.5" step="0.1" :value="m.temp"
-              @input="edit(m.id, { temp: Number($event.target.value) })" />
-          </label>
+          <span v-if="m.id === MODELS.active" class="md-tag">使用中</span>
+        </button>
+        <div v-show="isOpen(m)" class="md-body">
+          <div class="md-row">
+            <label class="md-name">
+              <input :value="m.name" @input="edit(m.id, { name: $event.target.value })" placeholder="显示名称" />
+            </label>
+            <span class="md-sp" />
+            <button class="md-btn" type="button" :class="{ on: m.id === MODELS.active }"
+              @click="setActiveModel(m.id)">{{ m.id === MODELS.active ? '使用中' : '用它' }}</button>
+            <button class="md-btn danger" type="button" @click="askRemove(m)">删除</button>
+          </div>
+          <div class="md-grid">
+            <label class="md-f">
+              <span>接口地址</span>
+              <input :value="m.baseUrl" spellcheck="false" placeholder="https://api.example.com/v1"
+                @input="edit(m.id, { baseUrl: $event.target.value })" />
+              <em class="md-url">{{ endpointOf(m.baseUrl) || '填上地址后显示实际请求地址' }}</em>
+            </label>
+            <label class="md-f">
+              <span>模型名</span>
+              <input :value="m.model" spellcheck="false" placeholder="gpt-4o-mini"
+                @input="edit(m.id, { model: $event.target.value })" />
+            </label>
+            <div class="md-f wide">
+              <span>API Key</span>
+              <div class="md-key">
+                <input :value="m.key" :type="keyShow[m.id] ? 'text' : 'password'" spellcheck="false"
+                  autocomplete="off" placeholder="sk-…（本地模型可留空）"
+                  @input="edit(m.id, { key: $event.target.value })" />
+                <button class="md-eye" type="button" @click="toggleKey(m.id)">{{ keyShow[m.id] ? '隐藏' : '显示' }}</button>
+              </div>
+            </div>
+            <label class="md-f">
+              <span>温度 {{ Number(m.temp).toFixed(1) }}</span>
+              <input class="md-range" type="range" min="0" max="1.5" step="0.1" :value="m.temp"
+                @input="edit(m.id, { temp: Number($event.target.value) })" />
+            </label>
+          </div>
+          <div class="md-foot">
+            <button class="md-btn" type="button" :disabled="!!(probe[m.id] && probe[m.id].busy)" @click="testModel(m)">
+              {{ probe[m.id] && probe[m.id].busy ? '连接中…' : '测试连接' }}
+            </button>
+            <span v-if="probe[m.id] && probe[m.id].msg" class="md-probe"
+              :class="{ ok: probe[m.id].ok, bad: probe[m.id].ok === false }">{{ probe[m.id].msg }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -413,7 +453,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>对话保存目录</strong>
-          <span>{{ chatDir || '还没选。选一个文件夹后，「存到目录」会把对话写成 md 存进去。' }}</span>
+          <span>{{ chatDir ? '对话会自动写成 md 存进这个文件夹；浏览器权限过期后，在聊天窗点一次「存到目录」即可续上。' : '还没选。选一个文件夹后对话会自动写成 md；不选也能用，对话实时存在浏览器里，刷新不丢。' }}</span>
         </div>
         <div class="dir-btns">
           <button class="md-btn" type="button" @click="pick('chat')">{{ chatDir ? '更换' : '选择文件夹' }}</button>
@@ -450,21 +490,22 @@
       <p>方向只影响弹出层落在哪边，画板内容、章节顺序、阅读进度都不受牵连。配色仍在顶栏「🎨 主题」里调；菜单底部那行「✨ 背景光影」是一道总闸，关掉之后本页选的背景也一并停下。</p>
     </div>
 
-    <div class="read-row">
-      <button class="readmark" type="button" @click="resetAll">恢复默认</button>
-      <router-link class="readmark" to="/">回到目录</router-link>
-      <span class="readtip">默认：目录靠左，画板与助手靠右，半屏，只展开当前子专题，画板操作条排在板上方靠左，画布半屏靠右、工具条贴顶部，卡片悬停亮线跟随主题，背景是三团呼吸光影（混沌场景的线条默认冷蓝、浓度 30%），右下角一枚旋转多面体，拖过的板内文字自动记在本机，笔记停手后自动写进所选文件夹</span>
+    <div class="set-actions">
+      <button class="set-btn" type="button" @click="resetAll">恢复默认</button>
+      <router-link class="set-btn ghost" to="/">回到目录</router-link>
+      <span class="set-tip">默认：目录靠左，画板与助手靠右半屏；操作条排在板上方靠左；悬停亮线跟随主题；背景为呼吸光影；板内文字位置记在本机；笔记停手后自动存入选定文件夹。</span>
     </div>
   </div>
 </template>
 
 <script setup>
 // 设置页：界面偏好在 lib/settings.js（PREFS），模型在 lib/models.js，保存目录句柄在 IndexedDB（lib/fsdir.js）。
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { PREFS, setPref, resetPrefs } from '../lib/settings.js';
 import { SCENE_LIST } from '../lib/chaos.js';
 import { MODELS, PRESETS, setActiveModel, addModel, updateModel, removeModel } from '../lib/models.js';
 import { fsSupported, pickDir, getHandle, dropHandle } from '../lib/fsdir.js';
+import { pingModel, endpointOf } from '../lib/chat.js';
 import { readLabels, writeLabels, clearLabels, mergeLabels, countBoards, effectiveLabels, defaultsSnapshot, setDefaultLabels } from '../lib/labelstore.js';
 import { playPageAnim } from '../lib/pagetransition.js';
 
@@ -650,12 +691,32 @@ function pickScene(id) {
   if (PREFS.bgMotionOn !== 'on') setPref('bgMotionOn', 'on');
 }
 
-function edit(id, patch) { updateModel(id, patch); }
+function edit(id, patch) { updateModel(id, patch); if (probe[id]) delete probe[id]; }
 function addPreset(p) { addModel(p); }
 function addBlank() { addModel({ name: '自定义模型' }); }
 function askRemove(m) {
   if (!window.confirm('删掉「' + m.name + '」？密钥也会一起删掉。')) return;
   removeModel(m.id);
+}
+
+// 模型卡：折叠状态、密钥显隐、连接测试
+const openMap = ref({});
+const keyShow = reactive({});
+const probe = reactive({});
+function isOpen(m) {
+  const v = openMap.value[m.id];
+  return v === undefined ? m.id === MODELS.active : v;
+}
+function toggleOpen(m) { openMap.value[m.id] = !isOpen(m); }
+function toggleKey(id) { keyShow[id] = !keyShow[id]; }
+async function testModel(m) {
+  probe[m.id] = { busy: true, ok: null, msg: '正在连接…' };
+  try {
+    await pingModel({ ...m });
+    probe[m.id] = { busy: false, ok: true, msg: '连接成功，模型可用。' };
+  } catch (e) {
+    probe[m.id] = { busy: false, ok: false, msg: (e && e.message) || String(e) };
+  }
 }
 
 async function pick(kind) {
@@ -715,8 +776,24 @@ function resetAll() {
 .ink-val { font-size: 12px; color: var(--mut); min-width: 42px; text-align: right; font-variant-numeric: tabular-nums; }
 /* 六个背景类型一行排不下就折行，圆角改小一点，折行时不至于成个怪圆 */
 .seg.wide { border-radius: 14px; justify-content: flex-end; max-width: 560px; }
-.read-row a { text-decoration: none; }
-.read-row .readmark { font: inherit; }
+/* 页脚两个动作钮：各自成颗、文字不换行；说明另起一行铺满 */
+.set-actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  margin-top: 28px; padding-top: 16px; border-top: 1px dashed var(--line);
+}
+.set-actions .set-btn {
+  flex: 0 0 auto; white-space: nowrap; font: inherit; font-size: 13px; line-height: 1;
+  padding: 9px 18px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--card); color: var(--mut); text-decoration: none; cursor: pointer;
+  transition: color .16s ease, border-color .16s ease, background-color .16s ease, transform .12s ease;
+}
+.set-actions .set-btn:hover {
+  color: var(--ink); border-color: var(--mut);
+  background: color-mix(in srgb, var(--ink) 7%, var(--card));
+}
+.set-actions .set-btn:active { transform: translateY(1px); }
+.set-actions .set-btn.ghost { background: transparent; }
+.set-actions .set-tip { flex: 1 1 100%; color: var(--faint); font-size: 12px; line-height: 1.7; }
 
 /* 模型区 */
 .md-hint { padding: 12px 0 6px; font-size: 12.5px; color: var(--mut); line-height: 1.8; }
@@ -728,8 +805,42 @@ function resetAll() {
   border-radius: 99px; padding: 3px 11px; cursor: pointer; }
 .md-preset:hover { color: var(--blue); border-color: var(--blue); }
 .md-empty { color: var(--faint); font-size: 12.5px; padding: 6px 0 14px; }
-.md-card { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; background: var(--bg2); }
+.md-card { border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; background: var(--bg2); }
 .md-card.on { border-color: color-mix(in srgb, var(--blue) 55%, transparent); }
+/* 折叠头：整行可点，左侧三角跟着开合转 */
+.md-sum {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  font: inherit; color: var(--ink); background: transparent; border: 0;
+  padding: 4px 2px; cursor: pointer; text-align: left;
+}
+.md-caret { flex: none; width: 14px; color: var(--faint); font-size: 11px; transition: transform .16s ease; }
+.md-caret.open { transform: rotate(90deg); }
+.md-sum-name { font-size: 13.5px; font-weight: 600; }
+.md-sum .md-model { font-size: 12px; color: var(--faint); font-family: ui-monospace, Menlo, monospace; }
+.md-tag {
+  flex: none; font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 99px;
+  color: var(--blue); border: 1px solid color-mix(in srgb, var(--blue) 45%, transparent);
+  background: color-mix(in srgb, var(--blue) 10%, transparent);
+}
+.md-body { padding-top: 4px; }
+/* 密钥一格：输入框 + 显示/隐藏 */
+.md-key { display: flex; align-items: center; gap: 6px; }
+.md-key input { flex: 1; min-width: 0; }
+/* 接口地址下面一行：把最终请求地址显出来，免得「怎么连到别的域名去了」 */
+.md-url { display: block; margin-top: 4px; font-style: normal; font-size: 11.5px; line-height: 1.5;
+  color: var(--faint); font-family: ui-monospace, Menlo, monospace;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.md-eye {
+  flex: none; font: inherit; font-size: 12px; line-height: 1; padding: 6px 10px;
+  border-radius: 8px; border: 1px solid var(--line); background: transparent;
+  color: var(--mut); cursor: pointer;
+}
+.md-eye:hover { color: var(--ink); border-color: var(--mut); }
+/* 折叠体底部：测试连接与结果 */
+.md-foot { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; padding: 8px 0 2px; }
+.md-probe { flex: 1 1 260px; font-size: 12px; line-height: 1.65; color: var(--faint); }
+.md-probe.ok { color: var(--green); }
+.md-probe.bad { color: var(--orange); }
 .md-row { display: flex; align-items: center; gap: 8px; }
 .md-name { flex: 1; min-width: 0; }
 .md-name input { width: 100%; font: inherit; font-size: 14px; font-weight: 600; color: var(--ink);
@@ -740,6 +851,7 @@ function resetAll() {
 .md-btn { font: inherit; font-size: 12px; color: var(--mut); background: transparent; border: 1px solid var(--line);
   border-radius: 8px; padding: 3px 10px; cursor: pointer; white-space: nowrap; }
 .md-btn:hover { color: var(--ink); border-color: var(--mut); }
+.md-btn:disabled { opacity: .55; cursor: default; }
 .md-btn.on { color: var(--blue); border-color: var(--blue); }
 .md-btn.danger:hover { color: var(--pink); border-color: var(--pink); }
 .md-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; margin-top: 8px; }

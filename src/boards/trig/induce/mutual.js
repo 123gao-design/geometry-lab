@@ -69,8 +69,10 @@ export function createBoard(root) {
       const dx = Math.cos(phi), dy = -Math.sin(phi);
       B.seg(V(O.x - MR * dx, O.y - MR * dy), V(O.x + MR * dx, O.y + MR * dy), { stroke: '#ffd166', 'stroke-width': 2, 'stroke-dasharray': '7 6', 'stroke-opacity': .9 });
       const flat = k === 0 || k === 4;
-      const lp = flat ? V(O.x + MR - 8, O.y - 10) : V(O.x + MR * dx + 10, O.y + MR * dy + 4);
-      B.text(lp, `镜面：${LINE[k]}`, { 'font-size': 12, fill: '#ffd166', 'text-anchor': flat ? 'end' : 'start' });
+      // 标签放在镜面远离点的那一截上：水平镜摆左端、斜镜继续沿射线往外推，
+      // 右上那一截正是 P、P′ 与坐标读数常驻的地方，贴上去必叠
+      const lp = flat ? V(O.x - MR + 8, O.y + 18) : V(O.x - (MR + 26) * dx, O.y - (MR + 26) * dy + 12);
+      B.text(lp, `镜面：${LINE[k]}`, { 'font-size': 12, fill: '#ffd166', 'text-anchor': flat ? 'start' : 'end' });
       B.seg(P, Q, { stroke: '#93a1b5', 'stroke-width': 1.2, 'stroke-dasharray': '4 4' });
       B.dot(V((P.x + Q.x) / 2, (P.y + Q.y) / 2), 2.4, { fill: '#93a1b5' });
     } else if (k > 0) rotArc(a, a + k * Math.PI / 2); // 旋转族：金弧转程
@@ -87,9 +89,14 @@ export function createBoard(root) {
     B.dot(P, 5.5, { fill: '#5cadff' });
     if (Math.hypot(Q.x - P.x, Q.y - P.y) < 7) mk('circle', { cx: Q.x, cy: Q.y, r: 10, fill: 'none', stroke: '#ffd166', 'stroke-width': 2.4 }, B.dyn);
     else B.dot(Q, 5.5, { fill: '#ffd166' });
-    B.text(V(P.x + 12, P.y - 14), `(${fmt(x, 3)}, ${fmt(y, 3)})`, { 'font-size': 12, fill: '#5cadff', 'text-anchor': 'start' });
-    B.text(V(Q.x + 12, Q.y + 24), `(${fmt(x2, 3)}, ${fmt(y2, 3)})`, { 'font-size': 12, fill: '#ffd166', 'text-anchor': 'start' });
-    B.text(V(Q.x - 10, Q.y - 12), 'P′', { 'font-size': 13, fill: '#ffd166', 'font-weight': 700, 'text-anchor': 'end' });
+    // 坐标读数：P 贴点下方、P′ 贴点上方，各让开把手标签 P 与点标 P′；
+    // 左半圆改右对齐，读数朝圆外张开，不压圆心一侧的角弧
+    const pR = P.x >= O.x, qR = Q.x >= O.x;
+    B.text(V(P.x + (pR ? 16 : -16), P.y + 30), `(${fmt(x, 3)}, ${fmt(y, 3)})`,
+      { 'font-size': 12, fill: '#5cadff', 'text-anchor': pR ? 'start' : 'end' });
+    B.text(V(Q.x + (qR ? 16 : -16), Q.y - 30), `(${fmt(x2, 3)}, ${fmt(y2, 3)})`,
+      { 'font-size': 12, fill: '#ffd166', 'text-anchor': qR ? 'start' : 'end' });
+    B.text(V(Q.x - 10, Q.y + 22), 'P′', { 'font-size': 13, fill: '#ffd166', 'font-weight': 700, 'text-anchor': 'end' });
     // chips：β 的名字由 k 奇偶定、符号由 β 象限定 —— 口诀的机器化
     const sv = Math.sin(b), cv = Math.cos(b);
     const tv = Math.abs(cv) > 1e-9 ? sv / cv : null;

@@ -62,13 +62,14 @@ export function renderRich(src) {
   while (i < lines.length) {
     const line = lines[i];
 
-    // 围栏代码块
+    // 围栏代码块（记下语言，聊天窗据此显示标签与下载扩展名）
     if (isFence(line)) {
+      const lang = (line.trim().slice(3) || '').trim().split(/\s+/)[0].toLowerCase();
       const buf = [];
       i++;
       while (i < lines.length && !/^\s*```/.test(lines[i])) { buf.push(lines[i]); i++; }
       i++; // 跳过收尾的 ```
-      out.push('<pre class="md-code"><code>' + esc(buf.join('\n')) + '</code></pre>');
+      out.push('<pre class="md-code"' + (lang ? ' data-lang="' + esc(lang) + '"' : '') + '><code>' + esc(buf.join('\n')) + '</code></pre>');
       continue;
     }
 

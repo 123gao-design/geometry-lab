@@ -1,0 +1,40 @@
+/* 章间内链（.xref）：正文里指到别的章节时，一律写那一节的标题、做成可点跳转（不写 M1 / U2 这类代号）。
+   淡蓝底 + 一像素内描边，悬停加深一档并让右上角的 ↗ 提亮；底色取主题蓝，浅色主题自动跟着变。
+   选择器带 a 前缀（0,1,1），与本文件在 main.js 里排在 global.css 之后一起压过站点的基础链接样式。
+   用法： <RouterLink class="xref" to="/trig/u2">同角三角函数的关系</RouterLink> */
+a.xref{
+  color:var(--blue);
+  text-decoration:none;
+  padding:0 4px;
+  border-radius:5px;
+  background:color-mix(in srgb,var(--blue) 11%,transparent);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--blue) 18%,transparent);
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+  transition:background-color .16s ease,color .16s ease,box-shadow .16s ease;
+}
+a.xref::after{
+  content:"↗";
+  display:inline-block;
+  margin-left:.14em;
+  font-size:.72em;
+  line-height:1;
+  vertical-align:.36em;
+  opacity:.6;
+  transition:opacity .16s ease,transform .16s ease;
+}
+a.xref:hover{
+  color:var(--blue);
+  text-decoration:none;
+  background:color-mix(in srgb,var(--blue) 20%,transparent);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--blue) 42%,transparent);
+}
+a.xref:hover::after{opacity:1;transform:translate(1px,-1px)}
+a.xref:focus-visible{outline:2px solid color-mix(in srgb,var(--blue) 55%,transparent);outline-offset:1px}
+@media print{
+  a.xref{color:inherit;background:none;box-shadow:none;padding:0}
+  a.xref::after{content:""}
+}
+@media (prefers-reduced-motion:reduce){
+  a.xref,a.xref::after{transition:none}
+}

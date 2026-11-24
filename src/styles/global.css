@@ -282,8 +282,8 @@ circle.hnd.drag{stroke-width:3}
 .dlbar.out.out-l{justify-content:flex-start}
 .dlbar.out .dl{opacity:1;background:var(--card)}
 /* 从卡片框（.conic-figure）里提出来的那一条：卡片自己带 24px 上边距，条与卡片之间会空出一大截，
-   用一段负下边距抵消，相邻外边距折叠后只剩十来像素，条仍贴着卡片上沿 */
-.dlbar.out.out-fig{margin-bottom:-18px}
+   用一段负下边距抵消。折叠后的间距 = 24 − 26 = −2，再减掉条自身的 7px 下内边距，可见缝约 5px */
+.dlbar.out.out-fig{margin-bottom:-26px}
 /* 半屏 / 全屏时板是 fixed 浮层，外面留不下这一条：条跟着回板内，作浮层顶部的工具条 */
 .board.bd-float>.dlbar{position:relative;inset:auto;z-index:6;order:-1;flex:none;flex-wrap:wrap;
   justify-content:flex-end;padding:6px 10px;border-bottom:1px solid var(--line)}

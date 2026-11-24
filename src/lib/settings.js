@@ -11,6 +11,8 @@ export const CHOICES = {
   dockSide: ['left', 'right'],     // 画板小窗
   chatSide: ['left', 'right'],     // 聊天小窗
   chatSize: ['half', 'full'],      // 聊天默认尺寸
+  chatThink: ['on', 'off'],        // 展示推理模型的思考过程（流式时实时展开）
+  chatHist: ['on', 'off'],         // 整屏时左侧常驻对话列表
   navOpen: ['cur', 'all', 'none'], // 左栏进页时的折叠方式
   pageAnim: ['fade', 'up', 'zoom', 'slide', 'blur', 'none'], // 切页动画
   noteFormat: ['md', 'tex'],       // 新建笔记的默认格式
@@ -66,6 +68,8 @@ const DEFAULTS = {
   dockSide: 'right',
   chatSide: 'right',
   chatSize: 'half',
+  chatThink: 'on',                    // 默认展示思考链；关掉只留最终回答
+  chatHist: 'on',                     // 整屏时默认显示左侧对话列表
   navOpen: 'cur',
   pageAnim: 'fade',
   noteFormat: 'md',

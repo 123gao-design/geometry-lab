@@ -49,8 +49,20 @@ export function createBoard(root) {
     B.seg(O, P, { stroke: '#ffd166', 'stroke-width': 2.4 });
     B.seg(V(M.x, M.y), V(M.x, M.y - 8), { stroke: '#fff', 'stroke-width': 1 }); // 直角标记
     B.textM(V((O.x + M.x) / 2, O.y + (x >= 0 ? 16 : -11)), `$\\cos\\alpha=${fmt(x, 3)}`, { 'font-size': 12, fill: '#ff9e4a' });
-    B.textM(V(M.x + (x >= 0 ? 7 : -7), (P.y + M.y) / 2 + 4), `$\\sin\\alpha=${fmt(y, 3)}`, { 'font-size': 12, fill: '#5cadff' });
-    B.text(V((O.x + P.x) / 2 + (y >= 0 ? 14 : -14), (O.y + P.y) / 2 + (x >= 0 ? -10 : 12)), '斜边 = 1', { 'font-size': 12, fill: '#ffd166' });
+    // 正弦读数贴着蓝腰、再往下让一格：T 端那列 AT、OT 两行读数离它只有两三个像素，
+    // 12px 的字上下缘一挨近就看成一团
+    B.textM(V(M.x + (x >= 0 ? 7 : -7), (P.y + M.y) / 2 + 10), `$\\sin\\alpha=${fmt(y, 3)}`,
+      { 'font-size': 12, fill: '#5cadff', 'text-anchor': x >= 0 ? 'start' : 'end' });
+    // 斜边 = 1 放在斜边外侧（离直角三角形最远的那一侧）：宽标签横着走，贴着斜边会与线交叠；
+    // 取斜边上 0.35 处向外推 24，靠 O 一端、不压正弦标签的腰
+    {
+      const hl = Math.hypot(P.x - O.x, P.y - O.y) || 1;
+      let hnx = (P.y - O.y) / hl, hny = -(P.x - O.x) / hl;
+      const ux = (P.x - O.x) / hl, uy = (P.y - O.y) / hl;
+      if (hnx * (M.x - O.x) + hny * (M.y - O.y) > 0) { hnx = -hnx; hny = -hny; }
+      B.text(V(O.x + ux * hl * .35 + hnx * 24, O.y + uy * hl * .35 + hny * 24), '斜边 = 1',
+        { 'font-size': 12, fill: '#ffd166', 'text-anchor': hnx < -0.15 ? 'end' : hnx > 0.15 ? 'start' : 'middle' });
+    }
     B.dot(P, 5.5, { fill: '#5cadff' });
     // 切线三角形 OAT：切线 x=1 与终边延长线交出 T —— OA=1、AT=tan、OT=sec，勾股直译 1+tan²=sec²
     if (st.tline && Math.abs(x) > 0.04) {
@@ -68,10 +80,15 @@ export function createBoard(root) {
       B.dot(T, 4.5, { fill: '#67e8f9' });
       B.dot(A, 3, { fill: '#93a1b5' });
       if (vis) {
-        B.textM(V(A.x + 9, (A.y + T.y) / 2 + 4), `$AT=\\tan\\alpha=${fmt(t, 3)}`, { 'font-size': 12, fill: '#67e8f9', 'text-anchor': 'start' });
-        B.textM(V((O.x + T.x) / 2 + 10, (O.y + T.y) / 2 + (t > 0 ? -4 : 14)), `$OT=\\sec\\alpha=${fmt(1 / x, 3)}`,
-          { 'font-size': 12, fill: '#ff9e4a', 'text-anchor': 'start' });
-        B.text(V(A.x, Math.min(A.y - 70, T.y - 6) - 8), '切线 x=1', { 'font-size': 11, fill: '#5c6a80' });
+        // AT、OT 两条读数都贴 T 端排到切线右侧一列：竖杆旁的中间一段留给正弦标签，
+        // 两行读数再放中点就会与它和彼此交叠；超出画框时整列一起上移
+        let yA = T.y + 14, yO = T.y + 38;
+        const over = yO + 10 - 502;
+        if (over > 0) { yA -= over; yO -= over; }
+        B.textM(V(A.x + 9, yA), `$AT=\\tan\\alpha=${fmt(t, 3)}`, { 'font-size': 12, fill: '#67e8f9', 'text-anchor': 'start' });
+        B.textM(V(A.x + 9, yO), `$OT=\\sec\\alpha=${fmt(1 / x, 3)}`, { 'font-size': 12, fill: '#ff9e4a', 'text-anchor': 'start' });
+        B.text(V(A.x - 8, Math.min(496, Math.max(A.y + 70, T.y + 6) - 6)), '切线 x=1',
+          { 'font-size': 11, fill: '#5c6a80', 'text-anchor': 'end' });
       }
     }
     // 右：堆叠条（总高恒 200px = 1）：下段 cos²、上段 sin²

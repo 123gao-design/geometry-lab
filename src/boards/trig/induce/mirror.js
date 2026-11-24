@@ -82,10 +82,10 @@ export function createBoard(root) {
     const MR = R + 26;
     if (m.mir === 'x') {
       B.seg(V(O.x - MR, O.y), V(O.x + MR, O.y), { stroke: '#ffd166', 'stroke-width': 2, 'stroke-dasharray': '7 6', 'stroke-opacity': .9 });
-      B.text(V(O.x + MR - 8, O.y - 10), '镜面：x 轴', { 'font-size': 12, fill: '#ffd166', 'text-anchor': 'end' });
+      B.text(V(O.x + MR * .55, O.y - 10), '镜面：x 轴', { 'font-size': 12, fill: '#ffd166' });
     } else if (m.mir === 'y') {
       B.seg(V(O.x, O.y - MR), V(O.x, O.y + MR), { stroke: '#ffd166', 'stroke-width': 2, 'stroke-dasharray': '7 6', 'stroke-opacity': .9 });
-      B.text(V(O.x + 10, O.y - MR + 16), '镜面：y 轴', { 'font-size': 12, fill: '#ffd166', 'text-anchor': 'start' });
+      B.text(V(O.x - 9, O.y - MR * .55), '镜面：y 轴', { 'font-size': 12, fill: '#ffd166', 'text-anchor': 'end' });
     } else if (m.mir === 'o') {
       B.dot(O, 4.5, { fill: '#ffd166' });
       B.text(V(O.x - 14, O.y + 26), '镜心：原点', { 'font-size': 12, fill: '#ffd166', 'text-anchor': 'end' });
@@ -109,9 +109,14 @@ export function createBoard(root) {
     B.dot(P, 5.5, { fill: '#5cadff' });
     if (Math.hypot(Q.x - P.x, Q.y - P.y) < 7) mk('circle', { cx: Q.x, cy: Q.y, r: 10, fill: 'none', stroke: '#ffd166', 'stroke-width': 2.4 }, B.dyn);
     else B.dot(Q, 5.5, { fill: '#ffd166' });
-    B.text(V(P.x + 12, P.y - 14), `(${fmt(x, 3)}, ${fmt(y, 3)})`, { 'font-size': 12, fill: '#5cadff', 'text-anchor': 'start' });
-    B.text(V(Q.x + 12, Q.y + 24), `(${fmt(x2, 3)}, ${fmt(y2, 3)})`, { 'font-size': 12, fill: '#ffd166', 'text-anchor': 'start' });
-    B.text(V(Q.x - 10, Q.y - 12), 'P′', { 'font-size': 13, fill: '#ffd166', 'font-weight': 700, 'text-anchor': 'end' });
+    // 坐标读数：P 贴点下方、P′ 贴点上方，各让开把手标签 P 与点标 P′；
+    // 左半圆改右对齐，读数朝圆外张开，不压圆心一侧的角弧
+    const pR = P.x >= O.x, qR = Q.x >= O.x;
+    B.text(V(P.x + (pR ? 16 : -16), P.y + 30), `(${fmt(x, 3)}, ${fmt(y, 3)})`,
+      { 'font-size': 12, fill: '#5cadff', 'text-anchor': pR ? 'start' : 'end' });
+    B.text(V(Q.x + (qR ? 16 : -16), Q.y - 30), `(${fmt(x2, 3)}, ${fmt(y2, 3)})`,
+      { 'font-size': 12, fill: '#ffd166', 'text-anchor': qR ? 'start' : 'end' });
+    B.text(V(Q.x - 10, Q.y + 22), 'P′', { 'font-size': 13, fill: '#ffd166', 'font-weight': 700, 'text-anchor': 'end' });
     // chips
     const deg = a * 180 / Math.PI, deg2 = b * 180 / Math.PI;
     cA(`α ${fmt(deg, 1)}° · β ${fmt(deg2, 1)}°`);

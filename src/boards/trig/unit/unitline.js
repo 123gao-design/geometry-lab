@@ -57,7 +57,8 @@ export function createBoard(root) {
     B.seg(O, M, { stroke: '#ff9e4a', 'stroke-width': 3.5 });
     B.seg(M, P, { stroke: '#5cadff', 'stroke-width': 3.5 });
     B.textM(V((O.x + M.x) / 2, O.y + (x >= 0 ? 17 : -12)), `$OM=\\cos\\alpha=${fmt(x, 3)}`, { 'font-size': 12, fill: '#ff9e4a' });
-    B.textM(V(M.x + 8, (P.y + M.y) / 2 + 4), `$MP=\\sin\\alpha=${fmt(y, 3)}`, { 'font-size': 12, fill: '#5cadff' });
+    B.textM(V(M.x + (x >= 0 ? 8 : -8), (P.y + M.y) / 2 + 4), `$MP=\\sin\\alpha=${fmt(y, 3)}`,
+      { 'font-size': 12, fill: '#5cadff', 'text-anchor': x >= 0 ? 'start' : 'end' });
     // 半径 OP 与 P
     B.seg(O, P, { stroke: '#fff', 'stroke-width': 2.2 });
     B.dot(P, 5.5, { fill: '#5cadff' });
@@ -67,7 +68,10 @@ export function createBoard(root) {
       const Td = V(A.x, O.y - R * (tBig ? Math.sign(tv) * 3.4 : tv));
       B.seg(O, Td, { stroke: '#2b4260', 'stroke-width': 1, 'stroke-dasharray': '2 4', 'stroke-opacity': .6 });
       B.seg(A, Td, { stroke: '#4ade80', 'stroke-width': 3.5 });
-      B.textM(V(A.x + 8, (A.y + Td.y) / 2 + 4), tBig ? '$AT=\\tan\\alpha$（溢出显示）' : `$AT=\\tan\\alpha=${fmt(tv, 3)}`, { 'font-size': 12, fill: '#4ade80' });
+      // 标签贴 T 端：正弦标签占了竖腿旁的中间一段，正切标签再放中点两行字就叠在一起
+      const ly = Td.y > O.y ? Math.min(470, Td.y + 14) : Math.max(94, Td.y - 12);
+      B.textM(V(A.x + 9, ly), tBig ? '$AT=\\tan\\alpha$（溢出显示）' : `$AT=\\tan\\alpha=${fmt(tv, 3)}`,
+        { 'font-size': 12, fill: '#4ade80', 'text-anchor': 'start' });
     }
     // 角标记 α 的小弧（0 → a 的短弧，采样画，免记弧旗标）
     const an = angDiff(a, 0), arc = [];

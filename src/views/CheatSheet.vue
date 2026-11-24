@@ -2,8 +2,8 @@
   <div>
     <div class="chapter-head">
       <h1>定理速查总览</h1>
-      <p class="sub">把二十三个模块 377 条的核心结论收进一张总表：每张卡片一条定理/判据 + 一句话用法，点进去看完整推导、易错点与实验台 —— 考前最后一遍复习用 Ctrl+P 打印（公式保留、控件不印）。</p>
-      <div class="readall">二十三个模块 · 106 小节 · 377 条（集合与常用逻辑 12 + 函数与微积分初步 35 + 不等式 15 + 三角与三角形 23 + 向量与复数 17 + 数列 20 + 直线与圆 13 + 极坐标与参数方程 9 + 圆锥曲线 33 + 立体几何 10 + 组合与二项式 9 + 概率与统计 18 + 数值计算 10 + 线性代数初步 14 + 一元函数微积分 33 + 空间解析几何 12 + 多元函数微积分 18 + 复变函数 12 + 初等数论 13 + 拓扑学基础 12 + 分形几何 11 + 高等几何（射影几何） 11 + 抽象代数 17）</div>
+      <p class="sub">把二十三个模块 378 条的核心结论收进一张总表：每张卡片一条定理/判据 + 一句话用法，点进去看完整推导、易错点与实验台 —— 考前最后一遍复习用 Ctrl+P 打印（公式保留、控件不印）。</p>
+      <div class="readall">二十三个模块 · 106 小节 · 378 条（集合与常用逻辑 12 + 函数与微积分初步 35 + 不等式 15 + 三角与三角形 23 + 向量与复数 17 + 数列 20 + 直线与圆 13 + 极坐标与参数方程 10 + 圆锥曲线 33 + 立体几何 10 + 组合与二项式 9 + 概率与统计 18 + 数值计算 10 + 线性代数初步 14 + 一元函数微积分 33 + 空间解析几何 12 + 多元函数微积分 18 + 复变函数 12 + 初等数论 13 + 拓扑学基础 12 + 分形几何 11 + 高等几何（射影几何） 11 + 抽象代数 17）</div>
     </div>
 
     <h3 class="sec">集合与常用逻辑 · 一 集合的语言</h3>
@@ -380,6 +380,7 @@
     <div class="topic-grid">
       <router-link class="topic-card" to="/polar/q1"><span class="tag">曲1</span><h3>圆的极坐标方程</h3><p class="fx"><Katex tex="\rho=a,\quad \rho=2a\cos\theta,\quad \rho=2a\sin\theta" /></p><p>圆心在极点写 <Katex tex="\rho=a"/>；在极轴上且过极点写 <Katex tex="\rho=2a\cos\theta"/>；在过极点垂直极轴的直线上写 <Katex tex="\rho=2a\sin\theta"/>。约去 <Katex tex="\rho"/> 时别丢极点。</p></router-link>
       <router-link class="topic-card" to="/polar/q2"><span class="tag">曲2</span><h3>直线与射线的极坐标方程</h3><p class="fx"><Katex tex="\theta=\alpha,\quad \rho\cos\theta=a,\quad \rho\sin\theta=b" /></p><p>过极点写 <Katex tex="\theta=\alpha"/>（<Katex tex="\rho\in\mathbb{R}"/> 才是整条直线）；垂直极轴写 <Katex tex="\rho\cos\theta=a"/>，平行极轴写 <Katex tex="\rho\sin\theta=b"/>。距离取 <Katex tex="|a|"/>、<Katex tex="|b|"/>。</p></router-link>
+      <router-link class="topic-card" to="/polar/q3"><span class="tag">曲3</span><h3>常见极坐标曲线</h3><p class="fx"><Katex tex="\rho=a\cos n\theta,\quad \rho=a(1+\cos\theta),\quad \rho^2=a^2\cos2\theta" /></p><p>玫瑰线 <Katex tex="n"/> 为奇数时 <Katex tex="n"/> 瓣、偶数时 <Katex tex="2n"/> 瓣；心形线的尖收在极点；双纽线只在 <Katex tex="\cos2\theta\ge0"/> 的方向上有定义；<Katex tex="\rho<0"/> 的点画在反向射线上。</p></router-link>
     </div>
 
     <h3 class="sec">极坐标与参数方程 · 三 参数方程</h3>

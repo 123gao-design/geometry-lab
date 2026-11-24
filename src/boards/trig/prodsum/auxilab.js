@@ -57,14 +57,19 @@ export function createBoard(root) {
       B.seg(T0, A2, { stroke: '#5cadff', 'stroke-width': 2 });
       B.seg(A2, B2, { stroke: '#5cadff', 'stroke-width': 2 });
       B.seg(T0, B2, { stroke: '#ffd166', 'stroke-width': 2 });
-      B.text(V((T0.x + A2.x) / 2, T0.y + 16), `a=${fmt(a, 2)}`, { 'font-size': 11, fill: '#5cadff' });
-      B.text(V(A2.x + (b >= 0 ? 14 : -14), (A2.y + B2.y) / 2), `b=${fmt(b, 2)}`, { 'font-size': 11, fill: '#5cadff', 'text-anchor': b >= 0 ? 'start' : 'end' });
-      B.tex(V((T0.x + B2.x) / 2 + (a >= 0 ? 10 : -10), (T0.y + B2.y) / 2 - 10), `$R=\\sqrt{a^2+b^2}$`, { size: 12, color: '#ffd166', anchor: a >= 0 ? 'start' : 'end', w: 130 });
+      B.text(V((T0.x + A2.x) / 2, T0.y + (b >= 0 ? 16 : -10)), `a=${fmt(a, 2)}`, { 'font-size': 11, fill: '#5cadff' });
+      const bOut = a > 0.05 ? 1 : -1;   // b 标在竖腿外侧：竖腿与 T0 之间是三角形内部，另一侧才是空处
+      B.text(V(A2.x + bOut * 10, (A2.y + B2.y) / 2), `b=${fmt(b, 2)}`, { 'font-size': 11, fill: '#5cadff', 'text-anchor': bOut > 0 ? 'start' : 'end' });
+      // R 标在斜边外侧：法向朝三角形内时翻向，短标签不压 b、φ
+      const legDx = B2.x - T0.x, legDy = B2.y - T0.y, legL = Math.hypot(legDx, legDy) || 1;
+      let nx = legDy / legL, ny = -legDx / legL;
+      if (nx * (A2.x - (T0.x + B2.x) / 2) + ny * (A2.y - (T0.y + B2.y) / 2) > 0) { nx = -nx; ny = -ny; }
+      B.tex(V((T0.x + B2.x) / 2 + nx * 20, (T0.y + B2.y) / 2 + ny * 20), '$R$', { size: 12, color: '#ffd166', anchor: 'mid', w: 30 });
       if (Math.abs(ph) > 0.03) {
         const n = 24, pts = [];
         for (let i = 0; i <= n; i++) { const t = ph * i / n; pts.push(`${(T0.x + 16 * Math.cos(t)).toFixed(1)},${(T0.y - 16 * Math.sin(t)).toFixed(1)}`); }
         mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 1.4 }, B.dyn);
-        B.tex(V(T0.x + 30 * Math.cos(ph / 2), T0.y - 30 * Math.sin(ph / 2)), '$\\varphi$', { size: 12, color: '#67e8f9', w: 40 });
+        B.tex(V(T0.x + 24 * Math.cos(ph / 2), T0.y - 24 * Math.sin(ph / 2)), '$\\varphi$', { size: 11, color: '#67e8f9', anchor: 'mid', w: 24 });
       }
       B.dot(T0, 2.6, { fill: '#93a1b5' });
     }

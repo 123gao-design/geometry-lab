@@ -58,6 +58,24 @@ export async function writeInto(kind, name, text) {
   return h.name + '/' + name;
 }
 
+/** 后台自动写文件用：只写权限已经授予的目录，绝不在用户手势之外弹授权框。
+ *  返回「目录名/文件名」；没目录、没权限都静默返回 null。 */
+export async function writeIfGranted(kind, name, text) {
+  try {
+    const h = await getHandle(kind);
+    if (!h) return null;
+    const q = h.queryPermission ? await h.queryPermission({ mode: 'readwrite' }) : 'granted';
+    if (q !== 'granted') return null;
+    const fh = await h.getFileHandle(name, { create: true });
+    const w = await fh.createWritable();
+    await w.write(text);
+    await w.close();
+    return h.name + '/' + name;
+  } catch (e) {
+    return null;
+  }
+}
+
 /** 删掉 kind 目录里的一个文件（笔记改标题后收走旧的那份用）；本来就没有也算删过。 */
 export async function removeFrom(kind, name) {
   const h = await getHandle(kind);

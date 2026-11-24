@@ -51,7 +51,7 @@
 | 数列 | `/sequences` | 20 · 23 |
 | 直线与圆 | `/linecircle` | 13 · 16 |
 | 极坐标与参数方程 | `/polar` | 9 · 10 |
-| 圆锥曲线 | `/conics` | 33 · 48 |
+| 圆锥曲线 | `/conics` | 33 · 49 |
 | 立体几何 | `/solid` | 10 · 14 |
 | 组合学与二项式定理 | `/combinatorics` | 9 · 9 |
 | 概率与统计 | `/probability` | 18 · 22 |

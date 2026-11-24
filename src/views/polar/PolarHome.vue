@@ -3,7 +3,7 @@
     <div class="chapter-head">
       <h1>极坐标与参数方程</h1>
       <p class="sub">坐标系的另一套语言。极坐标用极径与极角定位，把「到定点的距离」与「绕定点转过的角」分成两个独立读数；参数方程用一个参数同时驱动横纵坐标，把曲线上的点写成关于参数的一对式子。两套写法都与直角坐标互通，遇到圆、旋转与轨迹时往往比 <Katex tex="y=f(x)" /> 省事。</p>
-      <div class="readall">学习进度：已读 {{ totalRead() }} / 9 章</div>
+      <div class="readall">学习进度：已读 {{ totalRead() }} / {{ js.length + qs.length + ss.length + gs.length }} 章</div>
     </div>
 
     <h3 class="sec">子专题一 · 极坐标系与互化<span class="prog">已读 {{ cnt(js) }}/{{ js.length }}</span></h3>
@@ -57,6 +57,7 @@ const js = [
 const qs = [
   { to: '/polar/q1', t: '圆的极坐标方程', d: '圆心在极点写 $\\rho=a$，在极轴上写 $\\rho=2a\\cos\\theta$，在垂直线上写 $\\rho=2a\\sin\\theta$；负径补齐另半个圆。' },
   { to: '/polar/q2', t: '直线与射线的极坐标方程', d: '$\\theta=\\alpha$ 给过极点的直线，$\\rho\\cos\\theta=a$ 与 $\\rho\\sin\\theta=b$ 给垂直、平行于极轴的直线；射线与直线只差 $\\rho$ 的取值范围。' },
+  { to: '/polar/q3', t: '常见极坐标曲线', d: '玫瑰线、心形线、双纽线与螺线同屏：负径把玫瑰的四瓣分成正负两组，状态栏逐条读出有符号极径。' },
 ];
 const ss = [
   { to: '/polar/s1', t: '参数方程与消参', d: '参数每取一值给出一枚点；代入、平方相加、借恒等式三种消参手法，参数范围决定曲线留下哪一段。' },

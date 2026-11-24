@@ -51,27 +51,33 @@ export function createBoard(root) {
     mk('polygon', { points: `${O.x},40 ${O.x - 4.5},49 ${O.x + 4.5},49`, fill: '#8fa3bd' }, B.dyn);
     B.text(V(795, O.y - 12), 'x', { 'font-size': 13, fill: '#8fa3bd', 'font-style': 'italic' });
     B.text(V(O.x + 12, 55), 'y', { 'font-size': 13, fill: '#8fa3bd', 'font-style': 'italic' });
-    [[190, 155, 'I'], [668, 155, 'II'], [668, 352, 'III'], [190, 352, 'IV']].forEach(([x, y, s]) =>
+    // 象限编号：SVG 的 y 轴朝下，第 I 象限在右上方（x>0、y>0），顺时针数 II、III、IV
+    [[668, 155, 'I'], [190, 155, 'II'], [190, 352, 'III'], [668, 352, 'IV']].forEach(([x, y, s]) =>
       B.text(V(x, y), s, { 'font-size': 15, fill: '#3f5f8f', 'font-weight': 700 }));
     // 圆 + 始边
     mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: '#22314a', 'stroke-width': 1.6 }, B.dyn);
     B.seg(O, V(O.x + R, O.y), { stroke: '#5c6a80', 'stroke-width': 2.2 });
     mk('polygon', { points: `${O.x + R},${O.y} ${O.x + R - 10},${O.y - 4.5} ${O.x + R - 10},${O.y + 4.5}`, fill: '#5c6a80' }, B.dyn);
     B.text(V(O.x + R - 22, O.y + 18), '始边', { 'font-size': 12, fill: '#5c6a80' });
-    // 螺旋扫痕：从 0 累积到 a，每满一圈半径内缩一步
+    // 螺旋扫痕：从 0 累积到 a，半径随转过的角连续内缩（转满一圈缩 STEP）。
+    // 半径不能按整圈取整——取整时第一圈恰好恒在圆周上，一跨过 2π，箭尖、角度读数与螺旋末端就整块弹进 13px，
+    // 每次跨圈都跳一下；改成连续内缩后，箭尖与读数随转角匀速向内滑，不再有跳变
+    const rOf = th => R - STEP * Math.abs(th) / TAU;
     const pts = [];
     const nStep = Math.max(2, Math.ceil(Math.abs(a) / 0.06));
     for (let i = 0; i <= nStep; i++) {
-      const th = a * i / nStep, r = R - STEP * Math.floor(Math.abs(th) / TAU + 1e-9);
+      const th = a * i / nStep, r = rOf(th);
       pts.push(`${(O.x + r * Math.cos(th)).toFixed(1)},${(O.y - r * Math.sin(th)).toFixed(1)}`);
     }
-    const rr = R - STEP * Math.floor(Math.abs(a) / TAU + 1e-9);
+    const rr = rOf(a);
     mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#ffd166', 'stroke-width': 3, 'stroke-opacity': .8 }, B.dyn);
     mk('polygon', { points: `${O.x + rr * Math.cos(a)},${O.y - rr * Math.sin(a)} ${O.x + (rr - 12) * Math.cos(a - .05)},${O.y - (rr - 12) * Math.sin(a - .05)} ${O.x + (rr - 12) * Math.cos(a + .05)},${O.y - (rr - 12) * Math.sin(a + .05)}`, fill: '#ffd166' }, B.dyn);
     B.text(V(O.x + (rr + 16) * Math.cos(a / 2), O.y - (rr + 16) * Math.sin(a / 2)), `${fmt(deg, 1)}°`, { 'font-size': 14, fill: '#ffd166' });
     // 终边
     B.seg(O, V(O.x + R * Math.cos(a), O.y - R * Math.sin(a)), { stroke: '#fff', 'stroke-width': 2.6 });
-    B.text(V(O.x + (R + 26) * Math.cos(a), O.y - (R + 26) * Math.sin(a)), '终边', { 'font-size': 12, fill: '#aebdd2' });
+    // 标签沿射线内侧落位，再沿法线让开 12px：既避开圆上的把手 P，也避开 (a/2) 处的角度读数
+    const lr = R * 0.72, lx = O.x + lr * Math.cos(a) - 12 * Math.sin(a), ly = O.y - lr * Math.sin(a) - 12 * Math.cos(a);
+    B.text(V(lx, ly), '终边', { 'font-size': 12, fill: '#aebdd2' });
     // chips
     cDegu(`${fmt(deg, 1)}°`);
     cRad(`${fmt(a, 3)} rad ≈ ${fmt(a / Math.PI, 3)}π`);

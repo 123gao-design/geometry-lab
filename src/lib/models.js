@@ -29,10 +29,11 @@ export function loadModels() {
 function norm(m) {
   return {
     id: String(m.id),
-    name: String(m.name || m.model || '未命名模型'),
-    baseUrl: String(m.baseUrl || '').replace(/\/+$/, ''),
-    model: String(m.model || ''),
-    key: String(m.key || ''),
+    name: String(m.name || m.model || '未命名模型').trim() || '未命名模型',
+    baseUrl: String(m.baseUrl || '').trim().replace(/\/+$/, ''),
+    model: String(m.model || '').trim(),
+    // 从对话框整段复制时经常带上首尾空格或换行，存进来就 trim 一次，免得 Bearer 头带脏字符被判 401
+    key: String(m.key || '').trim(),
     temp: Number.isFinite(m.temp) ? m.temp : 0.6,
   };
 }
