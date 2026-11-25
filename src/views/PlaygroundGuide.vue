@@ -184,7 +184,7 @@ onBeforeUnmount(() => {
 .code {
   margin: 10px 0 4px; padding: 12px 16px; overflow-x: auto;
   background: var(--bg2); border: 1px solid var(--line); border-radius: 10px;
-  color: var(--ink); font: 13px/1.75 ui-monospace, Menlo, Consolas, monospace;
+  color: var(--ink); font: 13px/1.75 var(--font-mono);
 }
 .board-wrap { margin: 22px 0 8px; }
 .read-row a { text-decoration: none; }

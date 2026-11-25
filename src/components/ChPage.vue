@@ -1,5 +1,6 @@
 <template>
   <div class="chap3" :class="{ 'no-toc': !toc.length }">
+    <ReadProgress />
     <aside class="chapnav">
       <div class="chapnav-hd">
         <div class="chapnav-t">{{ mod ? mod.t : '章节导航' }}</div>
@@ -57,8 +58,9 @@
       <article>
         <slot />
         <div class="read-row">
-          <button class="readmark" :class="{ on: read }" @click="toggle">
-            {{ read ? '✓ 本章已读 · 点击取消' : '读完了？标记本章' }}
+          <button class="readmark" :class="{ on: read, 'just-done': justDone }" @click="toggle">
+            <svg class="rm-tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.6 10.4 8.1 14.9 16.5 5.6" /></svg>
+            <span>{{ read ? '本章已读 · 点击取消' : '读完了？标记本章' }}</span>
           </button>
           <span class="readtip">← / → 键翻章</span>
         </div>
@@ -80,6 +82,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { texMix } from '../lib/board.js'; // title/sub/toc 支持 '$…$' 公式段（2026-11-09 公式集中修复起启用）
 import { DEFAULT_CHAPTERS, DEFAULT_BASE } from './nav-defaults.js';
 import { isRead, toggleRead } from '../lib/progress.js';
+import ReadProgress from './ReadProgress.vue';
 import { moduleOf } from '../lib/modnav.js';
 import { NAV_OPEN, NAV_SCROLL } from '../lib/navpos.js';
 import { PREFS } from '../lib/settings.js';
@@ -152,7 +155,22 @@ const tabs = computed(() => {
 });
 
 const read = computed(() => isRead(route.path));
-const toggle = () => toggleRead(route.path);
+// 勾选反馈：只在「从未读 → 已读」这一次播描边 + 柔光；取消标记不播，避免误以为是奖励
+const justDone = ref(false);
+let justTimer = 0;
+function toggle() {
+  const willRead = !isRead(route.path);
+  toggleRead(route.path);
+  clearTimeout(justTimer);
+  justDone.value = false;
+  if (willRead) {
+    nextTick(() => {
+      justDone.value = true;
+      justTimer = setTimeout(() => { justDone.value = false; }, 760);
+    });
+  }
+}
+onUnmounted(() => clearTimeout(justTimer));
 
 // 左栏可能比视口高：首次进某个模块时只在必要时把当前章带进视野（滚最小距离，不居中，免得把组头切掉），页面本身不动
 const listEl = ref(null);

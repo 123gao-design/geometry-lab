@@ -1,7 +1,7 @@
 import { Board, mk } from './board.js';
 
-const LIGHT = { ink: '#202d3a', blue: '#2b598c', gold: '#8a5529', mint: '#316763', pink: '#794e69', guide: '#56677a', orange: '#a05434', green: '#356c4c', violet: '#66528b' };
-const DARK = { ink: '#e8edf5', blue: '#95b9e5', gold: '#d5a77f', mint: '#8ebfb7', pink: '#cba5be', guide: '#a0aec2', orange: '#e3a183', green: '#9bc5a5', violet: '#b8a9db' };
+const LIGHT = { ink: '#202d3a', blue: '#2b598c', gold: '#8a5529', mint: '#316763', pink: '#794e69', guide: '#56677a', orange: '#a05434', green: '#356c4c', violet: '#66528b', red: '#a12a38' };
+const DARK = { ink: '#e8edf5', blue: '#95b9e5', gold: '#d5a77f', mint: '#8ebfb7', pink: '#cba5be', guide: '#a0aec2', orange: '#e3a183', green: '#9bc5a5', violet: '#b8a9db', red: '#ff8894' };
 const rgb = hex => hex.slice(1).match(/../g).map(channel => parseInt(channel, 16));
 function luminance(channels) {
   const [r, g, b] = channels.map(v => {
@@ -23,7 +23,7 @@ function setPalette(B, background) {
   const figure = B.root.closest('.conic-figure');
   const colors = { paper: background };
   for (const [key, color] of Object.entries(palette)) {
-    const min = key === 'ink' || key === 'guide' ? 4.5 : 3.6;
+    const min = ['ink', 'guide', 'red'].includes(key) ? 4.5 : 3.6;
     const channels = rgb(color), limit = light ? 0 : 255;
     let candidate = channels;
     for (let step = 1; contrast(candidate) < min && step <= 16; step++) {

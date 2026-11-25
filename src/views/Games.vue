@@ -546,7 +546,7 @@ onBeforeUnmount(() => {
 .g24-num {
   width: 48px; height: 48px; border-radius: 11px;
   display: flex; align-items: center; justify-content: center;
-  font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-weight: 600;
+  font-family: var(--font-serif); font-size: 22px; font-weight: 600;
   color: var(--ink); background: var(--bg2); border: 1px solid var(--line);
 }
 
@@ -587,7 +587,7 @@ onBeforeUnmount(() => {
 .gs-list li { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px dashed var(--line); font-size: 13.5px; }
 .gs-list li:last-child { border-bottom: none; }
 .gs-n { width: 24px; color: var(--faint); font-size: 12px; text-align: right; }
-.gs-d { font-family: ui-monospace, Menlo, Consolas, monospace; letter-spacing: 3px; color: var(--ink); }
+.gs-d { font-family: var(--font-mono); letter-spacing: 3px; color: var(--ink); }
 .gs-ab { margin-left: auto; color: var(--purple); font-weight: 600; }
 .gs-empty { color: var(--faint); font-size: 12.5px; margin: 12px 0 0; }
 

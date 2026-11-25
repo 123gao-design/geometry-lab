@@ -15,6 +15,16 @@
       <h1 style="margin:0;font-size:clamp(26px,4vw,36px)">几何演示实验室</h1>
     </div>
     <p class="sub">把课本里的定理做成可以拖动、可以实时读数的实验台 —— 每一张图，都是一个活的证明。</p>
+    <div class="hero-start">
+      <router-link class="hero-cta" to="/sets/j1">开始第 1 讲<span class="hc-arrow" aria-hidden="true">→</span></router-link>
+      <nav class="hero-path" aria-label="推荐学习路径">
+        <span class="hp-label">推荐路径</span>
+        <router-link to="/sets">集合</router-link><i aria-hidden="true">→</i>
+        <router-link to="/functions">函数</router-link><i aria-hidden="true">→</i>
+        <router-link to="/trig">三角函数</router-link><i aria-hidden="true">→</i>
+        <router-link to="/conics">圆锥曲线</router-link>
+      </nav>
+    </div>
   </div>
 
   <h3 class="sec">一 · 初等数学<span class="prog">14 个模块 · 全部上线</span></h3>
@@ -218,6 +228,8 @@ const numRead = () => [...READ.set].filter(p => p.startsWith('/numeric/')).lengt
 const lgRead = () => [...READ.set].filter(p => p.startsWith('/linalg/')).length;
 </script>
 <style scoped>
+/* hero 入口（主按钮 + 推荐路径）已提到 global.css，数学 / 物理两页共用一套，
+   这里只留首页专属的一条 */
 /* 高等数学一栏的卡片：标签描边改虚线、取橙色，与已上线的实线蓝标签分开 */
 .plan-card .tag { color: var(--orange); border-style: dashed; }
 </style>

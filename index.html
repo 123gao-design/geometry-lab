@@ -26,25 +26,56 @@
        body 的背景就不再传播到画布，而会自己画成一层不透明底，正好盖住 z-index:-1 的
        .bg-fx / .bg-motion / .bg-poly 光影层（2026-11-17 踩过：换主题背景不变、背景动画全没了）。 */
     html, body { margin: 0; }
+    html.light { --boot-bg: #f4f1e8; --boot-accent: #2563eb; --boot-ink: #20293a; }
+    html[data-theme="dusk"] { --boot-bg: #101736; --boot-accent: #a5b4fc; }
+    html[data-theme="sky"] { --boot-bg: #eef2f7; --boot-accent: #2563eb; }
+    html[data-theme="sand"] { --boot-bg: #faf6ec; --boot-accent: #92400e; }
+    html[data-theme="mint"] { --boot-bg: #ecf8f1; --boot-accent: #047857; }
+    html[data-theme="sakura"] { --boot-bg: #fdf2f6; --boot-accent: #be185d; }
+    html[data-theme="lav"] { --boot-bg: #f4f0fb; --boot-accent: #7c3aed; }
+    html:has(#boot:not(.boot-done)) { overflow: hidden; }
     #boot {
-      position: fixed; inset: 0; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 18px;
-      background: #0a0d14;
-      font: 14px/1.6 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-      color: #8b98ad; letter-spacing: .08em;
+      position: fixed; inset: 0; z-index: 130; display: grid; align-content: center; justify-items: center; gap: 4px;
+      background: var(--bg, var(--boot-bg, #0b0f17));
+      color: var(--ink, var(--boot-ink, #e8eef7));
+      font: 14px/1.6 system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; letter-spacing: .08em;
+      pointer-events: none; transition: opacity .2s ease;
     }
-    html.light #boot { background: #f4f1e8; color: #6b7280; }
-    #boot i {
-      width: 34px; height: 34px; border-radius: 50%;
-      border: 2px solid currentColor; border-top-color: transparent; opacity: .55;
-      animation: boot-spin .9s linear infinite;
+    #boot.boot-done { opacity: 0; }
+    .boot-figure { position: relative; width: min(94vw, 760px); height: min(62dvh, 500px); }
+    .boot-figure canvas { display: block; width: 100%; height: 100%; }
+    .boot-rings {
+      position: absolute; inset: 50% auto auto 50%; width: min(67vw, 50dvh, 382px); aspect-ratio: 1;
+      translate: -50% -50%; border: 1px dashed var(--blue, var(--boot-accent, #5cadff)); border-radius: 50%;
+      background: radial-gradient(circle, color-mix(in srgb, var(--blue, var(--boot-accent, #5cadff)) 20%, transparent), transparent 66%);
     }
-    @keyframes boot-spin { to { transform: rotate(360deg); } }
-    @media (prefers-reduced-motion: reduce) { #boot i { animation: none; } }
+    .boot-rings i {
+      position: absolute; inset: 32% 2%; border: 1px solid var(--blue, var(--boot-accent, #5cadff));
+      border-radius: 50%; transform: rotate(-34deg);
+    }
+    .boot-rings i + i { transform: rotate(37deg); }
+    .boot-rings i::after {
+      content: ""; position: absolute; top: 50%; right: -3px; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--blue, var(--boot-accent, #5cadff)); box-shadow: 0 0 13px var(--blue, var(--boot-accent, #5cadff));
+    }
+    .boot-rings span { position: absolute; inset: 0; animation: boot-orbit 8s linear infinite; }
+    #boot.boot-painted .boot-rings { display: none; }
+    @keyframes boot-orbit { to { transform: rotate(1turn); } }
+    @media (prefers-reduced-motion: reduce) {
+      .boot-rings span { animation: none; }
+      #boot { transition: none; }
+    }
   </style>
 </head>
 <body>
-  <div id="app"><div id="boot"><i></i><span>几何演示实验室</span></div></div>
+  <div id="app"></div>
+  <div id="boot" role="status">
+    <div class="boot-figure" aria-hidden="true">
+      <canvas id="boot-particles"></canvas>
+      <div class="boot-rings"><span><i></i><i></i></span></div>
+    </div>
+    <span>正在加载几何演示实验室…</span>
+  </div>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

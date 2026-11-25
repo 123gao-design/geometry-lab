@@ -977,7 +977,7 @@ onBeforeUnmount(() => {
 }
 /* 标题走衬线：纸面上的一行小标题，跟正文的无衬线拉开一档 */
 .pd-title {
-  font-family: Georgia, 'Songti SC', 'Noto Serif CJK SC', 'SimSun', serif;
+  font-family: var(--font-sans);
   font-size: 14px; font-weight: 600; color: var(--pb-ink);
   letter-spacing: .015em;
 }

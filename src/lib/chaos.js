@@ -6,6 +6,7 @@
 
 export const SCENE_LIST = [
   { id: 'glow', name: '呼吸光影', blurb: '三团主题色柔光缓慢漂移，由 CSS 渐变绘制，不开画布。' },
+  { id: 'particles', name: '轨道粒子', blurb: '椭圆轨道上的粒子掠过利萨如曲线与干涉波面。线条和亮点跟随当前主题。' },
   { id: 'lorenz', name: '洛伦兹', blurb: 'σ=10、ρ=28、β=8/3 的双翼蝴蝶，两条轨道缠成连续的光带。' },
   { id: 'rossler', name: '罗斯勒', blurb: 'a=b=0.2、c=5.7 的单翼螺旋，绕一圈后甩出去再被拉回。' },
   { id: 'aizawa', name: '艾泽瓦', blurb: '球内的丝带与穿过中轴的细流，转动时像一颗悬空的星云。' },
@@ -14,7 +15,7 @@ export const SCENE_LIST = [
   { id: 'ns', name: 'NS 方程', blurb: '两个维度的不可压流：三个缓慢游走的涡把雾气卷成丝缕，再平流出去。' },
 ];
 
-export const CHAOS_IDS = SCENE_LIST.filter(s => s.id !== 'glow').map(s => s.id);
+export const CHAOS_IDS = SCENE_LIST.filter(s => s.id !== 'glow' && s.id !== 'particles').map(s => s.id);
 
 export const SCENES = {
   // 洛伦兹：经典双翼。x±19、y∈[-24,27]、z∈[2,45]

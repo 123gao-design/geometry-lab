@@ -158,7 +158,7 @@ onMounted(() => {
 .pg-pop-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .pg-pop-head strong { font-size: 13.5px; }
 .pg-cmds { margin: 6px 0 0; padding-left: 20px; line-height: 1.9; }
-.pg-cmds code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: var(--blue); }
+.pg-cmds code { font-family: var(--font-mono); font-size: 12.5px; color: var(--blue); }
 .pg-pop-tip { font-size: 12.5px; color: var(--mut); margin: 6px 0 0; }
 
 @media (max-width: 720px) {

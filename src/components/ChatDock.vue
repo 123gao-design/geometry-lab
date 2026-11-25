@@ -825,7 +825,7 @@ watch(() => route.fullPath, () => { if (props.open) nextTick(refreshBoardFlag); 
 .cd-mi.on { color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, transparent); }
 .cd-mi-n { grid-area: n; min-width: 0; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cd-mi-m { grid-area: m; min-width: 0; font-size: 11.5px; color: var(--faint);
-  font-family: ui-monospace, Menlo, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cd-mi-ck { grid-area: ck; font-size: 12px; color: var(--blue); }
 .cd-mi-add {
   margin-top: 4px; padding: 8px 10px 4px; width: 100%; text-align: left;
@@ -934,7 +934,7 @@ watch(() => route.fullPath, () => { if (props.open) nextTick(refreshBoardFlag); 
 }
 .cd-body:hover::-webkit-scrollbar-thumb { background-color: color-mix(in srgb, var(--mut) 46%, transparent); }
 .cd-empty { max-width: 720px; margin: 12vh auto 0; padding: 0 22px; text-align: center; }
-.cd-empty-t { font-size: 19px; color: var(--ink); margin: 0 0 6px; font-family: Georgia, 'Songti SC', serif; }
+.cd-empty-t { font-size: 19px; color: var(--ink); margin: 0 0 6px; font-family: var(--font-sans); }
 .cd-empty-s { font-size: 13.5px; color: var(--mut); margin: 0; }
 .cd-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
 .cd-chip { font: inherit; font-size: 13px; color: var(--mut); background: var(--card); border: 1px solid var(--line);
@@ -999,7 +999,7 @@ watch(() => route.fullPath, () => { if (props.open) nextTick(refreshBoardFlag); 
 .cd-md :deep(h1), .cd-md :deep(h2), .cd-md :deep(h3), .cd-md :deep(h4) { margin: .8em 0 .35em; font-size: 1.05em; color: var(--ink); }
 .cd-md :deep(ul), .cd-md :deep(ol) { margin: .4em 0; padding-left: 1.4em; }
 .cd-md :deep(li) { margin: .2em 0; }
-.cd-md :deep(code) { font-family: ui-monospace, Menlo, monospace; font-size: .9em; padding: 1px 5px;
+.cd-md :deep(code) { font-family: var(--font-mono); font-size: .9em; padding: 1px 5px;
   border-radius: 5px; color: var(--ink);
   background: color-mix(in srgb, var(--blue) 11%, transparent); }
 /* 代码块：深灰底换成淡蓝卡片 + 顶部工具条（语言 · 复制 · 下载） */
@@ -1024,7 +1024,7 @@ watch(() => route.fullPath, () => { if (props.open) nextTick(refreshBoardFlag); 
 .cd-md :deep(.md-code-btn:hover) { color: var(--ink); border-color: var(--mut); }
 .cd-md :deep(.md-code-body) {
   display: block; padding: 10px 12px; overflow: auto; background: transparent; border-radius: 0;
-  font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; line-height: 1.65;
+  font-family: var(--font-mono); font-size: 12.5px; line-height: 1.65;
   color: var(--ink); white-space: pre; tab-size: 2;
 }
 /* 代码高亮：注释 / 字符串 / 数字 / 关键字 */
@@ -1092,14 +1092,14 @@ watch(() => route.fullPath, () => { if (props.open) nextTick(refreshBoardFlag); 
   border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; outline: none; }
 .cd-file-f input { width: 210px; }
 .cd-file-f input:focus, .cd-file-f select:focus { border-color: color-mix(in srgb, var(--blue) 55%, transparent); }
-.cd-file-name { font-size: 11.5px; color: var(--faint); font-family: ui-monospace, Menlo, monospace; }
+.cd-file-name { font-size: 11.5px; color: var(--faint); font-family: var(--font-mono); }
 .cd-file-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
 .cd-file-ta { width: 100%; height: 100%; resize: none; border: 0; outline: none;
   padding: 14px 16px; background: color-mix(in srgb, var(--blue) 4%, var(--bg2)); color: var(--ink);
-  font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; line-height: 1.7; }
+  font-family: var(--font-mono); font-size: 12.5px; line-height: 1.7; }
 .cd-file-pv { min-width: 0; overflow: auto; padding: 16px 20px; background: var(--bg); }
 .cd-file-ifr { width: 100%; height: 100%; border: 0; border-radius: 8px; background: #fff; }
-.cd-file-pre { margin: 0; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; line-height: 1.7;
+.cd-file-pre { margin: 0; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.7;
   white-space: pre-wrap; word-break: break-word; color: var(--ink); }
 @media (max-width: 820px) {
   .cd-file { height: min(820px, 92vh); }

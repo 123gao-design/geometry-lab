@@ -152,7 +152,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
 .nd-title { font: inherit; font-size: 15px; font-weight: 600; color: var(--ink); background: transparent;
   border: none; border-bottom: 1px dashed var(--line); padding: 2px 0 6px; outline: none; }
 .nd-title:focus { border-bottom-color: var(--blue); }
-.nd-ta { flex: 1; min-height: 180px; resize: none; font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+.nd-ta { flex: 1; min-height: 180px; resize: none; font-family: var(--font-mono); font-size: 13px;
   line-height: 1.8; color: var(--ink); background: var(--card); border: 1px solid var(--line);
   border-radius: 12px; padding: 12px 13px; outline: none; }
 .nd-ta:focus { border-color: color-mix(in srgb, var(--blue) 55%, transparent); }

@@ -176,6 +176,11 @@ defineExpose({ toggle });
 }
 @media (max-width: 1100px) { .nav-kbd { display: none; } .nav-q { width: 150px; } }
 @media (max-width: 760px) { .nav-search { padding: 0 9px; } .nav-q { width: 100px; } }
+/* 窄屏顶栏只留 6 个元素时，搜索框接住剩下的宽度；固定 100px 会把导航条撑破 */
+@media (max-width: 900px) {
+  .nav-search { flex: 1 1 auto; min-width: 0; width: auto; }
+  .nav-q { flex: 1 1 auto; min-width: 0; width: auto; }
+}
 
 /* ---- 顶栏展开模式的结果浮层 ---- */
 .sp-drop {

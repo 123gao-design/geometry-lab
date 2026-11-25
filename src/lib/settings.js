@@ -14,11 +14,11 @@ export const CHOICES = {
   chatThink: ['on', 'off'],        // 展示推理模型的思考过程（流式时实时展开）
   chatHist: ['on', 'off'],         // 整屏时左侧常驻对话列表
   navOpen: ['cur', 'all', 'none'], // 左栏进页时的折叠方式
-  pageAnim: ['fade', 'up', 'zoom', 'slide', 'blur', 'none'], // 切页动画
+  pageAnim: ['particles', 'fade', 'up', 'zoom', 'slide', 'blur', 'none'], // 切页动画
   noteFormat: ['md', 'tex'],       // 新建笔记的默认格式
   visitCap: ['5', '8', '12', '20'], // 面包屑缓存多少个页面（硬上限 20）
   bgMotionOn: ['on', 'off'],       // 背景动画总开关
-  bgScene: ['glow', 'lorenz', 'rossler', 'aizawa', 'thomas', 'clifford', 'ns'], // 背景画什么
+  bgScene: ['glow', 'particles', 'lorenz', 'rossler', 'aizawa', 'thomas', 'clifford', 'ns'], // 背景画什么
   bgSolidOn: ['on', 'off'],        // 左侧空白处的旋转线框多面体
   bgSolidPos: ['br', 'left', 'right'], // 多面体摆哪儿：右下角 / 左侧留白 / 右侧留白
   lblPin: ['on', 'off'],           // 板内拖过的文字位置记在本机（默认开）
@@ -71,7 +71,7 @@ const DEFAULTS = {
   chatThink: 'on',                    // 默认展示思考链；关掉只留最终回答
   chatHist: 'on',                     // 整屏时默认显示左侧对话列表
   navOpen: 'cur',
-  pageAnim: 'fade',
+  pageAnim: 'particles',
   noteFormat: 'md',
   visitCap: '8',
   bgMotionOn: 'on',

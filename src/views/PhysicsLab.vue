@@ -587,7 +587,7 @@ onBeforeUnmount(() => {
 }
 .tb-back:hover { color: var(--blue); }
 .tb-t {
-  font-family: Georgia, 'Songti SC', 'Noto Serif CJK SC', 'SimSun', serif;
+  font-family: var(--font-sans);
   font-size: 15.2px;
   letter-spacing: .3px;
   color: var(--ink);

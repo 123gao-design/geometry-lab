@@ -1,7 +1,7 @@
 <template>
   <SubjectTabs active="physics" />
 
-  <div class="card hero" style="margin-top:26px">
+  <div class="card hero ph-hero" style="margin-top:26px">
     <div class="hero-row">
       <svg class="home-logo" viewBox="0 0 48 48" aria-hidden="true">
         <defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
@@ -18,6 +18,18 @@
       <h1 style="margin:0;font-size:clamp(26px,4vw,36px)">可视化物理</h1>
     </div>
     <p class="sub">把课本里的概念与公式做成可以拖动、可以实时读数的画面 —— 每一章的每个式子，都能在演示里对上一个数。</p>
+    <!-- 与数学首页同构的入口：第一讲直通力学第一章，路径按课本主干排到电磁学。
+         强调色由 .ph-hero 切到 --orange，8 套主题下都自动跟随。 -->
+    <div class="hero-start">
+      <router-link class="hero-cta" to="/physics/ch/motion1">开始第 1 讲<span class="hc-arrow" aria-hidden="true">→</span></router-link>
+      <nav class="hero-path" aria-label="推荐学习路径">
+        <span class="hp-label">推荐路径</span>
+        <router-link to="/physics/p/mech">力学</router-link><i aria-hidden="true">→</i>
+        <router-link to="/physics/p/vib">振动与波</router-link><i aria-hidden="true">→</i>
+        <router-link to="/physics/p/heat">热学</router-link><i aria-hidden="true">→</i>
+        <router-link to="/physics/p/em">电磁学</router-link>
+      </nav>
+    </div>
   </div>
 
   <h3 class="sec">课程部分<span class="prog">{{ onAll }} / {{ total }} 章已上线</span></h3>

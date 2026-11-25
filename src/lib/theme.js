@@ -24,8 +24,15 @@ const THEME_KEY = 'gl-theme';
 const THEME_HOOKS = [];
 export function onThemeChange(fn) { if (typeof fn === 'function') THEME_HOOKS.push(fn); }
 
+let SHIFT_TIMER = null;
 export function applyTheme(t, persist = true) {
   const th = themeOf(t);
+  // 换主题时临时给「有色块」开一段色彩过渡，320ms 后摘掉；
+  // 不常驻 transition，免得拖慢 hover 与画板重绘（打印时由 CSS 直接关掉）。
+  const root = document.documentElement;
+  root.classList.add('theme-shifting');
+  clearTimeout(SHIFT_TIMER);
+  SHIFT_TIMER = setTimeout(() => root.classList.remove('theme-shifting'), 320);
   document.documentElement.classList.toggle('light', !th.dark);
   document.documentElement.dataset.theme = th.id;
   if (persist) try { localStorage.setItem(THEME_KEY, th.id); } catch (_) { /* 隐私模式下忽略 */ }

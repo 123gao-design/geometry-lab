@@ -17,6 +17,29 @@ export { THEMES, themeOf, currentTheme, isLight, applyTheme, initTheme, mountThe
 
 const SVGNS = 'http://www.w3.org/2000/svg';
 
+/* ============ 读数变化反馈（教学层动效，2026-11-25） ============
+   画板里所有 chip / 滑块标签的值一变，就给一次极轻的「柔光扩散 + 数字轻滚」，
+   让人注意到「刚才哪个量变了、往哪边变」。这是阅读辅助，不是装饰特效：
+   - 只在值真的变化时触发；连续拖动按 130ms 节流，避免每帧重启动画闪屏；
+   - 颜色不在 JS 里写死，CSS 用 var(--blue)/currentColor 取，天然跟随 8 套主题；
+   - 纯 CSS 动画，不进 Board 的 rAF 表，销毁时无需额外清理；
+   - reduced-motion 下直接不挂 class，退化成静态读数。 */
+const _tickState = new WeakMap();
+function tickValue(el) {
+  if (!el || typeof window === 'undefined') return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const now = window.performance ? window.performance.now() : Date.now();
+  const rec = _tickState.get(el) || { at: -1e9, timer: 0 };
+  if (now - rec.at < 130) return;              // 拖点/拉滑块时别一帧一亮
+  rec.at = now;
+  clearTimeout(rec.timer);
+  el.classList.remove('val-tick');
+  void el.offsetWidth;                         // 强制回流，让同名动画能重新播放
+  el.classList.add('val-tick');
+  rec.timer = setTimeout(() => el.classList.remove('val-tick'), 580);
+  _tickState.set(el, rec);
+}
+
 /* 橡皮的鼠标样式：自己画一枚斜橡皮，热点在笔尖（7,21）。浏览器自带的十字看不出「这会儿是在擦」 */
 const ERASER_CURSOR = (() => {
   const body = 'M10.6 20.5 5.6 15.5a1.8 1.8 0 0 1 0-2.5l7.2-7.2a1.8 1.8 0 0 1 2.5 0l5 5a1.8 1.8 0 0 1 0 2.5l-7 7h-2.7z';
@@ -936,6 +959,7 @@ export class Board {
     // 纸格：与设置页「数学画板背景网格」是同一项（PREFS.boardGrid），这里只是就近的入口。
     // 不动 setPaper（那是画布显式定的纸面），只重铺那些跟着全局档走的板。
     const grow = hEl('div', { class: 'tint-row tint-grid' }, pop);
+    this._tintGridRow = grow;
     hEl('span', { class: 'tint-gl' }, grow).textContent = '纸格';
     const gbs = [];
     for (const [v, txt, tip] of [['off', '不画', '不铺背景纸格'], ['auto', '自动', '板上有坐标网格时自动收起'],
@@ -978,6 +1002,7 @@ export class Board {
     // 底注：纸面只改这一块，其余三项与设置页同一套值（照物理画板面板底下那句）
     const f = hEl('div', { class: 'tint-f' }, pop);
     f.textContent = '纸面只改这一块板；纸格与三项倍率与设置页「画板」是同一项';
+    this._tintFoot = f;
     this._tintSls = sls;
     this._tintPop = pop;
     this._tintSws = sws; // [0] 是「跟随主题」，k 对应 TINTS[k−1]
@@ -1002,6 +1027,36 @@ export class Board {
     }
     this._syncTintSw();
   }
+  /** 用当前板的两种背景替换全局纸格入口，沿用开关的分享链接状态。 */
+  setAppearanceBackground([plainLabel, gridLabel], apply) {
+    const row = this._tintGridRow;
+    this._ownBackground = true;
+    this._tintGbs = null;
+    row.replaceChildren();
+    row.setAttribute('role', 'group');
+    row.setAttribute('aria-label', '画板背景');
+    hEl('span', { class: 'tint-gl' }, row).textContent = '背景';
+    let grid = false;
+    const buttons = [plainLabel, gridLabel].map((label, i) => {
+      const button = hEl('button', { type: 'button', class: 'tint-gb' }, row);
+      button.textContent = label;
+      button.addEventListener('click', () => { set(i === 1); scheduleQuerySync(); });
+      return button;
+    });
+    const set = value => {
+      grid = !!value;
+      buttons.forEach((button, i) => {
+        const selected = i === Number(grid);
+        button.classList.toggle('on', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      });
+      apply(grid);
+    };
+    this.toggles.push({ key: 't' + (this.toggles.length + 1), label: gridLabel, get: () => Number(grid), set });
+    this._tintFoot.textContent = '纸面与背景只改这一块板，字号和线宽沿用设置页的倍率。';
+    set(false);
+    this._paperDraw();
+  }
   setTint(i) { this._tintUser = true; this._tint = i; this._syncTintSw(); this.syncTint(); }
   /* ---------- 画布纸面：底色 + 网格 ----------
      cfg = { c: '#rrggbb' | '', g: 'none' | 'square' | 'dots' | 'lines' }
@@ -1022,6 +1077,7 @@ export class Board {
    *  off 不画；auto 板上有坐标网格（B.grid）时收起，免得两套网格打架；其余按所选样式。 */
   _paperStyle() {
     if (this._paperSet) return (this._paper && this._paper.g) || 'none';
+    if (this._ownBackground) return 'none';
     const m = PREFS.boardGrid || 'off';
     if (m === 'off') return 'none';
     if (m === 'auto') return this._gridMarked ? 'none' : 'square';
@@ -3746,22 +3802,40 @@ export class Board {
     for (let n = 2; this._keys.has(k); n++) k = base() + n;
     this._keys.add(k);
     this.sliders.push({ s, key: k, min, max, label });
+    let lastLabel = `${label} ${fmt(val, digits)}`;
     s.addEventListener('input', () => {
-      t.textContent = `${label} ${fmt(+s.value, digits)}`;
+      const txt = `${label} ${fmt(+s.value, digits)}`;
+      if (txt !== lastLabel) tickValue(w);  // 读数真的变了才轻滚一下
+      t.textContent = txt; lastLabel = txt;
       fn(+s.value);
       scheduleQuerySync(); // 防抖后把整页滑块状态写进 hash query
     });
     // 程序化同步滑块 UI 与标签：不触发 fn、不把值读回（range 的 value 可能被浏览器按 step 整化）
-    s.sync = v => { s.value = v; t.textContent = `${label} ${fmt(+v, digits)}`; };
+    // 从 URL 还原现场时不播动效，免得刚进页面就闪一下
+    s.sync = v => { s.value = v; lastLabel = `${label} ${fmt(+v, digits)}`; t.textContent = lastLabel; };
     this.ctrl.appendChild(w); return s;
   }
-  chip(label) { // 返回 update(text, cls)
+  /** 读数徽章：返回 update(text, cls)。值变化时自动给一次柔光脉冲；
+   *  update.pulse() 可手动再触发（逐层核验这类分段演示用），update.el 是徽章 DOM。
+   *  cls 只在变化时重设 className，免得把正在播放的 val-tick 冲掉。 */
+  chip(label) {
     const c = hEl('span', { class: 'chip' });
     const lab = hEl('b', {}, c); const val = hEl('span', {}, c);
     lab.textContent = label + ' ';
     this.chipRow.appendChild(c);
     const rec = this._chipRec(label);
-    return (t, cls = '') => { rec.text = String(t); val.textContent = t; c.className = 'chip ' + cls; };
+    let prev = null, lastCls = null;
+    const upd = (t, cls = '') => {
+      const s = String(t);
+      const changed = prev !== null && s !== prev;
+      rec.text = s; val.textContent = s;
+      if (cls !== lastCls) { c.className = 'chip ' + cls; lastCls = cls; }
+      if (changed) tickValue(c);
+      prev = s;
+    };
+    upd.pulse = () => tickValue(c);
+    upd.el = c;
+    return upd;
   }
   /** 徽章的登记：AI 助手要看得见这一刻的读数（「测得 e ≈ 1.0003」比「e 是个滑块」有用得多） */
   _chipRec(label) {
@@ -3781,10 +3855,19 @@ export class Board {
     else lab.textContent = label + ' ';
     this.chipRow.appendChild(c);
     const rec = this._chipRec(label);
-    return (t, cls = '') => {
-      rec.text = String(t);
-      val.textContent = t; val.innerHTML = texMix(t); c.className = 'chip ' + cls;
+    let prev = null, lastCls = null;
+    const upd = (t, cls = '') => {
+      const s = String(t);
+      const changed = prev !== null && s !== prev;
+      rec.text = s;
+      val.textContent = s; val.innerHTML = texMix(s);
+      if (cls !== lastCls) { c.className = 'chip ' + cls; lastCls = cls; }
+      if (changed) tickValue(c);
+      prev = s;
     };
+    upd.pulse = () => tickValue(c);
+    upd.el = c;
+    return upd;
   }
   /** 「在 GeoGebra 中验证」出口：getCmds() 返回命令数组，点击后带着当前参数打开 /playground。
    *  mode 取 'graphing' 或 '3d'；按钮复用 .dl 的定位与主题配色，挂进右上角导出条（CSS order 排在最左）。 */

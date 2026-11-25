@@ -100,12 +100,16 @@
       <div class="set-row">
         <div class="set-label">
           <strong>页面切换动画</strong>
-          <span>切页时正文的入场方式，选一个马上能看到效果。</span>
+          <span>{{ PREFS.pageAnim === 'particles' ? '「轨道粒子」会在页面加载稍慢时出现。已就绪的页面直接打开。' : '选择正文切换时的入场方式。' }}</span>
         </div>
         <div class="seg" role="group" aria-label="页面切换动画">
           <button v-for="o in ANIMS" :key="o.v" type="button" :class="{ on: PREFS.pageAnim === o.v }"
             @click="pickAnim(o.v)">{{ o.t }}</button>
         </div>
+      </div>
+      <div v-if="PREFS.pageAnim === 'particles'" class="particle-preview" aria-label="加载动画预览">
+        <ParticleField />
+        <span>加载动画预览</span>
       </div>
       <div class="set-row">
         <div class="set-label">
@@ -142,12 +146,12 @@
             @click="setPref('bgMotionOn', o.v)">{{ o.t }}</button>
         </div>
       </div>
-      <div class="set-row">
+      <div class="set-row scene-row">
         <div class="set-label">
           <strong>背景类型</strong>
           <span>{{ sceneBlurb }}</span>
         </div>
-        <div class="seg wide" role="group" aria-label="背景类型">
+        <div class="seg scene-options" role="group" aria-label="背景类型">
           <button v-for="o in SCENE_LIST" :key="o.id" type="button" :class="{ on: PREFS.bgScene === o.id }"
             @click="pickScene(o.id)">{{ o.name }}</button>
         </div>
@@ -166,7 +170,7 @@
       <div class="set-row">
         <div class="set-label">
           <strong>背景线条浓度</strong>
-          <span>线条与烟气的透明度倍数，100% 是标准值。嫌淡往右拉，嫌抢眼往左拉；拖动即刻生效，画面不会重播。</span>
+          <span>适用于轨道粒子和混沌场景。100% 是标准浓度，调整即刻生效，画面会接续当前相位。</span>
         </div>
         <div class="ink-slide">
           <input class="ink-range" type="range" min="0.3" max="2.5" step="0.1" :value="PREFS.bgAlpha"
@@ -503,6 +507,7 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import { PREFS, setPref, resetPrefs } from '../lib/settings.js';
 import { SCENE_LIST } from '../lib/chaos.js';
+import ParticleField from '../components/ParticleField.vue';
 import { MODELS, PRESETS, setActiveModel, addModel, updateModel, removeModel } from '../lib/models.js';
 import { fsSupported, pickDir, getHandle, dropHandle } from '../lib/fsdir.js';
 import { pingModel, endpointOf } from '../lib/chat.js';
@@ -519,6 +524,7 @@ const SOLID_POS = [{ v: 'br', t: '右下角' }, { v: 'left', t: '左侧留白' }
 // 面包屑缓存条数：硬上限 20（见 lib/visits.js 的 MAX_VISITS）
 const CAPS = [{ v: '5', t: '5 个' }, { v: '8', t: '8 个' }, { v: '12', t: '12 个' }, { v: '20', t: '20 个' }];
 const ANIMS = [
+  { v: 'particles', t: '轨道粒子' },
   { v: 'fade', t: '淡入' },
   { v: 'up', t: '上滑' },
   { v: 'zoom', t: '缩放' },
@@ -740,6 +746,15 @@ function resetAll() {
 </script>
 
 <style scoped>
+.particle-preview {
+  display: grid; grid-template-rows: minmax(0, 1fr) auto;
+  width: min(100%, 700px); height: clamp(170px, 32vw, 290px); margin: 3px auto 12px; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 45%, color-mix(in srgb, var(--blue) 8%, var(--bg2)), var(--bg2) 70%);
+  border: 1px solid var(--line); border-radius: 9px;
+}
+.particle-preview span {
+  padding: 0 12px 8px; color: var(--mut); font-size: 12px; text-align: center;
+}
 .set-card {
   border: 1px solid var(--line); border-radius: 14px; background: var(--card);
   padding: 6px 18px; margin: 12px 0 4px;
@@ -774,8 +789,12 @@ function resetAll() {
 .ink-slide { flex: none; display: flex; align-items: center; gap: 10px; }
 .ink-range { width: 210px; accent-color: var(--blue); cursor: pointer; }
 .ink-val { font-size: 12px; color: var(--mut); min-width: 42px; text-align: right; font-variant-numeric: tabular-nums; }
-/* 六个背景类型一行排不下就折行，圆角改小一点，折行时不至于成个怪圆 */
-.seg.wide { border-radius: 14px; justify-content: flex-end; max-width: 560px; }
+.scene-row .set-label { min-width: min(190px, 100%); }
+.seg.scene-options {
+  flex: 0 1 auto; min-width: 0; max-width: 100%; flex-wrap: nowrap;
+  overflow-x: auto; scrollbar-width: thin;
+}
+.scene-options button { flex: none; white-space: nowrap; }
 /* 页脚两个动作钮：各自成颗、文字不换行；说明另起一行铺满 */
 .set-actions {
   display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
@@ -798,7 +817,7 @@ function resetAll() {
 /* 模型区 */
 .md-hint { padding: 12px 0 6px; font-size: 12.5px; color: var(--mut); line-height: 1.8; }
 .md-hint p { margin: 0 0 4px; }
-.md-hint code { font-family: ui-monospace, Menlo, monospace; background: var(--bg2); padding: 0 4px; border-radius: 4px; }
+.md-hint code { font-family: var(--font-mono); background: var(--bg2); padding: 0 4px; border-radius: 4px; }
 .md-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 4px 0 10px; }
 .md-presets-t { font-size: 12.5px; color: var(--faint); }
 .md-preset { font: inherit; font-size: 12px; color: var(--mut); background: var(--bg2); border: 1px solid var(--line);
@@ -816,7 +835,7 @@ function resetAll() {
 .md-caret { flex: none; width: 14px; color: var(--faint); font-size: 11px; transition: transform .16s ease; }
 .md-caret.open { transform: rotate(90deg); }
 .md-sum-name { font-size: 13.5px; font-weight: 600; }
-.md-sum .md-model { font-size: 12px; color: var(--faint); font-family: ui-monospace, Menlo, monospace; }
+.md-sum .md-model { font-size: 12px; color: var(--faint); font-family: var(--font-mono); }
 .md-tag {
   flex: none; font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 99px;
   color: var(--blue); border: 1px solid color-mix(in srgb, var(--blue) 45%, transparent);
@@ -828,7 +847,7 @@ function resetAll() {
 .md-key input { flex: 1; min-width: 0; }
 /* 接口地址下面一行：把最终请求地址显出来，免得「怎么连到别的域名去了」 */
 .md-url { display: block; margin-top: 4px; font-style: normal; font-size: 11.5px; line-height: 1.5;
-  color: var(--faint); font-family: ui-monospace, Menlo, monospace;
+  color: var(--faint); font-family: var(--font-mono);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .md-eye {
   flex: none; font: inherit; font-size: 12px; line-height: 1; padding: 6px 10px;
@@ -846,7 +865,7 @@ function resetAll() {
 .md-name input { width: 100%; font: inherit; font-size: 14px; font-weight: 600; color: var(--ink);
   background: transparent; border: none; border-bottom: 1px dashed transparent; padding: 2px 0; outline: none; }
 .md-name input:focus { border-bottom-color: var(--line); }
-.md-model { flex: none; font-size: 12px; color: var(--faint); font-family: ui-monospace, Menlo, monospace; }
+.md-model { flex: none; font-size: 12px; color: var(--faint); font-family: var(--font-mono); }
 .md-sp { flex: 1; }
 .md-btn { font: inherit; font-size: 12px; color: var(--mut); background: transparent; border: 1px solid var(--line);
   border-radius: 8px; padding: 3px 10px; cursor: pointer; white-space: nowrap; }

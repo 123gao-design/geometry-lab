@@ -556,7 +556,7 @@ onBeforeUnmount(() => {
 .nt-edit.v-write, .nt-edit.v-preview { grid-template-columns: minmax(0, 1fr); }
 .nt-pane { min-width: 0; border: 1px solid var(--line); border-radius: 14px; background: var(--card); overflow: hidden; }
 .nt-ta { display: block; width: 100%; height: calc(100vh - 300px); min-height: 380px; resize: vertical;
-  font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; line-height: 1.85; color: var(--ink);
+  font-family: var(--font-mono); font-size: 13.5px; line-height: 1.85; color: var(--ink);
   background: transparent; border: none; outline: none; padding: 16px 20px; }
 .nt-prev-hd { padding: 8px 16px; font-size: 12px; color: var(--faint); border-bottom: 1px solid var(--line); }
 .nt-prev { padding: 10px 18px 20px; height: calc(100vh - 334px); min-height: 346px; overflow: auto;
@@ -566,14 +566,14 @@ onBeforeUnmount(() => {
 .nt-prev :deep(h3) { font-size: 1.1em; margin: .6em 0 .25em; }
 .nt-prev :deep(p) { margin: .5em 0; }
 .nt-prev :deep(ul), .nt-prev :deep(ol) { margin: .4em 0; padding-left: 1.5em; }
-.nt-prev :deep(code) { font-family: ui-monospace, Menlo, monospace; font-size: .9em; background: rgba(255, 255, 255, .07);
+.nt-prev :deep(code) { font-family: var(--font-mono); font-size: .9em; background: rgba(255, 255, 255, .07);
   padding: 1px 5px; border-radius: 5px; }
 .nt-prev :deep(.md-code) { padding: 10px 12px; border-radius: 10px; background: rgba(0, 0, 0, .25); overflow: auto; }
 .nt-prev :deep(blockquote) { margin: .5em 0; padding: 2px 12px; border-left: 3px solid var(--line); color: var(--mut); }
 .nt-prev :deep(.md-math) { margin: .5em 0; overflow-x: auto; overflow-y: hidden; }
 .nt-prev :deep(.md-table) { border-collapse: collapse; margin: .6em 0; }
 .nt-prev :deep(.md-table th), .nt-prev :deep(.md-table td) { border: 1px solid var(--line); padding: 4px 10px; }
-.nt-prev :deep(.tex-plain) { margin: .4em 0; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px;
+.nt-prev :deep(.tex-plain) { margin: .4em 0; font-family: var(--font-mono); font-size: 12.5px;
   color: var(--mut); white-space: pre-wrap; }
 .nt-prev :deep(a) { color: var(--blue); }
 
@@ -586,7 +586,7 @@ onBeforeUnmount(() => {
   background: transparent; border: none; outline: none; }
 .nt-focus-meta { flex: none; font-size: 11.5px; color: var(--faint); }
 .nt-focus-ta { flex: 1; min-height: 0; width: 100%; max-width: 980px; margin: 0 auto; display: block;
-  resize: none; font-family: ui-monospace, Menlo, monospace; font-size: 14.5px; line-height: 1.95;
+  resize: none; font-family: var(--font-mono); font-size: 14.5px; line-height: 1.95;
   color: var(--ink); background: transparent; border: none; outline: none; padding: 22px 26px; }
 
 @media (max-width: 1100px) {

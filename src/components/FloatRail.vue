@@ -113,7 +113,8 @@ watch(() => route.fullPath, syncBack);
 
 // 最下面那枚「收起」：把上面这一摞圆钮淡出并向下滑走，只剩它自己；
 // 再点一下，按钮自下而上弹回来。状态只留在这一次会话里，不写偏好。
-const folded = ref(false);
+// 窄屏默认收起：整摞 7 枚圆钮会压住卡片和段落，只留一枚 FAB，用户随时可手动展开。
+const folded = ref(typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches);
 
 onMounted(() => { onScroll(); syncBack(); window.addEventListener('scroll', onScroll, { passive: true }); });
 onBeforeUnmount(() => window.removeEventListener('scroll', onScroll));
