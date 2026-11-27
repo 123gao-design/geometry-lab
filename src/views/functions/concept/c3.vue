@@ -5,7 +5,7 @@
     <div class="note good" id="c3-dom"><strong>定义域</strong>：使解析式有意义的自变量取值全体。无实际背景时按「自然限制条件」确定：<strong>分母不为零</strong>、<strong>偶次根号下 <Katex tex="\ge 0" /></strong>、<strong>对数真数 <Katex tex="&gt; 0" /></strong>（底数 <Katex tex="&gt; 0" /> 且 <Katex tex="\ne 1" />）；有实际背景的（重量、人数、时间）还要依题意确定。<strong>值域</strong> <span class="term">(range)</span>：全体函数值构成的集合 —— 它由定义域与法则共同决定，是全部函数值的集合。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRangeSweep" />
-      <div class="cap">图 C3 · <b>求函数的值域</b>。移动扫描点，观察函数值向纵轴投影。切换到有理函数，核对纵轴上取不到的 0。</div>
+      <div class="cap">图 C3 · <b>求函数的值域</b>。拖动上方滑块或开启自动扫描，观察纵轴上金色的投影。选择④，越过 <Katex tex="x=1" /> 后，两段投影之间仍有空隙。</div>
     </div>
 
     <h3 class="sec" id="c3-ex">多重限制：解不等式组</h3>
@@ -41,3 +41,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createRangeSweep } from '../../../boards/functions/concept/rangesweep.js';
 import { C_CHAPTERS } from './cnav.js';
 </script>
+
+<style src="./function-picker.css"></style>

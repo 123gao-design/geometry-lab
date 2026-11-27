@@ -1,21 +1,19 @@
 /* 图 H2 周期折叠机：arcsin(sin θ) 的判读现场 —— sin θ 的水平线同高的角不止一个，
    arcsin 只认主值窗 [−π/2, π/2] 内的那个；窗外的角按镜像/整圈改判，折叠波把正弦压成三角波。 */
-import { Board, mk, V, fmt, TAU } from '../../../lib/board.js';
+import { TrigLegendBoard, angleTex } from '../trig-board.js';
+import { mk, V, fmt, TAU } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 520);
+  const B = new TrigLegendBoard(root, 860, 520);
+  B.groupReadings('公式与数值');
   const st = { th: Math.PI / 3, fold: true, grid: true, labs: true };
   // 主值窗内改判：先把 θ 的正弦折回 (−π, π]，再镜像进 [−π/2, π/2]
   const fold = th => { const r = ((th + Math.PI / 2) % TAU + TAU) % TAU - Math.PI / 2; return r > Math.PI / 2 ? Math.PI - r : r; };
-  const sT = B.slider('角 θ', 0, TAU, 0.01, st.th, v => { st.th = v; B.render(); });
-  const pre = v => () => { st.th = v; sT.sync(v); B.render(); };
-  B.btnM('$\\theta=\\tfrac{\\pi}{6}$', pre(Math.PI / 6));
-  B.btnM('$\\theta=\\tfrac{2\\pi}{3}$', pre(2 * Math.PI / 3));
-  B.btnM('$\\theta=\\tfrac{7\\pi}{6}$', pre(7 * Math.PI / 6));
-  B.btnM('$\\theta=\\tfrac{5\\pi}{3}$', pre(5 * Math.PI / 3));
+  const sT = B.slider('角 θ', 0, TAU, 0.01, st.th, v => { st.th = v; B.render(); }, undefined, (_, v) => `角 $\\theta=${angleTex(v)}$`);
+  B.angleRow([30, 120, 210, 300], () => st.th, a => { st.th = a; sT.sync(a); B.render(); });
   B.toggleBtn('折叠波', true, v => { st.fold = v; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  const cS = B.chipM('sin θ'), cF = B.chipM('arcsin(sin θ)'), cJ = B.chipM('判读');
+  const cS = B.readout('$\\sin\\theta$', 'blue'), cF = B.readout('$\\arcsin(\\sin\\theta)$', 'gold'), cJ = B.chipM('判读');
 
   const poly = (ptsPx, at) => mk('polyline', { points: ptsPx.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' '), fill: 'none', ...at }, B.dyn);
   const sam = (xa, xb, anchors, n = 280) => {
@@ -27,7 +25,7 @@ export function createBoard(root) {
 
   B.renderFn = () => {
     const th = st.th, s = Math.sin(th), fd = fold(th);
-    const m = B.isoFit(-1.75, TAU + 0.6, -1.95, 1.95);
+    const m = B.isoFit(-1.75, TAU + 0.6, -1.95, 1.95, B.plotRect);
     B.grid({ ...m, sx: Math.PI / 4, sy: 0.5, xt: [], yt: [], grid: st.grid, labs: st.labs });
     if (st.labs) {
       const PIx = [[0, '0'], [Math.PI / 2, 'π/2'], [Math.PI, 'π'], [3 * Math.PI / 2, '3π/2'], [TAU, '2π']];
@@ -54,10 +52,12 @@ export function createBoard(root) {
       if (Math.abs(x - fd) < 1e-6) continue;
       B.dot(V(m.px(x), m.py(s)), 4, { fill: 'none', stroke: '#93a1b5', 'stroke-width': 1.5 });
     }
-    if (Math.abs(th - fd) > 1e-6) B.dot(V(m.px(th), m.py(s)), 4, { fill: '#67e8f9' });
+    if (Math.abs(th - fd) > 1e-6) B.mark(V(m.px(th), m.py(s)), '#67e8f9');
     B.seg(V(m.px(fd), m.py(0)), V(m.px(fd), m.py(s)), { stroke: '#ffd166', 'stroke-width': 1.2, 'stroke-dasharray': '4 4' });
-    B.dot(V(m.px(fd), m.py(s)), 5, { fill: '#ffd166' });
+    B.mark(V(m.px(fd), m.py(s)), '#ffd166');
     B.tex(V(m.px(fd), m.py(s) - 16), `$\\arcsin(\\sin\\theta)=${fmt(fd, 3)}$`, { size: 13, color: '#ffd166', anchor: 'mid', w: 200 });
+    B.note('$y=\\sin x$', '#5cadff');
+    if (st.fold) B.note('$y=\\arcsin(\\sin x)$', '#ffd166');
     // chips
     cS(`$\\sin\\theta=${fmt(s, 3)}$`, 'ok');
     cF(`$\\arcsin(\\sin\\theta)=${fmt(fd, 3)}$`, 'ok');

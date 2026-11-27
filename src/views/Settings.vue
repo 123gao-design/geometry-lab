@@ -113,6 +113,16 @@
       </div>
       <div class="set-row">
         <div class="set-label">
+          <strong>主题切换动画</strong>
+          <span>顶栏 🎨 换主题时的过渡方式：圆形从点击处扩散、整页淡入，或自左向右展开。页面与画板在同一次换色里一起过渡；浏览器不支持 View Transitions 或系统开了减少动态效果时直接换色。</span>
+        </div>
+        <div class="seg" role="group" aria-label="主题切换动画">
+          <button v-for="o in THEME_ANIMS" :key="o.v" type="button" :class="{ on: PREFS.themeAnim === o.v }"
+            @click="setPref('themeAnim', o.v)">{{ o.t }}</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="set-label">
           <strong>卡片悬停亮线</strong>
           <span>首页卡片鼠标移上去，沿圆角边框跑的那段亮线用什么颜色；其余页面卡片上的淡色渐变填充也取同一个色。跟随主题就按各主题的强调色走；自定义用右边的取色器，挑亮一点的颜色更显眼。</span>
         </div>
@@ -530,6 +540,13 @@ const ANIMS = [
   { v: 'zoom', t: '缩放' },
   { v: 'slide', t: '侧滑' },
   { v: 'blur', t: '模糊' },
+  { v: 'none', t: '不做' },
+];
+// 换主题的过渡（见 lib/theme.js 的 applyTheme 与 global.css 的 vt-* 规则）
+const THEME_ANIMS = [
+  { v: 'circle', t: '圆形扩散' },
+  { v: 'fade', t: '淡入' },
+  { v: 'sweep', t: '左向展开' },
   { v: 'none', t: '不做' },
 ];
 const ONS = [{ v: 'on', t: '开' }, { v: 'off', t: '关' }];

@@ -3,7 +3,7 @@
     title="弧度制：用弧长量角" sub="度是把圆硬切成 $360$ 份的人为约定；弧度用「弧长比半径」量角 —— 与圆的大小无关、与十进制/角度制换算无关，是让三角公式最干净的那套度量衡。"
     :toc="[{ id: 'b2-why', t: '弧度是什么' }, { id: 'b2-formula', t: '三个公式与互化' }, { id: 'b2-pit', t: '单位与换算' }]">
     <div class="note good" id="b2-law"><strong>弧度制定义</strong>：<Katex tex="|\alpha|=\dfrac{s}{r}" />（弧长比半径，与半径无关）；<strong>换算</strong>：<Katex tex="180^\circ=\pi" />（周角 <Katex tex="2\pi" />）。弧度制的便利：<Katex tex="s=\alpha r" />、<Katex tex="S=\dfrac{1}{2}\alpha r^2=\dfrac{1}{2}sr" /> —— 公式里不再出现 <Katex tex="\tfrac{\pi}{180}" />。</div>
-    <ConicFigure number="B2" title="弧长、扇形面积与弧度制" head="bottom" :factory="createSector">拖 α 与 r 实时记录弧长与面积；⏩ 把弧摊平成直尺 —— 尺上每格恰一个半径，格数正是弧度数；r×2 看弧长加倍而弧度纹丝不动。</ConicFigure>
+    <ConicFigure number="B2" title="弧长、扇形面积与弧度制" head="bottom" :factory="createSector">将圆弧展开，沿直尺数一数这段弧包含多少个半径。固定圆心角，把半径从 <Katex tex="1"/> 调到 <Katex tex="2"/>，再比较尺上的格数、弧长和扇形面积。</ConicFigure>
 
     <h3 class="sec" id="b2-why">弧度是什么</h3>
     <p>「<Katex tex="1^\circ" />」是把圆等分 <Katex tex="360" /> 份的<strong>人为</strong>约定 —— <Katex tex="360" /> 可被很多数整除，但和圆本身的几何毫无关系。「<Katex tex="1\ \mathrm{rad}" />」则是<strong>天然</strong>的：弧长恰好等于半径的弧，圆心角就是 <Katex tex="1\ \mathrm{rad}" />。图 B2 的展开动作把这个定义演给你看：弧被摊平成直尺后，尺上刻度每格恰一个半径长，<strong>格数就是弧度数</strong> —— <Katex tex="\alpha" /> 越大弧越长，摊平后尺越长，表达式分毫不差。这就是弧度的本质：<Katex tex="\alpha=s/r" /> 是一个<strong>比值</strong>，无量纲 —— 所以换一个半径不同的圆，弧长跟着伸缩，比值却不动。点一下 <Katex tex="r\times2" />：弧长读数翻倍，<Katex tex="s\div r" /> 读数纹丝不动 —— 弧度与半径无关，是「角」这个量本身的属性。</p>

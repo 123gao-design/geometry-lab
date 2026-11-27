@@ -5,12 +5,12 @@
     <div class="note good" id="v6-law"><strong>麦克劳林公式（x₀=0 处的泰勒）</strong>：与 f 在 0 处同值、同各阶导数（直到 n 阶）的多项式是 <Katex tex="P_n(x)=\sum_{k=0}^{n}\dfrac{f^{(k)}(0)}{k!}\,x^k" /> —— 阶乘来自求导计数：x^k 连求 k 次导得 k!。e^x 求导不变形 ⟹ 展开系数全是 1/k!：<Katex tex="e^x=1+x+\dfrac{x^2}{2!}+\dfrac{x^3}{3!}+\cdots" />；令 x=1 得 <Katex tex="e=\sum_{k=0}^{\infty}\dfrac{1}{k!}\approx 2.71828" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFit" />
-      <div class="cap">图 V6 · <b>泰勒多项式逼近</b>。提高近似阶数，对照目标曲线与多项式。切到 ln(1+x)，把探针移到收敛区间之外，观察误差变化。</div>
+      <div class="cap">图 V6 · <b>泰勒多项式逼近</b>。零阶水平线经过展开点 <Katex tex="A=(0,f(0))" />；升到一阶，直线在 A 处与原曲线相切。移动检验点 <Katex tex="x_q" />，观察两图在该处的竖直距离。</div>
     </div>
 
     <h3 class="sec" id="v6-fit">拟合：从切线到逐阶对齐</h3>
     <p>V1 的切线是「一阶拟合」：<Katex tex="P_1(x)=f(0)+f'(0)x"/>，在 0 处与 f 同值同斜率 —— 但离 0 一远误差立即增大（检验点误差徽章实时显示）。想贴得更远，就再匹配一阶：让二阶导数也对上。设 <Katex tex="P_n(x)=a_0+a_1x+\cdots+a_nx^n"/>，逐阶求导代 <Katex tex="x=0"/> 即得 <Katex tex="a_0=f(0),\ a_1=f'(0),\ a_2=\dfrac{f''(0)}{2!},\ \ldots,\ a_k=\dfrac{f^{(k)}(0)}{k!}" />：<Katex tex="x^2"/> 求两次导剩 2、<Katex tex="x^3"/> 求三次导剩 6 —— <strong>阶乘记录求导的次数</strong>，除回去恰好还原。V4 的逐级放缩（<Katex tex="e^x\ge 1+x"/> 推出 <Katex tex="\ge 1+x+x^2/2"/>）就是逐阶匹配的具体形式。</p>
-    <p>图 V6 的「⏩ 阶数加一」把这一过程做成动画：每加一项，金曲线在 0 附近多匹配一阶、有效范围更远一点。快到什么程度？检验点固定 <Katex tex="x=1"/>、原图 <Katex tex="e^x"/>：误差从 <Katex tex="n=0"/> 的 1.72 到 <Katex tex="n=2"/> 的 0.22、<Katex tex="n=4"/> 的 0.0099、<Katex tex="n=6"/> 的 0.0002 —— 每加一阶，误差大约缩小为 <Katex tex="1/(n+1)"/> 倍；离 0 越远，需要的阶数越多（把检验点拖远看误差回升，这是「展开以展开点为中心」的第一直觉）。</p>
+    <p>图 V6 的「⏩ 阶数加一」把这一过程做成动画：阶数升到 <Katex tex="n" /> 时，多项式在 <Katex tex="x=0" /> 处与目标函数的前 <Katex tex="n" /> 阶导数相同。正弦的偶次系数为零，例如从一阶调到二阶，曲线仍是 <Katex tex="y=x" />；升到三阶才出现弯曲。快到什么程度？检验点固定 <Katex tex="x=1"/>、原图 <Katex tex="e^x"/>：误差从 <Katex tex="n=0"/> 的 1.72 到 <Katex tex="n=2"/> 的 0.22、<Katex tex="n=4"/> 的 0.0099、<Katex tex="n=6"/> 的 0.0002 —— 每加一阶，误差大约缩小为 <Katex tex="1/(n+1)"/> 倍；离 0 越远，需要的阶数越多（把检验点拖远看误差回升，这是「展开以展开点为中心」的第一直觉）。</p>
 
     <h3 class="sec" id="v6-e">e 的两种表达：级数与复利</h3>
     <p><strong>复利表达</strong>：<Katex tex="e=\lim_{n\to\infty}\Bigl(1+\dfrac{1}{n}\Bigr)^n" /> —— 本金 1、年利率 100%，一年计息 n 次的期末余额（E4 已展示 a=e 的临界情形）。<strong>级数表达</strong>：<Katex tex="e=1+\dfrac{1}{1!}+\dfrac{1}{2!}+\dfrac{1}{3!}+\cdots" />。两种表达给出同一个数：把 <Katex tex="\Bigl(1+\dfrac{1}{n}\Bigr)^n" /> 按二项式定理展开，第 k 项是 <Katex tex="\tbinom{n}{k}\dfrac{1}{n^k}=\dfrac{1}{k!}\cdot\dfrac{n(n-1)\cdots(n-k+1)}{n^k}" />，n→∞ 时后面的因子趋于 1，每一项趋近 <Katex tex="\dfrac{1}{k!}" />（严格证明需要大学的一致收敛理论，主要结构高中可看懂）。</p>
@@ -26,7 +26,7 @@
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">
         <li><strong>提示一：估计截断误差。</strong>泰勒多项式近似的精度取决于阶数和取值位置。例如用 <Katex tex="P_3(1)" /> 近似 e，误差约为 0.052。</li>
-        <li><strong>提示二：无视收敛半径。</strong><Katex tex="\ln(1+x)"/> 的级数只在 <Katex tex="-1<x\le 1"/> 收敛，<Katex tex="x=2"/> 时部分和随项数增加偏离更大（图 V6 第三原图）；出了半径，多项式与函数不再相关，增加阶数也无济于事。</li>
+        <li><strong>提示二：无视收敛半径。</strong><Katex tex="\ln(1+x)"/> 的级数只在 <Katex tex="-1<x\le 1"/> 收敛，<Katex tex="x=2"/> 时部分和随项数增加偏离更大（可在图 V6 第三例中选取大于 1 的检验点）；出了半径，多项式与函数不再相关，增加阶数也无济于事。</li>
         <li><strong>提示三：以为「逼近」全局有效。</strong>泰勒展开以展开点为中心：离 0 越远需要的阶数越多；要逼近远处的值得换展开中心 <Katex tex="x_0\ne 0"/>（一般泰勒，高中不要求，但「中心」这个观念值得注意）。</li>
       </ul>
     </div>
@@ -40,3 +40,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createFit } from '../../../boards/functions/calculus/taylorfit.js';
 import { V_CHAPTERS } from './vnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

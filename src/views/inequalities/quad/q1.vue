@@ -1,11 +1,11 @@
 <template>
   <ChPage :cur="1" no="次1" base="/inequalities/q" :chapters="Q_CHAPTERS"
-    title="三个二次：函数、方程、不等式" sub="二次函数的图象、二次方程的根、二次不等式的解集是同一事实的三种读法：图象与 x 轴的位置关系（Δ 三态）决定根的存在，根的位置切分数轴、每段符号恒定，解集由此读出。标准流程：化标准形 → 算 Δ 与两根 → 按开口画示意图 → 从图上读解集 —— 图不离手，是这一章的全部要领。"
+    title="二次函数、方程与不等式" sub="二次函数的图象、二次方程的根、二次不等式的解集是同一事实的三种读法：图象与 x 轴的位置关系（Δ 三态）决定根的存在，根的位置切分数轴、每段符号恒定，解集由此读出。标准流程：化标准形 → 算 Δ 与两根 → 按开口画示意图 → 从图上读解集 —— 图不离手，是这一章的全部要领。"
     :toc="[{ id: 'q1-delta', t: 'Δ 三态与根' }, { id: 'q1-read', t: '解集读法：根外与根内' }, { id: 'q1-param', t: '含参讨论的三个层面' }, { id: 'q1-always', t: '恒成立与图象条件' }, { id: 'q1-pit', t: '漏开口、漏判别式、漏端点' }]">
     <div class="note good" id="q1-law"><Katex tex="a>0" /> 时：<Katex tex="f(x)>0\iff x<x_1\ \text{或}\ x>x_2" />（根外），<Katex tex="f(x)<0\iff x_1<x<x_2" />（根内）；<Katex tex="a<0" /> 时全部反转。<Katex tex="\Delta=0" />：解集退化为一点（≤）或除一点外的全体（&gt;）。<Katex tex="\Delta<0" />：解集只有 <Katex tex="\mathbb{R}" /> 与 <Katex tex="\varnothing" /> 两态。</div>
     <div class="board-wrap">
       <BoardMount :factory="createQS" />
-      <div class="cap">图 次1 · <b>二次不等式的解集</b>：拖 a、b、c 或点四个预设（<Katex tex="\Delta"/> 三态 + 开口向下），四个不等号方向即时切换。看点：金色解集带压在 x 轴上；严格不等号下根画成空心（不可取）；开口向上时「大于取根外、小于取根内」，开口向下全部反转；<Katex tex="\Delta\le 0"/> 时解集只剩两态。</div>
+      <div class="cap">图 次1 · <b>二次不等式的解集</b> · 切换四种不等号，观察根处的空心与实心端点。选「重根」比较 <Katex tex="f(x)>0"/> 和 <Katex tex="f(x)\ge0"/>，两幅图只相差轴上的一个点。</div>
     </div>
 
     <h3 class="sec" id="q1-delta">Δ 三态与根</h3>

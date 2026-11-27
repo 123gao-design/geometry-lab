@@ -1,25 +1,30 @@
 /* 图 U2 同角恒等验证机：平方关系 sin²α+cos²α=1 与商数关系 tan α=sin α/cos α；切线三角形 OAT 直译 1+tan²α=sec²α。
    左：单位圆直角三角形（斜边恒 1）+ 切线 x=1 上的三角形 OAT（OA=1、AT=tan、OT=sec）；右：高度恒满的堆叠条。 */
-import { Board, mk, V, fmt, angDiff } from '../../../lib/board.js';
+import { TrigLegendBoard, unitCoordinates } from '../trig-board.js';
+import { angleReadings, numberTex } from './angle-readings.js';
+import { mk, V, angDiff } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 520);
-  const O = V(300, 272), R = 150, MAXT = 6 * Math.PI;
+  const B = new TrigLegendBoard(root, 860, 520, 90);
+  root.classList.add('identity-board');
+  const O = V(300, 258), R = 114, MAXT = 6 * Math.PI;
   const st = { a: Math.PI / 6, say: '', tline: true };
   let prev = angDiff(st.a, 0);
 
-  const cSin = B.chipM('$\\sin\\alpha$'), cCos = B.chipM('$\\cos\\alpha$'), cTan = B.chipM('$\\tan\\alpha$'),
-    cSec = B.chipM('sec α'), cDiv = B.chip('商数'), cSum = B.chip('sin²+cos²'),
-    cTS = B.chipM('tan²+1'), cSay = B.chip('判读');
+  const panel = angleReadings(B, '当前角 $\\alpha$', '角度与同角函数值');
+  const cSin = panel.number('$\\sin\\alpha$', 'blue'), cCos = panel.number('$\\cos\\alpha$', 'orange');
+  const cSin2 = panel.number('$\\sin^2\\alpha$', 'blue'), cCos2 = panel.number('$\\cos^2\\alpha$', 'orange');
+  const cTan = panel.number('$\\tan\\alpha$', 'mint'), cSec = panel.number('$\\sec\\alpha$', 'orange');
+  const cSum = B.readout('平方关系', 'blue'), cTS = B.readout('切线三角形', 'mint'), cSay = B.chipM('判读');
 
-  B.btn('① π/6 验证', () => set(Math.PI / 6,
-    '(1/2)² + (√3/2)² = 1/4 + 3/4 = 1 —— 勾股定理在单位圆上的直译'));
-  B.btn('② sin=3/5 · 第 II 象限', () => set(Math.PI - Math.asin(0.6),
-    '平方给绝对值：|cos| = √(1−0.36) = 0.8；第 II 象限 cos<0 → cos α = −0.8 —— 符号由象限判定'));
-  B.btn('③ sin=3/5 · 第 I 象限', () => set(Math.asin(0.6),
-    '同样是 sin α=3/5：第 I 象限取正 → cos α = +0.8 —— 开方的 ± 是两解，由象限选定'));
-  B.btn('④ tan=2 · 第 I 象限', () => set(Math.atan(2),
-    '齐次式路径：tan=2 → sin=2k、cos=k、k=1/√5（第 I 象限取正）→ sin α≈0.894、cos α≈0.447'));
+  const examples = [
+    { name: '特殊角', formula: '$\\alpha=\\pi/6$', a: Math.PI / 6, say: '$1/4+3/4=1$。' },
+    { name: '第二象限', formula: '$\\sin\\alpha=3/5$', a: Math.PI - Math.asin(.6), say: '第二象限，$\\cos\\alpha=-4/5$。' },
+    { name: '第一象限', formula: '$\\sin\\alpha=3/5$', a: Math.asin(.6), say: '第一象限，$\\cos\\alpha=4/5$。' },
+    { name: '由斜率求角', formula: '$\\tan\\alpha=2$', a: Math.atan(2), say: '直角边比 $2:1$，斜边长 $1$。' },
+  ];
+  B.choiceRow('选择例题', examples, () => examples.findIndex(p => Math.abs(p.a - st.a) < 1e-8),
+    i => set(examples[i].a, examples[i].say));
   B.toggleBtn('切线三角形', true, v => { st.tline = v; B.render(); });
 
   function set(a, say) { st.a = a; st.say = say; prev = angDiff(a, 0); B.render(); }
@@ -35,87 +40,65 @@ export function createBoard(root) {
   });
 
   B.renderFn = () => {
-    const a = st.a, x = Math.cos(a), y = Math.sin(a);
-    const t = Math.abs(x) > 1e-6 ? y / x : NaN; // tan α（cos α=0 时无意义）
+    const a = st.a, { x, y } = unitCoordinates(a);
+    const t = x !== 0 ? y / x : NaN; // tan α（cos α=0 时无意义）
     const P = V(O.x + R * x, O.y - R * y), M = V(P.x, O.y);
     // 坐标轴 + 单位圆
     B.seg(V(90, O.y), V(500, O.y), { stroke: '#8fa3bd', 'stroke-width': 1.4 });
     B.seg(V(O.x, 96), V(O.x, 448), { stroke: '#8fa3bd', 'stroke-width': 1.4 });
-    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: '#22314a', 'stroke-width': 1.8 }, B.dyn);
+    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: '#93a1b5', 'stroke-width': 1.8 }, B.dyn);
     // 直角三角形 OMP：斜边 1、直角边 sin 与 cos
-    mk('path', { d: `M${O.x},${O.y}L${M.x},${M.y}L${P.x},${P.y}Z`, fill: 'rgba(92,173,255,.07)' }, B.dyn);
+    mk('path', { d: `M${O.x},${O.y}L${M.x},${M.y}L${P.x},${P.y}Z`, fill: '#5cadff', 'fill-opacity': .07 }, B.dyn);
     B.seg(O, M, { stroke: '#ff9e4a', 'stroke-width': 3 });
     B.seg(M, P, { stroke: '#5cadff', 'stroke-width': 3 });
     B.seg(O, P, { stroke: '#ffd166', 'stroke-width': 2.4 });
-    B.seg(V(M.x, M.y), V(M.x, M.y - 8), { stroke: '#fff', 'stroke-width': 1 }); // 直角标记
-    B.textM(V((O.x + M.x) / 2, O.y + (x >= 0 ? 16 : -11)), `$\\cos\\alpha=${fmt(x, 3)}`, { 'font-size': 12, fill: '#ff9e4a' });
-    // 正弦读数贴着蓝腰、再往下让一格：T 端那列 AT、OT 两行读数离它只有两三个像素，
-    // 12px 的字上下缘一挨近就看成一团
-    B.textM(V(M.x + (x >= 0 ? 7 : -7), (P.y + M.y) / 2 + 10), `$\\sin\\alpha=${fmt(y, 3)}`,
-      { 'font-size': 12, fill: '#5cadff', 'text-anchor': x >= 0 ? 'start' : 'end' });
-    // 斜边 = 1 放在斜边外侧（离直角三角形最远的那一侧）：宽标签横着走，贴着斜边会与线交叠；
-    // 取斜边上 0.35 处向外推 24，靠 O 一端、不压正弦标签的腰
-    {
-      const hl = Math.hypot(P.x - O.x, P.y - O.y) || 1;
-      let hnx = (P.y - O.y) / hl, hny = -(P.x - O.x) / hl;
-      const ux = (P.x - O.x) / hl, uy = (P.y - O.y) / hl;
-      if (hnx * (M.x - O.x) + hny * (M.y - O.y) > 0) { hnx = -hnx; hny = -hny; }
-      B.text(V(O.x + ux * hl * .35 + hnx * 24, O.y + uy * hl * .35 + hny * 24), '斜边 = 1',
-        { 'font-size': 12, fill: '#ffd166', 'text-anchor': hnx < -0.15 ? 'end' : hnx > 0.15 ? 'start' : 'middle' });
+    B.mark(M, '#ff9e4a');
+    B.text(V(O.x - 14, O.y + 18), 'O');
+    if (Math.abs(M.x - O.x) > 14) B.text(V(M.x, M.y + 18), 'M');
+    B.note('横坐标 $x_P=\\cos\\alpha$', '#ff9e4a');
+    B.note('纵坐标 $y_P=\\sin\\alpha$', '#5cadff');
+    const A = V(O.x + R, O.y);
+    if (st.tline) {
+      B.text(V(A.x + 12, A.y + 18), 'A');
+      B.seg(V(A.x, 25), V(A.x, 495), { stroke: '#93a1b5', 'stroke-dasharray': '4 4' });
     }
-    B.dot(P, 5.5, { fill: '#5cadff' });
-    // 切线三角形 OAT：切线 x=1 与终边延长线交出 T —— OA=1、AT=tan、OT=sec，勾股直译 1+tan²=sec²
-    if (st.tline && Math.abs(x) > 0.04) {
-      const A = V(O.x + R, O.y), T = V(O.x + R, O.y - R * t);
-      const vis = Math.abs(t) < 6; // 标签只在可视区贴
-      mk('path', { d: `M${O.x},${O.y}L${A.x},${A.y}L${T.x},${T.y}Z`, fill: 'rgba(103,232,249,.06)' }, B.dyn);
-      B.seg(V(A.x, Math.min(A.y - 70, T.y - 6)), V(A.x, Math.max(A.y + 70, T.y + 6)),
-        { stroke: '#93a1b5', 'stroke-width': 1, 'stroke-dasharray': '3 4' }); // 切线 x=1
-      B.seg(P, T, { stroke: '#ffd166', 'stroke-width': 1.3, 'stroke-dasharray': '4 4', 'stroke-opacity': .75 }); // 终边延长线
-      B.seg(A, T, { stroke: '#67e8f9', 'stroke-width': 3 });
-      B.seg(O, T, { stroke: '#ff9e4a', 'stroke-width': 2.4 });
-      const s = t > 0 ? -1 : 1;
-      B.seg(V(A.x - 9, A.y), V(A.x - 9, A.y + s * 9), { stroke: '#fff', 'stroke-width': 1 });
-      B.seg(V(A.x - 9, A.y + s * 9), V(A.x, A.y + s * 9), { stroke: '#fff', 'stroke-width': 1 }); // 直角标记
-      B.dot(T, 4.5, { fill: '#67e8f9' });
-      B.dot(A, 3, { fill: '#93a1b5' });
-      if (vis) {
-        // AT、OT 两条读数都贴 T 端排到切线右侧一列：竖杆旁的中间一段留给正弦标签，
-        // 两行读数再放中点就会与它和彼此交叠；超出画框时整列一起上移
-        let yA = T.y + 14, yO = T.y + 38;
-        const over = yO + 10 - 502;
-        if (over > 0) { yA -= over; yO -= over; }
-        B.textM(V(A.x + 9, yA), `$AT=\\tan\\alpha=${fmt(t, 3)}`, { 'font-size': 12, fill: '#67e8f9', 'text-anchor': 'start' });
-        B.textM(V(A.x + 9, yO), `$OT=\\sec\\alpha=${fmt(1 / x, 3)}`, { 'font-size': 12, fill: '#ff9e4a', 'text-anchor': 'start' });
-        B.text(V(A.x - 8, Math.min(496, Math.max(A.y + 70, T.y + 6) - 6)), '切线 x=1',
-          { 'font-size': 11, fill: '#5c6a80', 'text-anchor': 'end' });
+    if (st.tline && Number.isFinite(t)) {
+      const T = V(A.x, O.y - R * t);
+      if (T.y >= 22 && T.y <= 498) {
+        mk('polygon', { points: [O,A,T].map(p => p.x + ',' + p.y).join(' '), fill: '#67e8f9', 'fill-opacity': .075 }, B.dyn);
+        B.seg(O, T, { stroke: '#ff9e4a', 'stroke-width': 2 });
+        B.seg(A, T, { stroke: '#67e8f9', 'stroke-width': 2.5 });
+        B.mark(T, '#67e8f9');
+        B.text(V(T.x + 10, T.y - 10), 'T');
+      } else {
+        const edge = T.y < 22 ? 22 : 498;
+        B.arrow(O, V(O.x + (O.y - edge) / t, edge), { stroke: '#ff9e4a' });
+        B.arrow(A, V(A.x, edge), { stroke: '#67e8f9' });
       }
+      B.note('$AT=|\\tan\\alpha|$', '#67e8f9');
+      B.note('$OT=|\\sec\\alpha|$', '#ff9e4a');
     }
-    // 右：堆叠条（总高恒 200px = 1）：下段 cos²、上段 sin²
-    const X0 = 690, Wb = 58, Yb = 430, Hb = 200;
+    // 圆旁色条始终与圆心等高居中，下段 cos²、上段 sin²。
+    const X0 = 594, Wb = 58, Hb = 224, Yb = O.y + Hb / 2;
+    const labelSize = Math.max(15, Math.min(B.labelFontSize(), 23));
     const hCos = Hb * x * x, hSin = Hb * y * y;
     mk('rect', { x: X0, y: Yb - hCos, width: Wb, height: hCos, fill: '#ff9e4a', 'fill-opacity': .75 }, B.dyn);
     mk('rect', { x: X0, y: Yb - hCos - hSin, width: Wb, height: hSin, fill: '#5cadff', 'fill-opacity': .75 }, B.dyn);
-    mk('rect', { x: X0, y: Yb - Hb, width: Wb, height: Hb, fill: 'none', stroke: '#22314a', 'stroke-width': 1.4 }, B.dyn);
-    B.textM(V(X0 + Wb + 8, Math.min(425, Math.max(250, Yb - hCos / 2))), `$\\cos^2\\alpha=${fmt(x * x, 3)}`, { 'font-size': 12, fill: '#ff9e4a', 'text-anchor': 'start' });
-    B.textM(V(X0 + Wb + 8, Math.min(425, Math.max(250, Yb - hCos - hSin / 2))), `$\\sin^2\\alpha=${fmt(y * y, 3)}`, { 'font-size': 12, fill: '#5cadff', 'text-anchor': 'start' });
-    B.tex(V(X0 + Wb / 2, Yb - Hb - 16), `$\\sin^2\\alpha+\\cos^2\\alpha=1$`, { anchor: 'mid', w: 300, size: 14 });
-    B.text(V(X0 + Wb / 2, Yb + 18), '总高恒满（= 1）', { 'font-size': 11, fill: '#5c6a80' });
-    // chips
-    cSin(fmt(y, 3)); cCos(fmt(x, 3));
-    if (Math.abs(x) > 1e-6) {
-      cTan(Math.abs(t) > 999 ? '溢出（→∞）' : fmt(t, 3));
-      cDiv(`${fmt(y, 3)} ÷ ${fmt(x, 3)} = ${fmt(t, 3)}（斜率 = tan）`);
-      cSec(`$\\sec\\alpha=\\frac{1}{\\cos\\alpha}=${fmt(1 / x, 3)}$`);
-      cTS(`$1+\\tan^2\\alpha=\\sec^2\\alpha=${fmt(1 + t * t, 3)}$`, 'ok');
+    mk('rect', { x: X0, y: Yb - Hb, width: Wb, height: Hb, fill: 'none', stroke: '#93a1b5', 'stroke-width': 1.4 }, B.dyn);
+    B.tex(V(X0 + Wb / 2, Yb - Hb - 23), '$1$', { anchor: 'mid', w: 36, size: labelSize });
+    if (hSin > 18) B.tex(V(X0 + Wb + 12, Yb - hCos - hSin / 2), '$\\sin^2\\alpha$', { anchor: 'start', color: '#5cadff', w: 95, size: labelSize });
+    if (hCos > 18) B.tex(V(X0 + Wb + 12, Yb - hCos / 2), '$\\cos^2\\alpha$', { anchor: 'start', color: '#ff9e4a', w: 95, size: labelSize });
+    panel.angle(a);
+    cSin(y); cCos(x); cSin2(y * y); cCos2(x * x);
+    cTan(t); cSec(x === 0 ? NaN : 1 / x);
+    cSum('$\\sin^2\\alpha+\\cos^2\\alpha=1$', 'ok');
+    if (x !== 0) {
+      cTS(`$1+\\tan^2\\alpha=\\sec^2\\alpha\\approx${numberTex(1 + t * t)}$`, 'ok');
     } else {
-      cTan('无定义（cos α = 0）', 'warn'); cDiv('除数为 0 —— 商数关系在此排除', 'warn');
-      cSec('无定义（cos α = 0）', 'warn'); cTS('tan、sec 同时排除', 'warn');
+      cTS('终边所在直线平行于切线，交点 $T$ 不存在。', 'warn');
     }
-    cSum(`${fmt(y * y, 3)} + ${fmt(x * x, 3)} = ${fmt(x * x + y * y, 3)}`, 'ok');
-    cSay(st.say || '拖动 P：右侧堆叠条怎么动都满格 —— 平方关系恒成立');
+    cSay(st.say || '两段色条的总高恒为 $1$。');
   };
   B.render();
-  B.hintM('拖 P：堆叠条怎么动都满格（$\\sin^2+\\cos^2=1$）；切线三角形 OAT 直译 $1+\\tan^2=\\sec^2$；预设看开方 ± 象限联判');
   return B;
 }

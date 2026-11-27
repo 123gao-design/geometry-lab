@@ -6,7 +6,7 @@
     <div class="note good" id="l2-law">在线性规划问题中，约束都是二元一次不等式（组），可行域是凸多边形；目标函数 <Katex tex="z=ax+by" /> 是线性的。若可行域非空且有界，则 <Katex tex="z" /> 的最大值与最小值一定在可行域的顶点取得；当目标等值线与某条边界平行时，该边上的所有点同取最值，最优解不唯一。</div>
     <div class="board-wrap">
       <BoardMount :factory="createLP" />
-      <div class="cap">图 线2 · <b>线性规划的最优解</b>：可行域由 <Katex tex="x\ge0,\ y\ge0,\ x+y\le4,\ x+2y\le7" /> 围成，四个顶点标金点；四个预设切换目标函数 <Katex tex="z=ax+by" />，金色虚线是当前等值线 <Katex tex="z" />，绿色实线是最优等值线。右栏逐个列出顶点与目标值。看点：拖动 z 看等值线平移到触顶那一刻；切到整数解，看最优整点是否恰好是顶点。</div>
+      <div class="cap">图 线2 · <b>线性规划的最优解</b>：可行域由 <Katex tex="x\ge0,\ y\ge0,\ x+y\le4,\ x+2y\le7" /> 围成，四个顶点标金点；四个预设切换目标函数 <Katex tex="z=ax+by" />，金色虚线是当前等值线 <Katex tex="z" />，绿色实线是最优等值线。图下列出各顶点的目标值。看点：拖动 z 看等值线平移到触顶那一刻；切到整数解，看最优整点是否恰好是顶点。</div>
     </div>
 
     <h3 class="sec" id="l2-model">模型：约束与目标</h3>

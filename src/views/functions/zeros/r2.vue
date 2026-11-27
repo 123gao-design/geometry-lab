@@ -5,7 +5,7 @@
     <div class="note good" id="r2-thm"><strong>零点存在性定理</strong>：若 <Katex tex="y=f(x)" /> 在闭区间 <Katex tex="[a,b]" /> 上连续，且 <Katex tex="f(a)\cdot f(b)<0" />（端点异号），则存在 <Katex tex="c\in(a,b)" /> 使 <Katex tex="f(c)=0" />。一句话：连续曲线从 x 轴下方走到上方（或反过来），中途必有穿轴点。三个「不」要记牢：<strong>不给位置</strong>（c 在哪另算）、<strong>不给个数</strong>（一个也行、三个也行 —— 图 R2 ① 实况 3 个）、<strong>条件不必不可少</strong>（同号也可能有零点 —— 图 R2 ②）。它的价值在于给算法兜底：只要异号区间在手上，R3 的二分法就有了依据。</div>
     <div class="board-wrap">
       <BoardMount :factory="createIvtWitness" />
-      <div class="cap">图 R2 · <b>零点存在定理</b>。拖动两个端点，比较连续异号、同号有根和跳变异号三种情况。加上严格单调条件时，零点唯一。</div>
+      <div class="cap">图 R2 · <b>零点存在定理</b>。拖动两个端点，分别核对连续性、端点符号和零点数。绿带标出所选区间，区间内的零点用光点标出。</div>
     </div>
 
     <h3 class="sec" id="r2-why">为什么连续不可少</h3>
@@ -31,3 +31,6 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createIvtWitness } from '../../../boards/functions/zeros/ivtwitness.js';
 import { R_CHAPTERS } from './znav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>
+<style src="./zero-boards.css"></style>

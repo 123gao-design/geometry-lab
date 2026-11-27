@@ -5,7 +5,7 @@
     <div class="note good" id="r1-def"><strong>零点</strong>：设函数 <Katex tex="y=f(x)" /> 的定义域为 D，若 <Katex tex="c\in D" /> 使 <Katex tex="f(c)=0" />，则称 c 为 f 的零点。<strong>数</strong> —— <Katex tex="f(c)=0" /> 代入验证成立；<strong>式</strong> —— x=c 是方程 <Katex tex="f(x)=0" /> 的实根；<strong>图</strong> —— 曲线与 x 轴交点 <Katex tex="(c,\,0)" /> 的<strong>横坐标</strong>。判定只认第一条，后两条是「解方程」与「看图」的两种途径 —— 图 R1 的探针落在金点上时，三个徽章同时点亮，说的都是同一个 c。</div>
     <div class="board-wrap">
       <BoardMount :factory="createZeroLang" />
-      <div class="cap">图 R1 · <b>零点的图象判读</b>。比较穿过横轴和与横轴相切的零点。二重根两侧可以同号，因此只查变号会漏掉这类根。</div>
+      <div class="cap">图 R1 · <b>零点的图象判读</b>。比较穿过横轴和只接触横轴的零点。二重根两侧可以同号，因此只查变号会漏掉这类根。</div>
     </div>
 
     <h3 class="sec" id="r1-iso">易错清单</h3>
@@ -19,7 +19,7 @@
     </div>
 
     <h3 class="sec" id="r1-val">值域视角与预告</h3>
-    <p>零点还有一个「值域版」身份：<strong>0 在 f 的值域里 <Katex tex="\iff"/> f 有零点</strong>（存在 c 使 <Katex tex="f(c)=0"/>，说的正是 0 被取到 —— C3 的值域扫描机在此复职）。于是「求零点个数」可以改问「x 轴这条水平线被曲线穿过几次」，「无零点」可以改读成「值域不含 0」—— 数形两把椅子随时换坐。</p>
+    <p>零点还有一个「值域版」身份：<strong>0 在 f 的值域里 <Katex tex="\iff"/> f 有零点</strong>（存在 c 使 <Katex tex="f(c)=0"/>，说的正是 0 被取到 —— C3 的值域扫描机在此复职）。于是「求零点个数」可以改问「函数图象与横轴有几个交点」，「无零点」可以改读成「值域不含 0」—— 数形两把椅子随时换坐。</p>
     <p>图象可以用来定位零点的大致范围。精确结论还需要解析式、存在性条件或可控误差的数值方法。</p>
   </ChPage>
 </template>
@@ -30,3 +30,6 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createZeroLang } from '../../../boards/functions/zeros/zerolang.js';
 import { R_CHAPTERS } from './znav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>
+<style src="./zero-boards.css"></style>

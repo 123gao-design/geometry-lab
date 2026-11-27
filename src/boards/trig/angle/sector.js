@@ -1,38 +1,34 @@
 /* 图 B2 弧长展开机：弧度制 α = s/r。扇形可整体「摊平」成直尺 —— 每格恰一个半径，
    格数就是弧度数；s=αr、S=½αr² 实时记录。坐标：C 为圆心，α 关于 +x 轴对称张角。 */
-import { Board, mk, V, fmt, lerp, TAU } from '../../../lib/board.js';
+import { TrigBoard, angleTex } from '../trig-board.js';
+import { mk, V, fmt, lerp } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 470);
-  const C = V(218, 232), S = 55;              // 55 px / 单位长
-  const st = { r: 1.2, deg: 90, t: 0, tt: 0, say: '' }; // t 展开进度 → tt 目标
-  const gcd = (a, b) => b ? gcd(b, a % b) : a;
-  const radStr = d => {                       // 度 → π 分数（15 的倍数给精确分数）
-    if (d % 15 !== 0) return `${fmt(d * Math.PI / 180, 3)} rad`;
-    const g = gcd(d / 15, 12), p = d / 15 / g, q = 12 / g;
-    return (p === 1 ? '' : p) + 'π' + (q === 1 ? '' : '/' + q);
-  };
+  const B = new TrigBoard(root, 860, 470);
+  const C = V(430, 173), S = 62;              // 每单位长度的像素数
+  const st = { r: 1, deg: 90, t: 0, tt: 0, say: '' }; // t 展开进度 → tt 目标
+  B.groupReadings('弧度与扇形');
+  B.chipRow.dataset.readingStyle = 'info';
+  const cAng = B.readout('圆心角', 'gold'), cRatio = B.readout('弧长与半径之比', 'mint');
+  const cArc = B.readout('弧长', 'blue'), cArea = B.readout('扇形面积', 'orange');
+  const cSay = B.chipM('判读');
 
-  const cAng = B.chip('圆心角'), cArc = B.chip('弧长 s'), cArea = B.chip('扇形面积 S'),
-    cRatio = B.chip('s ÷ r'), cSay = B.chip('判读');
-
-  const rSl = B.slider('半径 r', 1, 2, 0.05, st.r, v => { st.r = v; st.say = ''; B.render(); });
-  const aSl = B.slider('圆心角 α°', 15, 330, 5, st.deg, v => { st.deg = v; st.say = ''; B.render(); });
-  B.btn('① 60°', () => setDeg(60));
-  B.btn('② 90°', () => setDeg(90));
-  B.btn('③ 180°', () => setDeg(180));
-  B.btn('④ 270°', () => setDeg(270));
-  B.btn('r×2', () => {
-    st.r = Math.min(2, st.r * 2); rSl.sync(st.r);
-    st.say = '弧长随 r 加倍、α 不变：s/r 恒为弧度数 —— 弧度与半径无关';
+  const rSl = B.slider('半径 r', 1, 2, 0.05, st.r, v => { st.r = v; st.say = ''; B.render(); }, undefined, (_, v) => `$r=${fmt(v, 2)}$`);
+  const aSl = B.slider('圆心角 α°', 15, 330, 5, st.deg, v => { st.deg = v; st.say = ''; B.render(); }, undefined, (_, v) => `$\\alpha=${v}^\\circ$`);
+  B.angleRow([60, 90, 180, 270], () => st.deg * Math.PI / 180, a => setDeg(Math.round(a * 180 / Math.PI)), true);
+  B.btn('取半径 2', () => {
+    const old = st.r; st.r = 2; rSl.sync(st.r);
+    st.say = `半径从 $${fmt(old,2)}$ 变为 $${fmt(st.r,2)}$，圆心角与比值 $s/r$ 保持不变。`;
     B.render();
   });
-  B.btn('⏩ 展开 / 卷回', () => { st.tt = st.tt ? 0 : 1; tick(); });
+  let moving = false;
+  B.btn('⏩ 展开 / 卷回', () => { st.tt = st.tt ? 0 : 1; if (!moving) tick(); });
 
   function setDeg(d) { st.deg = d; st.say = ''; aSl.sync(d); B.render(); }
   function tick() {
-    if (Math.abs(st.t - st.tt) < 0.005) { st.t = st.tt; B.render(); return; }
-    st.t += (st.tt - st.t) * 0.06 + (st.tt > st.t ? 0.004 : -0.004);
+    if (Math.abs(st.t - st.tt) < 0.005) { st.t = st.tt; moving = false; B.render(); return; }
+    moving = true;
+    st.t += (st.tt - st.t) * .10;
     B.render(); B.raf(tick);
   }
 
@@ -40,37 +36,40 @@ export function createBoard(root) {
     const A = st.deg * Math.PI / 180, r = st.r, rp = r * S, sp = A * rp; // rp 半径像素、sp 弧长像素
     const e = st.t * st.t * (3 - 2 * st.t);                              // smoothstep
     // 整圆（淡）+ 扇形 + 弧（摊平动画：弧上采样点从圆上插值到直尺上）
-    mk('circle', { cx: C.x, cy: C.y, r: rp, fill: 'none', stroke: '#22314a', 'stroke-width': 1.4, 'stroke-opacity': .7 }, B.dyn);
+    mk('circle', { cx: C.x, cy: C.y, r: rp, fill: 'none', stroke: '#93a1b5', 'stroke-width': 1.4, 'stroke-opacity': .7 }, B.dyn);
     const M = 40, pts = [], ends = [];
+    // 逐渐减小曲率；用弧中点的切向和弦长定位，使整个展开过程等弧长。
+    const start = (B.w - Math.ceil(A) * rp) / 2;
+    const mid = lerp(V(C.x + rp, C.y), V(start + sp / 2, 418), e);
+    mid.y += .34 * sp * e * (1 - e); // 展开大扇形时为外弧留出上边距
+    const tangent = -(1 - e) * Math.PI / 2;
     for (let i = 0; i <= M; i++) {
-      const ang = -A / 2 + A * i / M;
-      const pc = V(C.x + rp * Math.cos(ang), C.y - rp * Math.sin(ang));
-      const p = lerp(pc, V(120 + sp * i / M, 418), e);
+      const u = i / M - .5, halfTurn = -u * A * (1 - e) / 2;
+      const chord = u * sp * (Math.abs(halfTurn) < 1e-9 ? 1 : Math.sin(halfTurn) / halfTurn);
+      const p = V(mid.x + chord * Math.cos(tangent + halfTurn), mid.y + chord * Math.sin(tangent + halfTurn));
       pts.push(`${p.x.toFixed(1)},${p.y.toFixed(1)}`);
       if (i === 0 || i === M) ends.push(p);
     }
-    if (e < 0.02) mk('path', { d: `M${C.x},${C.y}L${pts.join('L')}Z`, fill: 'rgba(92,173,255,.05)' }, B.dyn);
-    B.seg(C, ends[0], { stroke: '#ff9e4a', 'stroke-width': 1.8 });
-    B.seg(C, ends[1], { stroke: '#ff9e4a', 'stroke-width': 1.8 });
-    B.text(V((C.x + ends[0].x) / 2 + 16, (C.y + ends[0].y) / 2 + 4), `r=${fmt(r, 2)}`, { 'font-size': 12, fill: '#ff9e4a' });
+    if (e < 0.02) mk('path', { d: `M${C.x},${C.y}L${pts.join('L')}Z`, fill: '#5cadff', 'fill-opacity': .08 }, B.dyn);
+    if (e < .001) B.seg(C, ends[0], { stroke: '#ff9e4a', 'stroke-width': 1.8 });
+    if (e < .001) B.seg(C, ends[1], { stroke: '#ff9e4a', 'stroke-width': 1.8 });
+    if (e < .001) B.text(V((C.x + ends[0].x) / 2 + 16, (C.y + ends[0].y) / 2 + 4), `r=${fmt(r, 2)}`, { 'font-size': 12, fill: '#ff9e4a' });
     mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#5cadff', 'stroke-width': 4.5, 'stroke-linecap': 'round' }, B.dyn);
     // 直尺虚线基准 + 每格一个半径的刻度
-    B.seg(V(120, 418), V(120 + sp, 418), { stroke: '#3f5f8f', 'stroke-width': 1, 'stroke-dasharray': '4 5' });
-    for (let j = 0; j <= Math.floor(A + 1e-9); j++) {
-      const x = 120 + rp * j;
-      if (x > 120 + sp + 1) break;
-      B.seg(V(x, 412), V(x, 424), { stroke: '#3f5f8f', 'stroke-width': 1.4 });
+    B.mark(ends[0], '#5cadff'); B.mark(ends[1], '#5cadff');
+    const rulerEnd = start + Math.ceil(A) * rp;
+    B.seg(V(start, 418), V(rulerEnd, 418), { stroke: '#93a1b5', 'stroke-width': 1, 'stroke-dasharray': '4 5' });
+    for (let j = 0; j <= Math.ceil(A); j++) {
+      const x = start + rp * j;
+      B.text(V(x, 445), j === 0 ? '0' : j === 1 ? 'r' : j + 'r', { fill: '#93a1b5', 'font-size': 13 });
+      B.seg(V(x, 412), V(x, 424), { stroke: '#93a1b5', 'stroke-width': 1.4 });
     }
-    B.tex(V(120 + sp / 2, 446), `$s=\\alpha r$：摊平后 $s$ = ${fmt(A, 2)} 个半径长`, { anchor: 'mid', w: 560 });
-    B.text(V(C.x, C.y + 14), `${fmt(st.deg, 0)}°`, { 'font-size': 14, fill: '#93a1b5' });
-    // chips
-    cAng(`${fmt(st.deg, 0)}° = ${radStr(st.deg)}`);
-    cArc(`s = αr = ${fmt(A, 3)} × ${fmt(r, 2)} = ${fmt(A * r, 2)}`);
-    cArea(`S = ½αr² = ½sr = ${fmt(.5 * A * r * r, 2)}`);
-    cRatio(`${fmt(A * r, 2)} ÷ ${fmt(r, 2)} = ${fmt(A, 2)}（恒为弧度数）`);
-    cSay(st.say || 'α 用弧度时公式最干净：s=αr、S=½αr² —— 角度制都得先乘 π/180');
+    cAng(`$${st.deg}^\\circ=${angleTex(A)}\\,\\mathrm{rad}$`);
+    cArc(`$s=r\\alpha\\approx${fmt(A*r, 3)}$`);
+    cArea(`$S=sr/2\\approx${fmt(.5*A*r*r, 3)}$`);
+    cRatio(`$s/r=${angleTex(A)}$`);
+    cSay(st.say || '直尺每格长 $r$，弧展开后占据的格数就是圆心角的弧度数。');
   };
   B.render();
-  B.hint('拖 α 与 r：弧长、面积实时记录；⏩ 把弧摊平成直尺 —— 每格恰一个半径，格数就是弧度数');
   return B;
 }

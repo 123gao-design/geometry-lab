@@ -1,0 +1,115 @@
+.board.fn-board.double-board { grid-template-columns: minmax(0, 1fr) minmax(250px, 39%); }
+.board.fn-board.double-board > svg { grid-column: 1; }
+.board.fn-board.double-board.bd-half { display: grid; overflow-y: auto; }
+.board.fn-board.double-board.bd-full { overflow-y: auto; grid-template-rows: auto auto minmax(max-content, 1fr) auto; }
+.double-proof {
+  box-sizing: border-box;
+  grid-area: 3 / 2;
+  align-self: center;
+  min-width: 0;
+  margin: 6px 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--pj-axis);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--pj-paper) 96%, var(--pj-ink));
+  color: var(--pj-ink);
+  font: 14px/1.6 system-ui, sans-serif;
+}
+.double-proof strong { font-size: 15px; }
+.double-proof-group { margin-top: 6px; padding-top: 5px; border-top: 1px solid var(--pj-axis); }
+.double-proof-group b { color: var(--pj-guide); font-size: 13px; }
+.double-proof-group:last-child b { color: var(--pj-blue); }
+.double-proof-group > div { line-height: 1.65; }
+.double-proof-group .mfrac { margin-block: 3px; }
+.board.fn-board.double-board > .ctrl.chips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.board.double-board .chips .chip:last-child { grid-column: auto; }
+.board.double-board .chips .chip > span { overflow: visible; }
+@container fn-board (max-width: 579px) {
+  .board.fn-board.double-board > svg { grid-column: 1 / -1; }
+  .double-proof { grid-area: 4 / 1 / auto / -1; }
+  .board.fn-board.double-board > .ctrl.chips { grid-row: 5; grid-template-columns: minmax(0, 1fr); }
+  .board.fn-board.double-board.bd-full { grid-template-rows: auto auto minmax(240px, auto) auto auto; }
+}
+.double-proof-coords { padding-bottom: 8px; margin-bottom: 7px; border-bottom: 1px solid var(--pj-axis); }
+.double-proof-coords > :first-child { color: var(--pj-mint); }
+.double-proof-coords > :nth-child(2) { color: var(--pj-gold); }
+.double-proof-coords > :last-child { color: var(--pj-blue); }
+.proof-export-checks {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px 9px;
+  color: var(--pj-ink); font: 14px/1.6 system-ui, sans-serif;
+}
+.proof-export-checks .chip {
+  display: flex; align-items: baseline; gap: 10px; padding: 3px 8px;
+  border: 1px solid var(--pj-axis); border-inline-start: 2px solid var(--pj-green); border-radius: 6px;
+}
+.proof-export-checks .warn { color: var(--pj-red); border-inline-start-color: var(--pj-red); }
+
+/* 底部与独立导出共用同一组读数。 */
+.double-checks {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 16px;
+  min-width: 0;
+}
+.double-check {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 3px 8px;
+  min-width: 0;
+  padding: 4px 0;
+  color: var(--check-tone);
+  font: 14px/1.5 system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.double-check strong {
+  grid-column: 1 / -1;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--pj-axis);
+  font-size: 14px;
+}
+:is(.board.fn-board.double-board, .proof-export-checks) .double-check .chip {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: start;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--check-tone);
+  box-shadow: none;
+  animation: none;
+}
+:is(.board.fn-board.double-board, .proof-export-checks) .double-check .chip b {
+  color: var(--pj-guide);
+  font: 13px/1.6 system-ui, sans-serif;
+  white-space: nowrap;
+}
+.double-check .chip > span {
+  font-size: 18px;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+.double-check .chip.warn > span { color: var(--pj-red); font-size: 14px; }
+.double-check .chip.muted > span { color: var(--pj-guide); font-size: 14px; }
+.board.double-board .chips > .chip:last-child, .proof-export-checks > .chip:last-child { grid-column: 1 / -1; }
+@container fn-board (max-width: 679px) {
+  .double-checks { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .double-check {
+    grid-template-columns: minmax(68px, .8fr) minmax(0, 1fr) minmax(0, 1.1fr);
+    align-items: start;
+    border-bottom: 1px solid var(--pj-axis);
+  }
+  .double-check strong { grid-column: auto; align-self: center; padding: 0; border: 0; }
+}
+
+.double-check:has(> .chip:nth-of-type(3)) {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.double-check:has(> .chip:nth-of-type(3)) strong { grid-column: 1 / -1; }
+@container fn-board (max-width: 450px) {
+  .double-check:has(> .chip:nth-of-type(3)) { grid-template-columns: minmax(0, 1fr); }
+}

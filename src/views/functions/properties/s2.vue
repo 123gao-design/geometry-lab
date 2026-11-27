@@ -40,3 +40,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createDerSign } from '../../../boards/functions/properties/dersign.js';
 import { S_CHAPTERS } from './snav.js';
 </script>
+
+<style src="./preset-row.css"></style>

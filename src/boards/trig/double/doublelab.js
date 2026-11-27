@@ -1,87 +1,158 @@
-/* 图 N1 倍角面积机：单位圆的内接矩形（宽 2cosα、高 sinα）面积 = 2sinαcosα = sin2α ——
-   倍角公式是和差公式 β=α 的特例；cos2α 三形态与 tan2α 分母为零情形同时实时核验。 */
-import { Board, mk, V, fmt, TAU } from '../../../lib/board.js';
+import { Board, fmt, hEl, mk, TAU, texMix, V } from '../../../lib/board.js';
+import { ProofBoard } from '../proof-board.js';
+import { angleTex, unitCoordinates } from '../trig-board.js';
+import './doublelab.css';
+import proofCSS from './doublelab.css?inline';
+
+function addProof(board) {
+  const panel = hEl('aside', { class: 'double-proof', 'aria-label': '倍角公式推导' });
+  board.root.insertBefore(panel, board.chipRow);
+  board.proof = panel;
+  board.proofCSS = proofCSS;
+  const coords = hEl('div', { class: 'double-proof-coords' }, panel);
+  for (const coordinate of ['$P(\\cos\\alpha,\\sin\\alpha)$', '$Q(\\cos 2\\alpha,\\sin 2\\alpha)$', "$P'(-\\cos\\alpha,\\sin\\alpha)$"]) {
+    hEl('div', {}, coords).innerHTML = texMix(coordinate);
+  }
+  hEl('strong', {}, panel).innerHTML = texMix('将 $\\beta=\\alpha$ 代入和差公式');
+  for (const [name, formulas] of [
+    ['正弦', ['$\\sin 2\\alpha=\\sin(\\alpha+\\alpha)$', '$=2\\sin\\alpha\\cos\\alpha$']],
+    ['余弦', ['$\\cos 2\\alpha=\\cos^2\\alpha-\\sin^2\\alpha$',
+      '$=2\\cos^2\\alpha-1=1-2\\sin^2\\alpha$']],
+    ['正切', ['$\\tan 2\\alpha=\\dfrac{\\tan\\alpha+\\tan\\alpha}{1-\\tan\\alpha\\tan\\alpha}$',
+      '$=\\dfrac{2\\tan\\alpha}{1-\\tan^2\\alpha}$']],
+    ['矩形面积', ['$S=2\\cos\\alpha\\cdot\\sin\\alpha=\\sin 2\\alpha$', '$0<\\alpha<\\pi/2$']],
+  ]) {
+    const group = hEl('div', { class: 'double-proof-group' }, panel);
+    hEl('b', {}, group).textContent = name;
+    for (const formula of formulas) hEl('div', {}, group).innerHTML = texMix(formula);
+  }
+}
+
+function checkGroup(board, parent, title, tone, labels) {
+  const group = hEl('section', { class: 'double-check', 'aria-label': title.split(' · ')[0] }, parent);
+  group.style.setProperty('--check-tone', 'var(--pj-' + tone + ')');
+  hEl('strong', {}, group).innerHTML = texMix(title);
+  return labels.map(label => {
+    const update = board.chipM(label);
+    group.appendChild(update.el);
+    return (value, status = '') => update(typeof value === 'number' ? '$' + fmt(value, 3) + '$' : value, status);
+  });
+}
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 520);
-  const st = { a: Math.PI / 6, rect: true, arc: true };
-  const O = V(300, 282), R = 190;
-  const sA = B.slider('角 α', 0, TAU, Math.PI / 12, st.a, v => { st.a = v; B.render(); });
-  B.toggleBtn('矩形', true, v => { st.rect = v; B.render(); });
-  B.toggleBtnM('$2\\alpha$ 弧', true, v => { st.arc = v; B.render(); });
-  const pre = v => () => { st.a = v; sA.sync(v); B.render(); };
-  B.btnM('$\\alpha=\\tfrac{\\pi}{6}$', pre(Math.PI / 6));
-  B.btnM('$\\alpha=\\tfrac{\\pi}{4}$', pre(Math.PI / 4));
-  B.btnM('$\\alpha=\\tfrac{\\pi}{3}$', pre(Math.PI / 3));
-  const cS = B.chipM('sin2α 核验'), cC = B.chipM('cos2α 三形态'), cT = B.chipM('tan2α 核验'), cR = B.chipM('面积');
-  const arcPts = (t0, t1, r) => {
-    const pts = [], n = 44;
-    for (let i = 0; i <= n; i++) { const t = t0 + (t1 - t0) * i / n; pts.push(`${(O.x + r * Math.cos(t)).toFixed(1)},${(O.y - r * Math.sin(t)).toFixed(1)}`); }
-    return pts.join(' ');
-  };
+  const B = new ProofBoard(root, 500, 430);
+  root.classList.add('double-board');
+  B.exportCheckHeight = 188;
+  B.exportSize.height = 692;
+  B.svg.setAttribute('aria-label', '单位圆上的单角终边 OP、倍角终边 OQ 和矩形');
+  const O = V(250, 215), R = 152;
+  const state = { a: Math.PI / 6, rect: true, arc: true };
+  const slider = B.slider('角 α', 0, TAU, 'any', state.a,
+    v => setAngle(Math.round(v * 180 / Math.PI) * Math.PI / 180), undefined,
+    (_, a) => '$\\alpha=' + angleTex(a) + '$');
+  function setAngle(a) {
+    state.a = a;
+    slider.sync(a);
+    B.render();
+  }
+  B.toggleBtn('矩形', true, on => { state.rect = on; B.render(); });
+  B.toggleBtnM('$2\\alpha$ 弧', true, on => { state.arc = on; B.render(); });
+  B.angleRow([30, 45, 60], () => state.a, setAngle);
+  addProof(B);
+  const checks = hEl('div', { class: 'double-checks' }, B.chipRow);
+  const [area, ordinate] = checkGroup(B, checks, '面积核验', 'blue', ['宽 × 高', '$Q$ 的纵坐标']);
+  const [sinDirect, sinFormula] = checkGroup(B, checks, '正弦核验', 'gold', ['$\\sin 2\\alpha$', '$2\\sin\\alpha\\cos\\alpha$']);
+  const [tanDirect, tanFormula] = checkGroup(B, checks, '正切核验', 'mint', ['$\\tan 2\\alpha$', '倍角分式']);
+  const cosineChecks = checkGroup(B, checks, '余弦三式 · $\\cos 2\\alpha$', 'violet', [
+    '$\\cos^2\\alpha-\\sin^2\\alpha$', '$2\\cos^2\\alpha-1$', '$1-2\\sin^2\\alpha$',
+  ]);
+
+  const point = (t, r = R) => V(O.x + r * Math.cos(t), O.y - r * Math.sin(t));
+  function label(p, text, color) {
+    const el = Board.prototype.text.call(B, p, text, { fill: color });
+    el.style.fill = el.getAttribute('fill');
+  }
+  function arc(from, to, radius, color) {
+    const points = [];
+    const n = Math.ceil((to - from) / .06);
+    if (!n) return;
+    for (let i = 0; i <= n; i++) {
+      const p = point(from + (to - from) * i / n, radius);
+      points.push(p.x + ',' + p.y);
+    }
+    mk('polyline', { points: points.join(' '), fill: 'none', stroke: color, 'stroke-width': 1.7 }, B.dyn);
+  }
+  function ray(t, color) {
+    const tip = point(t, R + 16), back = point(t, R + 8);
+    const dx = 3.5 * Math.sin(t), dy = 3.5 * Math.cos(t);
+    B.seg(O, tip, { stroke: color, 'stroke-width': 2 });
+    mk('polygon', { points: [tip.x + ',' + tip.y, (back.x + dx) + ',' + (back.y + dy),
+      (back.x - dx) + ',' + (back.y - dy)].join(' '), fill: color }, B.dyn);
+  }
+  B.handle({ color: '#67e8f9', get: () => point(state.a), set: p => {
+    const a = (Math.atan2(O.y - p.y, p.x - O.x) + TAU) % TAU;
+    state.a = Math.round(a * 180 / Math.PI) * Math.PI / 180;
+    slider.sync(state.a);
+  } }).setAttribute('aria-label', '拖动单角终边上的 P 点');
 
   B.renderFn = () => {
-    const a = st.a, ca = Math.cos(a), sa = Math.sin(a);
-    // 坐标轴 + 单位圆
-    B.seg(V(O.x - R - 22, O.y), V(O.x + R + 22, O.y), { stroke: '#2b3b53', 'stroke-width': 1.1 });
-    B.seg(V(O.x, O.y + R + 22), V(O.x, O.y - R - 22), { stroke: '#2b3b53', 'stroke-width': 1.1 });
-    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: '#93a1b5', 'stroke-width': 1.6 }, B.dyn);
-    B.dot(O, 3, { fill: '#93a1b5' });
-    // 终边 OP 与 P、P′
-    const P = V(O.x + R * ca, O.y - R * sa), P2 = V(O.x - R * ca, O.y - R * sa);
-    B.seg(O, P, { stroke: '#ffd166', 'stroke-width': 2.2 });
-    B.dot(P, 4.5, { fill: '#ffd166' });
-    B.textM(V(P.x + (P.x > O.x ? 10 : -10), P.y - 12), '$P(\\cos\\alpha,\\ \\sin\\alpha)$', { 'font-size': 11, fill: '#ffd166', 'text-anchor': P.x > O.x ? 'start' : 'end' });
-    // α 弧（青）—— 弧 r40、字 r54，与金的 2α 弧之间留出空档
-    if (a > 0.02) {
-      mk('polyline', { points: arcPts(0, a, 40), fill: 'none', stroke: '#67e8f9', 'stroke-width': 1.8 }, B.dyn);
-      B.text(V(O.x + 54 * Math.cos(a / 2), O.y - 54 * Math.sin(a / 2)), 'α', { 'font-size': 12, fill: '#67e8f9' });
+    const a = state.a, twice = 2 * a;
+    const { x: c, y: s } = unitCoordinates(a), { x: c2, y: s2 } = unitCoordinates(twice);
+    const P = point(a), Q = point(twice), mirror = V(2 * O.x - P.x, P.y);
+    const { guide, axis, blue, gold, mint, soft } = B.diagramColors;
+    const same = Math.hypot(P.x - Q.x, P.y - Q.y) < 1;
+    const acute = a > 0 && a < Math.PI / 2, showRect = acute && state.rect;
+    const atCorner = showRect && Math.hypot(mirror.x - Q.x, mirror.y - Q.y) < 1;
+
+    B.seg(V(26, 31), V(48, 31), { stroke: mint, 'stroke-width': 2 });
+    B.tex(V(55, 31), '$OP\\;:\\;\\alpha$', { w: 82, size: 15, color: mint });
+    B.seg(V(353, 31), V(375, 31), { stroke: gold, 'stroke-width': 2 });
+    B.tex(V(382, 31), '$OQ\\;:\\;2\\alpha$', { w: 92, size: 15, color: gold });
+    B.seg(V(34, O.y), V(464, O.y), { stroke: axis });
+    B.seg(V(O.x, 411), V(O.x, 19), { stroke: axis });
+    label(V(459, O.y + 18), 'x', guide);
+    label(V(O.x + 17, 24), 'y', guide);
+    label(V(O.x - 12, O.y + 16), 'O', guide);
+    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: guide, 'stroke-width': 1.5 }, B.dyn);
+    if (showRect) {
+      mk('rect', { x: mirror.x, y: P.y, width: P.x - mirror.x, height: O.y - P.y,
+        fill: soft, stroke: blue, 'stroke-width': 1.3, 'stroke-dasharray': '5 4' }, B.dyn);
+      if (!atCorner) { B.mark(mirror, blue); label(V(mirror.x - 14, mirror.y - 9), 'P′', blue); }
+      if (c > .3) label(V(O.x, O.y + 27), '2cos α', blue);
+      if (s > .3) label(V(P.x + 31, (P.y + O.y) / 2 + 4), 'sin α', blue);
     }
-    // 内接矩形：宽 2cosα、高 sinα —— 只在第一象限存在（0 < α < π/2）
-    const onRect = st.rect && ca > 0.02 && sa > 0.02;
-    if (onRect) {
-      mk('rect', { x: O.x - R * ca, y: O.y - R * sa, width: 2 * R * ca, height: R * sa, fill: 'rgba(92,173,255,.07)', stroke: '#5cadff', 'stroke-width': 1.2, 'stroke-dasharray': '5 4' }, B.dyn);
-      B.dot(P2, 4, { fill: '#5cadff' });
-      B.textM(V(P2.x - 10, P2.y - 10), "$P'(-\\cos\\alpha,\\ \\sin\\alpha)$", { 'font-size': 11, fill: '#5cadff', 'text-anchor': 'end' });
-      B.textM(V(O.x, O.y + 16), '宽 $2\\cos\\alpha$', { 'font-size': 11, fill: '#5cadff' });
-      B.textM(V(O.x + R * ca + 8, O.y - R * sa / 2), '高 $\\sin\\alpha$', { 'font-size': 11, fill: '#5cadff', 'text-anchor': 'start' });
+    if (s2 !== 0 && c2 !== 0) B.seg(Q, V(Q.x, O.y), { stroke: gold, 'stroke-opacity': .55, 'stroke-dasharray': '3 5' });
+    if (!same) ray(a, mint);
+    ray(twice, gold);
+    arc(0, a, 29, mint);
+    if (state.arc) {
+      arc(0, Math.min(TAU, twice), 58, gold);
+      if (twice > TAU) arc(TAU, twice, 70, gold);
     }
-    // 2α 弧（金）—— 每满一圈外推一环（半径 84+16j），余弧落在最外圈，2α 超过 2π 也不消失
-    if (st.arc && 2 * a > 0.04) {
-      const sweep = 2 * a, rings = Math.floor((sweep - 1e-9) / TAU), rest = sweep - rings * TAU;
-      for (let j = 0; j < rings; j++)
-        mk('polyline', { points: arcPts(0, TAU, 84 + 16 * j), fill: 'none', stroke: '#ffd166', 'stroke-width': 1.8 }, B.dyn);
-      if (rest > 0.04)
-        mk('polyline', { points: arcPts(0, rest, 84 + 16 * rings), fill: 'none', stroke: '#ffd166', 'stroke-width': 1.8 }, B.dyn);
-      const mid = rest > 0.04 ? rest / 2 : Math.PI / 2, lr = 84 + 16 * rings + 13;
-      B.text(V(O.x + lr * Math.cos(mid), O.y - lr * Math.sin(mid)), '2α', { 'font-size': 12, fill: '#ffd166' });
-    }
-    // 右栏：β=α 代入 M1 的三行推导
-    const X = 552;
-    B.tex(V(X, 96), 'β = α 代入和差公式（M1）：', { size: 14, color: '#93a1b5', anchor: 'start', w: 300 });
-    B.tex(V(X, 130), '$\\sin2\\alpha=\\sin(\\alpha+\\alpha)=2\\sin\\alpha\\cos\\alpha$', { size: 15, color: '#ffd166', anchor: 'start', w: 300 });
-    B.tex(V(X, 164), '$\\cos2\\alpha=\\cos^2\\alpha-\\sin^2\\alpha$', { size: 15, anchor: 'start', w: 300 });
-    B.tex(V(X, 194), '$\\hphantom{\\cos2\\alpha}=2\\cos^2\\alpha-1=1-2\\sin^2\\alpha$', { size: 15, anchor: 'start', w: 300 });
-    B.tex(V(X, 228), '$\\tan2\\alpha=\\dfrac{\\tan\\alpha+\\tan\\alpha}{1-\\tan\\alpha\\tan\\alpha}=\\dfrac{2\\tan\\alpha}{1-\\tan^2\\alpha}$', { size: 15, anchor: 'start', w: 320 });
-    B.tex(V(X, 266), '矩形面积：$S=2\\cos\\alpha\\cdot\\sin\\alpha=\\sin2\\alpha$', { size: 14, color: '#5cadff', anchor: 'start', w: 300 });
-    // chips
-    const s2 = 2 * sa * ca, s2v = Math.sin(2 * a);
-    cS(`$2\\sin\\alpha\\cos\\alpha=${fmt(s2, 3)}=\\sin2\\alpha=${fmt(s2v, 3)}$`, Math.abs(s2 - s2v) < 1e-9 ? 'ok' : 'warn');
-    const c2 = Math.cos(2 * a);
-    const f3 = [ca * ca - sa * sa, 2 * ca * ca - 1, 1 - 2 * sa * sa];
-    const ok3 = f3.every(v => Math.abs(v - c2) < 1e-9);
-    cC(`$\\cos^2\\alpha-\\sin^2\\alpha=${fmt(f3[0], 3)}=2\\cos^2\\alpha-1=${fmt(f3[1], 3)}=1-2\\sin^2\\alpha=${fmt(f3[2], 3)}$`, ok3 ? 'ok' : 'warn');
-    const tanA = Math.abs(ca) < 1e-9 ? NaN : sa / ca;
-    if (!isFinite(tanA)) cT('tan α 排除（cos α = 0），tan2α 无定义', 'warn');
-    else if (Math.abs(1 - tanA * tanA) < 1e-9) cT('$1-\\tan^2\\alpha=0$：tan2α 无定义（α 距 π/4 + kπ/2）', 'warn');
+    const pName = point(a, R + 33), qName = point(twice, R + 33);
+    const near = Math.hypot(pName.x - qName.x, pName.y - qName.y) < 32;
+    if (!same) label(V(pName.x, pName.y + (near ? 17 : -4)), 'P', mint);
+    label(V(qName.x, qName.y + (near ? -10 : 6)), same ? 'P=Q' : atCorner ? 'Q=P′' : 'Q', gold);
+    B.mark(Q, gold);
+
+    const matches = (actual, expected) => Math.abs(actual - expected) < 1e-9 * (1 + Math.abs(expected));
+    const widthTimesHeight = 2 * c * s;
+    const status = matches(widthTimesHeight, s2) ? '' : 'warn';
+    area(acute ? widthTimesHeight : '限锐角', acute ? status : 'muted');
+    ordinate(s2);
+    sinDirect(s2);
+    sinFormula(widthTimesHeight, status);
+    const forms = [c * c - s * s, 2 * c * c - 1, 1 - 2 * s * s];
+    forms.forEach((value, i) => cosineChecks[i](value, matches(value, c2) ? '' : 'warn'));
+    tanDirect(c2 === 0 ? '无定义' : s2 / c2, c2 === 0 ? 'warn' : '');
+    if (c2 === 0) tanFormula('分母为零', 'warn');
+    else if (c === 0) tanFormula('$\\tan\\alpha$ 无定义', 'warn');
     else {
-      const t2 = 2 * tanA / (1 - tanA * tanA), t2v = Math.tan(2 * a);
-      cT(`$\\frac{2\\tan\\alpha}{1-\\tan^2\\alpha}=${fmt(t2, 3)}=\\tan2\\alpha=${fmt(t2v, 3)}$`, Math.abs(t2 - t2v) < 1e-6 * (1 + Math.abs(t2v)) ? 'ok' : 'warn');
+      const t = s / c;
+      const expanded = 2 * t / (1 - t * t);
+      tanFormula(expanded, matches(expanded, s2 / c2) ? '' : 'warn');
     }
-    if (onRect) cR(`$S=2\\cos\\alpha\\cdot\\sin\\alpha=${fmt(s2, 3)}=\\sin2\\alpha$`, 'ok');
-    else cR('矩形只在第一象限存在（0 < α < π/2）', '');
   };
   B.render();
-  B.hintM('拖 $\\alpha$：内接矩形面积 $2\\cos\\alpha\\cdot\\sin\\alpha$ 与 $2\\alpha$ 弧上的正弦恒等 —— 倍角是和差公式 $\\beta=\\alpha$ 的特例');
   return B;
 }

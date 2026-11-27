@@ -1,0 +1,34 @@
+.board.fn-board.half-angle-board { grid-template-columns: minmax(0, 1fr) minmax(208px, 32%); }
+.board.half-angle-board > .ctrl.chips { grid-template-columns: minmax(0, 1fr); }
+.half-angle-board .chips .chip > span { overflow: visible; }
+.half-angle-readings .unit-function-values > .chip b { color: var(--reading-color); }
+.half-reading-heading {
+  grid-column: 1 / -1;
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pj-guide);
+}
+@container fn-board (max-width: 579px) {
+  .half-angle-readings .unit-function-values > .chip { flex-direction: column; }
+}
+/* 独立图像中的右栏与底部判读。 */
+foreignObject .half-angle-readings {
+  width: 100%; margin: 0 12px; padding-left: 16px; border-left: 1px solid var(--pj-axis);
+  color: var(--pj-ink); font: 15px/1.5 system-ui, sans-serif;
+}
+foreignObject .half-angle-readings .chip { display: flex; flex-flow: column; align-items: start; }
+foreignObject .half-angle-readings .chip b { color: var(--reading-color, var(--pj-guide)); font-weight: 500; }
+foreignObject .half-angle-readings .chip > span { font-size: 18px; }
+foreignObject .half-angle-readings .unit-function-values {
+  display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px 10px; margin-top: 8px;
+}
+foreignObject .half-angle-readings .unit-function-values .chip { border-top: 1px solid var(--pj-axis); padding-top: 4px; }
+foreignObject .proof-export-checks:has(> .chip:only-child) {
+  display: grid; grid-template-columns: minmax(0,1fr);
+  color: var(--pj-ink); font: 14px/1.5 system-ui, sans-serif;
+}
+foreignObject .proof-export-checks:has(> .chip:only-child) .chip {
+  display: flex; align-items: baseline; gap: 10px; border: 1px solid var(--pj-axis); border-radius: 6px; padding: 4px 9px;
+}
+foreignObject .proof-export-checks:has(> .chip:only-child) .chip:last-child { grid-column: 1 / -1; }

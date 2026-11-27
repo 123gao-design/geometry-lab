@@ -1,0 +1,26 @@
+.cos-law-panel h4 { margin: 0 0 6px; font: inherit; font-weight: 600; }
+.cos-law-expansion, .cos-law-result, .cos-law-angle { text-align: center; white-space: nowrap; }
+.cos-law-expansion { font-size: 13px; }
+.cos-law-result { margin-top: 6px; padding: 5px; border-radius: 6px; color: var(--pj-gold); background: color-mix(in srgb, currentColor 9%, transparent); }
+.cos-law-comparison { margin: 12px 0; padding: 8px 0; border-block: 1px solid var(--pj-axis); }
+.cos-law-bar + .cos-law-bar { margin-top: 8px; }
+.cos-law-bar-label { display: flex; justify-content: space-between; align-items: baseline; color: var(--bar-color); }
+.cos-law-track { height: 5px; background: var(--pj-soft); border-radius: 5px; }
+.cos-law-track i { display: block; height: 100%; background: var(--bar-color); border-radius: inherit; }
+.cos-law-bracket { box-sizing: border-box; height: 5px; margin-top: 2px; border: 1px solid var(--pj-orange); border-top: 0; }
+.cos-law-gap { text-align: right; color: var(--pj-orange); font-size: 12px; }
+.cos-law-angle { color: var(--pj-violet); }
+.cos-law-states { display: grid; grid-template-columns: repeat(3, 1fr); margin: 12px 0; }
+.cos-law-states > div { display: grid; justify-items: center; color: var(--pj-guide); line-height: 1.25; }
+.cos-law-states > div + div { border-left: 1px solid var(--pj-axis); }
+.cos-law-states [data-current] { color: var(--pj-gold); font-weight: 600; }
+.cos-law-panel .chip { display: flex; flex-flow: column; align-items: start; --reading-color: var(--pj-gold); }
+.board.fn-board .cos-law-panel .fn-reading-group[data-reading-style="info"] > .chip > span {
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: visible;
+}
+foreignObject .proof-export-checks { color: var(--pj-ink); }
+foreignObject .proof-export-checks .fn-reading-group { display: flex; gap: 24px; margin-bottom: 5px; }
+foreignObject .proof-export-checks .chip { display: flex; flex-flow: column; }
+foreignObject .proof-export-checks [data-reading] b { color: var(--pj-guide); }

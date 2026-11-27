@@ -1,107 +1,141 @@
-/* 图 放3 · 夹逼放缩机：证明式最后一步的三件工具
-   模式一「裂项凑项」：Σ 1/k² 不易求，用 1/k² < 1/(k−1)k = 1/(k−1) − 1/k 逐项放大，
-       错位相消后整列恰为 1 + (1−1/n) = 2 − 1/n，于是 Σ1/k² < 2−1/n < 2。
-   模式二「逐项夹逼」：S_n = Σ k/(n²+k)，每项夹在 k/(n²+n) ≤ · ≤ k/n²，
-       求和得 ½ ≤ S_n ≤ ½+1/(2n)，两端同时贴住 ½，夹逼出极限 ½。
-   模式三「二项舍项」：(1+1/n)ⁿ 按二项定理展开，舍去 k≥2 的非负项得下界 2；
-       k=2 项 C(n,2)/n² 严格为正，故 n≥2 时严格大于 2，极限即 e。
-   三法都含等号检验：取等位置（或极限处）须单独交代。
-   局部坐标约定：柱底基线 y=340（模式一/三），量程分别 0..2、0..2.9；模式二用水平夹条
-   x∈[90,790] 代表累积和值 0..0.9。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { mk, V } from '../../../lib/board.js';
+import { InequalityBoard } from '../inequality-board.js';
 
-export function createBoard(root) {
-  const W = 860, H = 440;
-  const B = new Board(root, W, H);
-  const f1 = v => fmt(v, 2).replace(/\.?0+$/, '');
-  const st = { p: 0, n: 5, labs: true };
-  const cS = B.chipM('读数'), cT = B.chipM('界'), cJ = B.chipM('判读');
+// 每幅图内部使用固定比例尺，所以拖动滑块前后的长度可以直接比较。
+const left = 78, right = 544, span = right - left;
+const blue = '#5cadff', gold = '#ffd166', green = '#4ade80', guide = '#93a1b5';
 
+function bar(B, x, end, y, height, color, opacity) {
+  mk('rect', { x, y, width: end - x, height, fill: color, 'fill-opacity': opacity }, B.dyn);
+}
+function label(B, x, y, text, color, anchor = 'mid') {
+  B.tex(V(x, y), text, { size: 15, anchor, color });
+}
+function nSlider(B, min, initial, update) {
+  return B.slider('n', min, 20, 1, initial, update, 'n', (_, v) => `$n=${v}$`);
+}
+
+export function createTelescope(root) {
+  const B = new InequalityBoard(root, 616, 285);
+  let n = 5;
+  nSlider(B, 2, n, v => { n = v; B.render(); });
+  const term = B.readout('末项放大'), sum = B.readout('部分和', 'mint'), bound = B.chipM('相消后的上界');
+  const x = v => left + span * v;
   B.renderFn = () => {
-    const n = st.n;
-    if (st.p === 0) {
-      /* ---------- 模式一 裂项凑项 ---------- */
-      const y0 = 340, S = 130, spanW = 744, x0 = 88;
-      const X = k => x0 + (k - 1) * (spanW / (Math.max(n - 1, 1)));
-      const w = Math.max(8, Math.min(46, spanW / (Math.max(n - 1, 1)) - 6));
-      let sum = 0;
-      for (let k = 1; k <= n; k++) sum += 1 / (k * k);
-      const ub = 2 - 1 / n;
-      for (let k = 1; k <= n; k++) {
-        const g = 1 / (k * k), b = k >= 2 ? 1 / (k * (k - 1)) : 0;
-        mk('rect', { x: X(k) - w / 2, y: y0 - g * S, width: w, height: g * S, fill: '#ffd166', 'fill-opacity': .9 }, B.dyn);
-        if (b > 1e-4) mk('rect', { x: X(k) - w / 2, y: y0 - b * S, width: w, height: b * S, fill: '#5cadff', 'fill-opacity': .3 }, B.dyn);
-      }
-      if (st.labs) {
-        B.seg(V(x0 - 2, y0 - ub * S), V(858, y0 - ub * S), { stroke: '#ff7b8a', 'stroke-width': 1.3, 'stroke-dasharray': '6 4' });
-        B.seg(V(x0 - 2, y0 - 2 * S), V(858, y0 - 2 * S), { stroke: '#c084fc', 'stroke-width': 1.3, 'stroke-dasharray': '6 4' });
-        B.text(V(848, y0 - ub * S - 7), '上界 2−1/n = ' + f1(ub), { 'font-size': 12, fill: '#ff7b8a', 'text-anchor': 'end' });
-        B.text(V(848, y0 - 2 * S + 17), '极限 2', { 'font-size': 12, fill: '#c084fc', 'text-anchor': 'end' });
-        B.textM(V(x0, y0 + 18), '金柱：$1/k^2$   蓝柱：$1/(k(k-1))$', { 'font-size': 12, fill: '#93a1b5' });
-      }
-      B.tex(V(430, 34), `$S_n=\\sum_{k=1}^{n}\\tfrac{1}{k^2}$（金柱）逐项小于 $1+\\sum_{k=2}^{n}\\tfrac{1}{k(k-1)}$（蓝柱）`, { size: 14, anchor: 'mid' });
-      B.textM(V(430, 60), '$k\\ge2$ 时 $1/k^2<1/(k-1)k$，错位相消后蓝列恰为 $2-1/n$ —— 放大列是显式可求和的', { 'font-size': 12.5, fill: '#93a1b5', 'text-anchor': 'middle' });
-      cS(`$S_n=${f1(sum)}$`);
-      cT(`$2-\\tfrac1n=${f1(ub)}$`);
-      cJ(`逐项放大 $\\tfrac1{k^2}<\\tfrac1{k(k-1)}$（$k\\ge2$）后错位相消：$S_n<2-\\tfrac1n<2$，放大严格取不到等号，$n\\to\\infty$ 时上界趋于 $\\zeta(2)=2$ 型下 2`);
-    } else if (st.p === 1) {
-      /* ---------- 模式二 逐项夹逼：水平夹条 ---------- */
-      const scale = .9, X = v => 90 + v / scale * 700;
-      let s = 0; for (let k = 1; k <= n; k++) s += k / (n * n + k);
-      const ub = 1 / 2 + 1 / (2 * n);
-      mk('rect', { x: X(0), y: 208, width: X(s) - X(0), height: 32, fill: '#ffd166', 'fill-opacity': .85 }, B.dyn);
-      if (st.labs) {
-        let acc = 0;
-        for (let k = 1; k <= n; k++) { acc += k / (n * n + k); B.seg(V(X(acc), 202), V(X(acc), 246), { stroke: '#7a5a30', 'stroke-width': .9 }); }
-        B.seg(V(X(.5), 196), V(X(.5), 258), { stroke: '#4ade80', 'stroke-width': 1.5, 'stroke-dasharray': '5 4' });
-        B.seg(V(X(ub), 196), V(X(ub), 258), { stroke: '#ff7b8a', 'stroke-width': 1.5, 'stroke-dasharray': '5 4' });
-        B.text(V(X(.5), 186), '下界 ½', { 'font-size': 12, fill: '#4ade80', 'text-anchor': 'middle' });
-        B.text(V(X(ub) - 6, 286), '上界 ½+1/(2n) = ' + f1(ub), { 'font-size': 12, fill: '#ff7b8a', 'text-anchor': 'end' });
-      }
-      B.tex(V(430, 34), `$S_n=\\sum_{k=1}^{n}\\dfrac{k}{n^2+k}$（金条长）夹在 ½ 与 $\\tfrac12+\\tfrac1{2n}$ 两线之间`, { size: 14, anchor: 'mid' });
-      B.textM(V(430, 60), '每项 $k/(n^2+n)\\le k/(n^2+k)\\le k/n^2$，累加后用 $1+2+\\cdots+n=n(n+1)/2$ 求和，两端同时贴住 $\\tfrac{1}{2}$', { 'font-size': 12.5, fill: '#93a1b5', 'text-anchor': 'middle' });
-      cS(`$S_n=${f1(s)}$`);
-      cT(`$\\tfrac12+\\tfrac1{2n}=${f1(ub)}$`);
-      cJ(`$\\tfrac{n(n+1)}{2(n^2+n)}=\\tfrac12\\le S_n\\le\\tfrac{n(n+1)}{2n^2}=\\tfrac12+\\tfrac1{2n}$，下界恰好等于 $\\tfrac12$，上界随 $n$ 增大压向 $\\tfrac12$：$\\lim S_n=\\tfrac12$`);
-    } else {
-      /* ---------- 模式三 二项舍项 ---------- */
-      const y0 = 340, S = 92;
-      const w = Math.max(8, Math.min(52, 700 / (n + 1)));
-      const X = k => 96 + k * w + w / 2;
-      const C = (a, b) => {
-        let r = 1; for (let i = 0; i < b; i++) r = r * (a - i) / (i + 1); return r;
-      };
-      const terms = [];
-      for (let k = 0; k <= n; k++) terms.push(C(n, k) / Math.pow(n, k));
-      const val = Math.pow(1 + 1 / n, n);
-      for (let k = 0; k <= n; k++) {
-        const v = terms[k];
-        const col = k <= 1 ? '#ff9e4a' : '#5cadff';
-        mk('rect', { x: X(k) - w / 2, y: y0 - v * S, width: w, height: v * S, fill: col, 'fill-opacity': k <= 1 ? .95 : .3 }, B.dyn);
-        if (st.labs && k <= 1) B.tex(V(X(k), y0 - v * S - 12), '$1$', { size: 13, anchor: 'mid', color: '#ff9e4a' });
-      }
-      if (st.labs) {
-        B.seg(V(86, y0 - 2 * S), V(858, y0 - 2 * S), { stroke: '#4ade80', 'stroke-width': 1.4, 'stroke-dasharray': '6 4' });
-        B.seg(V(86, y0 - val * S), V(858, y0 - val * S), { stroke: '#c084fc', 'stroke-width': 1.3, 'stroke-dasharray': '6 4' });
-        B.text(V(848, y0 - 2 * S + 16), '下界 = 首两项 = 2（绿线）', { 'font-size': 12, fill: '#4ade80', 'text-anchor': 'end' });
-        B.text(V(848, y0 - val * S - 7), '完整展开和（紫线）', { 'font-size': 12, fill: '#c084fc', 'text-anchor': 'end' });
-        B.text(V(96, y0 + 18), '橙柱：k=0、1 项（各 1）；蓝柱：k≥2 的非负项', { 'font-size': 12, fill: '#93a1b5' });
-      }
-      B.tex(V(430, 34), `$\\left(1+\\tfrac1n\\right)^n = \\sum_{k=0}^{n} \\binom{n}{k}\\tfrac{1}{n^k}$ 的各项`, { size: 14, anchor: 'mid' });
-      B.textM(V(430, 60), '舍去 $k\\ge2$ 的非负项只剩首两项 $1+1=2$ —— 下界；完整和更高，差正是被舍各项之和', { 'font-size': 12.5, fill: '#93a1b5', 'text-anchor': 'middle' });
-      cS(`$\\left(1+\\tfrac1n\\right)^n=${f1(val)}$`);
-      cT('$1+1=$首两项之和 $2$');
-      cJ(`舍掉 $k\\ge2$ 的非负项得下界 $2$；$\\binom{n}2\\tfrac1{n^2}=\\tfrac{n-1}{2n}>0$（$n\\ge2$），故严格大于 $2$；$n=1$ 时 $(1+1)^1=2$ 取等`);
+    // 将第 n 段局部放大，在同一对端点间比较原项与替代项。
+    label(B, left, 33, `第 $${n}$ 段放大`, guide, 'start');
+    label(B, right, 33, '$1/[n(n-1)]$', blue, 'end');
+    bar(B, left, right, 60, 21, blue, .22);
+    const fraction = (n - 1) / n;
+    bar(B, left, x(fraction), 60, 21, gold, .76);
+    B.mark(V(x(fraction), 71), gold);
+    label(B, left, 102, '$1/n^2$', gold, 'start');
+
+    label(B, left, 152, '相邻分数之间的长度', guide, 'start');
+    B.seg(V(left, 196), V(right, 196), { stroke: guide, 'stroke-width': 1.2 });
+    let total = 1;
+    for (let k = 2; k <= n; k++) {
+      total += 1 / (k * k);
+      const start = x(1 / k), end = x(1 / (k - 1));
+      bar(B, start, end, 182, 27, blue, k % 2 ? .25 : .4);
+      bar(B, start, x(1 / k + 1 / (k * k)), 190, 10, gold, .83);
+      B.seg(V(start, 179), V(start, 214), { stroke: blue, 'stroke-width': 1 });
     }
+    B.mark(V(x(1 / n), 196), blue);
+    label(B, left, 246, '$0$', guide);
+    label(B, x(1 / n), 227, `$1/${n}$`, blue);
+    label(B, right, 227, '$1$', guide);
+    term(`$1/${n * n}<1/${n * (n - 1)}$`);
+    sum(`$S_{${n}}\\approx ${total.toFixed(4)}$`);
+    bound(`首项 $1$ 加上蓝段的总长 $1-1/${n}$，得到 $S_{${n}}<2-1/${n}<2$。`);
   };
+  B.render();
+  return B;
+}
 
-  const modeBtns = ['裂项凑项', '逐项夹逼', '二项舍项'].map((name, i) => B.btnM(name, () => {
-    st.p = i; modeBtns.forEach((b, j) => b.classList.toggle('on', j === i)); B.render();
-  }, { on: i === 0 }));
-  B.graphToggles(st, ['labs']);
-  const sN = B.slider('n =', 2, 20, 1, 5, v => { st.n = v; B.render(); });
+export function createSqueeze(root) {
+  const B = new InequalityBoard(root, 616, 308);
+  let n = 5;
+  nSlider(B, 1, n, v => { n = v; B.render(); });
+  const value = B.readout('当前和'), width = B.readout('两界间距', 'gold'), conclusion = B.chipM('夹逼');
+  const x = k => left + (k - 1) / 19 * span;
+  const y = v => 239 - (v - .5) * 376;
+  const lower = .5;
+  const samples = Array.from({ length: 20 }, (_, index) => {
+    const k = index + 1;
+    let s = 0;
+    for (let j = 1; j <= k; j++) s += j / (k * k + j);
+    return { k, s, upper: lower + 1 / (2 * k) };
+  });
+  B.renderFn = () => {
+    const top = samples.map(p => `${x(p.k)},${y(p.upper)}`).join(' ');
+    mk('polygon', { points: `${left},${y(lower)} ${top} ${right},${y(lower)}`, fill: blue, 'fill-opacity': .1 }, B.dyn);
+    mk('polyline', { points: top, fill: 'none', stroke: blue, 'stroke-width': 1.4, 'stroke-dasharray': '5 4' }, B.dyn);
+    B.seg(V(left, y(lower)), V(right, y(lower)), { stroke: green, 'stroke-width': 1.8 });
+    for (const tick of [.5, .75, 1]) label(B, left - 11, y(tick), `$${tick}$`, guide, 'end');
+    for (const tick of [1, 5, 10, 15, 20]) label(B, x(tick), 263, `$${tick}$`, guide);
+    label(B, right + 22, 263, '$n$', guide);
+    for (const p of samples) {
+      B.dot(V(x(p.k), y(p.s)), 2.6, { fill: gold });
+      B.dot(V(x(p.k), y(p.upper)), 2, { fill: blue });
+    }
+    const p = samples[n - 1];
+    B.seg(V(x(n), y(lower)), V(x(n), y(p.upper)), { stroke: blue, 'stroke-width': 2 });
+    B.mark(V(x(n), y(p.s)), gold);
+    B.mark(V(x(n), y(p.upper)), blue);
+    B.note('原和 $S_n$', gold);
+    B.note('上界 $1/2+1/(2n)$', blue);
+    B.note('下界 $1/2$', green);
+    value(`$S_{${n}}\\approx ${p.s.toFixed(4)}$`);
+    width(`$U_{${n}}-L_{${n}}=1/${2 * n}$`);
+    conclusion(n === 1 ? '$S_1=1/2$，第一个点恰在下界上。' :
+      '$0<S_n-1/2<1/(2n)$。当 $n$ 增大，两界间距趋于零。');
+  };
+  B.render();
+  return B;
+}
 
-  B.hint('放大列逐项包住原列、上下两线夹住和、舍去非负项得下界 —— 三法都别漏等号检验');
+export function createBinomial(root) {
+  const B = new InequalityBoard(root, 616, 255);
+  let n = 5, m = 1;
+  nSlider(B, 1, n, v => {
+    n = v;
+    m = Math.min(m, n);
+    order.max = n;
+    order.sync(m);
+    B.render();
+  });
+  const order = B.slider('保留至 m 次', 1, 20, 1, m, v => { m = v; B.render(); }, 'm', (_, v) => `$m=${v}$`);
+  order.max = n;
+  const retained = B.readout('保留项之和'), omitted = B.readout('余项之和', 'gold'), conclusion = B.chipM('下界');
+  const x = v => left + v / 2.8 * span;
+  B.renderFn = () => {
+    let total = 0, partial = 0, rest = 0, term = 1;
+    label(B, left, 34, '完整展开', guide, 'start');
+    label(B, left, 119, `保留到 $k=${m}$`, guide, 'start');
+    for (let k = 0; k <= n; k++) {
+      if (k > 0) term *= (n - k + 1) / (k * n);
+      const next = total + term;
+      const included = k <= m;
+      const color = included ? gold : blue;
+      const opacity = k % 2 ? .54 : .83;
+      bar(B, x(total), x(next), 57, 26, color, opacity);
+      if (included) {
+        bar(B, x(total), x(next), 145, 26, color, opacity);
+        partial = next;
+      } else rest += term;
+      total = next;
+    }
+    B.seg(V(x(partial), 85), V(x(partial), 145), { stroke: gold, 'stroke-dasharray': '4 4' });
+    B.mark(V(x(partial), 158), gold);
+    B.seg(V(left, 197), V(x(2.8), 197), { stroke: guide, 'stroke-width': 1 });
+    for (const tick of [0, 1, 2, 2.5]) label(B, x(tick), 219, `$${tick}$`, guide);
+    const restTex = rest.toPrecision(4).split('e');
+    retained(`$T_{${m}}\\approx ${partial.toFixed(4)}$`);
+    omitted(rest === 0 ? '$R_m=0$' : `$R_m\\approx ${restTex[0]}${restTex.length > 1 ? '\\times10^{' + Number(restTex[1]) + '}' : ''}$`);
+    conclusion(m === n ? '所有项均已保留，下界取等。' :
+      `舍去的 ${n - m} 项都为正，$T_{${m}}<(1+1/n)^n$。`);
+  };
   B.render();
   return B;
 }

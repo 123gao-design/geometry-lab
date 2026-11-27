@@ -1,9 +1,9 @@
 <template>
   <ChPage :cur="4" no="Y4" base="/sets/y" :chapters="Y_CHAPTERS"
-    title="数轴上的运算：解集实战" sub="不等式的解是区间，区间是集合 —— 于是「解不等式组」就是「对集合做交并补」。上下双轴实时核验：交取公共、并取覆盖、补挖两端；端点的实心与空心由「能不能取等」决定，四端开关一拨，开闭规则直接现形。"
+    title="数轴上的运算" sub="不等式的解是区间，区间是集合 —— 于是「解不等式组」就是「对集合做交并补」。上下双轴实时核验：交取公共、并取覆盖、补挖两端；端点的实心与空心由「能不能取等」决定，四端开关一拨，开闭规则直接现形。"
     :toc="[{ id: 'y4-real', t: '解集：区间的集合身份' }, { id: 'y4-gap', t: '断口判据与端点开闭' }, { id: 'y4-pit', t: '取等与书写' }]">
     <div class="note good" id="y4-law"><strong>区间即集合</strong>：<Katex tex="[a,b)=\{x\mid a\le x<b\}" />，闭端实心（取得到）、开端空心（取不到）。<strong>运算口诀</strong>：交取公共 —— 两端各取靠内端、同点重合时「开优先」；并取覆盖 —— 重叠或闭端相触即连成一段，<strong>两端都开</strong>的触点才留断口；补 = 在 U 里挖去 A，剩余各段端点开闭对调（闭变开、开变闭）。<strong>不等式组</strong>的解集 = 各不等式解集的交集。</div>
-    <ConicFigure number="Y4" title="数轴上的区间运算" head="bottom" :factory="createAxis">
+    <ConicFigure number="Y4" title="数轴上的运算" head="bottom" :factory="createAxis">
       上轴摆 <Katex tex="A=[-3.5,\ 1.5)" />、<Katex tex="B=(0.5,\ 4]" />，四个把手拖位置、四个开关切端点开闭 —— 下轴实时输出 <Katex tex="A\cap B" /> / <Katex tex="A\cup B" /> / <Katex tex="\complement_U A" />；金探针 <Katex tex="x" /> 顺带验证「这一点在不在结果里」，断口只在两端都开时留下。
     </ConicFigure>
 
@@ -32,3 +32,23 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createAxis } from '../../../boards/sets/ops/axisops.js';
 import { Y_CHAPTERS } from './ynav.js';
 </script>
+
+<style>
+/* 图 Y4：读数直接贴在图下，不画那条横线；A、B、结果、探针并排，判读独占一行 */
+.board.atlas-board.axisops-board > .ctrl.chips {
+  border-top: 0 !important;
+  padding-top: 2px !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.board.atlas-board.axisops-board > .ctrl.chips .chip:last-child { grid-column: 1 / -1; }
+/* 判读框用红色提示例外，读数沿用三角排布的状态色。 */
+.board.atlas-board.axisops-board > .ctrl.chips .chip.warn:not([data-reading]) {
+  border-color: var(--pj-red);
+  border-inline-start-color: var(--pj-red);
+  color: var(--pj-red);
+  background: color-mix(in srgb, var(--pj-red) 10%, transparent);
+}
+@container set-readouts (max-width: 540px) {
+  .board.axisops-board > .ctrl.chips .chip[data-reading] { grid-column: span 2; }
+}
+</style>

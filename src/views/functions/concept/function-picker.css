@@ -1,0 +1,104 @@
+.board.fn-board.fn-picker-board {
+  display: grid;
+  --pair-picker-width: 262px;
+  grid-template-columns: minmax(0, 1fr) min(100%, var(--pair-picker-width));
+}
+.fn-board.fn-picker-board > .fn-board-guide:empty { display: none; }
+.fn-board.fn-picker-board > .pair-picker {
+  --domain-width: 58px;
+  box-sizing: border-box;
+  width: min(100%, var(--pair-picker-width));
+  justify-self: center;
+  grid-column: 1 / -1;
+  grid-row: 4;
+  min-width: 0;
+  padding: 4px var(--fn-margin) 6px;
+  color: var(--pj-ink);
+  font-size: 16px;
+}
+.pair-picker .pair-head {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 9px 4px;
+  color: var(--pj-guide);
+  font-size: 14px;
+}
+.pair-head span:last-child { width: var(--domain-width); text-align: center; }
+.pair-picker .pair-list { display: grid; grid-auto-rows: 1fr; gap: 4px; }
+.pair-picker .pair-choice {
+  display: grid;
+  grid-template-columns: 5px 1em minmax(0, 1fr) var(--domain-width);
+  grid-template-rows: repeat(2, auto);
+  align-items: center;
+  gap: 0 4px;
+  width: 100%;
+  padding: 3px 6px;
+  border: 1px solid var(--pj-axis);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--pj-paper) 76%, transparent);
+  color: var(--pj-ink);
+  font: inherit;
+  line-height: 1.35;
+  text-align: start;
+  cursor: pointer;
+}
+.pair-choice::before {
+  content: '';
+  grid-column: 1; grid-row: 1 / 3;
+  width: 5px; height: 5px; border-radius: 50%;
+}
+.pair-choice[aria-pressed="true"] {
+  border-color: var(--pj-green);
+  background: color-mix(in srgb, var(--pj-green) 9%, var(--pj-paper));
+}
+.pair-choice[aria-pressed="true"]::before {
+  background: var(--pj-green);
+  box-shadow: 0 0 4px 1px color-mix(in srgb, var(--pj-green) 50%, transparent);
+}
+.pair-choice:hover { border-color: var(--pj-rule); }
+.pair-choice:focus-visible { outline: 2px solid var(--pj-accent); outline-offset: 1px; }
+.pair-number { grid-column: 2; grid-row: 1 / 3; color: var(--pj-guide); }
+.pair-formula { grid-column: 3; display: flex; align-items: center; gap: 4px; }
+.pair-formula::before { content: ''; flex: 0 0 10px; border-top: 2px solid var(--pj-blue); }
+.pair-formula.pair-g::before { border-top: 2px dashed var(--pj-orange); }
+.pair-domain { grid-column: 4; text-align: center; color: var(--pj-guide); }
+.pair-choice .katex { font-size: 1em; }
+.board.fn-board.fn-picker-board > .ctrl.chips {
+  grid-row: 5;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.board.fn-board.fn-picker-board.bd-float { overflow-y: auto; }
+.board.fn-board.fn-picker-board.bd-float > svg { min-height: 140px; }
+@container fn-board (min-width: 610px) {
+  .fn-board.fn-picker-board > svg { grid-column: 1; grid-row: 3; }
+  .fn-board.fn-picker-board > .pair-picker { grid-column: 2; grid-row: 3; align-self: center; padding-inline-start: 4px; }
+  .board.fn-board.fn-picker-board > .ctrl.chips { grid-row: 4; }
+}
+@container fn-board (max-width: 480px) {
+  .board.fn-board.fn-picker-board > .ctrl.chips { grid-template-columns: minmax(0, 1fr); }
+}
+.board.fn-board.fn-simple-picker { --pair-picker-width: 172px; }
+.fn-simple-picker.fn-board .chip > span { overflow: visible; }
+.board.fn-board.fn-picker-board.bd-float > .ctrl.chips {
+  max-height: none;
+  overflow: visible;
+}
+.fn-simple-picker .pair-choice {
+  grid-template-columns: 5px 1em minmax(0, 1fr);
+  grid-template-rows: auto;
+  min-height: 40px;
+  column-gap: 7px;
+}
+.fn-simple-picker .pair-choice::before, .fn-simple-picker .pair-number { grid-row: 1; }
+@container fn-board (max-width: 609px) {
+  .fn-board.fn-simple-picker > .pair-picker { width: min(100%, 350px); }
+  .fn-simple-picker .pair-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container fn-board (max-width: 300px) {
+  .fn-board.fn-simple-picker > .pair-picker { width: min(100%, var(--pair-picker-width)); }
+  .fn-simple-picker .pair-list { grid-template-columns: 1fr; }
+}
+@container fn-board (max-width: 609px) {
+  .fn-board:is(.piecewise, .mono-read, .bound-wall) > .pair-picker { width: min(100%, var(--pair-picker-width)); }
+  :is(.piecewise, .mono-read, .bound-wall) .pair-list { grid-template-columns: 1fr; }
+}

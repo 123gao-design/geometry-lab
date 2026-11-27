@@ -1,55 +1,66 @@
-/* 图 E4 · 指数函数：y=a^x —— 单栏全景（用户拍板：基本初等函数不画导函数图，斜率走徽章；2026-11-06 改画投影垂线）。
-   指数的特征性质：斜率与函数值成正比（f′/f=ln a 恒定）—— 探针在两轴上的竖直/水平投影直读坐标，f′ 读数与函数值同步。
-   增速方向由底数定：a>1 递增且增速递增，0<a<1 递减且 |f′| 趋于 0，a=1 是常数 y=1 —— 指数函数排除（底数要求 a>0 且 a≠1）。
-   指数 y 方向与 x 量纲不同（x 走 7 个单位 y 要走 10 个）：按 C4 邮资/个税先例各用比例尺（mapFit）。
-   恒过 (0,1)，渐近线 y=0。 */
-import { mk, V, fmt } from '../../../lib/board.js';
+import { V, fmt } from '../../../lib/board.js';
 import { FunctionBoard } from '../function-board.js';
+import { presetRow } from '../properties/preset-row.js';
+
+const presets = [
+  { a: 2, name: '翻倍增长', short: '翻倍', formula: '$a=2$', tone: '#67e8f9', dash: '7 4' },
+  { a: .5, name: '逐次减半', short: '减半', formula: '$a=\\tfrac12$', tone: '#c084fc', dash: '3 4' },
+  { a: 3, name: '三倍增长', short: '三倍', formula: '$a=3$', tone: '#ff9e4a', dash: '10 4 2 4' },
+  { a: 1, name: '常值边界', short: '常值', formula: '$a=1$' },
+];
+const baseTex = a => a === .5 ? '\\left(\\tfrac12\\right)' : String(a);
 
 export function createBoard(root) {
-  const W = 860, H = 480;
-  const B = new FunctionBoard(root, W, H);
-
-  const st = { a: 2, x: 0, grid: true, labs: true, asym: true };
-  /** 各向比例尺取景（量纲不同的先例 C4）：rect 内完整看到 [xa,xb]×[ya,yb]，x/y 各用各的单位长 */
-  const M = B.mapFit(-2.6, 3.9, -1.2, 9.6, [0, 0, W, H]);
-  const f = x => Math.pow(st.a, x), fp = x => Math.log(st.a) * Math.pow(st.a, x);
-
-  const cA = B.chipM('底数'), cF = B.chipM('函数值'), cD = B.chipM('斜率 f′'), cV = B.chipM('判定');
+  const B = new FunctionBoard(root, 860, 480);
+  root.classList.add('fn-study-board');
+  const st = { a: 2, x: 0, grid: true, labs: true, asym: true, compare: true };
+  const cA = B.readout('当前曲线'), cF = B.readout('探针读数'), cD = B.readout('切线斜率', 'gold');
+  const cR = B.readout('相对变化率', 'mint'), cV = B.chipM('曲线高低');
 
   B.renderFn = () => {
-    const a = st.a, x0 = st.x, y0 = f(x0), d0 = fp(x0);
+    const { a, x } = st, y = a ** x, rate = Math.log(a), ink = B.diagramColors;
+    // 同一探针位置下，各个底数共用量程，移动底数时不会因画面缩放而误判增速。
+    const top = Math.max(7, 3 ** x, .3 ** x);
+    const M = B.mapFit(-4, 4, -.12 * top, top);
+    const point = (u, v) => V(M.px(u), M.py(v));
     B.grid({ ...M, grid: st.grid, labs: st.labs });
-    if (st.asym) B.asym(M, [{ h: 0 }]);
-    let d = '', pen = false;
-    for (let x = M.X0 - 0.2; x <= M.X1 + 0.2; x += 0.03) {
-      const y = f(x);
-      if (y > M.Y0 && y < M.Y1) { d += (pen ? 'L' : 'M') + M.px(x).toFixed(1) + ' ' + M.py(y).toFixed(1) + ' '; pen = true; continue; }
-      pen = false;
+    if (st.asym && a !== 1) B.asym(M, [{ h: 0 }]);
+    const anchors = [0, 1, x];
+    B.note(`当前 $y=${a === 1 ? '1' : baseTex(a) + '^x'}$`, '#5cadff');
+    if (st.compare) {
+      for (const ref of presets) {
+        if (!ref.dash || ref.a === a) continue;
+        B.plot(u => ref.a ** u, M, { anchors, stroke: ref.tone, 'stroke-width': 1.9,
+          'stroke-dasharray': ref.dash, 'stroke-opacity': .78 });
+        B.dot(point(1, ref.a), 2.6, { fill: ref.tone });
+        B.note(`$y=${baseTex(ref.a)}^x$`, ref.tone);
+      }
     }
-    mk('path', { d, fill: 'none', stroke: '#5cadff', 'stroke-width': 2.2 }, B.dyn);
-    B.dot(V(M.px(0), M.py(1)), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });   // 恒过 (0,1)
-    B.note(`$y=${a === 0.5 ? '\\dfrac{1}{2}' : a}^{x}$（$a=${fmt(a, 2)}$）`, '#93a1b5');
-    // 探针：向 x 轴、y 轴各作一条投影垂线（虚线直读坐标）—— 不画斜切线（2026-11-06 用户指定）
-    B.probe(V(x0, y0), M);
-    // 徽章
-    cA(`$a=${fmt(a, 2)}$ · ${a > 1 ? '递增' : a < 1 ? '递减' : '常值情形'}`, a === 1 ? 'warn' : '');
-    cF(`$f(${fmt(x0, 2)})=${fmt(y0, 3)}$`, '');
-    cD(`$f'(${fmt(x0, 2)})=${fmt(d0, 3)}$ —— $f'/f=\\ln a=${fmt(Math.log(a), 3)}$：斜率与函数值成正比`, '');
-    if (a === 1) cV('a=1：退化为常数 y=1 —— 不属指数函数（要求 a>0 且 a≠1）', 'warn');
-    else if (a > 1) cV('导数为正，随 x 增大而增大。', 'ok');
-    else cV('导数为负，随 x 增大而趋于 0。函数值也趋于 0。');
+    B.plot(u => a ** u, M, { anchors, stroke: ink.blue, 'stroke-width': 2.8 });
+    const projection = { stroke: ink.orange, 'stroke-width': 1.1, 'stroke-dasharray': '3 5', 'stroke-opacity': .75 };
+    B.seg(point(x, 0), point(x, y), projection);
+    B.seg(point(0, y), point(x, y), projection);
+    B.glowPoints([[point(0, 1), ink.gold], [point(x, y), ink.orange], [point(1, a), ink.blue]]);
+    cA(`$a=${fmt(a, 2)}$，${a === 1 ? '常值函数' : a > 1 ? '严格递增' : '严格递减'}`, a === 1 ? 'warn' : '');
+    cF(`$x=${fmt(x, 2)}$，$f(x)\\approx${fmt(y, 3)}$`);
+    cD(`$f'(x)\\approx${fmt(y * rate, 3)}$`);
+    cR(`$\\tfrac{f'(x)}{f(x)}=\\ln a\\approx${fmt(rate, 3)}$`);
+    cV(x === 0 ? '$x=0$ 时，各底数的曲线都经过 $(0,1)$。' :
+      x > 0 ? '在 $x>0$ 处，底数越大，曲线越高。' : '在 $x<0$ 处，底数越大，曲线越低。');
   };
-
-  const setA = v => { st.a = v; slA.sync(v); B.render(); };
-  B.btnM('① $a=2$ 翻倍', () => setA(2), { pri: true, on: true });
-  B.btnM('② $a=\\dfrac{1}{2}$ 减半', () => setA(0.5));
-  B.btnM('③ $a=3$ 更陡', () => setA(3));
-  B.btnM('④ $a=1$ 排除反例', () => setA(1));
-  const slA = B.slider('底数 a', 0.3, 3, 0.05, 2, v => { st.a = v; B.render(); });
-  B.slider('探针 x', -2.3, 3.8, 0.05, 0, v => { st.x = v; B.render(); });
+  const slA = B.slider('底数 a', .3, 3, .05, st.a, v => {
+    st.a = v;
+    setSelected(presets.findIndex(p => p.a === v));
+    B.render();
+  }, undefined, v => `底数 $a=${v}$`);
+  B.slider('探针 x', -2.3, 3.8, .05, st.x, v => { st.x = v; B.render(); }, undefined, v => `探针 $x=${v}$`);
   B.graphToggles(st);
-  B.hint("比较底数小于 1 和大于 1 时的导数符号。");
+  B.toggleBtn('对照曲线', st.compare, on => { st.compare = on; B.render(); });
+  const setSelected = presetRow(B.ctrl, '选择指数函数底数', presets, i => {
+    st.a = presets[i].a;
+    slA.sync(st.a);
+    B.render();
+  });
   B.render();
   return B;
 }

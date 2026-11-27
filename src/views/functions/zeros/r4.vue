@@ -1,12 +1,12 @@
 <template>
   <ChPage :cur="4" no="R4" base="/functions/r" :chapters="R_CHAPTERS"
-    title="牛顿法与弦截：切线一步到位" sub="牛顿法用切线求下一个近似。弦截法用两个近似点之间的割线代替切线。"
+    title="牛顿法与弦截" sub="牛顿法用切线求下一个近似。弦截法用两个近似点之间的割线代替切线。"
     :toc="[{ id: 'r4-der', t: '切线截距的推导（图 R4）' }, { id: 'r4-sp', t: '速度：对数 vs 平方' }, { id: 'r4-fail', t: '失效情形与实战组合' }]">
     <div class="note good" id="r4-der"><strong>牛顿法</strong>：在零点附近取初值 <Katex tex="x_0" />，在 <Katex tex="(x_0,\,f(x_0))" /> 处作切线，用切线与 x 轴的交点 <Katex tex="x_1" /> 作下一个迭代点；再在 <Katex tex="(x_1,\,f(x_1))" /> 作切线……循环往复。切线方程 <Katex tex="y=f(x_0)+f'(x_0)(x-x_0)" />，令 <Katex tex="y=0" /> 解出交点，即得迭代式 —— 这是「<strong>以直代曲</strong>」思想的第一次直接应用：曲线难解，切线好解，就一步一步用切线逼近零点。</div>
     <Katex tex="x_{n+1}\ =\ x_n-\dfrac{f(x_n)}{f'(x_n)}" display />
     <div class="board-wrap">
       <BoardMount :factory="createNewton" />
-      <div class="cap">图 R4 · <b>牛顿法与弦截法</b>。比较两种迭代的路径。观察平方根示例收敛，再切到初值为 0 的循环反例。</div>
+      <div class="cap">图 R4 · <b>牛顿法与弦截法</b>。分别点「切线一步」和「弦截一步」。沿实线或虚线找到横轴截距，再竖直回到曲线，这就是下一步的起点。先比较两法逼近 <Katex tex="\sqrt2" /> 的误差，再切到第三例观察牛顿迭代在 <Katex tex="0" /> 与 <Katex tex="1" /> 之间往返。</div>
     </div>
 
     <h3 class="sec" id="r4-sp">速度：对数 vs 平方</h3>
@@ -32,3 +32,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createNewton } from '../../../boards/functions/zeros/newton.js';
 import { R_CHAPTERS } from './znav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

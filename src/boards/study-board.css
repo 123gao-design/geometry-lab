@@ -1,0 +1,26 @@
+.study-board .ctrl > .fn-preset-row { order: 2; }
+.study-board .ctrl > .slider { order: -1; }
+.board.study-board .chips .chip { align-items: baseline; }
+.board.study-board .chip:has(.katex) > span { line-height: 1.6; }
+@container fn-board (max-width: 540px) {
+  .board.study-board .chips .chip { flex-wrap: wrap; row-gap: 0; }
+  .study-board .fn-preset-row:has(> :nth-child(6)) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@container fn-board (max-width: 600px) {
+  .trig-board .fn-preset-row:has(> :nth-child(7)) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.board.trig-board .chips > .chip:last-child { grid-column: 1 / -1; }
+
+@container fn-board (min-width: 601px) {
+  .trig-board .fn-preset-row {
+    grid-template-columns: repeat(var(--preset-count), minmax(0, 10.5rem));
+  }
+}
+
+@container fn-board (min-width: 781px) {
+  .board.trig-board .chips:has(> .chip:nth-child(4):last-child) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

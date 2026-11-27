@@ -5,11 +5,11 @@
     <div class="note good" id="e3-family"><strong>幂函数</strong>：<Katex tex="y=x^{\alpha}" />（形如「底是自变量、指数是常数」）。全族无论 <Katex tex="\alpha" /> 取多少，都<strong>恒过 <Katex tex="(1,1)" /></strong>；<Katex tex="\alpha>0" /> 的还过 <Katex tex="(0,0)" />。按 <Katex tex="\alpha" /> 分五档：<Katex tex="\alpha>1" /> 抛物线型（越走越陡）、<Katex tex="\alpha=1" /> 直线（<Katex tex="45^\circ" />）、<Katex tex="0<\alpha<1" /> 根式型（起步陡、越走越缓）、<Katex tex="\alpha=0" /> 常数 <Katex tex="y=1" />（<Katex tex="x\ne 0" />）、<Katex tex="\alpha<0" /> 双曲线型（x 越大越贴 0，双渐近线 <Katex tex="x=0" />、<Katex tex="y=0" />）。在 (0,+∞) 上：<Katex tex="\alpha>0" /> 全体递增、<Katex tex="\alpha<0" /> 递减。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFamily" />
-      <div class="cap">图 E3 · <b>幂函数曲线族</b>。拖动指数，观察曲线都经过 (1,1)。选择立方根和平方根，对比负半轴上是否有定义。</div>
+      <div class="cap">图 E3 · <b>幂函数曲线族</b>。拖动指数，观察曲线怎样经过公共点 <Katex tex="(1,1)" />。滑块每档改变 <Katex tex="1/12" />，读数保留两位小数，图例给出精确指数。切换平方根和立方根，比较负半轴上有没有曲线。</div>
     </div>
 
     <h3 class="sec" id="e3-neg">负底数：定义域的首要限制</h3>
-    <p>幂函数的定义域由「负底数能不能开方」决定：<strong>整数指数</strong>（如 <Katex tex="\alpha=2,\ 3,\ -1" />）对一切 <Katex tex="x" /> 都有意义（<Katex tex="(-2)^3=-8" /> 合法）；<strong>分母为奇数的最简分数指数</strong>（如 <Katex tex="\alpha=\tfrac{1}{3}" />）也可以（<Katex tex="(-8)^{1/3}=-2" />，立方根对负数有定义）；其余 —— <Katex tex="\alpha=\tfrac{1}{2}" />（平方根）、<Katex tex="\alpha=-\tfrac{1}{2}" />、以及一切无理指数 —— 在 <Katex tex="x<0" /> 处<strong>无定义</strong>（<Katex tex="(-4)^{1/2}" /> 没有实数答案）。图 E3 拖 <Katex tex="\alpha" /> 走过 0.5 与 <Katex tex="\tfrac{1}{3}" />，看左半轴一支有一支无。这又是 C3 的限制清单在指数位上的重演：定义域不对称，奇偶性（S3）便不再适用。</p>
+    <p>幂函数的定义域由「负底数能不能开方」决定：<strong>整数指数</strong>（如 <Katex tex="\alpha=2,\ 3,\ -1" />）允许负底数，负整数指数还要求 <Katex tex="x\ne 0" />（<Katex tex="(-2)^3=-8" /> 合法）；<strong>分母为奇数的最简分数指数</strong>（如 <Katex tex="\alpha=\tfrac{1}{3}" />）也可以（<Katex tex="(-8)^{1/3}=-2" />，立方根对负数有定义）；其余 —— <Katex tex="\alpha=\tfrac{1}{2}" />（平方根）、<Katex tex="\alpha=-\tfrac{1}{2}" />、以及一切无理指数 —— 在 <Katex tex="x<0" /> 处<strong>无定义</strong>（<Katex tex="(-4)^{1/2}" /> 没有实数答案）。图 E3 切换 <Katex tex="\tfrac12" /> 与 <Katex tex="\tfrac{1}{3}" />，看左半轴一支有一支无。这又是 C3 的限制清单在指数位上的重演：定义域不对称，奇偶性（S3）便不再适用。</p>
 
     <h3 class="sec" id="e3-cmp">(1,1) 交点：曲线高低的次序规律</h3>
     <p>全族都过 (1,1)，于是<strong>交点两侧次序相反</strong>：当 0&lt;x&lt;1 时，α 越大曲线越<strong>低</strong>（如 <Katex tex="0.5^{2.5} &lt; 0.5^2 &lt; \sqrt{0.5}" />）；当 x&gt;1 时，α 越大越<strong>高</strong>（<Katex tex="3^{2.5} &gt; 3^2 &gt; \sqrt{3}" />）。图 E3 的分色正是为了看清曲线族如何从 (1,1) 向左右两侧展开。比较大小题因此有了通用画法：把两个函数画进同一张图比次序 —— 这比死记「指数大者大」安全得多，因为那句口诀在交点左侧恰好反序。</p>
@@ -31,3 +31,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createFamily } from '../../../boards/functions/elementary/powerfamily.js';
 import { E_CHAPTERS } from './enav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

@@ -9,7 +9,7 @@
     </div>
 
     <h3 class="sec" id="v3-crit">驻点与变号判据</h3>
-    <p>「<Katex tex="f'=0"/>」只是<strong>入围条件</strong>：极值处切线水平（费马引理），但水平切线不保证得奖。图 V3 的第二原图 <Katex tex="f=x^3" /> 是经典反例：<Katex tex="f'=3x^2\ge 0" />，在 <Katex tex="x=0"/> 清零但两侧同号 —— 曲线在这里只是「歇了口气」继续上升，驻点不是极值。<strong>判据是变号，不是清零</strong>。第三原图 <Katex tex="f=x^4-2x^2" /> 给出更丰盛的场面：三个驻点两极小夹一极大，金点把「左减右增→极小」「左增右减→极大」的读法逐个标在图上。</p>
+    <p>「<Katex tex="f'=0"/>」只是<strong>入围条件</strong>：极值处切线水平（费马引理），但水平切线不保证得奖。图 V3 的第二原图 <Katex tex="f=x^3" /> 是经典反例：<Katex tex="f'=3x^2\ge 0" />，在 <Katex tex="x=0"/> 清零但两侧同号 —— 曲线在这里只是「歇了口气」继续上升，驻点不是极值。<strong>判据是变号，不是清零</strong>。第三原图 <Katex tex="f=x^4-2x^2" /> 给出更丰盛的场面：三个驻点两极小夹一极大，把区间设为 <Katex tex="[-1,1]" />，可见两端同时取得最小值 <Katex tex="-1" />，中间的驻点取得最大值 <Katex tex="0" />。</p>
     <p>流程收成三步：解 <Katex tex="f'=0"/> 得到驻点列表 → 相邻驻点之间看 <Katex tex="f'"/> 符号（染色的曲线直接给答案）→ 列单调表读出极大极小。S2 建立的「<Katex tex="f'"/> 符号是判据」在这里全程适用。</p>
 
     <h3 class="sec" id="v3-glob">闭区间最值：候选点比较</h3>
@@ -35,3 +35,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createExt } from '../../../boards/functions/calculus/extremum.js';
 import { V_CHAPTERS } from './vnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

@@ -6,7 +6,7 @@
     <div class="note good" id="c2-elm"><strong>同一函数判据</strong>：两个函数是同一函数 <span class="term">(identical functions)</span>，当且仅当<strong>定义域相同</strong>且<strong>对应法则（化简后）相同</strong>。记变量的字母无关紧要 —— <Katex tex="f(x)=x^2" /> 与 <Katex tex="g(t)=t^2" /> 是同一个函数，字母只是占位符。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSameFn" />
-      <div class="cap">图 C2 · <b>同一函数的判定</b>。拖动探针经过空心点，核对两个表达式在同一输入处是否都有定义、取值是否相同。</div>
+      <div class="cap">图 C2 · <b>同一函数的判定</b>。在同一输入处比较两个函数的值和定义域。选择②，把探针移到 <Katex tex="x=0" />，可看到两个函数在这里的差别。</div>
     </div>
 
     <h3 class="sec" id="c2-same">三大伪装陷阱</h3>
@@ -34,3 +34,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createSameFn } from '../../../boards/functions/concept/samefn.js';
 import { C_CHAPTERS } from './cnav.js';
 </script>
+
+<style src="./function-picker.css"></style>

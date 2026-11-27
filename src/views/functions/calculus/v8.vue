@@ -35,3 +35,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createRie } from '../../../boards/functions/calculus/riemann.js';
 import { V_CHAPTERS } from './vnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

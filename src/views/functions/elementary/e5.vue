@@ -5,7 +5,7 @@
     <div class="note good" id="e5-def"><strong>对数函数</strong>：<Katex tex="y=\log_a x\ (a&gt;0,\ a\ne 1)" />，当 <Katex tex="a^y=x" /> 时称 y 为「以 a 为底 x 的对数」。性质五条（与指数函数的五条性质整列互换）：定义域 <Katex tex="(0,+\infty)" />、值域 <Katex tex="\mathbb{R}" />、恒过 (1,0)、a&gt;1 时递增 / 0&lt;a&lt;1 时递减、y 轴（x=0）是竖直渐近线。<strong>真数必须为正</strong> —— 零和负数取不了对数，这是定义域的首要限制。</div>
     <div class="board-wrap">
       <BoardMount :factory="createSlow" />
-      <div class="cap">图 E5 · <b>对数函数</b>。切换底数并移动探针。对照两种底数下导数的符号及其向 0 变化的方向。</div>
+      <div class="cap">图 E5 · <b>对数函数</b>。实线随底数滑块变化，虚线用于对照。先把探针放在 <Katex tex="x=2" />，比较 <Katex tex="\log_2 x" /> 与 <Katex tex="\ln x" /> 的高低；再移到 <Katex tex="x=1/2" />，观察次序如何反转。切换到倒数底，还可以看到 <Katex tex="\log_{1/2} x=-\log_2 x" /> 的两条曲线关于横轴对称。</div>
     </div>
 
     <h3 class="sec" id="e5-slow">慢的定量：f′ 递减与「慢过一切幂」</h3>
@@ -18,7 +18,7 @@
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">
         <li><strong>提示一：真数必须 <Katex tex="&gt;0" />。</strong><Katex tex="\log_a x" /> 在 <Katex tex="x\le 0" /> 处无定义 —— C3 的分母限制、R1 的 <Katex tex="1/x" /> 先例，在对数函数上复发。</li>
-        <li><strong>提示二：底数要求 <Katex tex="0<a" /> 且 <Katex tex="a\ne 1" />。</strong>底为 1 时「1 的几次方都是 1」，无法把 x 记成 <Katex tex="1^y" />。</li>
+        <li><strong>提示二：底数要求 <Katex tex="0<a" /> 且 <Katex tex="a\ne 1" />。</strong>因为 <Katex tex="1^y=1" />，真数等于 1 时指数无法唯一确定，其他真数则没有对应的实数指数。</li>
         <li><strong>提示三：把运算律当分配律。</strong><Katex tex="\log_a(M+N)\ne\log_a M+\log_a N" /> —— 对数管乘除不管加减；<Katex tex="\log_a x^2" /> 是 <Katex tex="2\log_a|x|" />（真数展开要带绝对值），写成 <Katex tex="2\log_a x" /> 会凭空丢掉 <Katex tex="x&lt;0" /> 的解。</li>
       </ul>
     </div>
@@ -32,3 +32,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createSlow } from '../../../boards/functions/elementary/logslow.js';
 import { E_CHAPTERS } from './enav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

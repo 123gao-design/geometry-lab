@@ -5,7 +5,7 @@
     <div class="note good" id="p1-law">作差定义：<Katex tex="a>b\iff a-b>0" />。可加性：<Katex tex="a>b\iff a+c>b+c" />；可乘性：<Katex tex="a>b,\ c>0\Rightarrow ac>bc" />、<Katex tex="a>b,\ c<0\Rightarrow ac<bc" />；传递性：<Katex tex="a>b,\ b>c\Rightarrow a>c" /> —— 加减与传递无条件成立，乘除必须先定 c 的符号。</div>
     <div class="board-wrap">
       <BoardMount :factory="createKO" />
-      <div class="cap">图 性1 · <b>保序变形</b>：金点 a、蓝点 b 是原位置，橙点 a′、红点 b′ 是变形后的位置；选四种变形、拖 c 或点 ⏩ 让 c 扫过零。看点：同加减时两点整体平移、间距不变；同乘负数时两点按比例穿过原点、左右互换，方向当场反转；c=0 时不等号退化为等号。</div>
+      <div class="cap">图 性1 · <b>保序变形</b> · 拖动 <Katex tex="c"/>，观察变形前后两点的左右次序。试着让乘数从正变负，再换成除法，比较两种运算在零处的读数。</div>
     </div>
 
     <h3 class="sec" id="p1-src">性质的来源：作差定义</h3>

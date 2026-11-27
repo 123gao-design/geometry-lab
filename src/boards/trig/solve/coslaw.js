@@ -4,24 +4,78 @@
    锐角负修正（c²<a²+b²）、直角零修正（勾股）、钝角正修正（c²>a²+b²）。
    左栏版式：基准线做成带刻度与箭头的量轴；投影 a·cosγ 走一条紫色有向尺寸线（钝角时箭头掉头），
    水平直角边 |b−a·cosγ| 走绿色端标尺寸线，高 a·sinγ 走橙色虚线；三项读数沉到底部一行色标。
-   右栏是一条按横线分段的读数板：链条式推导 → 金色结论带 → 两根对比条与缺口花括号 → 实测核对 →
-   arccos 反演 → 锐直钝三态指示。坐标：C=(0,0)，S=33 px/单位。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+   右栏沿推导顺序对照两根横条、反求夹角，最后核对实测结果。 */
+import { LegendProofBoard } from '../proof-board.js';
+import { hEl, mk, texMix, V, fmt } from '../../../lib/board.js';
+import '../unit/angle-readings.css';
+import './theorem-frames.css';
+import frameCSS from './theorem-frames.css?inline';
+import './coslaw.css';
+import panelCSS from './coslaw.css?inline';
+import infoCSS from '../../info-readings.css?inline';
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 520);
+  const B = new LegendProofBoard(root, 512, 352, 64);
+  root.classList.add('trig-side-board', 'trig-theorem-board', 'cos-law-board');
+  B.proof = hEl('section', { class: 'trig-theorem-panel cos-law-panel', 'aria-label': '投影分解与修正项' });
+  root.insertBefore(B.proof, B.chipRow);
+  B.exportCheckHeight = 130;
+  B.exportSize = { width: 854, height: B.h + B.exportCheckHeight };
+  B.proofCSS = infoCSS + frameCSS + panelCSS;
+  B.groupReadings('公式与数值');
   const st = { a: 4, b: 5, deg: 60, proj: true, labs: true };
-  const S = 33, C0 = V(248, 322);
-  const PR = [532, 12, 312, 486];
-  const X = x => C0.x + S * x, Y = y => C0.y - S * y;
-  const cFix = B.chipM('修正项'), cInv = B.chipM('反演 γ');
-  const aSl = B.slider('边 a', 2, 7, 0.05, st.a, v => { st.a = v; B.render(); }, 'a');
-  const bSl = B.slider('边 b', 2, 7, 0.05, st.b, v => { st.b = v; B.render(); }, 'b');
-  const gSl = B.slider('夹角 γ°', 20, 160, 5, st.deg, v => { st.deg = v; B.render(); }, 'g');
-  const pre = (a, b, d) => () => { st.a = a; st.b = b; st.deg = d; aSl.sync(a); bSl.sync(b); gSl.sync(d); B.render(); };
-  B.btnM('① 勾股 $\\gamma=90^\\circ$', pre(4, 5, 90));
-  B.btnM('② 锐角 $\\gamma=60^\\circ$', pre(4, 5, 60));
-  B.btnM('③ 钝角 $\\gamma=120^\\circ$', pre(4, 5, 120));
+  const cFix = B.readout('修正项', 'violet'), cInv = B.readout('反演 $\\gamma$', 'gold');
+  const verdict = B.chipM('判读');
+  const title = hEl('h4', {}, B.proof);
+  title.textContent = '投影分解与修正项';
+  const formula = (parent, className, tex) => {
+    const el = hEl('div', { class: className }, parent);
+    el.innerHTML = texMix(tex);
+    return el;
+  };
+  formula(B.proof, 'cos-law-expansion', '$c^2=(b-a\\cos\\gamma)^2+(a\\sin\\gamma)^2$');
+  formula(B.proof, 'cos-law-result', '$c^2=a^2+b^2-2ab\\cos\\gamma$');
+
+  const comparison = hEl('div', { class: 'cos-law-comparison' }, B.proof);
+  function comparisonBar(label, tone) {
+    const row = hEl('div', { class: 'cos-law-bar' }, comparison);
+    row.style.setProperty('--bar-color', 'var(--pj-' + tone + ')');
+    const heading = formula(row, 'cos-law-bar-label', label);
+    const value = hEl('span', {}, heading);
+    const track = hEl('div', { class: 'cos-law-track' }, row);
+    const bar = hEl('i', {}, track);
+    return (n, width) => {
+      value.innerHTML = texMix('$' + fmt(n, 2) + '$');
+      bar.style.width = width + '%';
+    };
+  }
+  const sumBar = comparisonBar('$a^2+b^2$', 'blue');
+  const oppositeBar = comparisonBar('$c^2$', 'gold');
+  const bracket = hEl('div', { class: 'cos-law-bracket' }, comparison);
+  const gapLabel = hEl('div', { class: 'cos-law-gap' }, comparison);
+  const angle = hEl('div', { class: 'cos-law-angle' }, B.proof);
+  const states = hEl('div', { class: 'cos-law-states' }, B.proof);
+  const types = ['锐角', '直角', '钝角'].map((name, i) => {
+    const item = hEl('div', {}, states);
+    hEl('span', {}, item).textContent = name;
+    hEl('small', {}, item).textContent = ['负修正', '零修正', '正修正'][i];
+    return item;
+  });
+  const check = hEl('div', { class: 'fn-reading-group', 'data-reading-style': 'info' }, B.proof);
+  const measured = B.chipM('$c^2$ 实测');
+  check.appendChild(measured.el);
+  const aSl = B.slider('边 a', 2, 7, 0.05, st.a, v => { st.a = v; B.render(); }, 'a', n => `边 $a=${n}$`);
+  const bSl = B.slider('边 b', 2, 7, 0.05, st.b, v => { st.b = v; B.render(); }, 'b', n => `边 $b=${n}$`);
+  const gSl = B.slider('夹角 γ°', 20, 160, 5, st.deg, v => { st.deg = v; B.render(); }, 'g', n => `夹角 $\\gamma=${n}^\\circ$`);
+  const examples = [
+    { name: '勾股', formula: '$\\gamma=90^\\circ$', deg: 90 },
+    { name: '锐角', formula: '$\\gamma=60^\\circ$', deg: 60 },
+    { name: '钝角', formula: '$\\gamma=120^\\circ$', deg: 120 },
+  ];
+  B.choiceRow('选择例题', examples, () => examples.findIndex(e => st.a === 4 && st.b === 5 && st.deg === e.deg), i => {
+    st.a = 4; st.b = 5; st.deg = examples[i].deg;
+    aSl.sync(st.a); bSl.sync(st.b); gSl.sync(st.deg); B.render();
+  });
   B.toggleBtn('投影分解', true, v => { st.proj = v; B.render(); });
   B.graphToggles(st, ['labs']);
 
@@ -36,10 +90,10 @@ export function createBoard(root) {
   // 板内字号由设置页的全局倍率统一钉住（global.css 的 svg text 读 --bd-fs），单条 B.text 再写 font-size 不生效；
   // 所以按两条路排：顶点字母走 B.tex 显式 14px（p 换算成垂直中心），量与注释走 B.textM（p 仍按基线给）。
   const vlab = (p, s) => {
-    if (st.labs) B.tex(V(p.x, p.y - 14 * 0.4), `$${s}$`, { size: 14, color: '#fff', anchor: 'mid', w: 48 });
+    if (st.labs) B.tex(V(p.x, p.y - 14 * 0.4), `$${s}$`, { size: 14, color: B.diagramColors.ink, anchor: 'mid', w: 48 });
   };
   const lab = (p, s, col) => {
-    if (st.labs) B.textM(p, s, { 'font-size': 12, fill: col || '#fff', 'text-anchor': 'middle' });
+    if (st.labs) B.textM(p, s, { 'font-size': 12, fill: col || B.diagramColors.ink, 'text-anchor': 'middle' });
   };
   // 线段外法向：取背离重心的一侧，推 d 像素
   const outOf = (P, Q, away, d) => {
@@ -55,6 +109,11 @@ export function createBoard(root) {
     const a = st.a, b = st.b, g = st.deg * Math.PI / 180;
     const cs = Math.cos(g), sn = Math.sin(g);
     const A = V(b, 0), Bm = V(a * cs, a * sn);
+    // 同一组边长随夹角变化时保持比例尺；量轴下留出两道尺寸线的空间。
+    const S = Math.min((B.w - 86) / (a + b), (B.plotRect[3] - 120) / a);
+    const originX = (B.w - S * (Math.min(0, Bm.x) + Math.max(b, Bm.x))) / 2;
+    const X = x => originX + S * x;
+    const Y = y => B.plotRect[3] - 84 - S * y;
     const Cp = V(X(0), Y(0)), Ap = V(X(A.x), Y(0)), Bp = V(X(Bm.x), Y(Bm.y)), Dp = V(X(Bm.x), Y(0));
     const c = Math.hypot(b - a * cs, a * sn);
     const a2b2 = a * a + b * b, c2 = c * c, fix = a2b2 - c2;   // fix = 2ab·cosγ；修正项 −2ab·cosγ 是它的反号
@@ -62,13 +121,14 @@ export function createBoard(root) {
     const y0 = Y(0), l1 = y0 + 30, l2 = y0 + 54;              // 基准线与两条尺寸线的 y
 
     /* —— 左栏：底边量轴 —— */
-    B.seg(V(X(-7), y0), V(X(7.9), y0), { stroke: 'rgba(147,161,181,.45)', 'stroke-width': 1 });
-    for (let k = -7; k <= 7; k++) {
+    const axisEnd = B.w - 16;
+    B.seg(V(16, y0), V(axisEnd, y0), { stroke: 'rgba(147,161,181,.45)', 'stroke-width': 1 });
+    for (let k = Math.ceil((16 - originX) / S); X(k) < axisEnd; k++) {
       if (!k) continue;
       B.seg(V(X(k), y0), V(X(k), y0 + (k % 2 ? 3.5 : 5.5)), { stroke: 'rgba(147,161,181,.33)', 'stroke-width': 1 });
     }
     mk('polygon', {
-      points: `${X(7.9)},${y0} ${X(7.9) - 9},${y0 - 3.2} ${X(7.9) - 9},${y0 + 3.2}`,
+      points: `${axisEnd},${y0} ${axisEnd - 9},${y0 - 3.2} ${axisEnd - 9},${y0 + 3.2}`,
       fill: 'rgba(147,161,181,.55)', stroke: 'none',
     }, B.dyn);
 
@@ -117,11 +177,10 @@ export function createBoard(root) {
     }
 
     /* —— 左栏：顶点、垂足与边标（b 走三角形内侧，a / c 沿外法向） —— */
-    B.dot(Cp, 2.8, { fill: '#93a1b5' });
-    B.dot(Ap, 2.8, { fill: '#93a1b5' });
-    mk('circle', { cx: Bp.x, cy: Bp.y, r: 9, fill: 'rgba(255,209,102,.16)', stroke: 'none' }, B.dyn);
-    B.dot(Bp, 4.2, { fill: '#ffd166' });
-    if (st.proj) B.dot(Dp, 2.6, { fill: '#ff9e4a' });
+    B.mark(Cp, '#93a1b5');
+    B.mark(Ap, '#93a1b5');
+    B.mark(Bp, '#ffd166');
+    if (st.proj) B.mark(Dp, '#ff9e4a');
     vlab(V(Ap.x + 14, Ap.y + 16), 'A');
     vlab(V(Cp.x - 13, Cp.y + 16), 'C');
     vlab(V(Bp.x, Bp.y - 14), 'B');
@@ -129,90 +188,32 @@ export function createBoard(root) {
     lab(outOf(Cp, Bp, ct, 16), '$a$', '#67e8f9');
     lab(outOf(Ap, Bp, ct, 16), `$c=${fmt(c, 2)}$`, '#ffd166');
 
-    /* —— 左栏底部：三项分解的色标读数（颜色与图上尺寸线一一对应） —— */
     if (st.proj) {
-      B.seg(V(30, 436), V(508, 436), { stroke: 'rgba(147,161,181,.22)', 'stroke-width': 1 });
-      const items = [
-        ['#c084fc', `$a\\cos\\gamma=${fmt(a * cs, 2)}$`],
-        ['#ff9e4a', `$a\\sin\\gamma=${fmt(a * sn, 2)}$`],
-        ['#4ade80', `$|b-a\\cos\\gamma|=${fmt(Math.abs(b - a * cs), 2)}$`],
-      ];
-      items.forEach(([col, s], i) => {
-        const x0 = 42 + i * 152;
-        B.seg(V(x0, 458), V(x0 + 14, 458), { stroke: col, 'stroke-width': 2.4, 'stroke-linecap': 'round' });
-        B.textM(V(x0 + 20, 462), s, { 'font-size': 12, fill: '#93a1b5', 'text-anchor': 'start' });
-      });
-    }
+      B.note(`$a\\cos\\gamma=${fmt(a * cs, 2)}$`, '#c084fc');
+      B.note(`$a\\sin\\gamma=${fmt(a * sn, 2)}$`, '#ff9e4a', 'dashed');
+      B.note(`$|b-a\\cos\\gamma|=${fmt(Math.abs(b - a * cs), 2)}$`, '#4ade80');
+    } else B.note('对边 $c=AB$', '#ffd166');
 
-    /* —— 右栏：一条按横线分段的读数板 —— */
-    const TX = PR[0] + 14, TW = PR[2] - 28, mid = TX + TW / 2;
-    const mx2 = Math.max(a2b2, c2) * 1.08;
-    const rule = (ry, op) => mk('line', {
-      x1: TX, y1: ry, x2: TX + TW, y2: ry,
-      stroke: `rgba(147,161,181,${op || .22})`, 'stroke-width': 1,
-    }, B.dyn);
-
-    B.textM(V(TX, 38), '投影分解与修正项', { 'font-size': 13, fill: '#93a1b5', 'text-anchor': 'start' });
-    rule(52);
-    B.tex(V(TX, 76), '$c^2=(b-a\\cos\\gamma)^2+(a\\sin\\gamma)^2$', { size: 13, anchor: 'start', w: TW });
-    mk('rect', { x: TX, y: 94, width: TW, height: 46, rx: 8, fill: 'rgba(255,209,102,.10)', stroke: 'rgba(255,209,102,.30)' }, B.dyn);
-    B.tex(V(mid, 117), '$c^2=a^2+b^2-2ab\\cos\\gamma$', { size: 16, color: '#ffd166', anchor: 'mid', w: TW - 16 });
-    rule(156);
-
-    // 两根对比条：同一把尺子，右端读数右对齐在 TX+TW；右端之差用一条淡橙竖带直接罩出来
-    // （不画引线：上条那根引线要穿过下一条的读数，1px 虚线压在数字上比不画更难认）
-    const e1 = TX + TW * a2b2 / mx2, e2 = TX + TW * c2 / mx2;
-    const xa = Math.min(e1, e2), xb = Math.max(e1, e2), gap = xb - xa;
-    if (gap > 2) mk('rect', { x: xa, y: 183, width: gap, height: 58, rx: 3, fill: 'rgba(255,158,74,.12)', stroke: 'none' }, B.dyn);
-    [[`$a^2+b^2$`, a2b2, '#5cadff', 186], [`$c^2$`, c2, '#ffd166', 230]].forEach(([nm, v2, col, ty]) => {
-      B.textM(V(TX, ty - 9), nm, { 'font-size': 13, fill: '#93a1b5', 'text-anchor': 'start' });
-      B.textM(V(TX + TW, ty - 9), fmt(v2, 2), { 'font-size': 13, fill: col, 'text-anchor': 'end' });
-      mk('rect', { x: TX, y: ty, width: TW, height: 8, rx: 4, fill: 'rgba(147,161,181,.13)' }, B.dyn);
-      const w2 = TW * v2 / mx2;
-      mk('rect', { x: TX, y: ty, width: w2, height: 8, rx: 4, fill: col, 'fill-opacity': .9 }, B.dyn);
-      mk('line', { x1: TX + w2, y1: ty - 3, x2: TX + w2, y2: ty + 11, stroke: col, 'stroke-width': 2, 'stroke-linecap': 'round' }, B.dyn);
-    });
-
-    // 缺口尺寸线：挂在两根条下面，两端与竖带的边对齐
-    if (gap > 2) {
-      B.seg(V(xa, 256), V(xb, 256), { stroke: '#ff9e4a', 'stroke-width': 2, 'stroke-linecap': 'round' });
-      B.seg(V(xa, 250), V(xa, 262), { stroke: '#ff9e4a', 'stroke-width': 1.6 });
-      B.seg(V(xb, 250), V(xb, 262), { stroke: '#ff9e4a', 'stroke-width': 1.6 });
-      const cx2 = Math.max(TX + 78, Math.min(TX + TW - 78, (xa + xb) / 2));
-      B.textM(V(cx2, 280), `缺口 $|2ab\\cos\\gamma|=${fmt(Math.abs(fix), 2)}$`, { 'font-size': 12, fill: '#ff9e4a', 'text-anchor': 'middle', w: 170 });
-    } else {
-      B.textM(V(mid, 280), '零修正：两条一样长', { 'font-size': 12, fill: '#ff9e4a', 'text-anchor': 'middle', w: 150 });
-    }
-    rule(296);
-
-    // 两条读数的交叉核对（c² 由 hypot 实测、右列由 a²+b²−2ab·cosγ 现算）
-    B.textM(V(TX, 322), '$c^2$ 实测', { 'font-size': 12, fill: '#93a1b5', 'text-anchor': 'start' });
-    B.textM(V(TX + TW, 322), fmt(c2, 2), { 'font-size': 14, fill: '#fff', 'text-anchor': 'end' });
-    B.textM(V(TX, 348), '$a^2+b^2-2ab\\cos\\gamma$', { 'font-size': 12, fill: '#93a1b5', 'text-anchor': 'start' });
-    B.textM(V(TX + TW, 348), fmt(a2b2 - 2 * a * b * cs, 2), { 'font-size': 14, fill: '#fff', 'text-anchor': 'end' });
-    rule(364);
-
-    // arccos 反演：三边代回角
-    const inv = Math.acos(Math.max(-1, Math.min(1, (a * a + b * b - c * c) / (2 * a * b)))) * 180 / Math.PI;
-    B.tex(V(mid, 392), '$\\gamma=\\arccos\\frac{a^2+b^2-c^2}{2ab}$', { size: 14, color: '#c084fc', anchor: 'mid', w: TW - 16 });
-    B.tex(V(mid, 428), `$=${fmt(inv, 1)}^\\circ$，与滑块对上`, { size: 12, color: '#93a1b5', anchor: 'mid', w: TW });
-
-    // 底部三态指示：当前那一档转金
-    rule(442, .18);
-    const act = st.deg < 89.5 ? 0 : st.deg > 90.5 ? 2 : 1;   // 不写 === 90：滑块回传若是字符串，严格相等会判错档
-    [['锐角', '负修正'], ['直角', '零修正'], ['钝角', '正修正']].forEach((pair, i) => {
-      const cx3 = TX + TW * (i + .5) / 3, on = i === act;
-      B.textM(V(cx3, 464), pair[0], { 'font-size': 12, fill: on ? '#ffd166' : '#93a1b5', 'text-anchor': 'middle' });
-      B.textM(V(cx3, 481), pair[1], { 'font-size': 12, fill: on ? '#ffd166' : '#93a1b5', 'text-anchor': 'middle' });
-      if (i) B.seg(V(TX + TW * i / 3, 452), V(TX + TW * i / 3, 486), { stroke: 'rgba(147,161,181,.18)', 'stroke-width': 1 });
-    });
+    const scale = 100 / (Math.max(a2b2, c2) * 1.08);
+    sumBar(a2b2, a2b2 * scale);
+    oppositeBar(c2, c2 * scale);
+    const rightAngle = Math.abs(cs) < 1e-9;
+    bracket.style.marginLeft = Math.min(a2b2, c2) * scale + '%';
+    bracket.style.width = Math.abs(fix) * scale + '%';
+    bracket.style.visibility = rightAngle ? 'hidden' : 'visible';
+    gapLabel.innerHTML = rightAngle ? '零修正：两条一样长' : texMix('缺口 $|2ab\\cos\\gamma|=' + fmt(Math.abs(fix), 2) + '$');
+    const inv = Math.acos(Math.max(-1, Math.min(1, (a2b2 - c2) / (2 * a * b)))) * 180 / Math.PI;
+    angle.innerHTML = texMix('$\\gamma=\\arccos\\frac{a^2+b^2-c^2}{2ab}=' + fmt(inv, 1) + '^\\circ$');
+    const active = rightAngle ? 1 : cs > 0 ? 0 : 2;
+    types.forEach((item, i) => item.toggleAttribute('data-current', i === active));
+    measured('$' + fmt(c2, 2) + '$，公式值 $' + fmt(a2b2 - 2 * a * b * cs, 2) + '$');
 
     /* —— 徽章 —— */
     const cor = -fix;                                   // 修正项 −2ab·cosγ
-    cFix(`修正项 $-2ab\\cos\\gamma=${fmt(cor, 2)}$，` + (Math.abs(fix) < 0.02 ? '零修正，勾股成立' : cor < 0 ? '负修正，c² 变小' : '正修正，c² 变大'),
-      Math.abs(fix) < 0.02 ? 'ok' : '');
-    cInv(`反演 $\\gamma=${fmt(inv, 1)}^\\circ$` + (Math.abs(inv - st.deg) < 0.6 ? ' —— 与滑块完全重合' : ''),
-      Math.abs(inv - st.deg) < 0.6 ? 'ok' : 'warn');
+    cFix(`$-2ab\\cos\\gamma\\approx ${fmt(cor, 2)}$`);
+    cInv(`$\\gamma\\approx ${fmt(inv, 1)}^\\circ$`);
+    verdict(Math.abs(cs) < 1e-9 ? '直角时修正项为零，$c^2=a^2+b^2$。'
+      : cor < 0 ? '锐角时修正项为负，$c^2<a^2+b^2$。' : '钝角时修正项为正，$c^2>a^2+b^2$。');
   };
   B.render();
   B.hintM('拖 $\\gamma$ 从锐到钝：紫箭头掉头，两条直角边一长一短；右栏两根横条的缺口即修正项');

@@ -34,3 +34,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createFold } from '../../../boards/functions/transforms/stretchfold.js';
 import { G_CHAPTERS } from './gnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

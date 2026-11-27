@@ -31,6 +31,9 @@
     <p>将二维结论推广到 n 维，可以从一个对所有实数 t 都非负的量出发。设 <Katex tex="A=\sum a_i^2,\ B=\sum a_ib_i,\ C=\sum b_i^2" />，各项都从 1 加到 n。展开并配方，在 <Katex tex="A>0" /> 时得到</p>
     <Katex tex="q(t)=\sum_i(ta_i-b_i)^2=At^2-2Bt+C=A(t-B/A)^2+C-B^2/A." display />
     <p>取 <Katex tex="t=B/A" />，第一项消失，余下的最小值仍须非负。因此 <Katex tex="AC\ge B^2" />。等号成立恰好要求每一个平方项都为零，即对所有 i 有 <Katex tex="b_i=(B/A)a_i" />。若 <Katex tex="A=0" />，所有 <Katex tex="a_i" /> 都是零，原式直接取等。</p>
+    <ConicFigure number="2c" title="平方和的最低点" head="bottom" :factory="quadratic">
+      <Katex tex="q(t)=(t-1)^2+h^2" />。固定垂直分量 <Katex tex="h" />，移动 <Katex tex="t" /> 比较当前点与顶点。再令 <Katex tex="h=0" />，观察最低点如何落到横轴上。
+    </ConicFigure>
     <h3 class="sec" id="f2-min">例一 · 直线上哪一点离原点最近？</h3>
     <p>已知 <Katex tex="2x+3y=6" />，求 <Katex tex="x^2+y^2" /> 的最小值。把系数 (2, 3) 与未知数 (x, y) 配成两个向量，内积已固定为 6，故 <Katex tex="13(x^2+y^2)\ge36" />。取等时 <Katex tex="(x,y)=\lambda(2,3)" />，代回约束得到 <Katex tex="\lambda=6/13" />。最小值 <Katex tex="36/13" /> 在 <Katex tex="H=(12/13,18/13)" /> 处取得。</p>
     <ConicFigure number="2d" title="沿约束直线寻找最小半径" head="bottom" :factory="minimum"
@@ -50,6 +53,7 @@ import ConicFigure from '../../../components/ConicFigure.vue';
 import Katex from '../../../components/Katex.vue';
 import { createBoard as vectors } from '../../../boards/inequalities/scale/cauchy.js';
 import { createBoard as triangles } from '../../../boards/inequalities/scale/cauchyTriangles.js';
+import { createBoard as quadratic } from '../../../boards/inequalities/scale/cauchyQuadratic.js';
 import { createBoard as minimum } from '../../../boards/inequalities/scale/cauchyMinimum.js';
 import { F_CHAPTERS } from './fnav.js';
 </script>

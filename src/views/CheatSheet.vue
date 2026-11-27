@@ -23,7 +23,7 @@
       <router-link class="topic-card" to="/sets/y1"><span class="tag">Y1</span><h3>交与并</h3><p class="fx"><Katex tex="A\cap B\subseteq A\subseteq A\cup B" /></p><p>∧∨ 的集合实现；差集不交换，容斥 <Katex tex="|A\cup B|=|A|+|B|-|A\cap B|"/>。</p></router-link>
       <router-link class="topic-card" to="/sets/y2"><span class="tag">Y2</span><h3>补集与全集</h3><p class="fx"><Katex tex="A\setminus B=A\cap\complement_U B" /></p><p>先定全集再谈补集；挖去再挖去回到本身（双重否定）。</p></router-link>
       <router-link class="topic-card" to="/sets/y3"><span class="tag">Y3</span><h3>德摩根与分配</h3><p class="fx"><Katex tex="\complement_U(A\cap B)=\complement_UA\cup\complement_UB" /></p><p>补集穿过括号 ∩∪ 互换 —— 与 ¬(p∧q)=¬p∨¬q 同构。</p></router-link>
-      <router-link class="topic-card" to="/sets/y4"><span class="tag">Y4</span><h3>区间运算</h3><p class="fx"><Katex tex="[a,b)\cap(c,d]=(c,b)" /></p><p>交取公共（同点开优先）、并取覆盖（都开留断口）、补对调端点开闭。</p></router-link>
+      <router-link class="topic-card" to="/sets/y4"><span class="tag">Y4</span><h3>数轴上的运算</h3><p class="fx"><Katex tex="[a,b)\cap(c,d]=(c,b)" /></p><p>交取公共（同点开优先）、并取覆盖（都开留断口）、补对调端点开闭。</p></router-link>
     </div>
 
     <h3 class="sec">集合与常用逻辑 · 四 常用逻辑</h3>
@@ -225,7 +225,7 @@
 
     <h3 class="sec">不等式 · 二 一元二次不等式</h3>
     <div class="topic-grid">
-      <router-link class="topic-card" to="/inequalities/q1"><span class="tag">次1</span><h3>三个二次</h3><p class="fx"><Katex tex="ax^2+bx+c>0\iff (x-x_1)(x-x_2)>0" /></p><p>Δ 三态定根、根切分数轴定号；a&gt;0 大于取根外、小于取根内，开口向下反转。</p></router-link>
+      <router-link class="topic-card" to="/inequalities/q1"><span class="tag">次1</span><h3>二次不等式</h3><p class="fx"><Katex tex="a(x-x_1)(x-x_2)>0" /></p><p>Δ 三态定根、根切分数轴定号；a&gt;0 大于取根外、小于取根内，开口向下反转。</p></router-link>
       <router-link class="topic-card" to="/inequalities/q2"><span class="tag">次2</span><h3>穿根法</h3><p class="fx"><Katex tex="\tfrac{x-a}{x-b}>0\iff (x-a)(x-b)>0,\ x\ne b" /></p><p>符号表逐行读号、奇穿偶不穿；分式移项通分、分母零点除外。</p></router-link>
       <router-link class="topic-card" to="/inequalities/q3"><span class="tag">次3</span><h3>绝对值距离带</h3><p class="fx"><Katex tex="|x-m|<c\iff m-c<x<m+c\ (c>0)" /></p><p>带内带外、端点关于 m 对称；<Katex tex="|ax+b|"/> 化为中心 <Katex tex="-b/a"/>、半宽 <Katex tex="c/|a|"/>；<Katex tex="c<0"/> 时只剩 ℝ 与 ∅ 两态。</p></router-link>
     </div>

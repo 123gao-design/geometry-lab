@@ -37,3 +37,19 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createQL } from '../../../boards/sets/logic/quants.js';
 import { O_CHAPTERS } from './onav.js';
 </script>
+
+<style>
+/* 图 O1：读数直接贴在图下，不画横线；断言、探针一行，判定占整行；「不符合」的格子用红色 */
+.board.atlas-board.quants-board > .ctrl.chips {
+  border-top: 0 !important;
+  padding-top: 2px !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.board.atlas-board.quants-board > .ctrl.chips .chip:last-child { grid-column: 1 / -1; }
+.board.atlas-board.quants-board > .ctrl.chips .chip.warn:not([data-reading]) {
+  border-color: var(--pj-red);
+  border-inline-start-color: var(--pj-red);
+  color: var(--pj-red);
+  background: color-mix(in srgb, var(--pj-red) 10%, transparent);
+}
+</style>

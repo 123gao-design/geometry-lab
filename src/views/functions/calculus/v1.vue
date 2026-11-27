@@ -44,3 +44,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createTan } from '../../../boards/functions/calculus/sectan.js';
 import { V_CHAPTERS } from './vnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

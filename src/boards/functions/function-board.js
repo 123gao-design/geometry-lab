@@ -1,13 +1,23 @@
-import { Board, texMix } from '../../lib/board.js';
+import { Board, hEl, mk, texMix } from '../../lib/board.js';
+
+import { glowDot, setPalette } from '../../lib/conic-diagram.js';
+import { paperHalo } from '../../lib/diagram-paper.js';
 
 const SHAPES = 'circle, ellipse, line, path, polygon, polyline, rect';
 const OFFSETS = [[0, 0], [0, -17], [0, 17], [-19, 0], [19, 0], [0, -30], [0, 30]];
 const HORIZONTAL_TICKS = [[0, 0], [0, -17], [0, 17]];
 const VERTICAL_TICKS = [[0, 0], [-18, 0], [18, 0]];
+// 章节用同一组色号表达曲线、符号和参考线，屏幕与导出都使用当前纸面的实色。
 const TONES = {
-  '#5cadff': 'blue', '#4ade80': 'green', '#ff9e4a': 'orange',
-  '#ffd166': 'yellow', '#ff7b8a': 'red', '#c084fc': 'purple', '#67e8f9': 'cyan',
+  '#5cadff': 'blue', '#4ade80': 'green', '#ff9e4a': 'orange', '#ffd166': 'gold',
+  '#ff7b8a': 'red', '#c084fc': 'violet', '#67e8f9': 'mint', '#0a0d14': 'paper',
+  '#93a1b5': 'guide', '#5c6a80': 'guide', '#8fa3bd': 'guide', '#3f5f8f': 'rule',
+  '#3a4a63': 'axis', '#2e3d57': 'axis', '#2b3b53': 'axis', 'rgba(92,173,255,.05)': 'soft',
 };
+function functionPalette(board, background, scheme) {
+  setPalette(board, background, scheme);
+  board.drawingColors = Object.fromEntries(Object.entries(TONES).map(([code, key]) => [code, board.diagramColors[key]]));
+}
 
 const bounds = (box, pad = 0) => ({
   left: box.x - pad, right: box.x + box.width + pad,
@@ -46,10 +56,15 @@ function obstacle(node) {
   };
 }
 
-export class FunctionBoard extends Board {
-  constructor(root, w, h) {
-    super(root, w, h, { preciseSliders: true });
+export class PlotBoard extends Board {
+  constructor(root, w, h, layout = 'stack') {
+    super(root, w, h, { preciseSliders: true, onAppearanceChange: functionPalette });
     root.classList.add('fn-board');
+    root.dataset.layout = layout;
+    paperHalo(this);
+    mk('rect', { x: 7, y: 7, width: w - 14, height: h - 14, rx: 16, fill: 'none',
+      stroke: 'var(--pj-accent)', 'stroke-width': 1.2, 'stroke-opacity': .62,
+      'stroke-dasharray': '7 6', 'pointer-events': 'none' }, this.svg);
     this._notes = [];
     this._labels = [];
     this._notesRow = document.createElement('div');
@@ -64,13 +79,50 @@ export class FunctionBoard extends Board {
         const next = entry.contentRect.width;
         if (next === width) return;
         width = next;
-        if (next > 0) this.render();
+        if (next > 0) {
+          this._minLabelSize = Math.min(30, Math.max(12, 11 * w / next));
+          this.svg.style.setProperty('--fn-label-size', this._minLabelSize + 'px');
+          this.render();
+        }
       });
       this._plotResize.observe(this.svg);
     }
     document.fonts?.ready.then(() => {
       if (this.svg.isConnected) this.render();
     });
+  }
+
+  groupReadings(label) {
+    this.chipRow.classList.add('fn-chapter-readings');
+    this.readingGroup = hEl('div', {
+      class: 'fn-reading-group', role: 'group', 'aria-label': label,
+    }, this.chipRow);
+  }
+
+  readout(label, tone) {
+    const update = super.readout(label, tone);
+    this.readingGroup?.appendChild(update.el);
+    return update;
+  }
+
+  labelFontSize() { return Math.max(super.labelFontSize(), this._minLabelSize || 0); }
+
+  handle(options) {
+    const point = super.handle({ ...options, r: 4 });
+    point.setAttribute('stroke', 'transparent');
+    point.setAttribute('stroke-width', '18');
+    return point;
+  }
+
+  // 按讲解优先级绘点。把手自带光晕，落在同一位置的标记共用一个光芯。
+  glowPoints(points) {
+    const drawn = this.handles.filter(({ c }) => c.style.display !== 'none').map(({ st }) => st.get());
+    for (const [point, color] of points) {
+      if (point.x < 0 || point.y < 0 || point.x > this.w || point.y > this.h) continue;
+      if (drawn.some(p => Math.hypot(p.x - point.x, p.y - point.y) < 1)) continue;
+      glowDot(this, point, color, 8, 3.5);
+      drawn.push(point);
+    }
   }
 
   destroy() {
@@ -107,6 +159,7 @@ export class FunctionBoard extends Board {
     const anchor = attributes['text-anchor'];
     const ticks = anchor === 'start' || anchor === 'end' ? VERTICAL_TICKS : HORIZONTAL_TICKS;
     this._labels.push({ node, offsets: this._drawingGrid ? ticks : OFFSETS });
+    if (attributes.fill) node.style.fill = node.getAttribute('fill');
     return node;
   }
 
@@ -118,9 +171,19 @@ export class FunctionBoard extends Board {
     this._notes.length = 0;
     this._labels.length = 0;
     super.render();
+    this.syncPaperHalo();
     this._layoutPlotLabels();
+    for (const { c, st } of this.handles) {
+      const color = this.drawingColors[st.color] || st.color || this.diagramColors.gold;
+      c.setAttribute('fill', color);
+      if (c.style.display !== 'none') glowDot(this, st.get(), color, 9);
+    }
+    this.renderNotes();
+  }
+
+  renderNotes() {
     const html = this._notes.map(({ text, tone }) =>
-      `<span class="fn-board-note" data-tone="${tone}">${texMix(text)}</span>`).join('');
+      `<span class="fn-board-note" data-tone="${tone}" style="--tone:var(--pj-${tone},var(--pj-guide))">${texMix(text)}</span>`).join('');
     if (html !== this._notesHtml) {
       this._notesRow.innerHTML = html;
       this._notesRow.hidden = !html;
@@ -143,8 +206,8 @@ export class FunctionBoard extends Board {
     for (const { node, box, offsets, x, y } of placements) {
       const fit = offsets.find(([dx, dy]) => {
         const position = bounds({ x: box.x + dx, y: box.y + dy, width: box.width, height: box.height }, 2);
-        if (position.left < 3 || position.right > this.w - 3 ||
-            position.top < 3 || position.bottom > this.h - 3) return false;
+        if (position.left < 9 || position.right > this.w - 9 ||
+            position.top < 9 || position.bottom > this.h - 9) return false;
         if (occupied.some(other => overlaps(other, position)) || obstacles.some(blocked => blocked(position))) return false;
         occupied.push(position);
         return true;
@@ -156,5 +219,13 @@ export class FunctionBoard extends Board {
       node.setAttribute('x', x + fit[0]);
       node.setAttribute('y', y + fit[1]);
     }
+  }
+}
+
+// 函数章节把读数收在一组，判读仍用原来的徽章。两组一起随原读数栏定位。
+export class FunctionBoard extends PlotBoard {
+  constructor(root, w, h, layout) {
+    super(root, w, h, layout);
+    this.groupReadings('函数读数');
   }
 }

@@ -4,7 +4,7 @@
     :toc="[{ id: 'o4-def', t: '定义与四类' }, { id: 'o4-set', t: '真值集观点：合流' }, { id: 'o4-flow', t: '判定流程与必要性的读法' }, { id: 'o4-pit', t: '方向与取等' }]">
     <div class="note good" id="o4-law">若 <Katex tex="p\Rightarrow q" />：<Katex tex="p" /> 是 <Katex tex="q" /> 的<strong>充分条件</strong>，<Katex tex="q" /> 是 <Katex tex="p" /> 的<strong>必要条件</strong>。四类：<strong>充分不必要</strong>（<Katex tex="p\Rightarrow q" /> 且 <Katex tex="q\nRightarrow p" />）、<strong>必要不充分</strong>（<Katex tex="q\Rightarrow p" /> 且 <Katex tex="p\nRightarrow q" />）、<strong>充要</strong>（<Katex tex="p\iff q" />）、<strong>既不充分也不必要</strong>（互推都不成立）。</div>
     <ConicFigure number="O4" title="充分条件与必要条件" head="bottom" :factory="createCD">
-      蓝带画 <Katex tex="p" /> 的真值集 <Katex tex="A" />、橙带画 <Katex tex="q" /> 的真值集 <Katex tex="B" />，四个预设即四类条件各一例；拖探针到 <Katex tex="A\setminus B" /> 或 <Katex tex="B\setminus A" /> 的位置，对应方向的「反例元素」当场读出。看点：小范围推出大范围 —— 两条带谁含住谁，箭头就指向谁，判定四类型只须比较包含关系。
+      上带和下带分别表示 <Katex tex="p" /> 与 <Katex tex="q" /> 的真值集。空心端点表示该集合排除这个数，箭头表示区间继续延伸。预设①中，把探针移到 <Katex tex="x=2" />。上带在此开口，下带包含此点，因此它恰是 <Katex tex="q\Rightarrow p" /> 的反例。
     </ConicFigure>
 
     <h3 class="sec" id="o4-def">定义与四类</h3>
@@ -21,7 +21,7 @@
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">
         <li><strong>提示一：充分、必要说反。</strong>「<Katex tex="x\gt2" /> 是 <Katex tex="x\gt1" /> 的充分条件」与「<Katex tex="x\gt1" /> 是 <Katex tex="x\gt2" /> 的必要条件」是同一句话 —— 充分条件在箭尾、必要条件在箭头；答「谁是谁的什么条件」时，先固定箭头方向再作答。</li>
-        <li><strong>提示二：端点取等决定类型。</strong><Katex tex="x\ge 2" /> 与 <Katex tex="x>2" /> 的真值集差一个点 <Katex tex="2" />：后者对前者是充分不必要；端点能否取等（<Katex tex="\le" /> 还是 <Katex tex="\lt" />）直接改变 <Katex tex="A\subseteq B" /> 是否成立 —— 与<RouterLink class="xref" to="/sets/y4">数轴上的运算：解集实战</RouterLink>的取等检验同源。</li>
+        <li><strong>提示二：端点取等决定类型。</strong><Katex tex="x\ge 2" /> 与 <Katex tex="x>2" /> 的真值集差一个点 <Katex tex="2" />：后者对前者是充分不必要；端点能否取等（<Katex tex="\le" /> 还是 <Katex tex="\lt" />）直接改变 <Katex tex="A\subseteq B" /> 是否成立 —— 与<RouterLink class="xref" to="/sets/y4">数轴上的运算</RouterLink>的取等检验同源。</li>
         <li><strong>提示三：不验证反向就报「充要」。</strong>充要须 <strong>两个方向都</strong>验证（<Katex tex="A\subseteq B" /> 且 <Katex tex="B\subseteq A" />）；只验单向就下结论，是把充分条件当成充要条件 —— 大题里按双向分别作答给分，缺一向就丢分。</li>
       </ul>
     </div>

@@ -5,13 +5,13 @@
     <div class="note good" id="r3-alg"><strong>二分法</strong>：设 <Katex tex="f" /> 在 <Katex tex="[a,b]" /> 上连续且 <Katex tex="f(a)f(b)<0" />。循环四步 —— ① 取中点 <Katex tex="m=\dfrac{a+b}{2}" />；② 算 <Katex tex="f(m)" />（若恰为 0，零点就是 m，直接完成）；③ 判定：<Katex tex="f(m)" /> 与 <Katex tex="f(a)" /> 异号则零点在 <Katex tex="[a,m]" />、同号则在 <Katex tex="[m,b]" />；④ 留下变号的那半，回到 ①。每一步的依据都来自 R2 的定理：<strong>留下的半区间端点依旧异号、函数依旧连续，所以零点一定还在里面</strong> —— 二分法是存在性定理的算法化。</div>
     <div class="board-wrap">
       <BoardMount :factory="createBisect" />
-      <div class="cap">图 R3 · <b>二分法</b>。点「二分一步」，同时观察全局图和当前区间的放大图。比较中点与两端的符号，找出保留的一半。</div>
+      <div class="cap">图 R3 · <b>二分法</b>。点「二分一步」，比较每次保留的区间和中点的符号。左图金色线段是保留区间；右图放大该区间，金色点标出本次检验的中点。</div>
     </div>
 
     <h3 class="sec" id="r3-err">误差与步数：对数关系</h3>
-    <p>第 n 步后区间宽 <Katex tex="w_n=\dfrac{b_0-a_0}{2^n}" />；拿区间里任一点（习惯取中点）当零点近似，误差不超过 <Katex tex="\dfrac{w_n}{2}" />。反过来问「要误差 &lt; ε 需二分几步」：</p>
-    <Katex tex="n\ \ge\ \log_2\dfrac{b_0-a_0}{\varepsilon}" display />
-    <p>这是<strong>对数关系</strong>：ε 每缩小 10 倍，步数只多约 3.3 步（<Katex tex="\log_2 10\approx 3.32" />）。区间宽 1 缩到 0.05 要 5 步；缩到百万分之一也只要 21 步 —— 收敛虽慢、步数增长极缓。图 R3 的步数徽章把这条对数曲线实时呈现：ε 滑块越拖越小，「还差约 k 步」增长极为缓慢。</p>
+    <p>经过 <Katex tex="n" /> 步二分，区间宽度为 <Katex tex="w_n=(b_0-a_0)/2^n" />。取当前区间的中点作为近似根，误差至多为 <Katex tex="w_n/2" />。画板的精度滑块设定的是区间宽度目标 <Katex tex="w_n\le\varepsilon" />，所需的最少步数为</p>
+    <Katex tex="n=\max\!\left(0,\left\lceil\log_2\frac{b_0-a_0}{\varepsilon}\right\rceil\right)" display />
+    <p>初始区间宽度为 <Katex tex="1" /> 时，要将宽度缩到 <Katex tex="0.05" /> 以内，需要二分 <Katex tex="5" /> 步；缩到 <Katex tex="10^{-6}" /> 以内，需要 <Katex tex="20" /> 步。若题目给出的是中点误差目标 <Katex tex="\delta" />，让区间宽度不超过 <Katex tex="2\delta" /> 即可。</p>
 
     <h3 class="sec" id="r3-scope">适用范围与易错点</h3>
     <p>二分法需要函数在保留区间上连续且两端异号。偶重根两侧可以同号，仅靠端点变号可能漏掉这种零点。</p>
@@ -34,3 +34,6 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createBisect } from '../../../boards/functions/zeros/bisect.js';
 import { R_CHAPTERS } from './znav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>
+<style src="./zero-boards.css"></style>

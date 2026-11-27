@@ -5,7 +5,7 @@
     <div class="note good" id="s1-def"><strong>严格单调递增</strong>：若区间 <Katex tex="I\subseteq D" /> 中任意两个点 <Katex tex="x_1&lt;x_2" /> 都满足 <Katex tex="f(x_1)&lt;f(x_2)" />，则 f 在 I 上严格递增。若函数值的不等号反向，则严格递减。</div>
     <div class="board-wrap">
       <BoardMount :factory="createMonoRead" />
-      <div class="cap">图 S1 · <b>单调性的定义</b>。在同一段内拖动两点，再把点放到 1/x 的两支上，对比哪一组能用于判断区间单调性。</div>
+      <div class="cap">图 S1 · <b>单调性的定义</b>。拖动金色和青色的点，或用上方滑块精确取值。先从左到右比较两点高低，再对照下方的单调区间。试试把两个点放到倒数函数的不同分支上。</div>
     </div>
 
     <h3 class="sec" id="s1-proof">作差法证明模板</h3>
@@ -19,7 +19,7 @@
     <div class="note warn tip">
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">
-        <li><strong>提示一：抽查当证明。</strong>图 S1 的徽章永远只说"这对样本支持"——找到一对满足不等式的点，离"任意点都满足"还差一个作差法。</li>
+        <li><strong>提示一：抽查当证明。</strong>画板中一条向上的弦只说明这两个输入之间函数值增大。证明严格递增时，要对区间内任意一对有序输入证明同一个不等式。</li>
         <li><strong>提示二：单调区间乱并。</strong><Katex tex="x^2" /> 在 (−∞,0) 与 (0,+∞)（更准确写法含端点）上各是减、增，但写成并集 <Katex tex="(-\infty,0)\cup(0,+\infty)" /> 再说"减"就错了 —— 取 <Katex tex="x_1=-1" />、<Katex tex="x_2=1" /> 立刻反例。区间之间隔着"谷"（或缺口），打包必错；单调区间用"和/逗号"分开写，不用 <Katex tex="\cup" />。</li>
         <li><strong>提示三：跨缺口比较。</strong><Katex tex="1/x" /> 在两支上各自递减，但 <Katex tex="x_1=-1" />、<Katex tex="x_2=1" /> 时 <Katex tex="f(x_1)<f(x_2)" /> 看起来"增" —— 因为区间 (−1,1) 根本不在定义域里。单调性的"区间 I"必须整体含在定义域内，这是定义的第一道锁。</li>
       </ul>
@@ -34,3 +34,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createMonoRead } from '../../../boards/functions/properties/monoread.js';
 import { S_CHAPTERS } from './snav.js';
 </script>
+
+<style src="../concept/function-picker.css"></style>

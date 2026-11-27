@@ -1,0 +1,8 @@
+[data-reading-style="light"] {
+  --reading-tone: var(--pj-blue);
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--reading-tone);
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+[data-reading-style="light"][data-tone="gold"] { --reading-tone: var(--pj-gold); }

@@ -1,0 +1,72 @@
+/* 信息样式的底光取自画板当前纸色和该项的语义色。 */
+.board.fn-board :is(.ctrl.chips, .fn-reading-group)[data-reading-style="info"] > .chip {
+  --edge: var(--reading-color, var(--pj-blue));
+  position: relative;
+  gap: 5px;
+  padding: 9px 12px 9px 17px;
+  border: 1px solid color-mix(in srgb, var(--edge) 25%, var(--pj-paper));
+  border-radius: 8px;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--edge) 18%, var(--pj-paper)) 0%,
+    color-mix(in srgb, var(--edge) 9%, var(--pj-paper)) 30%,
+    color-mix(in srgb, var(--edge) 3%, var(--pj-paper)) 100%);
+}
+.board.fn-board :is(.ctrl.chips, .fn-reading-group)[data-reading-style="info"] > .chip.warn {
+  --edge: var(--pj-red);
+}
+[data-reading-style="info"] > .chip::before {
+  content: '';
+  position: absolute;
+  inset: 7px auto 7px 0;
+  width: 2px;
+  border-radius: 4px;
+  background: var(--edge);
+  box-shadow: 1px 0 3px color-mix(in srgb, var(--edge) 26%, transparent);
+  pointer-events: none;
+}
+.board.fn-board :is(.ctrl.chips, .fn-reading-group)[data-reading-style="info"] > .chip > b {
+  align-self: flex-start;
+  padding: 1px 7px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--edge) 82%, var(--pj-ink));
+  color: var(--pj-paper);
+  font-family: var(--font-song);
+  font-size: 13px;
+  font-weight: 600;
+}
+.board.fn-board :is(.ctrl.chips, .fn-reading-group)[data-reading-style="info"] > .chip > span {
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+[data-reading-style="info"] > .chip.val-tick {
+  animation: none;
+}
+
+/* 成对的判读框各占一列，框内标题和结论上下左对齐。 */
+.ctrl.chips.paired-notes { --note-column: auto; }
+.board.fn-board > .ctrl.chips[data-reading-style="info"] > .chip:not([data-reading]) {
+  grid-column: var(--note-column, 1 / -1);
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 4px;
+  color: var(--pj-ink);
+}
+.board.fn-board > .ctrl.chips[data-reading-style="info"] > .chip.ok { --edge: var(--pj-green); }
+.board.fn-board > .ctrl.chips[data-reading-style="info"] > .chip > span {
+  align-self: stretch;
+  min-width: 0;
+  font-family: var(--font-song);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@container function-readings (min-width: 240px) and (max-width: 375px) {
+  .fn-reading-group[data-reading-style="info"]:has(> :nth-child(2):last-child) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

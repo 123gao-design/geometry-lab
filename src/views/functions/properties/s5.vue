@@ -31,3 +31,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createSymTrans } from '../../../boards/functions/properties/symtrans.js';
 import { S_CHAPTERS } from './snav.js';
 </script>
+
+<style src="./preset-row.css"></style>

@@ -5,7 +5,7 @@
     <div class="note good" id="v2-law"><strong>四则运算法则</strong>：<Katex tex="(u\pm v)'=u'\pm v'" />、<Katex tex="(cu)'=c\,u'" />、<Katex tex="(uv)'=u'v+uv'" />、<Katex tex="\Bigl(\dfrac{u}{v}\Bigr)'=\dfrac{u'v-uv'}{v^2}\ (v\neq 0)" /> —— 前两条是「记录不混项」，后两条的几何来源都能在图 V2 的面积板上看到。</div>
     <div class="board-wrap">
       <BoardMount :factory="createArea" />
-      <div class="cap">图 V2 · <b>乘积法则与矩形面积</b>。缩小两边的增量，对比蓝色原矩形、金色上条、橙色右条和红色角块。颜色与图例中的各项对应。</div>
+      <div class="cap">图 V2 · <b>乘积法则与矩形面积</b>。原矩形的面积固定为 <Katex tex="uv=2" />。先只拖动一个增量，观察哪几块面积随之变化；再让两个增量一起减半，两条边带的面积各减半，角块的面积变为原来的四分之一。</div>
     </div>
 
     <h3 class="sec" id="v2-ledger">四则法则</h3>
@@ -35,3 +35,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createArea } from '../../../boards/functions/calculus/prodarea.js';
 import { V_CHAPTERS } from './vnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

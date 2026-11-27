@@ -15,7 +15,7 @@
     <div class="note warn tip">
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">
-        <li><strong>提示一：轴线角不属于任何象限。</strong><Katex tex="90^\circ,180^\circ,270^\circ,0^\circ" /> 的终边压在坐标轴上，板上判读写明「不属于任何象限」—— 选择题里「第二象限角」不含 <Katex tex="90^\circ" /> 本身，端点处单独处理（区间开闭的判法见<RouterLink class="xref" to="/sets/y4">数轴上的运算：解集实战</RouterLink>）。</li>
+        <li><strong>提示一：轴线角不属于任何象限。</strong><Katex tex="90^\circ,180^\circ,270^\circ,0^\circ" /> 的终边压在坐标轴上，板上判读写明「不属于任何象限」—— 选择题里「第二象限角」不含 <Katex tex="90^\circ" /> 本身，端点处单独处理（区间开闭的判法见<RouterLink class="xref" to="/sets/y4">数轴上的运算</RouterLink>）。</li>
         <li><strong>提示二：「小于 <Katex tex="90^\circ" /> 的角」不是「锐角」。</strong>锐角限 <Katex tex="(0^\circ,90^\circ)" />，而任意角世界里 <Katex tex="-30^\circ" />、<Katex tex="-300^\circ" /> 都小于 <Katex tex="90^\circ" />。</li>
         <li><strong>提示三：顺时针为负。</strong>时钟、方向盘倒打都是负角——分针一小时走 <Katex tex="-360^\circ" />（下一章换算成 <Katex tex="-2\pi" />）。</li>
         <li><strong>提示四：判象限先减整圈，别用 <Katex tex="750" /> 直接比。</strong>「终边相同」是唯一合法的化简依据，直觉比较数值大小会出错。</li>

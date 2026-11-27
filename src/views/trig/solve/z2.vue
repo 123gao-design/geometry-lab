@@ -3,7 +3,7 @@
     title="余弦定理：勾股定理的修正版" sub="$c^2=a^2+b^2-2ab\cos\gamma$ —— 勾股是零修正特例；锐角负修正、钝角正修正，修正项由角的余弦现场决定。"
     :toc="[{ id: 'z2-law', t: '定理与投影分解' }, { id: 'z2-proof', t: '推导：勾股 + 修正项' }, { id: 'z2-inv', t: '三边求角：arccos 反演' }, { id: 'z2-table', t: '解三角形分工表' }, { id: 'z2-pit', t: '符号与主值窗' }]">
     <div class="note good" id="z2-def"><strong>余弦定理</strong>：<Katex tex="c^2=a^2+b^2-2ab\cos\gamma" />；反过来 <Katex tex="\cos\gamma=\frac{a^2+b^2-c^2}{2ab}" />。任何三角形的对边平方 = 两邻边平方和 − 修正项；<Katex tex="\gamma=90^\circ"/> 时修正项归零，正是勾股定理。</div>
-    <ConicFigure number="Z2" title="用投影分解证余弦定理" head="bottom" :factory="createLab">把角 γ 顶点摆到原点、b 沿横轴、a 仰角 γ —— 对边 AB 自动成为直角三角形的斜边：水平分量 <Katex tex="|b-a\cos\gamma|" />、竖直分量 <Katex tex="a\sin\gamma" />，勾股一勾即得 c²。拖 γ 从锐到钝：紫色投影 <Katex tex="a\cos\gamma" /> <strong>掉头反向</strong>，修正项从负过零变正；右栏两根横条对比 <Katex tex="a^2+b^2" /> 与 <Katex tex="c^2" />，缺口宽度就是修正项本身。板左下沿一行色标把三项分量实时读出，右栏底部三态指示始终亮着当前所处的锐 / 直 / 钝那一档。</ConicFigure>
+    <ConicFigure number="Z2" title="用投影分解证余弦定理" head="bottom" :factory="createLab">把角 γ 顶点摆到原点、b 沿横轴、a 仰角 γ —— 对边 AB 自动成为直角三角形的斜边：水平分量 <Katex tex="|b-a\cos\gamma|" />、竖直分量 <Katex tex="a\sin\gamma" />，勾股一勾即得 c²。拖 γ 从锐到钝：紫色投影 <Katex tex="a\cos\gamma" /> <strong>掉头反向</strong>，修正项从负过零变正；右栏两根横条对比 <Katex tex="a^2+b^2" /> 与 <Katex tex="c^2" />，缺口宽度对应修正项的绝对值。左框图例随滑块更新三项分量。右框用三边反求夹角，标出当前锐、直、钝状态，底部对照 <Katex tex="c^2" /> 的实测值与公式值。</ConicFigure>
 
     <h3 class="sec" id="z2-law">定理与投影分解</h3>
     <p>余弦定理的几何来历是一条<strong>投影分解</strong>：<Katex tex="B" /> 在底边 <Katex tex="CA" /> 所在直线上的投影 <Katex tex="D" /> 把图形拆成两段 —— <Katex tex="CD=a\cos\gamma" />（可正可负）与 <Katex tex="AD=b-a\cos\gamma" />，加上高 <Katex tex="BD=a\sin\gamma" />，<Katex tex="AB" /> 便是直角三角形的斜边：</p>

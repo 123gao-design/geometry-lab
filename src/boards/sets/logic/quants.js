@@ -3,12 +3,15 @@
    全称命题为假当且仅当带内出现红 —— 红处即反例；为真则须证明（逐点检验数不完）。
    存在命题为真当且仅当带内出现绿 —— 绿处即见证；为假则须论证 M 内无解。
    探针逐点读数，x∉M 时提示前置集合之外命题不作断言；「换量词」对照 ∀ 与 ∃ 的真假变化。
-   局部坐标约定：u∈[0,860] 向右、v∈[0,340] 向下；px(v)=70+60(v+6)，数轴 v=214、满足带 186..198。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+   局部坐标约定：u∈[0,860] 向右、v∈[0,210] 向下；px(v)=70+60(v+6)，数轴 v=128、满足带 100..112，
+   刻度数字 v=152、探针读数 v=174，外框 20..196 为圆角虚线。 */
+import { mk, V, fmt } from '../../../lib/board.js';
+import { createDiagram, plotInk, glowDot } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
-  const W = 860, H = 340;
-  const B = new Board(root, W, H);
+  const W = 860, H = 212;
+  root.classList.add('atlas-board', 'quants-board');
+  const B = createDiagram(root, W, H, '量词判定机：全称与存在命题的真假');
   const px = v => 70 + 60 * (v + 6), inv = x => (x - 70) / 60 - 6;
   const snap = v => Math.round(v * 20) / 20;
   const f1 = v => fmt(v, 2).replace(/\.?0+$/, '');
@@ -46,53 +49,50 @@ export function createBoard(root) {
     return { truth: q === 0 ? allT : anyT, firstFail: ms.find(x => !P.p(x)), firstPass: ms.find(P.p) };
   };
 
-  const cPr = B.chipM('探针'), cV = B.chipM('判定');
+  B.setAppearanceBackground(['光晕', '细网格'], grid => { root.dataset.texture = grid ? 'grid' : 'halo'; });
+
+  const cSay = B.readout('断言'), cPr = B.readout('探针', 'gold');
+  const cV = B.chipM('判定');
 
   B.renderFn = () => {
     const P = PRE[st.i], M = MDEF[P.M];
     const qEff = P.q ^ (st.flipped ? 1 : 0);
     const qt = qEff === 0 ? '\\forall' : '\\exists';
     const { truth, firstFail, firstPass } = evaluate(qEff);
+    // 圆角虚线框：把数轴、满足带与探针收在同一个图区里
+    mk('rect', { x: 20, y: 12, width: 820, height: 184, rx: 16, fill: 'none', stroke: plotInk.accent, 'stroke-opacity': .75, 'stroke-width': 1.4, 'stroke-dasharray': '7 6' }, B.dyn);
     // 命题与断言
-    B.tex(V(430, 52), `$${qt} x\\in ${M.tex},\\ ${P.t}$`, { size: 17, anchor: 'mid' });
-    B.text(V(430, 82), (qEff === 0 ? '全称命题 —— 断言：' + M.name + ' 内每一个 x 都使 p(x) 成立'
-                              : '存在命题 —— 断言：' + M.name + ' 内至少有一个 x 使 p(x) 成立'),
-      { 'font-size': 13, fill: '#93a1b5', 'text-anchor': 'middle' });
+    B.tex(V(430, 40), `$${qt} x\\in ${M.tex},\\ ${P.t}$`, { size: 17, anchor: 'mid' });
+    cSay(qEff === 0 ? '全称：' + M.name + ' 内每一个 $x$ 都使 $p(x)$ 成立' : '存在：' + M.name + ' 内至少有一个 $x$ 使 $p(x)$ 成立');
     // 满足情况带（M 外留空 = 命题不作断言）
-    B.tex(V(62, 192), '$p(x)$', { size: 13, anchor: 'end', color: '#4ade80' });
+    B.tex(V(62, 106), '$p(x)$', { size: 13, anchor: 'end', color: plotInk.green });
     if (M.dens) {
       for (const [l, r] of runsOf(t => M.in(t) && P.p(t)))
-        mk('rect', { x: px(l) - .8, y: 186, width: px(r) - px(l) + 1.6, height: 12, fill: '#4ade80', 'fill-opacity': .5 }, B.dyn);
+        mk('rect', { x: px(l) - .8, y: 100, width: px(r) - px(l) + 1.6, height: 12, fill: plotInk.green, 'fill-opacity': .5 }, B.dyn);
       for (const [l, r] of runsOf(t => M.in(t) && !P.p(t)))
-        mk('rect', { x: px(l) - .8, y: 186, width: px(r) - px(l) + 1.6, height: 12, fill: '#ff7b8a', 'fill-opacity': .45 }, B.dyn);
+        mk('rect', { x: px(l) - .8, y: 100, width: px(r) - px(l) + 1.6, height: 12, fill: plotInk.rose, 'fill-opacity': .45 }, B.dyn);
     } else {
       for (let t = -6; t <= 6; t++) {
         if (!M.in(t)) continue;
-        mk('rect', { x: px(t) - 4, y: 188, width: 8, height: 8, fill: P.p(t) ? '#4ade80' : '#ff7b8a', 'fill-opacity': .75 }, B.dyn);
+        mk('rect', { x: px(t) - 4, y: 102, width: 8, height: 8, fill: P.p(t) ? plotInk.green : plotInk.rose, 'fill-opacity': .75 }, B.dyn);
       }
     }
     // 数轴
-    B.seg(V(px(-6.4), 214), V(px(6.4) + 12, 214), { stroke: '#8fa3bd', 'stroke-width': 1.6 });
-    mk('polygon', { points: `${px(6.4) + 20},214 ${px(6.4) + 10},209.5 ${px(6.4) + 10},218.5`, fill: '#8fa3bd' }, B.dyn);
+    B.seg(V(px(-6.4), 128), V(px(6.4) + 12, 128), { stroke: plotInk.axis, 'stroke-width': 1.6 });
+    mk('polygon', { points: `${px(6.4) + 20},128 ${px(6.4) + 10},123.5 ${px(6.4) + 10},132.5`, fill: plotInk.axis }, B.dyn);
     for (let t = -6; t <= 6; t++) {
-      B.seg(V(px(t), 214), V(px(t), 207), { stroke: '#8fa3bd', 'stroke-width': 1.2 });
-      B.text(V(px(t), 234), String(t), { 'font-size': 11, fill: '#5c6a80' });
+      B.seg(V(px(t), 128), V(px(t), 121), { stroke: plotInk.guide, 'stroke-width': 1.2 });
+      B.text(V(px(t), 152), String(t), { 'font-size': 11, fill: plotInk.guide, style: 'fill:' + plotInk.guide });
     }
-    // 探针
-    B.seg(V(px(st.v), 160), V(px(st.v), 240), { stroke: '#ffd166', 'stroke-width': 1.2, 'stroke-dasharray': '4 4' });
-    B.tex(V(px(st.v), 258), '$x=' + fmt(st.v, 2) + '$', { size: 13, anchor: 'mid', color: '#ffd166' });
+    // 探针：竖直参考线 + 多层柔光 + 实心芯，读数放在刻度数字下面
+    B.seg(V(px(st.v), 70), V(px(st.v), 128), { stroke: plotInk.gold, 'stroke-width': 1.2, 'stroke-dasharray': '4 4' });
+    glowDot(B, V(px(st.v), 128), plotInk.gold, 18, 6);
+    B.tex(V(px(st.v), 174), '$x=' + fmt(st.v, 2) + '$', { size: 13, anchor: 'mid', color: plotInk.gold });
     // 逐点读数
     const inM = M.in(st.v), sat = P.p(st.v);
-    let read;
-    if (!inM) read = `$x=${f1(st.v)}$：x\\notin M —— 前置集合之外，命题不作断言`;
-    else if (qEff === 0) read = sat ? `$x=${f1(st.v)}$：满足 —— 全称命题要求 M 内每点都如此`
-                                    : `$x=${f1(st.v)}$：不满足 —— 反例即在此，全称命题被这一个点推翻`;
-    else read = sat ? `$x=${f1(st.v)}$：满足 —— 见证即在此，存在命题由这一个点成立`
-                    : `$x=${f1(st.v)}$：不满足 —— 存在命题仍可另寻见证`;
-    B.tex(V(430, 296), read, { size: 15, anchor: 'mid' });
     // 徽章
-    cPr(inM ? (sat ? `$x=${f1(st.v)}$：p(x) 满足 ✓` : `$x=${f1(st.v)}$：p(x) 不满足 ✗`)
-            : `$x=${f1(st.v)}$：x∉M，量词只管 M 内的元素`, inM ? (sat ? 'ok' : '') : '');
+    cPr(inM ? (sat ? `$x=${f1(st.v)}$：$p(x)$ 满足 ✓` : `$x=${f1(st.v)}$：$p(x)$ 不满足 ✗`)
+            : `$x=${f1(st.v)}$：$x\\notin M$，量词只管 $M$ 内的元素`, inM ? (sat ? 'ok' : 'warn') : '');
     let vt, vcls;
     if (qEff === 0) {
       if (truth) { vt = `真：带内全绿 —— 这须要证明（对一切 x 论证），逐点检验数不完`; vcls = 'ok'; }
@@ -133,12 +133,11 @@ export function createBoard(root) {
   });
 
   B.handle({
-    get: () => V(px(st.v), 214), color: '#ffd166', label: 'x',
+    get: () => V(px(st.v), 128), color: plotInk.gold, label: 'x',
     set: p => { st.v = snap(Math.max(-6, Math.min(6, inv(p.x)))); },
-    clamp: p => V(Math.max(px(-6), Math.min(px(6), p.x)), 214),
+    clamp: p => V(Math.max(px(-6), Math.min(px(6), p.x)), 128),
   });
 
-  B.hint('拖金探针逐点读、⏩ 扫轴看全带：全称命题红处即反例，存在命题绿处即见证；换量词对照真假');
   B.render();
   return B;
 }

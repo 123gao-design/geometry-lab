@@ -4,11 +4,13 @@
    mask 内容写原始色 '#ffffff'/'#000000'（'#fff' 是主题语义键，亮色下会破坏亮度合成）；
    右墙移动时 mask 里装着 U 的矩形要跟着重建（removeChild 循环，浏览器与无头环境都走得通）。
    局部坐标约定：u∈[0,860] 向右、v∈[0,470] 向下（SVG 原生方向）。 */
-import { Board, mk, V } from '../../../lib/board.js';
+import { mk, V } from '../../../lib/board.js';
+import { createDiagram, plotInk, glowDot } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 860, H = 470;
-  const B = new Board(root, W, H);
+  root.classList.add('atlas-board', 'complab-board');
+  const B = createDiagram(root, W, H, '补集演示台：推动全集右墙，看补集随全集改变');
   const UY = 60, UH = 355;                                   // 全集框：y 60..415，右墙 x = st.ux
   const EA = { cx: 300, cy: 240, rx: 118, ry: 85 }, EBv = { cx: 492, cy: 240, rx: 108, ry: 80 };
   const inE = (e, p) => ((p.x - e.cx) / e.rx) ** 2 + ((p.y - e.cy) / e.ry) ** 2 <= 1;
@@ -28,7 +30,7 @@ export function createBoard(root) {
     { t: '$\\complement_U(\\complement_U A)$', def: '$\\complement_U(\\complement_UA)=A$', say: '双重否定即肯定：挖去再挖去，回到 A 本身' },
   ];
 
-  // ---- mask：随右墙重建 ----
+  // ---- mask：随右墙重建（defs 会被清空，柔光渐变也在重建里一并补回）----
   const defs = mk('defs', {}, B.svg);
   const ID = B.uid;
   function buildMasks() {
@@ -41,37 +43,39 @@ export function createBoard(root) {
     mk('ellipse', { cx: EBv.cx, cy: EBv.cy, rx: EBv.rx, ry: EBv.ry, fill: '#000000' }, mAB);
   }
 
-  const cR = B.chipM('结果'), cId = B.chipM('恒等式'), cV = B.chipM('判读');
+  B.setAppearanceBackground(['光晕', '细网格'], grid => { root.dataset.texture = grid ? 'grid' : 'halo'; });
+
+  const cR = B.readout('结果'), cId = B.readout('恒等式', 'mint'), cV = B.chipM('判读');
 
   B.renderFn = () => {
     const M = MODES[st.m];
     const joined = [5, 6, 7, 8].filter(i => inU(i));          // 已被右墙划进全集的圈外元素
     // 全集框（右墙 = 框右边）+ 活动墙高亮
-    mk('rect', { x: 60, y: UY, width: st.ux - 60, height: UH, fill: 'rgba(139,163,189,.05)', stroke: '#3f5f8f', 'stroke-width': 1.4, 'stroke-dasharray': '5 5' }, B.dyn);
-    B.seg(V(st.ux, UY), V(st.ux, UY + UH), { stroke: '#ff9e4a', 'stroke-width': 2.2 });
-    B.tex(V(st.ux - 14, UY + 20), '$U$', { size: 15, anchor: 'end', color: '#93a1b5' });
-    B.text(V(st.ux - 14, UY + 40), '右墙 u=' + st.ux, { 'font-size': 11, fill: '#ff9e4a', 'text-anchor': 'end' });
+    mk('rect', { x: 60, y: UY, width: st.ux - 60, height: UH, fill: plotInk.soft, stroke: plotInk.rule, 'stroke-width': 1.4, 'stroke-dasharray': '5 5' }, B.dyn);
+    B.seg(V(st.ux, UY), V(st.ux, UY + UH), { stroke: plotInk.copper, 'stroke-width': 2.2 });
+    B.tex(V(st.ux - 14, UY + 20), '$U$', { size: 15, anchor: 'end', color: plotInk.guide });
     // 两圈
-    mk('ellipse', { cx: EA.cx, cy: EA.cy, rx: EA.rx, ry: EA.ry, fill: '#5cadff', 'fill-opacity': .07, stroke: '#5cadff', 'stroke-width': 2.2 }, B.dyn);
-    mk('ellipse', { cx: EBv.cx, cy: EBv.cy, rx: EBv.rx, ry: EBv.ry, fill: '#ff9e4a', 'fill-opacity': .07, stroke: '#ff9e4a', 'stroke-width': 2.2 }, B.dyn);
-    B.tex(V(EA.cx, EA.cy - EA.ry - 16), '$A$', { size: 16, anchor: 'mid', color: '#5cadff' });
-    B.tex(V(EBv.cx, EBv.cy - EBv.ry - 16), '$B$', { size: 16, anchor: 'mid', color: '#ff9e4a' });
+    mk('ellipse', { cx: EA.cx, cy: EA.cy, rx: EA.rx, ry: EA.ry, fill: plotInk.blue, 'fill-opacity': .07, stroke: plotInk.blue, 'stroke-width': 2.2 }, B.dyn);
+    mk('ellipse', { cx: EBv.cx, cy: EBv.cy, rx: EBv.rx, ry: EBv.ry, fill: plotInk.copper, 'fill-opacity': .07, stroke: plotInk.copper, 'stroke-width': 2.2 }, B.dyn);
+    B.tex(V(EA.cx, EA.cy - EA.ry - 16), '$A$', { size: 16, anchor: 'mid', color: plotInk.blue });
+    B.tex(V(EBv.cx, EBv.cy - EBv.ry - 16), '$B$', { size: 16, anchor: 'mid', color: plotInk.copper });
     // 结果区域着色
-    if (st.m === 0) mk('rect', { x: 60, y: UY, width: st.ux - 60, height: UH, fill: '#4ade80', 'fill-opacity': .16, mask: `url(#${ID}mCA)` }, B.dyn);
-    else if (st.m === 1) mk('rect', { x: 60, y: UY, width: st.ux - 60, height: UH, fill: '#4ade80', 'fill-opacity': .16, mask: `url(#${ID}mAB)` }, B.dyn);
-    else mk('ellipse', { cx: EA.cx, cy: EA.cy, rx: EA.rx, ry: EA.ry, fill: '#4ade80', 'fill-opacity': .16 }, B.dyn);
+    if (st.m === 0) mk('rect', { x: 60, y: UY, width: st.ux - 60, height: UH, fill: plotInk.green, 'fill-opacity': .16, mask: `url(#${ID}mCA)` }, B.dyn);
+    else if (st.m === 1) mk('rect', { x: 60, y: UY, width: st.ux - 60, height: UH, fill: plotInk.green, 'fill-opacity': .16, mask: `url(#${ID}mAB)` }, B.dyn);
+    else mk('ellipse', { cx: EA.cx, cy: EA.cy, rx: EA.rx, ry: EA.ry, fill: plotInk.green, 'fill-opacity': .16 }, B.dyn);
     // 元素点：纳入的实色（成员绿/非成员暗），未纳入的虚影等待
     const members = [];
     for (let i = 0; i < 9; i++) {
       if (!inU(i)) {
-        mk('circle', { cx: P(i).x, cy: P(i).y, r: 8, fill: 'none', stroke: '#3f5f8f', 'stroke-width': 1.2, 'stroke-dasharray': '3 3', 'stroke-opacity': .6 }, B.dyn);
-        B.text(V(P(i).x, P(i).y - 13), String(i + 1), { 'font-size': 11, fill: '#5c6a80', 'fill-opacity': .6 });
+        mk('circle', { cx: P(i).x, cy: P(i).y, r: 8, fill: 'none', stroke: plotInk.axis, 'stroke-width': 1.2, 'stroke-dasharray': '3 3', 'stroke-opacity': .6 }, B.dyn);
+        B.text(V(P(i).x, P(i).y - 13), String(i + 1), { 'font-size': 11, fill: plotInk.guide, 'fill-opacity': .6, style: 'fill:' + plotInk.guide });
         continue;
       }
       const mem = st.m === 0 ? !inA(i) : st.m === 1 ? inA(i) && !inB(i) : inA(i);
       if (mem) members.push(i + 1);
-      B.dot(P(i), 8, mem ? { fill: '#4ade80' } : { fill: '#93a1b5', 'fill-opacity': .4 });
-      B.text(V(P(i).x, P(i).y - 13), String(i + 1), { 'font-size': 11, fill: mem ? '#4ade80' : '#5c6a80' });
+      if (mem) glowDot(B, P(i), plotInk.green, 18, 6);
+      else B.dot(P(i), 8, { fill: plotInk.guide, 'fill-opacity': .4 });
+      B.text(V(P(i).x, P(i).y - 13), String(i + 1), { 'font-size': 11, fill: mem ? plotInk.green : plotInk.guide, style: 'fill:' + (mem ? plotInk.green : plotInk.guide) });
     }
     // 徽章
     const list = members.length ? '\\{' + members.join(',') + '\\}' : '\\varnothing';
@@ -107,11 +111,10 @@ export function createBoard(root) {
   // 1..5 可拖（限制在当前全集内）；6..9 是圈外元素，只等右墙
   for (let i = 0; i < 5; i++) {
     const lo = p => [Math.max(74, Math.min(st.ux - 12, p.x)), Math.max(UY + 14, Math.min(UY + UH - 14, p.y))];
-    B.handle({ get: () => P(i), thin: true, set: p => { st.pts[i] = lo(p); }, clamp: p => V(lo(p)[0], lo(p)[1]) });
+    B.handle({ get: () => P(i), thin: true, color: 'transparent', set: p => { st.pts[i] = lo(p); }, clamp: p => V(lo(p)[0], lo(p)[1]) });
   }
 
   buildMasks();
-  B.hint('推右墙 u：6、7、8、9 从「不存在」变成补集成员 —— 不在全集里的元素根本不参与运算');
   B.render();
   return B;
 }

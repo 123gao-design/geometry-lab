@@ -35,3 +35,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createMachine } from '../../../boards/functions/concept/machine.js';
 import { C_CHAPTERS } from './cnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

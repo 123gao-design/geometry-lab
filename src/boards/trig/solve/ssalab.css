@@ -1,0 +1,28 @@
+.board.fn-board.sine-law-board { grid-template-columns: minmax(0, 1fr) minmax(220px, 35%); }
+.ssa-readings { font-variant-numeric: tabular-nums; }
+.ssa-readings > section + section { margin-top: 12px; }
+.ssa-readings h4 {
+  margin: 0 0 5px;
+  color: var(--reading-color);
+  font: 600 14px/1.4 var(--font-song, serif);
+}
+.ssa-readings dl {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 6px;
+  margin: 0;
+}
+.ssa-readings dl > div {
+  padding-top: 5px;
+  border-top: 1px solid var(--pj-axis);
+}
+.ssa-readings dt { color: var(--reading-color); font-size: 13px; }
+.ssa-readings dd {
+  margin: 3px 0 0;
+  color: var(--pj-ink);
+  font-size: clamp(15px, 1.8cqw, 19px);
+  line-height: 1.35;
+}
+foreignObject .ssa-readings { width: 100%; padding: 0 14px; border-inline-start: 1px solid var(--pj-axis); }
+foreignObject .proof-export-checks > .chip { display: flex; flex-direction: column; align-items: start; }

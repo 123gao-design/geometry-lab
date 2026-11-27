@@ -1,0 +1,62 @@
+.fn-preset-row {
+  flex: 0 0 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--preset-count, 4), minmax(0, 1fr));
+  gap: 4px;
+}
+.fn-preset-row .btn { position: relative; min-width: 0; padding: 4px 16px; }
+.fn-preset-row .preset-formula { display: block; margin-inline: -14px; }
+.fn-preset-row .preset-short { display: none; }
+.fn-preset-row .btn[aria-pressed="true"]::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: var(--pj-green);
+  box-shadow: 0 0 4px 1px color-mix(in srgb, var(--pj-green) 50%, transparent);
+}
+@container fn-board (min-width: 681px) {
+  .fn-preset-row .btn[aria-pressed="true"]:has(.preset-formula)::before { top: calc(4px + .8em); }
+}
+@container fn-board (max-width: 680px) {
+  .fn-preset-row :is(.preset-name, .preset-formula) { display: none; }
+  .fn-preset-row .preset-short { display: inline; }
+}
+@container fn-board (max-width: 480px) {
+  .fn-preset-row .preset-short { display: block; line-height: 1.35; }
+  .fn-preset-row .preset-index { display: block; }
+  .fn-preset-row .btn[aria-pressed="true"]::before { inset-inline-start: 5px; top: calc(4px + .675em); }
+  .fn-preset-row .btn { padding-inline: 0; font-size: 13px; }
+}
+
+.fn-study-board .fn-board-note,
+.fn-study-board.fn-board .chip > span { overflow: visible; }
+.fn-study-board .chip:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.board.fn-study-board.bd-float { overflow-y: auto; }
+.board.fn-study-board.bd-float > :is(.ctrl.chips, .fn-board-notes) { max-height: none; overflow: visible; }
+
+.board:is(.log-board, .fn-wrap-legend) > .fn-board-notes {
+  align-items: center;
+  gap: 2px 14px;
+  padding-block: 4px 6px;
+  overflow: visible;
+}
+:is(.log-board, .fn-wrap-legend) .fn-board-note {
+  display: inline-flex;
+  flex: none;
+  align-items: baseline;
+  gap: .28em;
+  padding-block: 2px;
+  white-space: nowrap;
+}
+:is(.log-board, .fn-wrap-legend) .fn-board-note::before {
+  align-self: center;
+  margin: 0;
+}
+
+.board.fn-wrap-legend.bd-float > .ctrl:not(.chips) { max-height: none; overflow: visible; }

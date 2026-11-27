@@ -1,12 +1,12 @@
 /* 图 B1 终边转针机：任意角 = 旋转量（可正可负、可超 2π）。把手累积圈数，螺旋扫痕记录，
    终边相同角 α₀+2kπ 实时读数。坐标：O 为圆心，数学角 α 逆时针为正（SVG y 向下，取负号换算）。 */
-import { Board, mk, V, fmt, angDiff, TAU } from '../../../lib/board.js';
+import { TrigBoard, angleTex } from '../trig-board.js';
+import { mk, V, fmt, angDiff, TAU } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 500);
+  const B = new TrigBoard(root, 860, 500);
   const O = V(430, 255), R = 155, STEP = 13, MAXT = 6 * Math.PI; // 每圈螺旋半径内缩 13
   const st = { a: Math.PI / 6, dir: 1, anim: false };
-  let prev = angDiff(st.a, 0);
 
   const cDeg = a => a * 180 / Math.PI;
   const quad = d0 => { // d0 ∈ [0,360)
@@ -14,15 +14,14 @@ export function createBoard(root) {
     return d0 < 90 ? '第 I 象限' : d0 < 180 ? '第 II 象限' : d0 < 270 ? '第 III 象限' : '第 IV 象限';
   };
 
-  // chips
-  const cDegu = B.chip('α（度）'), cRad = B.chip('α（弧度）'), cAcc = B.chip('转角读数'),
-    cSame = B.chip('终边相同角'), cQuad = B.chip('象限归属');
-  B.btn('① 30°', () => set(Math.PI / 6));
-  B.btn('② 390°', () => set(13 * Math.PI / 6));
-  B.btn('③ −330°', () => set(-11 * Math.PI / 6));
-  B.btn('④ 750°', () => set(25 * Math.PI / 6));
-  const goBtn = B.btn('⏩ 连转', () => { st.anim = !st.anim; st.anim && tick(); });
-  function set(a) { st.a = a; prev = angDiff(a, 0); B.render(); }
+  B.groupReadings('当前转角');
+  B.chipRow.dataset.readingStyle = 'info';
+  B.chipRow.classList.add('paired-notes');
+  const cDegu = B.readout('角度', 'gold'), cRad = B.readout('弧度', 'blue'), cAcc = B.readout('转角分解', 'mint');
+  const cSame = B.chipM('终边相同角'), cQuad = B.chipM('象限归属');
+  B.angleRow([30, 390, -330, 750], () => st.a, set, true);
+  const goBtn = B.btn('⏩ 连转', () => { st.anim = !st.anim; if (st.anim) tick(); else B.render(); });
+  function set(a) { st.anim = false; st.a = a; B.render(); }
   function tick() {
     if (!st.anim) return;
     st.a += st.dir * 0.045;
@@ -36,8 +35,8 @@ export function createBoard(root) {
     get: () => V(O.x + R * Math.cos(st.a), O.y - R * Math.sin(st.a)),
     set: p => {
       const ang = Math.atan2(-(p.y - O.y), p.x - O.x);
-      st.a = Math.max(-MAXT, Math.min(MAXT, st.a + angDiff(ang, prev)));
-      prev = ang;
+      st.a = Math.max(-MAXT, Math.min(MAXT, st.a + angDiff(ang, st.a)));
+      st.anim = false;
     },
     color: '#ffd166', r: 8, label: 'P', lo: [10, -10],
   });
@@ -55,7 +54,7 @@ export function createBoard(root) {
     [[668, 155, 'I'], [190, 155, 'II'], [190, 352, 'III'], [668, 352, 'IV']].forEach(([x, y, s]) =>
       B.text(V(x, y), s, { 'font-size': 15, fill: '#3f5f8f', 'font-weight': 700 }));
     // 圆 + 始边
-    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: '#22314a', 'stroke-width': 1.6 }, B.dyn);
+    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: '#93a1b5', 'stroke-width': 1.6 }, B.dyn);
     B.seg(O, V(O.x + R, O.y), { stroke: '#5c6a80', 'stroke-width': 2.2 });
     mk('polygon', { points: `${O.x + R},${O.y} ${O.x + R - 10},${O.y - 4.5} ${O.x + R - 10},${O.y + 4.5}`, fill: '#5c6a80' }, B.dyn);
     B.text(V(O.x + R - 22, O.y + 18), '始边', { 'font-size': 12, fill: '#5c6a80' });
@@ -71,23 +70,23 @@ export function createBoard(root) {
     }
     const rr = rOf(a);
     mk('polyline', { points: pts.join(' '), fill: 'none', stroke: '#ffd166', 'stroke-width': 3, 'stroke-opacity': .8 }, B.dyn);
-    mk('polygon', { points: `${O.x + rr * Math.cos(a)},${O.y - rr * Math.sin(a)} ${O.x + (rr - 12) * Math.cos(a - .05)},${O.y - (rr - 12) * Math.sin(a - .05)} ${O.x + (rr - 12) * Math.cos(a + .05)},${O.y - (rr - 12) * Math.sin(a + .05)}`, fill: '#ffd166' }, B.dyn);
+    const prev = a * (nStep - 1) / nStep;
+    if (Math.abs(a) > .01) B.arrow(V(O.x + rOf(prev) * Math.cos(prev), O.y - rOf(prev) * Math.sin(prev)),
+      V(O.x + rr * Math.cos(a), O.y - rr * Math.sin(a)), { line: false, stroke: '#ffd166', head: 10, wide: 4 });
     B.text(V(O.x + (rr + 16) * Math.cos(a / 2), O.y - (rr + 16) * Math.sin(a / 2)), `${fmt(deg, 1)}°`, { 'font-size': 14, fill: '#ffd166' });
     // 终边
-    B.seg(O, V(O.x + R * Math.cos(a), O.y - R * Math.sin(a)), { stroke: '#fff', 'stroke-width': 2.6 });
+    B.seg(O, V(O.x + R * Math.cos(a), O.y - R * Math.sin(a)), { stroke: '#93a1b5', 'stroke-width': 2.6 });
     // 标签沿射线内侧落位，再沿法线让开 12px：既避开圆上的把手 P，也避开 (a/2) 处的角度读数
     const lr = R * 0.72, lx = O.x + lr * Math.cos(a) - 12 * Math.sin(a), ly = O.y - lr * Math.sin(a) - 12 * Math.cos(a);
-    B.text(V(lx, ly), '终边', { 'font-size': 12, fill: '#aebdd2' });
+    B.text(V(lx, ly), '终边', { 'font-size': 12, fill: '#93a1b5' });
     // chips
-    cDegu(`${fmt(deg, 1)}°`);
-    cRad(`${fmt(a, 3)} rad ≈ ${fmt(a / Math.PI, 3)}π`);
-    cAcc(k === 0
-      ? `不足一圈：余 ${fmt(d0, 1)}°（${a >= 0 ? '正' : '负'}向）`
-      : `${k} 整圈（${k > 0 ? '正' : '负'}向）+ 余 ${fmt(d0, 1)}°`);
-    cSame(`β = ${fmt(d0, 1)}° + k·360°（k∈ℤ，此刻 k=${k}）`);
+    goBtn.classList.toggle('on', st.anim);
+    cDegu(`$${fmt(deg, 1)}^\\circ$`);
+    cRad(`$${angleTex(a)}\\,\\mathrm{rad}$`);
+    cAcc(`$${fmt(deg, 1)}^\\circ=${k}\\times360^\\circ+${fmt(d0, 1)}^\\circ$`);
+    cSame(`$\\beta=${fmt(d0, 1)}^\\circ+k\\cdot360^\\circ$，$k\\in\\mathbb Z$`);
     cQuad(quad(d0));
   };
   B.render();
-  B.hint('拖动圆上把手旋转：转过一圈角度继续累加 —— 390° 与 30° 终边重合、角度不同；⏩ 自动连转');
   return B;
 }

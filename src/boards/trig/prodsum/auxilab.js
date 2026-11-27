@@ -1,20 +1,27 @@
 /* 图 Q2 辅助角机：a sin x + b cos x = R sin(x+φ)，R=√(a²+b²)、φ=atan2(b,a) ——
    两列波叠成一列纯 sin；右上直角三角形读出 R 与 φ（F1 三旋钮的结论：R 管峰高、φ 管起点）。 */
-import { Board, mk, V, fmt, TAU } from '../../../lib/board.js';
+import { TrigLegendBoard } from '../trig-board.js';
+import { mk, V, fmt, TAU } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 520);
+  const B = new TrigLegendBoard(root, 860, 520);
+  B.groupReadings('公式与数值');
   const st = { a: 1, b: 1, x0: Math.PI / 6, grid: true, labs: true };
-  const sA = B.slider('系数 a', -2, 2, 0.25, st.a, v => { st.a = v; B.render(); });
-  const sB = B.slider('系数 b', -2, 2, 0.25, st.b, v => { st.b = v; B.render(); });
-  const sX = B.slider('探针 x₀', -0.5, TAU + 0.5, 0.01, st.x0, v => { st.x0 = v; B.render(); });
+  const sA = B.slider('系数 a', -2, 2, 0.25, st.a, v => { st.a = v; B.render(); }, undefined, n => `系数 $a=${n}$`);
+  const sB = B.slider('系数 b', -2, 2, 0.25, st.b, v => { st.b = v; B.render(); }, undefined, n => `系数 $b=${n}$`);
+  B.slider('探针 x₀', -0.5, TAU + 0.5, 0.01, st.x0, v => { st.x0 = v; B.render(); }, undefined, n => `探针 $x_0=${n}$`);
   B.graphToggles(st, ['grid', 'labs']);
-  const pre = (a, b) => () => { st.a = a; st.b = b; sA.sync(a); sB.sync(b); B.render(); };
-  B.btnM('$\\sin x+\\cos x$', pre(1, 1));
-  B.btnM('$\\sin x-\\cos x$', pre(1, -1));
-  const cR = B.chipM('R'), cP = B.chipM('φ'), cV = B.chipM('探针核验'), cJ = B.chipM('判读');
+  const examples = [
+    { name: '$\\sin x+\\cos x$', a: 1, b: 1 },
+    { name: '$\\sin x-\\cos x$', a: 1, b: -1 },
+  ];
+  B.choiceRow('选择例题', examples, () => examples.findIndex(e => e.a === st.a && e.b === st.b), i => {
+    st.a = examples[i].a; st.b = examples[i].b;
+    sA.sync(st.a); sB.sync(st.b); B.render();
+  });
+  const cR = B.readout('$R$', 'gold'), cP = B.readout('$\\varphi$', 'mint'), cV = B.readout('探针核验', 'blue'), cJ = B.chipM('判读');
 
-  const m = B.isoFit(-0.3, TAU + 0.3, -3, 3);
+  const m = B.isoFit(-0.3, TAU + 0.3, -3, 3, B.plotRect);
   const sam = f => {
     const xs = [];
     for (let i = 0; i <= 420; i++) xs.push(m.X0 + (m.X1 - m.X0) * i / 420);
@@ -47,8 +54,7 @@ export function createBoard(root) {
     const L = a * Math.sin(x0) + b * Math.cos(x0), Rv = R * Math.sin(x0 + ph);
     if (x0 >= m.X0 && x0 <= m.X1) {
       B.seg(V(m.px(x0), m.py(0)), V(m.px(x0), m.py(L)), { stroke: '#67e8f9', 'stroke-width': 1.2, 'stroke-dasharray': '4 3' });
-      B.dot(V(m.px(x0), m.py(L)), 3.6, { fill: '#5cadff' });
-      B.dot(V(m.px(x0), m.py(Rv)), 3.6, { fill: '#ffd166' });
+      B.mark(V(m.px(x0), m.py(L)), '#5cadff');
     }
     // 右上直角三角形：横腿 a、竖腿 b、斜边 R、夹角 φ —— a、b 带符号，腿自动翻向
     const T0 = V(664, 128), S = 30;
@@ -73,14 +79,14 @@ export function createBoard(root) {
       }
       B.dot(T0, 2.6, { fill: '#93a1b5' });
     }
+    B.note('$a\\sin x+b\\cos x$', '#5cadff');
+    if (R > 1e-9) B.note('$R\\sin(x+\\varphi)$', '#ffd166', 'dashed');
     // chips
     cR(`$R=\\sqrt{a^2+b^2}=${fmt(R, 3)}$`);
-    cP(`$\\varphi=${fmt(ph, 3)}\\approx${fmt(ph * 180 / Math.PI, 1)}°$（按 (a,b) 定象限）`);
-    cV(`$a\\sin x_0+b\\cos x_0=${fmt(L, 3)}=R\\sin(x_0+\\varphi)=${fmt(Rv, 3)}$`, Math.abs(L - Rv) < 1e-9 ? 'ok' : 'warn');
-    if (R < 1e-9) cJ('全零排除：a=b=0 时 R=0、恒为 0 —— 不表示任何波形', 'warn');
-    else if (Math.abs(b) < 1e-9) cJ('纯 sin 波：φ=0，辅助角不出现（F1 的 A=a）', '');
-    else if (Math.abs(a) < 1e-9) cJ('纯 cos 波：φ=π/2 —— W2 的 cos x=sin(x+π/2) 的同一情形', '');
-    else cJ(`两波叠成一列纯 sin：R=${fmt(R, 2)} 管峰高、φ=${fmt(ph, 2)} 管起点（F1 三旋钮的结论）`, '');
+    cP(R > 1e-9 ? `$\\varphi\\approx ${fmt(ph, 3)}\\,\\mathrm{rad}$，约 $${fmt(ph * 180 / Math.PI, 1)}^\\circ$` : '相位任意');
+    cV(`原式 $${fmt(L, 3)}$，辅助角式 $${fmt(Rv, 3)}$`, Math.abs(L - Rv) < 1e-9 ? 'ok' : 'warn');
+    if (R < 1e-9) cJ('$a=b=0$ 时函数恒为零，任意相位都得到同一条水平线。');
+    else cJ(`振幅 $R=\\sqrt{a^2+b^2}$。由 $\\cos\\varphi=a/R$、$\\sin\\varphi=b/R$ 同时确定相位的终边。`);
   };
   B.render();
   B.hint('拖 a、b：蓝实（原始叠加）与金虚（辅助角写法）恒重合 —— 两列波叠成一列，峰高 R、起点 φ 全在直角三角形上读');

@@ -35,3 +35,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createArrowMap } from '../../../boards/functions/concept/arrowmap.js';
 import { C_CHAPTERS } from './cnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

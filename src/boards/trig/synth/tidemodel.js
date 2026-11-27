@@ -1,36 +1,32 @@
-/* 图 K2 建模与最值机，双模式：
-   模式一 潮汐建模 —— 港口水深散点（真值 5+3sin(2π(x−3)/12)+微噪）由金曲线去拟合，
-     四旋钮 A/T/x₀/k 就是 F1 三旋钮 + 中线；残差 RMS 与「建模四步」公式实时核验。
-   模式二 最值竞技 —— f(x)=a sinx+b cosx+c 辅助角直译 R sin(x+φ)+c（Q2 全回收）：
-     右栏直角三角形读 R 与 φ，max=c+R、min=c−R 与数值实测完全重合。
-   坐标：模式一 x∈[0,24]h、y∈[0,9.5]m；模式二 x∈[0,2π]、y 自适应 ±(|c|+R+1)。 */
-import { Board, mk, V, fmt, TAU } from '../../../lib/board.js';
+import { SynthBoard } from './synth-board.js';
+import { mk, V, fmt, TAU } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 520);
+  const B = new SynthBoard(root, '从曲线读周期、振幅和最值');
   const st = { mode: 0, A: 3, T: 12, t0: 3, k: 5, a: 1, b: 1, c: 0 };
-  const PL = [16, 12, 500, 486], PR = [532, 12, 312, 486];
-  const cP = B.chipM('参数核验'), cQ = B.chipM('峰值核验'), cR = B.chipM('谷值核验'), cS = B.chipM('方法判读');
-  const ASl = B.slider('振幅 A', 0.5, 6, 0.05, st.A, v => { st.A = v; B.render(); }, 'A');
-  const TSl = B.slider('周期 T', 6, 24, 0.5, st.T, v => { st.T = v; B.render(); }, 'Tp');
-  const zSl = B.slider('升零点 x₀', 0, 12, 0.25, st.t0, v => { st.t0 = v; B.render(); }, 't0');
-  const kSl = B.slider('中线 k', 0, 8, 0.1, st.k, v => { st.k = v; B.render(); }, 'km');
-  const aSl = B.slider('系数 a', 0, 3, 0.1, st.a, v => { st.a = v; B.render(); }, 'a');
-  const bSl = B.slider('系数 b', 0, 3, 0.1, st.b, v => { st.b = v; B.render(); }, 'b');
-  const cSl = B.slider('中线 c', -3, 3, 0.1, st.c, v => { st.c = v; B.render(); }, 'c');
+  const cP = B.readout('参数核验', 'blue'), cQ = B.readout('峰值核验', 'gold'), cR = B.readout('谷值核验', 'orange'), cS = B.chipM('方法判读');
+  const ASl = B.slider('振幅 A', 0.5, 6, 0.05, st.A, v => { st.A = v; B.render(); }, 'A', n => `振幅 $A=${n}$`);
+  const TSl = B.slider('周期 T', 6, 24, 0.5, st.T, v => { st.T = v; B.render(); }, 'Tp', n => `周期 $T=${n}$`);
+  const zSl = B.slider('上穿中线 x₀', 0, 12, 0.25, st.t0, v => { st.t0 = v; B.render(); }, 't0', n => `上穿中线 $x_0=${n}$`);
+  const kSl = B.slider('中线 k', 0, 8, 0.1, st.k, v => { st.k = v; B.render(); }, 'km', n => `中线 $k=${n}$`);
+  const aSl = B.slider('系数 a', 0, 3, 0.1, st.a, v => { st.a = v; B.render(); }, 'a', n => `系数 $a=${n}$`);
+  const bSl = B.slider('系数 b', 0, 4, 0.1, st.b, v => { st.b = v; B.render(); }, 'b', n => `系数 $b=${n}$`);
+  const cSl = B.slider('中线 c', -3, 3, 0.1, st.c, v => { st.c = v; B.render(); }, 'c', n => `中线 $c=${n}$`);
   const rowOf = s => s.parent || s.parentElement;
-  const mBtns = [
-    B.btnM('潮汐建模', () => setMode(0), { on: true }),
-    B.btnM('$a\\sin x+b\\cos x+c$ 最值竞技', () => setMode(1)),
+  B.choiceRow('选择模式', ['潮汐建模', '合成波最值'].map(name => ({ name })), () => st.mode, setMode);
+  const examples = [
+    { name: '潮汐拟合', values: { mode: 0, A: 3, T: 12, t0: 3, k: 5 } },
+    { name: '半周期错配', values: { mode: 0, A: 3, T: 12, t0: 9, k: 5 } },
+    { name: '合成振幅 $\\sqrt{2}$', values: { mode: 1, a: 1, b: 1, c: 0 } },
+    { name: '合成振幅 $5$', values: { mode: 1, a: 3, b: 4, c: 2 } },
   ];
-  const pre = fn => () => { fn(); B.render(); };
-  B.btn('① 真值贴合', pre(() => { setMode(0); st.A = 3; st.T = 12; st.t0 = 3; st.k = 5; ASl.sync(3); TSl.sync(12); zSl.sync(3); kSl.sync(5); }));
-  B.btn('② 半周期错配', pre(() => { setMode(0); st.A = 3; st.T = 12; st.t0 = 9; st.k = 5; ASl.sync(3); TSl.sync(12); zSl.sync(9); kSl.sync(5); }));
-  B.btnM('③ 两波叠一列 $\\sqrt{2}$', pre(() => { setMode(1); st.a = 1; st.b = 1; st.c = 0; aSl.sync(1); bSl.sync(1); cSl.sync(0); }));
-  B.btn('④ 3-4-5 波', pre(() => { setMode(1); st.a = 3; st.b = 4; st.c = 2; aSl.sync(3); bSl.sync(4); cSl.sync(2); }));
+  B.examples('选择例题', examples, st, values => {
+    Object.assign(st, values);
+    ASl.sync(st.A); TSl.sync(st.T); zSl.sync(st.t0); kSl.sync(st.k);
+    aSl.sync(st.a); bSl.sync(st.b); cSl.sync(st.c); setMode(st.mode);
+  });
   function setMode(m) {
     st.mode = m;
-    mBtns.forEach((b2, i) => b2.classList.toggle('on', i === m));
     for (const s2 of m === 0 ? [aSl, bSl, cSl] : [ASl, TSl, zSl, kSl]) rowOf(s2).style.display = 'none';
     for (const s2 of m === 0 ? [ASl, TSl, zSl, kSl] : [aSl, bSl, cSl]) rowOf(s2).style.display = '';
     B.render();
@@ -40,92 +36,80 @@ export function createBoard(root) {
   const NZ = [0.08, -0.12, 0.05, 0.1, -0.06, 0.12, -0.09, 0.07, 0.13, -0.08, 0.06, -0.11, 0.09, 0.12, -0.05, 0.1, -0.07];
   const dpts = Array.from({ length: 17 }, (_, i) => V(i * 1.5, 5 + 3 * Math.sin(TAU * (i * 1.5 - 3) / 12) + NZ[i]));
   const fit = x => st.k + st.A * Math.sin(TAU * (x - st.t0) / st.T);
-  const angArc = (p, r, a0, a1, at) => {
-    const n = 22, pts = [];
-    for (let i = 0; i <= n; i++) { const t = a0 + (a1 - a0) * i / n; pts.push(`${(p.x + r * Math.cos(t)).toFixed(1)},${(p.y - r * Math.sin(t)).toFixed(1)}`); }
-    mk('polyline', { points: pts.join(' '), fill: 'none', ...at }, B.dyn);
-  };
-
+  const peak = Math.max(...dpts.map(p => p.y)), low = Math.min(...dpts.map(p => p.y));
+  function midline(m, level) {
+    B.seg(V(m.px(0), m.py(level)), V(m.px(m.X1), m.py(level)), { stroke: '#93a1b5', 'stroke-width': 1.4, 'stroke-dasharray': '5 4' });
+  }
+  function point(m, x, y, label, color, offset) {
+    B.mark(V(m.px(x), m.py(y)), color);
+    const markerLabel = B.tex(V(Math.max(68, Math.min(B.w - 64, m.px(x))), m.py(y) + offset), label, { size: 14, color, anchor: 'mid', w: 98 });
+    markerLabel.firstElementChild.style.fontFamily = B.legendFont;
+  }
+  function triangle(card, a, b) {
+    const svg = mk('svg', { viewBox: '0 0 168 76', class: 'synth-triangle', role: 'img', 'aria-label': '两直角边为 a 和 b，斜边为合成振幅 R' }, card);
+    const scale = Math.min(108 / a, 49 / b);
+    const left = (160 - scale * a) / 2, right = left + scale * a, top = 58 - scale * b;
+    mk('path', { d: 'M' + left + ' 58H' + right + 'V' + top, fill: 'none', stroke: B.diagramColors.blue, 'stroke-width': 2 }, svg);
+    mk('line', { x1: left, y1: 58, x2: right, y2: top, stroke: B.diagramColors.gold, 'stroke-width': 2.3 }, svg);
+    for (const [x, y, name] of [[(left + right) / 2, 68, 'a'], [right + 10, (58 + top) / 2, 'b'], [(left + right) / 2 - 9, (58 + top) / 2 - 8, 'R']]) {
+      B.tex(V(x, y), '$' + name + '$', { root: svg, w: 24, size: 12, anchor: 'mid', color: B.diagramColors.ink });
+    }
+  }
   B.renderFn = () => {
+    B.proof.replaceChildren();
     if (st.mode === 0) {
-      const m = { px: v => PL[0] + 26 + v * (PL[2] - 52) / 24, py: v => PL[1] + 442 - v * 396 / 9.6, X0: 0, X1: 24, Y0: 0, Y1: 9.6 };
-      B.grid({ ...m, sx: 4, sy: 1, grid: true, labs: true, axLab: 't', ayLab: 'd' });
-      B.tex(V(m.px(12), m.py(9.6) - 6), '港口水深 d（m）随时刻 t（h）', { size: 12, color: '#93a1b5', anchor: 'mid', w: 300 });
-      // 数据散点（按残差染色：近绿远红）
-      dpts.forEach(p => {
-        const e2 = Math.abs(fit(p.x) - p.y);
-        B.dot(V(m.px(p.x), m.py(p.y)), 4, { fill: e2 < 0.35 ? '#67e8f9' : '#ff6b6b' });
-      });
-      // 拟合金曲线 + 峰/谷/升零点
-      const xs = Array.from({ length: 121 }, (_, i) => 24 * i / 120).concat([0, 24]).sort((p, q) => p - q);
-      mk('polyline', { points: xs.map(x => `${m.px(x).toFixed(1)},${m.py(fit(x)).toFixed(1)}`).join(' '), fill: 'none', stroke: '#ffd166', 'stroke-width': 2.2 }, B.dyn);
-      const z1 = st.t0, pk = st.t0 + st.T / 4, gy = st.t0 + 3 * st.T / 4;
-      [[z1, '升零'], [pk, '峰'], [gy, '谷']].forEach(([x, nm]) => {
-        if (x < 0 || x > 24) return;
-        B.dot(V(m.px(x), m.py(fit(x))), 3.5, { fill: nm === '谷' ? '#ff9e4a' : '#ffd166' });
-        B.tex(V(m.px(x), m.py(fit(x)) + (nm === '峰' ? -14 : 16)), nm, { size: 11, color: nm === '谷' ? '#ff9e4a' : '#ffd166', anchor: 'mid', w: 50 });
-      });
-      // 右栏：实测对照表 + 建模四步
-      const M = Math.max(...dpts.map(p => p.y)), mn = Math.min(...dpts.map(p => p.y));
-      B.tex(V(PR[0] + PR[2] / 2, 34), '情境对照表（潮汐）', { size: 13, color: '#93a1b5', anchor: 'mid', w: 260 });
-      B.tex(V(PR[0] + 26, 64), `实测峰 M=${fmt(M, 2)} · 谷 m=${fmt(mn, 2)}`, { size: 14, color: '#e8eef7', anchor: 'start', w: 280 });
-      B.tex(V(PR[0] + PR[2] / 2, 104), '建模四步（从数据读真值）', { size: 13, color: '#93a1b5', anchor: 'mid', w: 280 });
-      B.tex(V(PR[0] + 26, 134), `$T=$ 两峰距 ${fmt(12, 1)}$`, { size: 14, color: '#ffd166', anchor: 'start', w: 260 });
-      B.tex(V(PR[0] + 26, 166), `$A=(M-m)/2=${fmt((M - mn) / 2, 2)}$`, { size: 14, color: '#ffd166', anchor: 'start', w: 260 });
-      B.tex(V(PR[0] + 26, 198), `$k=(M+m)/2=${fmt((M + mn) / 2, 2)}$`, { size: 14, color: '#ffd166', anchor: 'start', w: 260 });
-      B.tex(V(PR[0] + 26, 230), `$x_0=$ 升段零点 $=3$`, { size: 14, color: '#ffd166', anchor: 'start', w: 260 });
-      B.tex(V(PR[0] + 26, 268), `你拧的：A=${fmt(st.A, 2)} T=${fmt(st.T, 1)} x₀=${fmt(st.t0, 2)} k=${fmt(st.k, 2)}`, { size: 13, color: '#67e8f9', anchor: 'start', w: 280 });
-      B.tex(V(PR[0] + 26, 300), `残差最大的点已标红 —— 调四旋钮相等全蓝`, { size: 12, color: '#93a1b5', anchor: 'start', w: 280 });
-      // chips
-      const rms = Math.sqrt(dpts.reduce((p, q) => p + (fit(q.x) - q.y) ** 2, 0) / dpts.length);
-      const okP = rms < 0.35;
-      cP(`残差 RMS=${fmt(rms, 2)}${okP ? ' 完全重合' : ' —— 数据不吻合，需继续调整'}`, okP ? 'ok' : 'warn');
-      const okQ = Math.abs(st.k + st.A - M) < 0.5;
-      cQ(`峰：拟合 k+A=${fmt(st.k + st.A, 2)} vs 实测 ${fmt(M, 2)}`, okQ ? 'ok' : 'warn');
-      const okR = Math.abs(st.k - st.A - mn) < 0.5;
-      cR(`谷：拟合 k−A=${fmt(st.k - st.A, 2)} vs 实测 ${fmt(mn, 2)}`, okR ? 'ok' : 'warn');
-      cS('四步：T 看两峰距、A 看峰谷差、k 看中线、x₀ 看升零点', '');
+      const m = B.axes(24, Math.min(0, st.k - st.A - 0.8), Math.max(9.6, st.k + st.A + 1), 2);
+      midline(m, st.k);
+      B.plot(fit, m, { stroke: '#ffd166', 'stroke-width': 2.4 });
+      for (const p of dpts) {
+        B.mark(V(m.px(p.x), m.py(p.y)), Math.abs(fit(p.x) - p.y) < 0.35 ? '#67e8f9' : '#ff7b8a');
+      }
+      point(m, st.t0, st.k, '上穿中线', '#5cadff', -16);
+      const pk = st.t0 + st.T / 4, valley = st.t0 + 3 * st.T / 4;
+      point(m, pk, st.k + st.A, '峰', '#ffd166', -14);
+      point(m, valley > 24 ? valley - st.T : valley, st.k - st.A, '谷', '#ff9e4a', 15);
+      B.note('拟合曲线', '#ffd166');
+      B.note('中线', '#93a1b5', 'dashed');
+      B.note('偏差小', '#67e8f9');
+      B.note('偏差大', '#ff7b8a');
+
+      B.reading('横向看周期', ['约在 $6$ 时和 $18$ 时出现高潮，两峰相距约 $12$ 小时。']);
+      B.reading('纵向看潮差', ['水深约为 $2$ 至 $8$ 米。中点是 $5$ 米，潮差的一半是 $3$ 米。'], 'gold');
+      const rms = Math.sqrt(dpts.reduce((sum, p) => sum + (fit(p.x) - p.y) ** 2, 0) / dpts.length);
+      cP('均方根误差 $' + fmt(rms, 2) + '\\,\\mathrm m$', rms < .35 ? 'ok' : 'warn');
+      cQ('拟合 $' + fmt(st.k + st.A, 2) + '$，观测 $' + fmt(peak, 2) + '$', Math.abs(st.k + st.A - peak) < .5 ? 'ok' : 'warn');
+      cR('拟合 $' + fmt(st.k - st.A, 2) + '$，观测 $' + fmt(low, 2) + '$', Math.abs(st.k - st.A - low) < .5 ? 'ok' : 'warn');
+      cS('调 $x_0$，让曲线上升时穿过中线的位置对准观测点。点与曲线的竖直距离越小，拟合越好。');
     } else {
       const R = Math.hypot(st.a, st.b), phi = Math.atan2(st.b, st.a);
-      const yM = Math.max(4, Math.abs(st.c) + R + 1.2);
-      const m = { px: v => PL[0] + 24 + v * (PL[2] - 48) / TAU, py: v => PL[1] + 244 - v * 224 / yM, X0: 0, X1: TAU, Y0: -yM, Y1: yM };
-      B.grid({ ...m, sx: Math.PI / 2, sy: yM > 6 ? 2 : 1, grid: true, labs: true, axLab: 'x', ayLab: 'y', xt: [] });
-      for (let i = 0; i <= 4; i++)
-        B.text(V(m.px(i * Math.PI / 2), PL[1] + 466), ['0', 'π/2', 'π', '3π/2', '2π'][i], { 'font-size': 11, fill: '#93a1b5', 'text-anchor': 'middle' });
-      const f2 = x => st.c + st.a * Math.sin(x) + st.b * Math.cos(x);
-      const xs = Array.from({ length: 121 }, (_, i) => TAU * i / 120).concat([0, Math.PI / 2 - phi, 3 * Math.PI / 2 - phi, TAU]).sort((p, q) => p - q);
-      mk('polyline', { points: xs.map(x => `${m.px(x).toFixed(1)},${m.py(f2(x)).toFixed(1)}`).join(' '), fill: 'none', stroke: '#5cadff', 'stroke-width': 2.2 }, B.dyn);
-      B.seg(V(m.px(0), m.py(st.c)), V(m.px(TAU), m.py(st.c)), { stroke: '#ffd166', 'stroke-width': 1.2, 'stroke-dasharray': '5 4' });
-      const pk = ((Math.PI / 2 - phi) % TAU + TAU) % TAU, gy = (pk + Math.PI) % TAU;
-      B.dot(V(m.px(pk), m.py(st.c + R)), 4.5, { fill: '#ffd166' });
-      B.tex(V(m.px(pk) + 10, m.py(st.c + R) - 10), `max=${fmt(st.c + R, 2)}`, { size: 12, color: '#ffd166', anchor: 'start', w: 110 });
-      B.dot(V(m.px(gy), m.py(st.c - R)), 4.5, { fill: '#ff9e4a' });
-      B.tex(V(m.px(gy) + 10, m.py(st.c - R) + 18), `min=${fmt(st.c - R, 2)}`, { size: 12, color: '#ff9e4a', anchor: 'start', w: 110 });
-      // 右栏：辅助角直角三角形（auxilab 先例）
-      B.tex(V(PR[0] + PR[2] / 2, 34), '辅助角直读', { size: 13, color: '#93a1b5', anchor: 'mid', w: 260 });
-      const sc = 34, C0 = V(PR[0] + 78, PR[1] + 210), P2 = V(C0.x + sc * st.a, C0.y), P3 = V(P2.x, C0.y - sc * st.b);
-      B.seg(C0, P2, { stroke: '#5cadff', 'stroke-width': 3 });
-      B.seg(P2, P3, { stroke: '#67e8f9', 'stroke-width': 3 });
-      B.seg(C0, P3, { stroke: '#ffd166', 'stroke-width': 3 });
-      angArc(C0, 20, 0, phi, { stroke: '#93a1b5', 'stroke-width': 1.2 });
-      B.tex(V(C0.x + 6, C0.y + 16), 'φ', { size: 13, color: '#93a1b5', anchor: 'start', w: 30 });
-      B.tex(V((C0.x + P2.x) / 2, C0.y + 16), `a=${fmt(st.a, 1)}`, { size: 12, color: '#5cadff', anchor: 'mid', w: 70 });
-      B.tex(V(P2.x + 34, (P2.y + P3.y) / 2), `b=${fmt(st.b, 1)}`, { size: 12, color: '#67e8f9', anchor: 'mid', w: 70 });
-      B.tex(V((C0.x + P3.x) / 2 - 26, (C0.y + P3.y) / 2 - 8), `R=${fmt(R, 2)}`, { size: 12, color: '#ffd166', anchor: 'mid', w: 80 });
-      B.tex(V(PR[0] + PR[2] / 2, 306), `$f=R\\sin(x+\\varphi)+c$`, { size: 15, color: '#ffd166', anchor: 'mid', w: 240 });
-      B.tex(V(PR[0] + PR[2] / 2, 338), `$\\varphi=\\arctan\\tfrac{b}{a}=${fmt(phi, 2)}$`, { size: 13, color: '#67e8f9', anchor: 'mid', w: 240 });
-      B.tex(V(PR[0] + PR[2] / 2, 372), `max=c+R=${fmt(st.c + R, 2)} 在 x=π/2−φ 取得`, { size: 13, color: '#e8eef7', anchor: 'mid', w: 290 });
-      B.tex(V(PR[0] + PR[2] / 2, 400), `min=c−R=${fmt(st.c - R, 2)} 再隔半周期`, { size: 13, color: '#e8eef7', anchor: 'mid', w: 290 });
-      // chips：与数值实测核验
-      let fMax = -1e9, fMin = 1e9;
-      for (let i = 0; i <= 480; i++) { const v = f2(TAU * i / 480); fMax = Math.max(fMax, v); fMin = Math.min(fMin, v); }
-      cP(`R=√(a²+b²)=${fmt(R, 2)} —— 斜边管峰高`, Math.abs(fMax - (st.c + R)) < 0.02 ? 'ok' : 'warn');
-      cQ(`max：理论 c+R=${fmt(st.c + R, 2)} vs 实测 ${fmt(fMax, 2)}`, Math.abs(fMax - (st.c + R)) < 0.02 ? 'ok' : 'warn');
-      cR(`min：理论 c−R=${fmt(st.c - R, 2)} vs 实测 ${fmt(fMin, 2)}`, Math.abs(fMin - (st.c - R)) < 0.02 ? 'ok' : 'warn');
-      cS('辅助角：两波叠一列，R 管峰高、c 管中线（Q2 全回收）', '');
+      const yM = Math.max(3, Math.abs(st.c) + R + 1);
+      const m = B.axes(TAU, -yM, yM, yM > 5 ? 2 : 1);
+      const f = x => st.c + st.a * Math.sin(x) + st.b * Math.cos(x);
+      const pk = Math.PI / 2 - phi, valley = pk + Math.PI;
+      midline(m, st.c);
+      B.plot(f, m, { anchors: [pk, valley], stroke: '#5cadff', 'stroke-width': 2.5 });
+      if (R > 0) {
+        point(m, pk, st.c + R, '$c+R$', '#ffd166', -16);
+        point(m, valley, st.c - R, '$c-R$', '#ff9e4a', 16);
+      }
+      B.note('$a\\sin x+b\\cos x+c$', '#5cadff');
+      B.note('中线 $y=c$', '#93a1b5', 'dashed');
+      const amplitude = ['$R=\\sqrt{a^2+b^2}$'];
+      if (!st.a && st.b) amplitude.push('只剩余弦项，振幅为 $|b|$。');
+      if (st.a && !st.b) amplitude.push('只剩正弦项，振幅为 $|a|$。');
+      const card = B.reading('合成振幅', amplitude);
+      if (st.a && st.b) triangle(card, st.a, st.b);
+      B.reading('从中线读峰谷', R > 0 ? ['中线在 $y=' + fmt(st.c, 1) + '$，向上或向下各走一个振幅。',
+        '最高 $' + fmt(st.c + R, 2) + '$，最低 $' + fmt(st.c - R, 2) + '$。'] : ['振幅为零，整条曲线都在中线上。'], 'gold');
+      const samples = Array.from({ length: 481 }, (_, i) => f(TAU * i / 480));
+      cP('$R\\approx ' + fmt(R, 2) + '$');
+      cQ('理论 $' + fmt(st.c + R, 2) + '$，采样 $' + fmt(Math.max(...samples), 2) + '$');
+      cR('理论 $' + fmt(st.c - R, 2) + '$，采样 $' + fmt(Math.min(...samples), 2) + '$');
+      cS(R > 0 ? '写成 $R\\sin(x+\\varphi)+c$，第一个波峰在 $x=\\pi/2-\\varphi$，再走半个周期到达波谷。'
+        : '$a=b=0$，每个 $x$ 都同时取得最大值和最小值。');
     }
   };
   B.render();
-  B.hint('模式一：调 A/T/x₀/k 四旋钮把金线压上蓝点；模式二：辅助角把两波叠成一列，max/min 直接读');
+  B.hint('切换例题比较潮汐的峰谷时刻，或改变系数，观察合成波的中线与振幅。');
   return B;
 }

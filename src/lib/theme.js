@@ -2,6 +2,7 @@
    单独成文件的理由：main.js 与 App.vue 只用到主题这几样，若仍从 board.js 取，
    整个画板引擎（math / ggb / record / labelstore / katex）会被一并拖进首屏包。
    画板引擎需要「换主题后重绘」时，用 onThemeChange 挂一个回调即可。 */
+import { PREFS } from './settings.js';
 
 export const THEMES = [
   { id: 'dark', name: '暗夜', icon: '🌙', board: '#0a0d14', ink: '#e8eef7', dark: true, sw: '#0a0d14' },
@@ -25,8 +26,8 @@ const THEME_HOOKS = [];
 export function onThemeChange(fn) { if (typeof fn === 'function') THEME_HOOKS.push(fn); }
 
 let SHIFT_TIMER = null;
-export function applyTheme(t, persist = true) {
-  const th = themeOf(t);
+let VT_SEQ = 0;
+function applyThemeNow(th, persist) {
   // 换主题时临时给「有色块」开一段色彩过渡，320ms 后摘掉；
   // 不常驻 transition，免得拖慢 hover 与画板重绘（打印时由 CSS 直接关掉）。
   const root = document.documentElement;
@@ -40,6 +41,36 @@ export function applyTheme(t, persist = true) {
   for (const fn of THEME_HOOKS) {
     try { fn(th); } catch (_) { /* 某块板画崩了不影响其余 */ }
   }
+}
+/* 换主题：默认交给 View Transitions 做一段过渡（设置页「主题切换动画」：
+   圆形扩散 / 淡入 / 左向展开 / 不做）。页面与画板在同一次 DOM 更新里换色，
+   所以一张快照就把整页连带画板一起换过去；origin 是圆形扩散的圆心（通常取点击处）。
+   打印临时切纸面走 persist=false，不播动画。 */
+export function applyTheme(t, persist = true, origin = null) {
+  const th = themeOf(t);
+  const kind = PREFS.themeAnim;
+  const root = document.documentElement;
+  const canVT = typeof document !== 'undefined' && typeof document.startViewTransition === 'function'
+    && !(typeof window !== 'undefined' && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const same = root.dataset.theme === th.id;
+  if (!persist || !canVT || kind === 'none' || same) { applyThemeNow(th, persist); return; }
+  const vw = (typeof window !== 'undefined' && window.innerWidth) || 0;
+  const vh = (typeof window !== 'undefined' && window.innerHeight) || 0;
+  const x = origin && isFinite(origin.x) ? origin.x : vw / 2;
+  const y = origin && isFinite(origin.y) ? origin.y : vh / 2;
+  const r = Math.hypot(Math.max(x, vw - x), Math.max(y, vh - y)) || 1;
+  root.style.setProperty('--vt-x', x + 'px');
+  root.style.setProperty('--vt-y', y + 'px');
+  root.style.setProperty('--vt-r', r + 'px');
+  root.classList.add('vt-' + kind);
+  const seq = ++VT_SEQ;
+  const clear = () => { if (seq === VT_SEQ) root.classList.remove('vt-circle', 'vt-fade', 'vt-sweep'); };
+  let vt = null;
+  try { vt = document.startViewTransition(() => applyThemeNow(th, persist)); }
+  catch (_) { applyThemeNow(th, persist); clear(); return; }
+  if (vt && vt.finished && vt.finished.then) vt.finished.then(clear, clear);
+  else setTimeout(clear, 800);
 }
 
 export function initTheme() { // 须在任何画板构造前调用
@@ -82,7 +113,10 @@ export function mountThemeButton(btn) { // 点 🎨 展开圆角面板：圆形�
     const lab = document.createElement('span');
     lab.textContent = t.name;                         // 圆圈下面只写名字，icon 留在按钮上
     it.appendChild(lab);
-    it.addEventListener('click', () => { applyTheme(t.id); menu.style.display = 'none'; });
+    it.addEventListener('click', e => {
+      menu.style.display = 'none';               // 先收选单，再以点击处为圆心换主题
+      applyTheme(t.id, true, { x: e.clientX, y: e.clientY });
+    });
     items.push(it);
     menu.appendChild(it);
   });

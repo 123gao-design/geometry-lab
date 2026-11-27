@@ -25,7 +25,7 @@
       <ul class="tip-list">
         <li><strong>提示一：<Katex tex="\varphi" /> 的象限按 <Katex tex="(a,b)" /> 定。</strong>死记 <Katex tex="\varphi=\arctan\tfrac ba" /> 在 <Katex tex="a\lt0" /> 时差半个 <Katex tex="\pi" /> —— 正确流程是看 <Katex tex="(a,b)" /> 落在直角三角形的哪个象限（板上拖 <Katex tex="a" /> 过零，三角形直接翻向、<Katex tex="\varphi" /> 跳变）。「按点 <Katex tex="(a,b)" /> 定象限」就是 atan2 的课本版。</li>
         <li><strong>提示二：<Katex tex="a=b=0" /> 排除。</strong><Katex tex="R=0" /> 时无波形可谈，辅助角不适用。</li>
-        <li><strong>提示三：和差化积只收同名。</strong><Katex tex="\sin A+\cos B" /> 不能直接套 —— 先用<RouterLink class="xref" to="/trig/i1">诱导公式</RouterLink>、<RouterLink class="xref" to="/trig/i2">互配两组与奇变偶不变</RouterLink>把两边换成同名，再化和差。</li>
+        <li><strong>提示三：和差化积只收同名。</strong><Katex tex="\sin A+\cos B" /> 不能直接套 —— 先用<RouterLink class="xref" to="/trig/i1">诱导公式</RouterLink>、<RouterLink class="xref" to="/trig/i2">奇变偶不变</RouterLink>把两边换成同名，再化和差。</li>
         <li><strong>提示四：<Katex tex="\cos A-\cos B" /> 的负号。</strong>结果里那个负号漏写是高频事故，记「余弦差、负号出现」。</li>
       </ul>
     </div>

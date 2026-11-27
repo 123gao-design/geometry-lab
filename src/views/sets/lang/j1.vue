@@ -35,7 +35,9 @@ import { J_CHAPTERS } from './jnav.js';
 
 <style>
 .board.numsets-board {
-  --numsets-halo-accent: var(--blue, var(--pj-blue));
+  /* 光晕跟着画板自己的配色方案走：主题档取该主题的强调色，预设纸面按暖沙橙 / 薄荷绿 / 樱粉粉 / 紫夜紫 / 墨蓝青，
+     这一枚变量由 conic-diagram 的 setPalette 按当前档位写进板根，只影响这一块板。 */
+  --numsets-halo-accent: var(--pj-accent, var(--blue, var(--pj-blue)));
   --numsets-glow-position: 34% 43%;
   --numsets-halo-opacity: 13%;
   --numsets-band-opacity: 7%;
@@ -59,8 +61,6 @@ html.light .board.numsets-board {
   --numsets-halo-opacity: 10%;
   --numsets-band-opacity: 5.5%;
 }
-html[data-theme="dusk"] .board.numsets-board { --numsets-halo-accent: var(--purple) }
-html[data-theme="sand"] .board.numsets-board { --numsets-halo-accent: var(--orange) }
 .board.numsets-board[data-texture="grid"] {
   --numsets-grid-line: color-mix(in srgb, var(--pj-blue) 13%, transparent);
   background-image: linear-gradient(to right, var(--numsets-grid-line) 1px, transparent 1px),
@@ -85,7 +85,7 @@ html[data-theme="sand"] .board.numsets-board { --numsets-halo-accent: var(--oran
 .board.numsets-board > .ctrl > .numsets-auto { margin-inline-start: auto }
 .board.numsets-board > .chips {
   display: grid; flex: 1 1 210px; min-width: 0; align-content: center;
-  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: 5px;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px;
   padding: 10px 12px 12px !important;
 }
 .board.numsets-board > .chips .chip {
@@ -97,8 +97,8 @@ html[data-theme="sand"] .board.numsets-board { --numsets-halo-accent: var(--oran
 .board.numsets-board > .chips .chip.ok { color: var(--pj-mint); border-inline-start-color: var(--pj-mint) }
 .board.numsets-board > .chips .chip.warn { color: var(--pj-red); border-inline-start-color: var(--pj-red) }
 .board.numsets-board > .chips [data-readout] { grid-column: 1 / -1 }
-.board.numsets-board > .chips [data-readout="answer"] { background: var(--pj-goldWash); color: var(--pj-gold) }
-.board.numsets-board > .chips [data-readout="answer"] > span { font-size: 19px }
+.board.numsets-board > .chips .chip[data-reading] > span { font-size: 18px }
+.board.numsets-board > .chips .chip:not([data-reading]) { grid-column: 1 / -1 }
 .board.numsets-board > .chips [data-readout="reason"] {
   display: grid; gap: 2px; padding-block: 7px; overflow-wrap: anywhere;
 }
@@ -129,7 +129,7 @@ html[data-theme="sand"] .board.numsets-board { --numsets-halo-accent: var(--oran
 @media screen and (min-width: 1000px) and (min-height: 560px) {
   .board.numsets-board.bd-full > .chips .chip { padding: 7px 12px; font-size: 14px }
   .board.numsets-board.bd-full > .chips .chip b { font-size: 14px }
-  .board.numsets-board.bd-full > .chips [data-readout="answer"] > span { font-size: 24px }
+  .board.numsets-board.bd-full > .chips .chip[data-reading] > span { font-size: 24px }
 }
 @media screen and (max-width: 640px) {
   .board.numsets-board.bd-float {

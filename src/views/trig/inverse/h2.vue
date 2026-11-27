@@ -11,9 +11,9 @@
     <p>arctan 的恒等式在全实数范围有效 —— 它的定义域本来就是 ℝ。该式讲「先反代再正代」，回到原值；下面看反方向 —— 先正代再反代 —— 为什么会失效。</p>
 
     <h3 class="sec" id="h2-fold">周期折叠与三角波</h3>
-    <p><Katex tex="\theta\in[-\tfrac\pi2,\ \tfrac\pi2]" /> 时 <Katex tex="\arcsin(\sin\theta)=\theta" /> 原样返回；出窗就得改判 —— 判读三步：<strong>① 找同高候选</strong>（水平线交点，板上逐个亮出）→ <strong>② 只认窗内那个</strong> → <strong>③ 写改判式</strong>（依据<RouterLink class="xref" to="/trig/i2">互配两组与奇变偶不变</RouterLink>里的诱导公式）：</p>
+    <p><Katex tex="\theta\in[-\tfrac\pi2,\ \tfrac\pi2]" /> 时 <Katex tex="\arcsin(\sin\theta)=\theta" /> 原样返回；出窗就得改判 —— 判读三步：<strong>① 找同高候选</strong>（水平线交点，板上逐个亮出）→ <strong>② 只认窗内那个</strong> → <strong>③ 写改判式</strong>（依据<RouterLink class="xref" to="/trig/i2">奇变偶不变</RouterLink>里的诱导公式）：</p>
     <p><Katex display tex="\arcsin\!\bigl(\sin\tfrac{2\pi}{3}\bigr)=\pi-\tfrac{2\pi}{3}=\tfrac{\pi}{3}" />（镜像）；<Katex display tex="\arcsin\!\bigl(\sin\tfrac{7\pi}{6}\bigr)=\pi-\tfrac{7\pi}{6}=-\tfrac{\pi}{6}" />（下半岸镜像）；<Katex display tex="\arcsin\!\bigl(\sin\tfrac{5\pi}{3}\bigr)=\tfrac{5\pi}{3}-2\pi=-\tfrac{\pi}{3}" />（整圈平移）</p>
-    <p>把每个 θ 都这样过一遍，得到<strong>折叠波</strong> <Katex tex="y=\arcsin(\sin x)" />：周期仍是 2π，但整条被压进 [−π/2, π/2] —— 正弦波折成三角波，<RouterLink class="xref" to="/trig/w1">正弦五点法：单位圆展开</RouterLink>的五点法在此变形成「折点法」，折点恰在正弦的峰谷 <Katex tex="\pi/2" /> 与 <Katex tex="3\pi/2" /> 上。同高改判用的恒等式 <Katex tex="\sin(\pi-\theta)=\sin\theta" />、<Katex tex="\sin(\theta-2\pi)=\sin\theta" /> 全是<RouterLink class="xref" to="/trig/i2">互配两组与奇变偶不变</RouterLink>镜像五组的已有公式。</p>
+    <p>把每个 θ 都这样过一遍，得到<strong>折叠波</strong> <Katex tex="y=\arcsin(\sin x)" />：周期仍是 2π，但整条被压进 [−π/2, π/2] —— 正弦波折成三角波，<RouterLink class="xref" to="/trig/w1">正弦五点法：单位圆展开</RouterLink>的五点法在此变形成「折点法」，折点恰在正弦的峰谷 <Katex tex="\pi/2" /> 与 <Katex tex="3\pi/2" /> 上。同高改判用的恒等式 <Katex tex="\sin(\pi-\theta)=\sin\theta" />、<Katex tex="\sin(\theta-2\pi)=\sin\theta" /> 全是<RouterLink class="xref" to="/trig/i2">奇变偶不变</RouterLink>镜像五组的已有公式。</p>
 
     <h3 class="sec" id="h2-dual">对偶恒等式</h3>
     <p>arcsin 与 arccos 分同一个定义域 [-1,1]，主值窗拼起来恰是半圆 —— 两者的关系可以并成一行：</p>

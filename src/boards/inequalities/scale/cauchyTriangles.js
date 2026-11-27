@@ -1,9 +1,10 @@
 import { mk, V } from '../../../lib/board.js';
-import { createConicLab, plotInk as ink } from '../../../lib/conic-diagram.js';
+import { InequalityBoard } from '../inequality-board.js';
+import { plotInk as ink } from '../../../lib/conic-diagram.js';
 import { lineStyle } from '../../../lib/projective/diagram.js';
 
 export function createBoard(root) {
-  const board = createConicLab(root, 580, 350);
+  const board = new InequalityBoard(root, 580, 350, 'info');
   const a = 3, b = 1.5, scale = 63;
   let c = 1.3, d = 3.2;
   let ox = 290, oy = 228, dragFz = null;
@@ -15,8 +16,8 @@ export function createBoard(root) {
     oy = 175 + Math.max(b, c) / 2 * scale + 6;
   };
   layout();
-  const sliderC = board.slider('c', .5, 4, .1, c, n => { c = n; board.render(); });
-  const sliderD = board.slider('d', .5, 4, .1, d, n => { d = n; board.render(); });
+  const sliderC = board.slider('c', .5, 4, .1, c, n => { c = n; board.render(); }, undefined, n => `$c=${n}$`);
+  const sliderD = board.slider('d', .5, 4, .1, d, n => { d = n; board.render(); }, undefined, n => `$d=${n}$`);
   function setLengths(height, width) {
     const snap = n => Math.max(.5, Math.min(4, Math.round(n * 10) / 10));
     c = snap(height); d = snap(width);
@@ -28,9 +29,10 @@ export function createBoard(root) {
   hB.addEventListener('pointerdown', () => { dragFz = { ox, oy }; });
   hB.addEventListener('pointerup', stopDrag);
   hB.addEventListener('pointercancel', stopDrag);
-  board.btn('让两条斜边垂直', () => setLengths(2, 1));
-  board.btn('复位', () => setLengths(1.3, 3.2));
-  const area = board.chip('两倍三角形面积'), bound = board.chip('斜边长度之积');
+  const examples = [{ name: '让两条斜边垂直', short: '垂直', c: 2, d: 1 }, { name: '复位', c: 1.3, d: 3.2 }];
+  board.choiceRow('选择拼图', examples, () => examples.findIndex(p => p.c === c && p.d === d),
+    i => setLengths(examples[i].c, examples[i].d));
+  const area = board.readout('两倍三角形面积', 'gold'), bound = board.readout('斜边长度之积');
   board.renderFn = () => {
     layout();
     const origin = pos(0, 0), A = pos(a, b), U = pos(a, 0);
@@ -51,15 +53,16 @@ export function createBoard(root) {
     const H = pos(factor*a, factor*b);
     board.seg(origin,H,lineStyle(ink.guide,1,'4 4'));
     board.seg(B,H,lineStyle(ink.teal,2,'4 4'));
-    board.dot(H,3,{fill:ink.teal});
+    board.mark(H, ink.teal);
     const equal = Math.abs(b*c-a*d)<1e-10;
     if (!equal) board.text(V(H.x,H.y+18),'H');
     board.text(V(origin.x,origin.y+25),equal ? 'O = H' : 'O');
     board.text(V(A.x+14,A.y-5),'A'); board.text(V(B.x-12,B.y-10),'B');
     board.text(pos(a/2,-.34),'a'); board.text(pos(a+.24,b/2),'b');
     board.text(pos(-d/2,-.34),'d'); board.text(pos(-d-.24,c/2),'c');
-    area((a*c+b*d).toFixed(2));
-    bound((Math.hypot(a,b)*Math.hypot(c,d)).toFixed(2)+(equal ? ' · 取等' : ''));
+    board.mark(A, ink.blue);
+    area(`$2S=${(a*c+b*d).toFixed(2)}$`);
+    bound(`$${(Math.hypot(a,b)*Math.hypot(c,d)).toFixed(2)}$` + (equal ? ' · 取等' : ''), equal ? 'ok' : '');
   };
   board.render();
   return board;

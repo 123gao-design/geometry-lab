@@ -1,34 +1,34 @@
 /* 图 I1 对称镜像机：诱导公式的镜像五组 —— α+2kπ（旋转整圈）、−α（x 轴镜）、π−α（y 轴镜）、π+α（原点镜）、2π−α（x 轴镜）。
    P′ 的坐标只变号、不改名 —— 诱导公式就是镜像的坐标关系：函数名不变，符号看新角 β 的象限。 */
-import { Board, mk, V, fmt, TAU } from '../../../lib/board.js';
+import { TrigLegendBoard, unitCoordinates } from '../trig-board.js';
+import { angleComparison } from './comparison.js';
+import { mk, V, TAU } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 520);
-  const O = V(430, 258), R = 170;
+  const B = new TrigLegendBoard(root, 680, 520);
+  const O = V(340, 258), R = 170;
   const st = { a: Math.PI / 6, m: 1 };
   const MODES = [
-    { btn: '① α+2kπ', b: a => a + TAU, mir: null,
+    { btn: '$\\alpha+2k\\pi$', b: a => a + TAU, mir: null,
       st: '\\sin(\\alpha+2k\\pi)=\\sin\\alpha', ct: '\\cos(\\alpha+2k\\pi)=\\cos\\alpha',
-      say: '旋转整圈：终边回原位 —— 函数名、符号、值全不动（图示 k=1）' },
-    { btn: '② −α', b: a => -a, mir: 'x',
+      say: '转一整圈，两点重合。' },
+    { btn: '$-\\alpha$', b: a => -a, mir: 'x',
       st: '\\sin(-\\alpha)=-\\sin\\alpha', ct: '\\cos(-\\alpha)=\\cos\\alpha',
-      say: 'x 轴镜像：横坐标不变、纵坐标变号 —— sin 变号、cos 不动' },
-    { btn: '③ π−α', b: a => Math.PI - a, mir: 'y',
+      say: '关于 $x$ 轴对称，纵坐标变号。' },
+    { btn: '$\\pi-\\alpha$', b: a => Math.PI - a, mir: 'y',
       st: '\\sin(\\pi-\\alpha)=\\sin\\alpha', ct: '\\cos(\\pi-\\alpha)=-\\cos\\alpha',
-      say: 'y 轴镜像：横坐标变号、纵坐标不变 —— sin 不动、cos 变号' },
-    { btn: '④ π+α', b: a => Math.PI + a, mir: 'o',
+      say: '关于 $y$ 轴对称，横坐标变号。' },
+    { btn: '$\\pi+\\alpha$', b: a => Math.PI + a, mir: 'o',
       st: '\\sin(\\pi+\\alpha)=-\\sin\\alpha', ct: '\\cos(\\pi+\\alpha)=-\\cos\\alpha',
-      say: '原点镜像：横纵坐标同时变号 —— sin、cos 双变号' },
-    { btn: '⑤ 2π−α', b: a => TAU - a, mir: 'x',
+      say: '关于原点对称，两个坐标都变号。' },
+    { btn: '$2\\pi-\\alpha$', b: a => TAU - a, mir: 'x',
       st: '\\sin(2\\pi-\\alpha)=-\\sin\\alpha', ct: '\\cos(2\\pi-\\alpha)=\\cos\\alpha',
-      say: '还是 x 轴那面镜子：2π−α ≡ −α（mod 2π）—— 负角的正角写法' },
+      say: '$2\\pi-\\alpha$ 与 $-\\alpha$ 终边重合。' },
   ];
-  const cA = B.chip('角'), cP = B.chip('P 坐标'), cQ = B.chipM("$P'$ 坐标"),
-    cS = B.chipM('sin 核验'), cC = B.chipM('cos 核验'), cM = B.chip('对称判读');
-  const mBtns = MODES.map((m, i) => B.btn(m.btn, () => { st.m = i; syncBtns(); B.render(); }, { on: i === st.m }));
-  function syncBtns() { mBtns.forEach((b, i) => b.classList.toggle('on', i === st.m)); }
-  [['π/6', Math.PI / 6], ['π/4', Math.PI / 4], ['π/3', Math.PI / 3], ['π/2', Math.PI / 2]]
-    .forEach(([lab, v]) => B.btn(lab, () => { st.a = v; B.render(); }));
+  const compare = angleComparison(B);
+  const cS = B.readout('正弦公式', 'blue'), cC = B.readout('余弦公式', 'orange'), cM = B.chipM('对称判读');
+  B.choiceRow('选择对称关系', MODES.map(m => ({ name: m.btn })), () => st.m, i => { st.m = i; B.render(); });
+  B.angleRow([30, 45, 60, 90], () => st.a, v => { st.a = v; B.render(); });
   B.handle({
     get: () => V(O.x + R * Math.cos(st.a), O.y - R * Math.sin(st.a)),
     set: p => {
@@ -68,16 +68,16 @@ export function createBoard(root) {
 
   B.renderFn = () => {
     const m = MODES[st.m], a = st.a, b = m.b(a);
-    const x = Math.cos(a), y = Math.sin(a), x2 = Math.cos(b), y2 = Math.sin(b);
-    const P = V(O.x + R * x, O.y - R * y), Q = V(O.x + R * x2, O.y - R * y2);
+    const source = unitCoordinates(a), image = unitCoordinates(b);
+    const P = V(O.x + R * source.x, O.y - R * source.y), Q = V(O.x + R * image.x, O.y - R * image.y);
     // 坐标轴 + 单位圆
-    B.seg(V(238, O.y), V(666, O.y), { stroke: '#8fa3bd', 'stroke-width': 1.6 });
+    B.seg(V(O.x - 202, O.y), V(O.x + 236, O.y), { stroke: '#8fa3bd', 'stroke-width': 1.6 });
     B.seg(V(O.x, 56), V(O.x, 466), { stroke: '#8fa3bd', 'stroke-width': 1.6 });
-    mk('polygon', { points: `666,${O.y} 657,${O.y - 4.5} 657,${O.y + 4.5}`, fill: '#8fa3bd' }, B.dyn);
+    mk('polygon', { points: `${O.x + 236},${O.y} ${O.x + 227},${O.y - 4.5} ${O.x + 227},${O.y + 4.5}`, fill: '#8fa3bd' }, B.dyn);
     mk('polygon', { points: `${O.x},56 ${O.x - 4.5},65 ${O.x + 4.5},65`, fill: '#8fa3bd' }, B.dyn);
-    B.text(V(660, O.y - 12), 'x', { 'font-size': 13, fill: '#8fa3bd', 'font-style': 'italic' });
+    B.text(V(O.x + 230, O.y - 12), 'x', { 'font-size': 13, fill: '#8fa3bd', 'font-style': 'italic' });
     B.text(V(O.x + 12, 68), 'y', { 'font-size': 13, fill: '#8fa3bd', 'font-style': 'italic' });
-    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: '#22314a', 'stroke-width': 1.8 }, B.dyn);
+    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: '#93a1b5', 'stroke-width': 1.8 }, B.dyn);
     // 镜面（金虚线）
     const MR = R + 26;
     if (m.mir === 'x') {
@@ -87,7 +87,7 @@ export function createBoard(root) {
       B.seg(V(O.x, O.y - MR), V(O.x, O.y + MR), { stroke: '#ffd166', 'stroke-width': 2, 'stroke-dasharray': '7 6', 'stroke-opacity': .9 });
       B.text(V(O.x - 9, O.y - MR * .55), '镜面：y 轴', { 'font-size': 12, fill: '#ffd166', 'text-anchor': 'end' });
     } else if (m.mir === 'o') {
-      B.dot(O, 4.5, { fill: '#ffd166' });
+      B.mark(O, '#ffd166');
       B.text(V(O.x - 14, O.y + 26), '镜心：原点', { 'font-size': 12, fill: '#ffd166', 'text-anchor': 'end' });
     }
     // 连线 P–P′（虚线，镜像的垂直平分关系肉眼可查）
@@ -103,30 +103,20 @@ export function createBoard(root) {
       arc(b, 48, '#ffd166', 1.8, false);
       B.text(V(O.x + 64 * Math.cos(b / 2), O.y - 64 * Math.sin(b / 2)), 'β', { 'font-size': 14, fill: '#ffd166', 'font-style': 'italic' });
     }
-    // 半径与点（P′ 与 P 重合时画空心环：整圈/半圈回到原位）
-    B.seg(O, P, { stroke: '#fff', 'stroke-width': 2.2 });
+    // 半径与点（两点重合时共用把手）
+    B.seg(O, P, { stroke: '#5cadff', 'stroke-width': 2.2 });
     B.seg(O, Q, { stroke: '#ffd166', 'stroke-width': 2.2, 'stroke-opacity': .9 });
-    B.dot(P, 5.5, { fill: '#5cadff' });
-    if (Math.hypot(Q.x - P.x, Q.y - P.y) < 7) mk('circle', { cx: Q.x, cy: Q.y, r: 10, fill: 'none', stroke: '#ffd166', 'stroke-width': 2.4 }, B.dyn);
-    else B.dot(Q, 5.5, { fill: '#ffd166' });
-    // 坐标读数：P 贴点下方、P′ 贴点上方，各让开把手标签 P 与点标 P′；
-    // 左半圆改右对齐，读数朝圆外张开，不压圆心一侧的角弧
-    const pR = P.x >= O.x, qR = Q.x >= O.x;
-    B.text(V(P.x + (pR ? 16 : -16), P.y + 30), `(${fmt(x, 3)}, ${fmt(y, 3)})`,
-      { 'font-size': 12, fill: '#5cadff', 'text-anchor': pR ? 'start' : 'end' });
-    B.text(V(Q.x + (qR ? 16 : -16), Q.y - 30), `(${fmt(x2, 3)}, ${fmt(y2, 3)})`,
-      { 'font-size': 12, fill: '#ffd166', 'text-anchor': qR ? 'start' : 'end' });
-    B.text(V(Q.x - 10, Q.y + 22), 'P′', { 'font-size': 13, fill: '#ffd166', 'font-weight': 700, 'text-anchor': 'end' });
-    // chips
-    const deg = a * 180 / Math.PI, deg2 = b * 180 / Math.PI;
-    cA(`α ${fmt(deg, 1)}° · β ${fmt(deg2, 1)}°`);
-    cP(`(${fmt(x, 3)}, ${fmt(y, 3)})`);
-    cQ(`(${fmt(x2, 3)}, ${fmt(y2, 3)})`);
-    cS(`$${m.st}=${fmt(Math.sin(b), 3)}$`, 'ok');
-    cC(`$${m.ct}=${fmt(Math.cos(b), 3)}$`, 'ok');
+    B.mark(Q, '#ffd166');
+    if (Math.hypot(Q.x - P.x, Q.y - P.y) >= 1) {
+      B.text(V(Q.x + 10, Q.y - 10), 'P′', { fill: '#ffd166' });
+      B.note('原角 $\\alpha$ · $P$', '#5cadff');
+      B.note('变换角 $\\beta$ · $P^{\\prime}$', '#ffd166');
+    } else B.note('$P=P^{\\prime}$', '#ffd166');
+    compare(a, b, source, image);
+    cS(`$${m.st}$`, 'ok');
+    cC(`$${m.ct}$`, 'ok');
     cM(m.say);
   };
   B.render();
-  B.hint('点 ①..⑤ 换镜子、拖 P 换角：P′ 坐标只变号不改名 —— 诱导公式就是镜像的坐标关系');
   return B;
 }

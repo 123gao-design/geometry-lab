@@ -1,0 +1,108 @@
+.board.fn-board.chord-board {
+  grid-template-columns: minmax(0, 1fr) minmax(288px, 42%);
+  padding-bottom: 10px;
+}
+.board.fn-board.chord-board > svg { grid-column: 1; }
+.board.fn-board.chord-board > .chips[hidden] { display: none; }
+.board.fn-board.chord-board.bd-half { display: grid; overflow-y: auto; }
+.board.fn-board.chord-board.bd-full { overflow-y: auto; grid-template-rows: auto auto minmax(400px, 1fr); }
+.board.chord-board .slider:first-child input { accent-color: var(--pj-gold); }
+
+.chord-proof {
+  box-sizing: border-box;
+  grid-area: 3 / 2;
+  align-self: center;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  margin: 6px 10px 6px 2px;
+  padding: 12px 10px 8px;
+  color: var(--pj-ink);
+  border: 1px solid var(--pj-axis);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--pj-paper) 96%, var(--pj-ink));
+  font-size: 14px;
+  line-height: 1.5;
+}
+.chord-proof-note {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-radius: 5px;
+  background: linear-gradient(120deg,
+    color-mix(in srgb, #f4edda 93%, var(--pj-accent)),
+    color-mix(in srgb, #e9ddc1 90%, var(--pj-accent)));
+  box-shadow: 0 4px 12px #0002;
+  color: #29261d;
+}
+.chord-proof-note::before {
+  position: absolute;
+  content: '';
+  inset: -4px auto auto calc(50% - 18px);
+  width: 36px;
+  height: 9px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--pj-accent) 42%, transparent);
+}
+.chord-proof-page { grid-area: 1 / 1; padding: 12px 10px 9px; }
+.chord-proof-page[aria-hidden="true"] { visibility: hidden; }
+.chord-proof-title { font-size: 15px; color: #53452f; }
+.chord-proof-detail { margin: 2px 0 6px; font-size: 13px; }
+.chord-proof-equation, .chord-proof-result { font-size: 14px; }
+.chord-proof-equation:first-of-type { margin-bottom: 2px; }
+.chord-proof-measurement { margin-top: 5px; font-size: 13px; color: #53452f; }
+.chord-proof-result {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: .3em;
+  padding: 4px 9px;
+  border: 1px solid color-mix(in srgb, var(--pj-green) 72%, var(--pj-paper));
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--pj-green) 9%, var(--pj-paper));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--pj-green) 16%, transparent);
+  color: var(--pj-green);
+}
+.chord-proof-steps {
+  display: grid;
+  border: 1px solid var(--pj-axis);
+  border-radius: 7px;
+}
+.chord-proof-steps button {
+  position: relative;
+  appearance: none;
+  margin: 0;
+  padding: 5px 8px 5px 24px;
+  border: 0;
+  background: transparent;
+  color: var(--pj-guide);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.chord-proof-steps button + button { border-top: 1px solid var(--pj-axis); }
+.chord-proof-steps button::before {
+  position: absolute;
+  content: '';
+  width: 6px;
+  height: 6px;
+  inset-inline-start: 9px;
+  top: calc(50% - 3px);
+  border-radius: 50%;
+  background: var(--pj-axis);
+}
+.chord-proof-steps button:hover, .chord-proof-steps button[aria-pressed="true"] {
+  color: var(--pj-green);
+  background: color-mix(in srgb, var(--pj-green) 10%, transparent);
+}
+.chord-proof-steps button[aria-pressed="true"]::before {
+  background: var(--pj-green);
+  box-shadow: 0 0 8px var(--pj-green);
+}
+.chord-proof-tan { color: var(--pj-guide); font-size: 13px; padding-inline: 2px; }
+.chord-proof-tan.warn { color: var(--pj-red); }
+
+@container fn-board (max-width: 619px) {
+  .board.fn-board.chord-board > svg { grid-column: 1 / -1; }
+  .chord-proof { grid-area: 4 / 1 / auto / -1; margin-inline: 10px; }
+  .board.fn-board.chord-board.bd-full { grid-template-rows: auto auto minmax(240px, auto) auto; }
+}

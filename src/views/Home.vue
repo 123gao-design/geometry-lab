@@ -44,7 +44,7 @@
     <router-link class="topic-card" to="/inequalities">
       <span class="tag">已上线</span>
       <h3>不等式</h3>
-      <p>不等式的性质与比较、三个二次与穿根法、绝对值不等式、基本不等式与均值链、放缩与柯西不等式、线性规划与非线性规划。</p>
+      <p>不等式的性质与比较、二次不等式与穿根法、绝对值不等式、基本不等式与均值链、放缩与柯西不等式、线性规划与非线性规划。</p>
       <span class="prog-box">已读 {{ ineqRead() }} / 15</span>
     </router-link>
     <router-link class="topic-card" to="/trig">

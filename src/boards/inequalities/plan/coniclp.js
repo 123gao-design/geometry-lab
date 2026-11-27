@@ -7,26 +7,26 @@
    最优等值线与边界相切于切点，切点处的法向就是 (a,b)；抛物带的角点也可能成为最优点。
    圆：切点 = r(a,b)/|(a,b)|；椭圆：切点 = (p²a, q²b)/|(p a, q b)|；
    抛物带：候选点 = 两个角点 (±2,4) 与下边界 y=x² 的顶点 x = −a/(2b)。
-   局部坐标约定：三个模式各取各的视野（拖滑块不会跑到画外），右侧 470..850 为读数栏。
    约束统一写成 A x + B y + C ≥ 0 的形式。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { InequalityBoard, visibleLine } from '../inequality-board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const W = 860, H = 460;
-  const B = new Board(root, W, H);
+  const W = 540, H = 460;
+  const B = new InequalityBoard(root, W, H);
   const f1 = v => fmt(v, 2).replace(/\.?0+$/, '');
   const st = { mode: 0, a: 1, b: 1, z: 0, grid: true, labs: true };
   const CR = 2, EA = 2, EB = 1;
-  let m = B.isoFit(-2.9, 2.9, -2.9, 2.9, [40, 45, 390, 390], 0);
-  const cZ = B.chipM('等值线'), cM = B.chipM('最大值'), cN = B.chipM('最小值'), cJ = B.chipM('判读');
+  let m = B.isoFit(-2.9, 2.9, -2.9, 2.9, [75, 45, 390, 390], 0);
+  const cZ = B.readout('等值线'), cM = B.readout('最大值', 'gold'), cN = B.readout('最小值', 'mint'), cJ = B.chipM('判读');
   const REGN = ['圆域', '椭圆域', '抛物带'];
   const REGL = ['$x^2+y^2\\le4$', '$\\frac{x^2}{4}+y^2\\le1$', '$x^2\\le y\\le4$'];
 
   const fit = mode => mode === 0
-    ? B.isoFit(-2.9, 2.9, -2.9, 2.9, [40, 45, 390, 390], 0)
+    ? B.isoFit(-2.9, 2.9, -2.9, 2.9, [75, 45, 390, 390], 0)
     : mode === 1
-      ? B.isoFit(-2.9, 2.9, -1.8, 1.8, [40, 115, 390, 242], 0)
-      : B.isoFit(-2.9, 2.9, -0.8, 4.6, [40, 55, 390, 363], 0);
+      ? B.isoFit(-2.9, 2.9, -1.8, 1.8, [75, 115, 390, 242], 0)
+      : B.isoFit(-2.9, 2.9, -0.8, 4.6, [75, 55, 390, 363], 0);
 
   // 可行域的边界采样点（多边形填充用）
   const regionPts = () => {
@@ -86,13 +86,6 @@ export function createBoard(root) {
     return parts.length ? parts.join(' ') : '0';
   };
   // 直线 A x + B y + C = 0 与当前视野的两交点（像素坐标）
-  const lineEnds = (A, Bc, C) => {
-    if (Math.abs(Bc) > 1e-9) {
-      return [V(m.px(m.X0), m.py((-C - A * m.X0) / Bc)), V(m.px(m.X1), m.py((-C - A * m.X1) / Bc))];
-    }
-    if (Math.abs(A) < 1e-9) return null;
-    return [V(m.px(-C / A), m.py(m.Y0)), V(m.px(-C / A), m.py(m.Y1))];
-  };
 
   const judge = o => {
     if (!o) return ['目标函数退化：$a=b=0$ 时不画等值线', 'warn'];
@@ -107,17 +100,17 @@ export function createBoard(root) {
 
   B.renderFn = () => {
     m = fit(st.mode);
-    B.grid(m);
+    B.grid({ ...m, grid: st.grid, labs: st.labs });
     const o = opt();
     const px = regionPts().map(p => V(m.px(p.x), m.py(p.y)));
     mk('polygon', { points: px.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '),
       fill: '#5cadff', 'fill-opacity': .13, stroke: '#5cadff', 'stroke-width': 1.8 }, B.dyn);
-    const lv = (z, at) => { const e = lineEnds(st.a, st.b, -z); if (e) B.seg(e[0], e[1], at); };
+    const lv = (z, at) => { const e = visibleLine(m, st.a, st.b, -z); if (e) B.seg(e[0], e[1], at); };
     if (o) {
       lv(o.zMax, { stroke: '#4ade80', 'stroke-width': 2.1 });
       lv(o.zMin, { stroke: '#67e8f9', 'stroke-width': 1.8, 'stroke-dasharray': '6 4' });
       lv(st.z, { stroke: '#ffd166', 'stroke-width': 1.6, 'stroke-dasharray': '7 5' });
-      const dotAt = (p, col) => B.dot(V(m.px(p.x), m.py(p.y)), 5.5, { fill: col, stroke: '#0a0d14', 'stroke-width': 1.2 });
+      const dotAt = (p, col) => B.mark(V(m.px(p.x), m.py(p.y)), col);
       dotAt(o.pMax, '#4ade80'); dotAt(o.pMin, '#67e8f9');
       if (st.labs) {
         B.tex(V(m.px(o.pMax.x) + 8, m.py(o.pMax.y) - 10), `$(${f1(o.pMax.x)},${f1(o.pMax.y)})$`,
@@ -126,23 +119,12 @@ export function createBoard(root) {
           { size: 11, anchor: 'start', color: '#67e8f9' });
       }
     }
-    B.tex(V(235, 24), `$z=${zExpr()}$`, { size: 15, anchor: 'mid' });
-    // ---- 右侧读数栏 ----
-    B.tex(V(470, 56), `$z=${zExpr()}$`, { size: 17, anchor: 'start', w: 370 });
-    B.tex(V(470, 88), `可行域 ${REGL[st.mode]}`, { size: 13, anchor: 'start', color: '#93a1b5', w: 370 });
-    if (o) {
-      B.tex(V(470, 126), `$z_{\\max}=${f1(o.zMax)}$`, { size: 14, anchor: 'start', color: '#4ade80', w: 370 });
-      B.tex(V(470, 150), `在 $(${f1(o.pMax.x)},${f1(o.pMax.y)})$`, { size: 12.5, anchor: 'start', color: '#93a1b5', w: 370 });
-      B.tex(V(470, 186), `$z_{\\min}=${f1(o.zMin)}$`, { size: 14, anchor: 'start', color: '#67e8f9', w: 370 });
-      B.tex(V(470, 210), `在 $(${f1(o.pMin.x)},${f1(o.pMin.y)})$`, { size: 12.5, anchor: 'start', color: '#93a1b5', w: 370 });
-      B.tex(V(470, 246), `当前 $z=${f1(st.z)}$`, { size: 13, anchor: 'start', color: '#ffd166', w: 370 });
-    } else {
-      B.tex(V(470, 126), '$a=b=0$：目标函数为常数', { size: 13, anchor: 'start', color: '#ff7b8a', w: 370 });
-    }
+    B.tex(V(W / 2, 24), `$z=${zExpr()}$`, { size: 15, anchor: 'mid' });
     // ---- 徽章 ----
+    B.note(REGL[st.mode], '#5cadff');
     cZ(o ? `$z=${f1(st.z)}$` : '$z$ 恒定');
-    cM(o ? `$z_{\\max}=${f1(o.zMax)}$` : '—');
-    cN(o ? `$z_{\\min}=${f1(o.zMin)}$` : '—');
+    cM(o ? `$z_{\\max}=${f1(o.zMax)}$，${o.tieMax ? '整条上边' : `$(${f1(o.pMax.x)},${f1(o.pMax.y)})$`} ` : '$0$');
+    cN(o ? `$z_{\\min}=${f1(o.zMin)}$，${o.tieMin ? '整条上边' : `$(${f1(o.pMin.x)},${f1(o.pMin.y)})$`} ` : '$0$');
     const [jt, jc] = judge(o);
     cJ(jt, jc);
   };
@@ -157,18 +139,16 @@ export function createBoard(root) {
     sZ.sync(st.z);
   };
 
-  const modeBtns = REGN.map((n, i) => B.btnM(n, () => {
-    st.mode = i; modeBtns.forEach((b, j) => b.classList.toggle('on', j === i));
-    applyRange(); B.render();
-  }, { on: i === 0 }));
+  B.choiceRow('选择模式', REGN.map(name => ({ name })), () => st.mode, i => {
+    st.mode = i; applyRange(); B.render();
+  });
   B.graphToggles(st, ['grid', 'labs']);
 
-  const sA = B.slider('a =', -3, 3, .5, 1, v => { st.a = v; applyRange(); B.render(); });
-  const sB = B.slider('b =', -3, 3, .5, 1, v => { st.b = v; applyRange(); B.render(); });
-  const sZ = B.slider('z =', -4, 4, .1, 0, v => { st.z = v; B.render(); });
+  const sA = B.slider('a =', -3, 3, .5, 1, v => { st.a = v; applyRange(); B.render(); }, undefined, n => `$a=${n}$`);
+  const sB = B.slider('b =', -3, 3, .5, 1, v => { st.b = v; applyRange(); B.render(); }, undefined, n => `$b=${n}$`);
+  const sZ = B.slider('z =', -4, 4, .1, 0, v => { st.z = v; B.render(); }, undefined, n => `$z=${n}$`);
   applyRange();
 
-  B.hint('拖 z 平移等值线：与边界曲线相切处取最值；换区域看切点如何移动');
   B.render();
   return B;
 }

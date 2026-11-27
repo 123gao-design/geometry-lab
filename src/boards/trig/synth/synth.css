@@ -1,0 +1,20 @@
+.board.fn-board.synth-board { grid-template-columns: minmax(0, 1fr) clamp(169px, 27%, 235px); }
+.synth-panel { justify-content: center; gap: 12px; padding: 12px 9px; }
+.synth-panel h4, .synth-panel p { margin: 0; font: inherit; }
+.synth-panel h4 { margin-bottom: 4px; font-weight: 600; }
+.synth-panel p { line-height: 1.55; color: var(--pj-ink); }
+.synth-panel p + p { margin-top: 3px; }
+.synth-triangle { display: block; width: 100%; height: 68px; }
+foreignObject .proof-export-checks { color: var(--pj-ink); }
+foreignObject .proof-export-checks .fn-reading-group { display: flex; gap: 22px; margin-bottom: 6px; }
+foreignObject .proof-export-checks .chip { display: flex; flex-direction: column; }
+@container fn-board (max-width: 579px) {
+  .synth-board > .synth-panel { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); padding: 8px; gap: 6px; }
+}
+@container fn-board (max-width: 440px) {
+  .synth-board .fn-preset-row:has(> :nth-child(4)) { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .synth-panel [data-reading-style="light"] { padding: 7px; }
+}
+@container fn-board (max-width: 310px) {
+  .synth-board > .synth-panel { grid-template-columns: 1fr; }
+}

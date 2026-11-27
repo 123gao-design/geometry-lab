@@ -4,11 +4,13 @@
    两栏共用列位（k 格同 x），缩比关系一眼可见：R_n=(1/n³)Σk²=(n+1)(2n+1)/(6n²)=1/3+1/(2n)+1/(6n²)→1/3。
    下栏映射：px=120+680x、py=540−190y（各向比例尺，量纲不同的双面板先例 C4）；绿区=精确面积 1/3，金矩形=黎曼和（右端点高估）。 */
 import { mk, V, fmt } from '../../../lib/board.js';
+import { parameterRow } from '../properties/preset-row.js';
 import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 560;
   const B = new FunctionBoard(root, W, H);
+  root.classList.add('fn-study-board', 'fn-wrap-legend');
   const st = { n: 8, grid: true, labs: true };
 
   // 上栏离散平方塔
@@ -17,12 +19,15 @@ export function createBoard(root) {
   const px = x => X_L + (X_R - X_L) * x, py = y => 540 - 190 * y;
   const M = { px, py, X0: -0.176, X1: 1.06, Y0: -0.10, Y1: 1.12 };
 
-  const cF = B.chipM('求和公式'), cZ = B.chipM('缩比'), cR = B.chipM('黎曼和'), cL = B.chipM('极限判读'), cE = B.chipM('精确对照');
+  const cF = B.readout('平方和'), cR = B.readout('黎曼和', 'gold');
+  const cE = B.readout('精确积分', 'green'), cL = B.readout('黎曼和与积分之差', 'violet');
+  const cZ = B.chipM('极限判读');
 
   B.renderFn = () => {
+    syncPreset();
     const n = st.n, slot = (X_R - X_L) / n;
     // 上栏
-    B.note(`上栏 · 离散平方塔：第 k 根条高 $\\propto k^2$（n=${n} 根）`, '#93a1b5');
+    B.note('上图 $k^2$', '#5cadff');
     B.seg(V(X_L - 10, TOP_BASE), V(X_R + 10, TOP_BASE), { stroke: '#8fa3bd', 'stroke-width': 1.8 });
     let S = 0;
     for (let k = 1; k <= n; k++) {
@@ -35,7 +40,7 @@ export function createBoard(root) {
       }
     }
     // 下栏
-    B.note(`下栏 · 连续 [0,1]：右端点矩形宽 $1/n$、高 $(k/n)^2$ —— 与上栏同一轮廓，整体 $\\div n^3$`, '#93a1b5');
+    B.note('下图右端点矩形', '#ffd166');
     B.grid({ ...M, grid: st.grid, labs: st.labs, sx: 0.25, sy: 0.25, lx: 0.5, ly: 0.5, axLab: 'x', ayLab: 'y' });
     // 绿区：曲线下精确面积 1/3
     const xs = [];
@@ -55,22 +60,18 @@ export function createBoard(root) {
     mk('path', { d: dc, fill: 'none', stroke: '#5cadff', 'stroke-width': 2.2 }, B.dyn);
     // 右端点采样点（橙）
     if (st.labs && n <= 24) for (let k = 1; k <= n; k++)
-      B.dot(V(px(k / n), py((k / n) * (k / n))), 3.5, { fill: '#ff9e4a', stroke: '#0a0d14', 'stroke-width': 1.2 });
+      B.dot(V(px(k / n), py((k / n) * (k / n))), 2.4, { fill: B.diagramColors.orange });
 
     // 徽章
     const R = (n + 1) * (2 * n + 1) / (6 * n * n), diff = R - 1 / 3;
-    cF(`$\\sum_{k=1}^{n}k^2=\\dfrac{n(n+1)(2n+1)}{6}=${S}$（n=${n}）`, '');
-    cZ(`上栏 $\\div n^3$ = 下栏矩形和：$\\sum\\dfrac{1}{n}\\Bigl(\\dfrac{k}{n}\\Bigr)^2=\\dfrac{1}{n^3}\\sum k^2$`, '');
-    cR(`$R_n=\\dfrac{(n+1)(2n+1)}{6n^2}=${fmt(R, 4)}$`, '');
-    if (diff < 0.012) cL(`差 ${fmt(diff, 4)}：矩形已糊成曲线，$R_n\\to\\dfrac{1}{3}$ —— 离散和的极限就是积分`, 'ok');
-    else cL(`差 ${fmt(diff, 4)} $\\approx \\dfrac{1}{2n}$：n 翻倍差减半 —— 拖大 n 看金边消失`, '');
-    cE(`$\\int_0^1x^2\\,dx=\\Bigl[\\dfrac{x^3}{3}\\Bigr]_0^1=\\dfrac{1}{3}$ —— 绿区面积（V8 正式开工）`, '');
+    B.glowPoints([[V(px(1), py(1)), B.diagramColors.gold]]);
+    cF(`$S_n=\\sum_{k=1}^{n}k^2=${S}$`);
+    cZ('$R_n=S_n/n^3$，右端点和从上方逼近积分。');
+    cR(`$R_n\\approx${fmt(R, 4)}$`);
+    cL(`$R_n-1/3\\approx${fmt(diff, 4)}$`);
+    cE('$\\int_0^1x^2\\,dx=1/3$');
   };
 
-  const setN = v => { st.n = Math.round(v); sl.sync(st.n); B.render(); };
-  B.btnM('① n=4：手算核对', () => setN(4));
-  B.btnM('② n=8：金字塔成形', () => setN(8), { pri: true, on: true });
-  B.btnM('③ n=60：矩形糊成曲线', () => setN(60));
   let autoOn = false, autoBtn = null, fr = 0;
   const tick = () => {
     if (!autoOn) return;
@@ -80,12 +81,16 @@ export function createBoard(root) {
       sl.sync(st.n); B.render();
       if (st.n >= 60) { autoOn = false; autoBtn.set(false); }
     }
-    B.raf(tick);
+    if (autoOn) B.raf(tick);
   };
-  autoBtn = B.toggleBtn('⏩ n 逐级翻倍', false, on => { autoOn = on; fr = 0; if (on) B.raf(tick); });
-  const sl = B.slider('份数 n', 1, 60, 1, 8, v => { st.n = Math.round(v); B.render(); });
+  autoBtn = B.toggleBtn('⏩ n 逐级翻倍', false, on => { autoOn = on; fr = 0; if (on) B.raf(tick); else B.cancelRaf(); });
+  const sl = B.slider('份数 n', 1, 60, 1, 8, v => { st.n = Math.round(v); B.render(); }, undefined, v => `$n=${Number(v)}$`);
   B.graphToggles(st, ['grid', 'labs']);
-  B.hint("增大 n，看右端点黎曼和趋近 1/3。");
+  const syncPreset = parameterRow(B, '选择分割份数', [
+    { name: '手算', formula: '$n=4$', values: { n: 4 } },
+    { name: '比较', formula: '$n=8$', values: { n: 8 } },
+    { name: '细分', formula: '$n=60$', values: { n: 60 } },
+  ], st, { n: sl });
   B.render();
   return B;
 }

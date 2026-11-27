@@ -78,7 +78,9 @@ export const COLOR = {
 /* 板面自选了纸色时，语义色的亮/暗家族未必跟页面主题是一家（浅色主题下也能选深纸）：
    render() 期间把这一块板要用的家族放到 FAM_LIGHT 上，null 表示跟页面主题走，画完再交还 */
 let FAM_LIGHT = null;
+let drawingColors = null;
 function paint(c) {
+  if (drawingColors?.[c]) return drawingColors[c];
   const m = COLOR[c];
   if (!m) return c;
   const light = FAM_LIGHT == null ? document.documentElement.classList.contains('light') : FAM_LIGHT;
@@ -1148,9 +1150,13 @@ export class Board {
     if (this._onAppearanceChange) {
       const theme = themeOf(currentTheme());
       const background = col || theme.board;
-      if (background !== this._appearanceBg) {
+      // 第三个参数是配色方案：预设纸面给它的 id，自定义色给 'custom'，跟随主题给 'theme'。
+      // 画板的语义色据此换一套（conic-diagram 的 setPalette），页面本身的主题不受影响。
+      const scheme = p ? p.id : this._tint === -2 ? 'custom' : 'theme';
+      if (background !== this._appearanceBg || scheme !== this._appearanceScheme) {
         this._appearanceBg = background;
-        this._onAppearanceChange(this, background);
+        this._appearanceScheme = scheme;
+        this._onAppearanceChange(this, background, scheme);
       }
     }
     if (col === this._bgCol && ink === this._inkCol && fam === this._famLight && skin === this._skinCol) {
@@ -3730,7 +3736,7 @@ export class Board {
   text(p, s, at = {}) {
     const el = mk('text', { x: p.x, y: p.y, 'text-anchor': 'middle', ...at });
     this.dyn.appendChild(el);
-    return fillRuns(el, s);
+    return fillRuns(el, s, this.labelFontSize());
   }
   /** B.text 的公式版：s 里 '$…$' 段走 KaTeX 混排；定位沿 B.text 语义 —— p 为文字基线、默认水平居中，
    *  at 沿用 B.text 的键（'font-size'、fill、'text-anchor'、'font-weight'）。宽度按字符自动预算（可 at.w 覆盖）。 */
@@ -3757,6 +3763,7 @@ export class Board {
     d.innerHTML = texMix(s);
     return fo;
   }
+  labelFontSize() { return boardFontPx(); }
   clear() { this.dyn.innerHTML = ''; }
   btn(label, fn, opts = {}) {
     const b = hEl('button', { class: 'btn' + (opts.pri ? ' pri' : '') + (opts.on ? ' on' : '') });
@@ -3791,28 +3798,36 @@ export class Board {
     this.toggles.push({ key, label, get: () => (on ? 1 : 0), set });
     return { set, button: b };
   }
-  slider(label, min, max, step, val, fn, key) {
-    const digits = this._preciseSliders ? Math.max(1, String(step).split('.')[1]?.length ?? 0) : 1;
+  slider(label, min, max, step, val, fn, key, mathLabel) {
     const w = hEl('label', { class: 'slider' });
     const s = hEl('input', { type: 'range', min, max, step, value: val }); w.appendChild(s);
-    const t = hEl('span', {}, w); t.textContent = `${label} ${fmt(val, digits)}`;
+    const formatValue = v => fmt(v, this._preciseSliders ? Math.max(1, s.step.split('.')[1]?.length ?? 0) : 1);
+    const t = hEl('span', {}, w);
+    let lastValue;
+    const showValue = (v, pulse = false) => {
+      const value = formatValue(v);
+      const labelText = mathLabel ? mathLabel(value, v) : `${label} ${value}`;
+      if (labelText === lastValue) return;
+      lastValue = labelText;
+      if (pulse) tickValue(w);
+      if (mathLabel) t.innerHTML = texMix(labelText);
+      else t.textContent = labelText;
+    };
+    showValue(val);
     // URL 键：默认取标签首个拉丁/希腊字母（θ→th 等），无字母则 p1/p2；同板冲突加序号；第 7 参可显式指定
     const base = () => key || sliderKey(label, this.sliders.length);
     let k = base();
     for (let n = 2; this._keys.has(k); n++) k = base() + n;
     this._keys.add(k);
     this.sliders.push({ s, key: k, min, max, label });
-    let lastLabel = `${label} ${fmt(val, digits)}`;
     s.addEventListener('input', () => {
-      const txt = `${label} ${fmt(+s.value, digits)}`;
-      if (txt !== lastLabel) tickValue(w);  // 读数真的变了才轻滚一下
-      t.textContent = txt; lastLabel = txt;
+      showValue(+s.value, true);
       fn(+s.value);
       scheduleQuerySync(); // 防抖后把整页滑块状态写进 hash query
     });
     // 程序化同步滑块 UI 与标签：不触发 fn、不把值读回（range 的 value 可能被浏览器按 step 整化）
     // 从 URL 还原现场时不播动效，免得刚进页面就闪一下
-    s.sync = v => { s.value = v; lastLabel = `${label} ${fmt(+v, digits)}`; t.textContent = lastLabel; };
+    s.sync = v => { s.value = v; showValue(+v); };
     this.ctrl.appendChild(w); return s;
   }
   /** 读数徽章：返回 update(text, cls)。值变化时自动给一次柔光脉冲；
@@ -3868,6 +3883,12 @@ export class Board {
     upd.pulse = () => tickValue(c);
     upd.el = c;
     return upd;
+  }
+  /** 三角排布的读数沿用公式徽章的更新、登记和导出，位置由画板原布局决定。 */
+  readout(label, tone = 'blue') {
+    const update = this.chipM(label);
+    update.el.setAttribute('data-reading', tone);
+    return update;
   }
   /** 「在 GeoGebra 中验证」出口：getCmds() 返回命令数组，点击后带着当前参数打开 /playground。
    *  mode 取 'graphing' 或 '3d'；按钮复用 .dl 的定位与主题配色，挂进右上角导出条（CSS order 排在最左）。 */
@@ -4061,7 +4082,7 @@ export class Board {
     const st = mk('style', {}, clone);
     // 注入的规则必须与 global.css 那条逐字对齐（页面 CSS 的优先级高于呈现属性），
     // 只有字号改成 --bd-fs 的真实像素值：导出的图不读页面的 --bd-fs 变量
-    st.textContent = 'text{fill:var(--bd-svg-ink,' + ink + ');font-size:' + boardFontPx() + 'px;paint-order:stroke;stroke:' + bg
+    st.textContent = 'text{fill:var(--bd-svg-ink,' + ink + ');font-size:' + this.labelFontSize() + 'px;paint-order:stroke;stroke:' + bg
       + ';stroke-width:3px;stroke-linejoin:round;'
       + "font-family:-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif}"
       + (this._inkCol ? '.bd-tex-ink{color:' + ink + ' !important}' : '');
@@ -4088,7 +4109,7 @@ export class Board {
     const img = new Image();
     img.onload = () => {
       const c = document.createElement('canvas');
-      c.width = this.w * scale; c.height = this.h * scale;
+      c.width = img.naturalWidth * scale; c.height = img.naturalHeight * scale;
       const ctx = c.getContext('2d');
       ctx.scale(scale, scale); ctx.drawImage(img, 0, 0);
       const d = new Date(), p2 = n => String(n).padStart(2, '0');
@@ -4194,7 +4215,7 @@ export class Board {
     for (const { c, lbl, st } of this.handles) {
       const p = st.get();
       c.setAttribute('cx', p.x); c.setAttribute('cy', p.y);
-      if (lbl) { lbl.setAttribute('x', p.x + (st.lo ? st.lo[0] : 9)); lbl.setAttribute('y', p.y + (st.lo ? st.lo[1] : -9)); fillRuns(lbl, st.label); }
+      if (lbl) { lbl.setAttribute('x', p.x + (st.lo ? st.lo[0] : 9)); lbl.setAttribute('y', p.y + (st.lo ? st.lo[1] : -9)); fillRuns(lbl, st.label, this.labelFontSize()); }
     }
   }
   render() {
@@ -4205,7 +4226,8 @@ export class Board {
     this._lblSyncId();
     if (this.renderFn) {
       // 纸面自带的亮/暗家族：这一块板画图期间语义色按它取，画完交还（别的板各用各的）
-      const prevFam = FAM_LIGHT;
+      const prevFam = FAM_LIGHT, previousColors = drawingColors;
+      drawingColors = this.drawingColors;
       FAM_LIGHT = this._famLight == null ? null : this._famLight;
       try {
         this.clear();
@@ -4216,6 +4238,7 @@ export class Board {
         this._paperDraw();          // 纸格在网格标记定下来之后再铺（「自动」档要看它）
       } finally {
         FAM_LIGHT = prevFam;
+        drawingColors = previousColors;
       }
     }
   }

@@ -2,14 +2,14 @@
   <ChPage :cur="8" no="E8" base="/functions/e" :chapters="E_CHAPTERS"
     title="绝对值嵌套：三种折叠" sub="外层绝对值改变负的函数值，内层绝对值把右半支复制到左侧。"
     :toc="[{ id: 'e8-fold', t: '两道折缝（图 E8）' }, { id: 'e8-zeros', t: '零点核验：不变与翻倍' }, { id: 'e8-solve', t: '解绝对值方程与不等式' }]">
-    <div class="note good" id="e8-fold"><strong>三种嵌套</strong>（原图 f）：<Katex tex="y=|f(x)|" /> —— x 轴下方部分翻上来，值域下界抬到 0；<Katex tex="y=f(|x|)" /> —— 右半图象原样、左半是右半关于 y 轴的<strong>镜像复制</strong>（必偶）；<Katex tex="y=|f(|x|)|" /> —— 先折拢再翻上，两道一起。分层口诀：<strong>里层的 |x| 管定义域（横向折叠），外层的 |·| 管值域（纵向翻折）</strong> —— 由内向外逐层剥。</div>
+    <div class="note good" id="e8-fold"><strong>三种嵌套</strong>（原图 f）：<Katex tex="y=|f(x)|" /> —— x 轴下方部分翻上来，折后函数值均非负；<Katex tex="y=f(|x|)" /> —— 右半图象原样、左半是右半关于 y 轴的<strong>镜像复制</strong>（必偶）；<Katex tex="y=|f(|x|)|" /> —— 先折拢再翻上，两道一起。分层口诀：<strong>里层的 |x| 管定义域（横向折叠），外层的 |·| 管值域（纵向翻折）</strong> —— 由内向外逐层剥。</div>
     <div class="board-wrap">
       <BoardMount :factory="createFold" />
-      <div class="cap">图 E8 · <b>|f(x)| 与 f(|x|) 的图象</b>。拖动进度，对比关于横轴的翻折和关于纵轴的镜像。观察两种操作对零点的影响。</div>
+      <div class="cap">图 E8 · <b>绝对值嵌套的图象</b>。选择原函数与折叠方式，再拖动进度。两层折叠的前半程将右半支复制到左侧，后半程将横轴下方的部分翻上。比较原图与成图的零点，原点只计一次。</div>
     </div>
 
     <h3 class="sec" id="e8-zeros">零点核验：不变与翻倍</h3>
-    <p><strong><Katex tex="|f|" /> 的零点不多不少</strong>：<Katex tex="|f(x)|=0\iff f(x)=0" /> —— 翻折不产生新零点，也不消灭旧零点（变的是符号与值域：<Katex tex="|f|\ge 0" /> 恒成立）。<strong><Katex tex="f(|x|)" /> 的零点可能翻倍</strong>：右半的零点 <Katex tex="z" /> 会翻印出左半的 <Katex tex="-z" /> —— 原图 <Katex tex="x-1" /> 的零点 <Katex tex="\{1\}" /> 变成 {<Katex tex="|x|-1" /> 的} <Katex tex="\{-1,\ 1\}" />；但若原图本身偶（如 <Katex tex="x^2-2" />），<Katex tex="f(|x|)=f" />，零点完全不变。图 E8 的「零点核验」徽章把这两条结论记成实时读数。对称性同理：<Katex tex="f(|x|)" /> <strong>必偶</strong>（S5 的 y 轴对称随之成立），而 <Katex tex="|f|" /> 该对称才对称 —— 翻折不负责对称。</p>
+    <p><strong><Katex tex="|f|" /> 的零点不多不少</strong>：<Katex tex="|f(x)|=0\iff f(x)=0" /> —— 翻折不产生新零点，也不消灭旧零点（变的是符号与值域：<Katex tex="|f|\ge 0" /> 恒成立）。<strong><Katex tex="f(|x|)" /> 的零点可能翻倍</strong>：右半的零点 <Katex tex="z" /> 会翻印出左半的 <Katex tex="-z" /> —— 原图 <Katex tex="x-1" /> 的零点 <Katex tex="\{1\}" /> 变成 {<Katex tex="|x|-1" /> 的} <Katex tex="\{-1,\ 1\}" />；但若原图本身偶（如 <Katex tex="x^2-2" />），<Katex tex="f(|x|)=f" />，零点完全不变。图 E8 在图下列出原图与折叠完成时的零点集合。对称性同理：<Katex tex="f(|x|)" /> <strong>必偶</strong>（S5 的 y 轴对称随之成立），外层取绝对值后的偶性则要检查 <Katex tex="|f(-x)|=|f(x)|" /> 是否对所有输入成立。</p>
 
     <h3 class="sec" id="e8-solve">解绝对值方程与不等式</h3>
     <p>代数上，绝对值本质是<strong>分段函数</strong>（C4 回收）：<Katex tex="|f|=\begin{cases}f, & f\ge 0\\ -f, & f&lt;0\end{cases}" />，<Katex tex="f(|x|)=\begin{cases}f(x), & x\ge 0\\ f(-x), & x&lt;0\end{cases}" /> —— 「按符号分段、逐段求解、并回验段条件」是标准流程。几何上则用图 E8 的折缝读答案：解 <Katex tex="|f(x)|&lt;g(x)" /> 型（g(x)&gt;0）等价于 <Katex tex="-g(x)&lt;f(x)&lt;g(x)" /> —— 上界 g 与下界 −g 两条曲线夹出的竖直带；数形结合时「带里取横坐标」比逐段开平方快得多。</p>
@@ -31,3 +31,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createFold } from '../../../boards/functions/elementary/absfold.js';
 import { E_CHAPTERS } from './enav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

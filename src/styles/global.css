@@ -12,6 +12,7 @@
      反而多一次闪烁。西文优先交给系统 UI 字体，中文由各平台自带黑体接住，零加载、跨平台一致。 */
   --font-sans:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
   --font-serif:Georgia,"Times New Roman","Noto Serif CJK SC","Source Han Serif SC","Songti SC","STSong",serif;
+  --font-song:"Songti SC","Noto Serif CJK SC","Source Han Serif SC","SimSun","STSong",serif;
   --font-mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,"Microsoft YaHei",monospace;
   /* 标题字体：默认保留衬线的书卷气。想全站换成黑体，只改这一行为 var(--font-sans) 即可。 */
   --font-head:var(--font-serif);
@@ -262,49 +263,69 @@ circle.hnd:focus-visible{outline:2px solid var(--bd-ink,var(--ink));outline-offs
 circle.hnd.drag{stroke-width:3}
 .hndlbl{pointer-events:none;user-select:none}
 
-/* 函数实验：绘图区、图例和参数读数各占一行。 */
-.board.fn-board{display:grid;grid-template-columns:minmax(0,1fr);container-type:inline-size;border-radius:16px;
-  border-color:color-mix(in srgb,var(--blue) 30%,var(--line));
-  box-shadow:0 12px 28px color-mix(in srgb,var(--bg) 75%,transparent)}
-.fn-board>svg{background:radial-gradient(ellipse at 50% 25%,color-mix(in srgb,var(--blue) 10%,transparent),transparent 70%)}
-.fn-board svg text{pointer-events:none;stroke-width:2px}
-.fn-board>.dlbar:not(.out){grid-row:1;order:-1;position:static;flex-wrap:wrap;justify-content:flex-end;
-  gap:4px;padding:6px 10px;border-bottom:1px solid var(--line)}
-.fn-board .ctrl{gap:7px;padding:10px 12px}
-.fn-board .ctrl .btn{min-height:32px;border-color:var(--line)}
-.fn-board .ctrl .btn.on{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 14%,var(--bg2))}
-.fn-board .slider{max-width:100%;min-width:0}
-.fn-board .slider input{min-width:48px;accent-color:var(--blue)}
-.fn-board .chips .chip{max-width:100%;min-width:0;align-items:baseline;flex-wrap:wrap;font-variant-numeric:tabular-nums}
-.fn-board .chip>span{min-width:0;max-width:100%;overflow:auto;overflow-wrap:anywhere}
-.fn-board-notes{display:flex;flex-wrap:wrap;gap:6px 9px;padding:9px 12px;border-top:1px solid var(--line)}
-.fn-board-notes[hidden]{display:none}
-.fn-board-note{--tone:var(--mut);min-width:0;max-width:100%;padding:5px 8px;line-height:1.6;
-  border-inline-start:2px solid var(--tone);border-radius:4px;background:color-mix(in srgb,var(--tone) 9%,var(--bg2));
-  color:var(--ink);font-size:.875rem;overflow:auto;overflow-wrap:anywhere}
-.fn-board-note[data-tone="blue"]{--tone:var(--blue)}
-.fn-board-note[data-tone="cyan"]{--tone:var(--cyan,var(--blue))}
-.fn-board-note[data-tone="green"]{--tone:var(--green)}
-.fn-board-note[data-tone="orange"]{--tone:var(--orange,var(--yellow))}
-.fn-board-note[data-tone="yellow"]{--tone:var(--yellow)}
-.fn-board-note[data-tone="red"]{--tone:var(--red,var(--orange))}
-.fn-board-note[data-tone="purple"]{--tone:var(--purple,var(--blue))}
-.fn-board-guide{margin:0;padding:9px 12px 12px;color:var(--mut);font-size:.875rem;line-height:1.6;
-  overflow:auto;overflow-wrap:anywhere}
-.board-wrap:has(>.fn-board)>.cap{margin:9px 2px 18px;color:var(--mut)}
-@container (max-width:500px){
-  .fn-board svg text{font-size:max(var(--bd-fs,12px),19px)}
+/* 函数实验。控件、曲线和判读共用纸面；布局依据画板的实际宽度。 */
+.board.fn-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  container: fn-board / inline-size;
+  isolation: isolate;
+  border-radius: 16px;
+  background-color: var(--pj-paper);
+  border-color: var(--pj-axis);
+  --fn-margin: 10px;
 }
-@container (max-width:390px){
-  .fn-board svg text{font-size:max(var(--bd-fs,12px),23px)}
+.fn-board > :is(.dlbar, svg, .ctrl, .fn-board-notes, .fn-board-guide) { grid-column: 1 / -1; min-width: 0; }
+.board.fn-board > .dlbar:not(.out) { position: static; flex-wrap: wrap; justify-content: flex-end; gap: 4px; padding: 5px var(--fn-margin); grid-row: 1; order: -2; }
+.board.fn-board > .ctrl { background: transparent; border: 0; }
+.board.fn-board > .ctrl:not(.chips) { grid-row: 2; order: -1; gap: 6px; padding: 8px var(--fn-margin); }
+.fn-board > svg { grid-row: 3; order: 0; align-self: center; }
+.fn-board svg text { pointer-events: none; stroke: var(--pj-paper); fill: var(--pj-ink); stroke-width: 2px; font-size: max(var(--fn-label-size,12px),var(--bd-fs,12px)); }
+.fn-board circle.hnd { pointer-events: all; }
+.fn-board circle.hnd:is(:hover,.drag) { r: 4.8px; }
+.fn-board .ctrl .btn { min-height: 32px; background: var(--pj-paper); border-color: var(--pj-axis); color: var(--pj-ink); max-width: 100%; white-space: normal; }
+.fn-board .ctrl .btn:is(.on,:hover) { border-color: var(--pj-accent); background: color-mix(in srgb,var(--pj-accent) 13%,var(--pj-paper)); }
+.fn-board .slider { max-width: 100%; min-width: 0; color: var(--pj-ink); }
+.fn-board .slider input { min-width: 48px; accent-color: var(--pj-blue); }
+.board.fn-board > .ctrl.chips {
+  display: grid; grid-row: 4; order: 1; align-items: stretch;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,300px),1fr));
+  gap: 5px 9px; padding: 4px var(--fn-margin) 6px !important;
 }
-@media (max-width:650px){
-  .fn-board .ctrl,.fn-board-notes,.fn-board-guide{padding-inline:8px}
-  .fn-board .ctrl .btn{max-width:100%;white-space:normal}
+.fn-board .chips .chip {
+  --tone: var(--pj-guide);
+  min-width: 0; margin: 0; padding: 5px 9px; gap: 7px; align-items: baseline;
+  border: 1px solid var(--pj-axis); border-inline-start: 2px solid var(--tone); border-radius: 6px;
+  color: var(--pj-ink); background: color-mix(in srgb,var(--pj-paper) 75%,transparent);
+  font-size: 15px; line-height: 1.5; font-variant-numeric: tabular-nums;
 }
-@media print{
-  .fn-board{box-shadow:none!important}
-  .fn-board>.dlbar{display:none}
+.board.fn-board .chips .chip:is(.ok,.warn) { color: var(--tone); background: color-mix(in srgb,var(--tone) 8%,var(--pj-paper)); border-color: color-mix(in srgb,var(--tone) 45%,var(--pj-paper)); border-inline-start-color: var(--tone); }
+.fn-board .chips .chip.ok { --tone: var(--pj-green); }
+.fn-board .chips .chip.warn { --tone: var(--pj-red); }
+.board.fn-board .chips .chip b { flex: none; font: inherit; font-weight: 600; color: var(--pj-ink); }
+.fn-board .chip > span { min-width: 0; max-width: 100%; overflow-wrap: anywhere; overflow-x: auto; }
+.fn-board .fn-board-notes { grid-row: 5; order: 2; display: flex; flex-wrap: wrap; gap: 4px 10px; padding: 3px var(--fn-margin); }
+.fn-board-notes[hidden] { display: none !important; }
+.fn-board-note { min-width: 0; max-width: 100%; color: var(--pj-guide); font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; overflow-x: auto; }
+.fn-board-note::before { content: ''; display: inline-block; vertical-align: .2em; width: .85em; margin-inline-end: .4em; border-top: 2px solid var(--tone,var(--pj-guide)); }
+.fn-board-guide { grid-row: 6; order: 3; margin: 0; padding: 4px var(--fn-margin) 10px; color: var(--pj-guide); font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; }
+.board-wrap:has(>.fn-board)>.cap { margin: 8px 8px 16px; color: var(--mut); font-size: 14px; }
+.board-wrap:has(> .trig-board) > figcaption.cap {
+  margin: 0;
+  padding: 4px 12px 5px;
+  line-height: 1.45;
+}
+@container fn-board (min-width: 700px) {
+  .fn-board[data-layout="side"]:not(.bd-half) > svg { grid-column: 1; }
+  .fn-board[data-layout="side"]:not(.bd-half) > .ctrl.chips {
+    grid-column: 2; grid-row: 3; grid-template-columns: minmax(0,1fr);
+    align-self: center; padding-inline-start: 5px !important;
+  }
+}
+@container fn-board (max-width: 600px) {
+  .fn-board .chips .chip { font-size: 14px; }
+}
+@media print {
+  .fn-board > .dlbar { display: none; }
 }
 /* 画板操作条：右上角一排（缩放 / GeoGebra / 视频 / PNG），hover 才现身（触屏无 hover，常显） */
 .dlbar{position:absolute;top:8px;right:8px;z-index:6;display:flex;gap:6px}
@@ -553,6 +574,12 @@ html.light .board.bd-half{box-shadow:0 0 0 100vmax rgba(60,50,25,.16),0 26px 70p
 /* 只有绘图 SVG 占用可伸缩的空间，内嵌工具图标维持原大小。 */
 .board.bd-float>svg{flex:1 1 auto;min-height:0}
 .board.bd-float>:is(.ctrl,.fn-board-notes,.fn-board-guide){flex:none;overflow:auto;overscroll-behavior:contain}
+.board.fn-board.bd-full { display: grid; grid-template-rows: auto auto minmax(0,1fr) auto auto auto; }
+.board.fn-board.bd-full > svg { height: 100%; }
+@container fn-board (min-width: 700px) {
+  .board.fn-board.bd-full[data-layout="side"] > .chips { max-height: 100%; }
+}
+.board.fn-board.bd-half > svg { align-self: stretch; }
 /* 短窗口先保留绘图区，再分配参数、读数和函数讲解的滚动区域。 */
 .board.bd-float>.ctrl{max-height:calc(var(--bd-controls-height) / 2)}
 .board.bd-float.fn-board>.ctrl{max-height:calc(var(--bd-controls-height) * .32)}
@@ -1160,4 +1187,225 @@ button.readmark{display:inline-flex;align-items:center;gap:7px}
   .read-progress{display:none!important}
   .chip.val-tick,.chip.val-tick>span,.slider.val-tick>span,
   .readmark.just-done,.readmark.just-done .rm-tick,.chapnav .rd{animation:none!important}
+}
+
+/* 换主题的过渡（View Transitions；设置页「主题切换动画」）
+   旧快照不参与动画，新快照按其类型显形：圆形从点击处扩散 / 整体淡入 / 自左向右展开。
+   不支持 View Transitions 的浏览器直接换色（applyTheme 里有能力检测与 reduced-motion 判定）。 */
+::view-transition-old(root),::view-transition-new(root){mix-blend-mode:normal}
+html.vt-circle::view-transition-old(root),
+html.vt-fade::view-transition-old(root),
+html.vt-sweep::view-transition-old(root){animation:none}
+html.vt-circle::view-transition-new(root){animation:vt-circle .62s cubic-bezier(.4,0,.2,1) both}
+html.vt-fade::view-transition-new(root){animation:vt-fade .45s ease both}
+html.vt-sweep::view-transition-new(root){animation:vt-sweep .55s cubic-bezier(.4,0,.2,1) both}
+@keyframes vt-circle{
+  from{clip-path:circle(0 at var(--vt-x,50%) var(--vt-y,50%))}
+  to{clip-path:circle(var(--vt-r,120vmax) at var(--vt-x,50%) var(--vt-y,50%))}
+}
+@keyframes vt-fade{from{opacity:0}to{opacity:1}}
+@keyframes vt-sweep{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+
+/* 集合模块图卡板（2026-11-26）：整板柔光 / 细网格，控件在上、判读在下。
+   只作用于 .board.atlas-board，页面主题与正文不受影响；配色仍由 conic-diagram 的 --pj-* 提供。 */
+.board.atlas-board{
+  --atlas-accent:var(--pj-accent,var(--blue));
+  --atlas-glow:color-mix(in srgb,var(--atlas-accent) 11%,transparent);
+  --atlas-band:color-mix(in srgb,var(--atlas-accent) 5.5%,transparent);
+  --atlas-faint:color-mix(in srgb,var(--atlas-accent) 2.2%,transparent);
+  background-color:var(--pj-paper,var(--bg2));
+  background-image:
+    radial-gradient(ellipse 46% 72% at 34% 40%,var(--atlas-glow),var(--atlas-faint) 46%,transparent 100%),
+    radial-gradient(ellipse 66% 96% at 42% 46%,transparent 26%,var(--atlas-band) 62%,transparent 100%),
+    radial-gradient(ellipse 88% 124% at 50% 58%,transparent 34%,var(--atlas-faint) 56%,var(--atlas-band) 78%,transparent 100%),
+    var(--bd-skin,none);
+}
+html.light .board.atlas-board{
+  --atlas-glow:color-mix(in srgb,var(--atlas-accent) 8%,transparent);
+  --atlas-band:color-mix(in srgb,var(--atlas-accent) 4%,transparent);
+}
+.board.atlas-board[data-texture="grid"]{
+  --atlas-grid-line:color-mix(in srgb,var(--pj-blue) 11%,transparent);
+  background-image:
+    linear-gradient(to right,var(--atlas-grid-line) 1px,transparent 1px),
+    linear-gradient(to bottom,var(--atlas-grid-line) 1px,transparent 1px),
+    var(--bd-skin,none);
+  background-size:22px 22px,22px 22px,auto;
+}
+.board.atlas-board:not(.bd-float){display:flex;flex-direction:column}
+.board.atlas-board>.dlbar{position:static;order:-2;flex:none;justify-content:flex-end;flex-wrap:wrap;padding:6px 10px}
+.board.atlas-board>.ctrl:not(.chips){order:-1;flex:none;gap:5px;padding:8px 12px;
+  border-top:0;border-bottom:1px solid var(--pj-axis)}
+.board.atlas-board>.ctrl.chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;
+  padding:9px 12px 12px!important;border-top:1px solid var(--pj-axis)!important;background:transparent}
+.board.atlas-board>.ctrl:not(.chips){background:transparent}
+.board.atlas-board>.ctrl.chips .chip{display:flex;justify-content:space-between;gap:8px;min-width:0;margin:0;
+  padding:5px 9px;border-color:var(--pj-axis);background:color-mix(in srgb,var(--pj-paper) 80%,transparent);
+  font-size:12px;line-height:1.45}
+.board.atlas-board>.ctrl.chips .chip b{font-family:inherit;white-space:nowrap}
+.board.atlas-board>.ctrl.chips .chip>span{min-width:0;overflow-wrap:anywhere}
+@media (max-width:640px){.board.atlas-board>.ctrl.chips{grid-template-columns:1fr}}
+
+/* 主图、控件、判读区共享整张纸；图中的备用背景用于独立导出。 */
+.board.atlas-board.logic-board { isolation: isolate; container: logic-board / inline-size; }
+.board.atlas-board.logic-board[data-texture="halo"] { background-image: var(--bd-skin, none); }
+.board > .diagram-backdrop { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.board > .diagram-backdrop > svg { width: 100%; height: 100%; }
+.board[data-texture="grid"] > .diagram-backdrop,
+.board .diagram-export-halo { display: none; }
+.board.atlas-board.logic-board:not(.bd-float) > svg { max-width: 740px; margin-inline: auto; }
+.board.atlas-board.logic-board > .ctrl { background: transparent; }
+.conic-figure:has(> .logic-board) {
+  --logic-frame-width: calc(min(100%, 740px) * 504 / 520);
+}
+.conic-figure > .logic-board ~ figcaption.cap {
+  width: auto;
+  margin-inline: 0;
+  padding-inline: 12px;
+  font-size: 14px;
+}
+.conic-figure > .logic-board ~ figcaption.cap .conic-number { font-size: inherit; }
+.board.atlas-board.logic-board > .ctrl.chips {
+  border-top: 0 !important;
+  padding: 4px 0 14px !important;
+  width: var(--logic-frame-width, 100%);
+  max-width: 100%;
+  margin-inline: auto;
+  /* 留足一条读数的宽度；整屏时也至多并排两项。 */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(320px, (100% - 12px) / 2)), 1fr));
+  container: logic-readouts / inline-size;
+  justify-items: stretch;
+  gap: 6px 12px;
+}
+.board.atlas-board.logic-board > .ctrl.chips .chip {
+  justify-content: start;
+  max-width: 100%;
+  box-sizing: border-box;
+  column-gap: 8px;
+  align-items: baseline;
+  padding: 6px 10px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.board.atlas-board.logic-board > .ctrl.chips .chip b { font-size: inherit; }
+.board.atlas-board.logic-board > .ctrl.chips .chip:is(.ok,.warn) {
+  color: var(--logic-state);
+  border-color: color-mix(in srgb, var(--logic-state) 55%, var(--pj-paper));
+  border-inline-start: 3px solid var(--logic-state);
+  background: color-mix(in srgb, var(--logic-state) 8%, var(--pj-paper));
+}
+.board.logic-board .chip.ok { --logic-state: var(--pj-green); }
+.board.logic-board .chip.warn { --logic-state: var(--pj-red); }
+.board.atlas-board.logic-board svg circle.hnd:is(:hover,.drag) { r: 16px; }
+@container logic-readouts (max-width: 360px) {
+  .board.atlas-board.logic-board > .ctrl.chips .chip {
+    font-size: 14px;
+    column-gap: 6px;
+    padding-inline: 8px;
+  }
+}
+@container logic-readouts (max-width: 280px) {
+  .board.atlas-board.logic-board > .ctrl.chips .chip {
+    column-gap: 4px;
+    padding-inline: 5px;
+  }
+  .board.logic-board > .chips .katex { font-size: 1em; }
+}
+.board.logic-board.contra-board > .ctrl.chips .chip:last-child { grid-column: 1 / -1; }
+
+.chip[data-reading="blue"] { --reading-color: var(--pj-blue); }
+.chip[data-reading="gold"] { --reading-color: var(--pj-gold); }
+.chip[data-reading="mint"] { --reading-color: var(--pj-mint); }
+.chip[data-reading="green"] { --reading-color: var(--pj-green); }
+.chip[data-reading="violet"] { --reading-color: var(--pj-violet); }
+.chip[data-reading="orange"] { --reading-color: var(--pj-orange); }
+
+/* 三角排布的读数。图旁与图下共用排版，保留各画板自己的列宽与顺序。 */
+.board:is(.fn-board,.conic-board,.ineq-board) > .ctrl.chips .chip[data-reading] {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 2px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 5px 8px;
+  border: 0;
+  border-block-start: 1px solid var(--pj-axis);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--pj-ink);
+  text-align: start;
+  white-space: normal;
+  font-variant-numeric: tabular-nums;
+}
+.board > .ctrl.chips .chip[data-reading] > b {
+  color: var(--reading-color);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+.board > .ctrl.chips .chip[data-reading] > span {
+  min-width: 0;
+  max-width: 100%;
+  font-size: 15px;
+  line-height: 1.55;
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+.board > .ctrl.chips .chip[data-reading].warn > span { color: var(--pj-red); }
+.board > .ctrl.chips .chip[data-reading].val-tick,
+.board > .ctrl.chips .chip[data-reading].val-tick > span { animation: none; }
+
+.board.subfamily-board > .ctrl.chips .chip:first-child,
+.board.subfamily-board > .ctrl.chips .chip:last-child { grid-column: 1 / -1; }
+
+/* 集合画板中，读数与判读按 DOM 顺序分行。以读数区本身的宽度适配半屏与手机。 */
+.board:is(.replab-board,.subslab-board,.vennops-board,.complab-board,.quants-board,.axisops-board) > .ctrl.chips {
+  container: set-readouts / inline-size;
+  align-items: stretch;
+}
+.board:is(.subslab-board,.vennops-board,.complab-board) > .ctrl.chips {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@container set-readouts (max-width: 400px) {
+  :is(.replab-board,.subslab-board,.vennops-board,.complab-board) > .ctrl.chips > .chip { grid-column: 1 / -1; }
+}
+.board.subslab-board > .ctrl.chips > [data-reading],
+.board.complab-board > .ctrl.chips > .chip:not([data-reading]) { grid-column: 1 / -1; }
+@container set-readouts (max-width: 470px) {
+  .ctrl.chips > .chip:not([data-reading]) { flex-wrap: wrap; }
+}
+
+/* 成组读数按项数分列，判读从下一行开始。 */
+.board.fn-board > .ctrl.chips.fn-chapter-readings {
+  container: function-readings / inline-size;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.fn-chapter-readings > .fn-reading-group {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 9px;
+}
+.fn-chapter-readings > .fn-reading-group:where(:has(> :last-child:nth-child(odd))) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.fn-chapter-readings > .fn-reading-group:where(:has(> :only-child)) { grid-template-columns: minmax(0, 1fr); }
+.board.fn-board > .ctrl.fn-chapter-readings > .chip,
+.board.fn-board .fn-chapter-readings > .fn-reading-group > .chip { grid-column: auto; }
+.board.fn-board > .ctrl.fn-chapter-readings > .chip:last-child:nth-child(even) { grid-column: 1 / -1; }
+.board.fn-board > .ctrl.fn-chapter-readings > .chip { flex-wrap: wrap; }
+.board.fn-board > .ctrl.fn-chapter-readings > .chip > span { overflow: visible; }
+@container function-readings (max-width: 555px) {
+  .fn-chapter-readings > .fn-reading-group:where(:has(> :last-child:nth-child(odd):not(:only-child))) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .board.fn-board > .ctrl.fn-chapter-readings > .chip { grid-column: 1 / -1; }
+}
+@container function-readings (max-width: 375px) {
+  .fn-chapter-readings > .fn-reading-group { grid-template-columns: minmax(0, 1fr); }
 }

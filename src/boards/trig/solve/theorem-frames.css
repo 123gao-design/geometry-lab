@@ -1,0 +1,47 @@
+.board.fn-board.trig-theorem-board { grid-template-columns: minmax(0, 1fr) minmax(244px, 40%); }
+/* 图与推导共用同一网格行，两侧边框随行高伸展；SVG 内的原框供独立导出。 */
+.board.fn-board.trig-theorem-board > svg, .trig-theorem-panel {
+  box-sizing: border-box;
+  align-self: stretch;
+  margin-block: 7px;
+  border: 1px dashed color-mix(in srgb, var(--pj-accent) 62%, transparent);
+  border-radius: 15px;
+}
+.board.fn-board.trig-theorem-board > svg {
+  margin-inline: 9px 4px;
+  width: calc(100% - 13px);
+  height: calc(100% - 14px);
+}
+.trig-theorem-board > svg > rect[stroke-dasharray="7 6"] { display: none; }
+.trig-theorem-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  grid-area: 3 / 2;
+  min-width: 0;
+  margin-inline: 4px 9px;
+  padding: 14px 12px;
+  color: var(--pj-ink);
+  font: 14px/1.45 var(--font-song, serif);
+}
+foreignObject .trig-theorem-panel { width: 100%; }
+@container fn-board (max-width: 579px) {
+  .board.fn-board.trig-theorem-board > svg { margin-inline: 9px; width: calc(100% - 18px); height: auto; }
+  .trig-theorem-board > .trig-theorem-panel {
+    grid-area: 4 / 1 / auto / -1;
+    margin: 9px 9px 10px;
+    padding-block: 17px;
+  }
+}
+
+.board.trig-compact-choices .ctrl .btn {
+  min-height: 28px;
+  padding-block: 2px;
+  line-height: 1.25;
+}
+.trig-compact-choices .fn-preset-row .btn { white-space: nowrap; }
+.trig-compact-choices .fn-preset-row .preset-index { display: inline; }
+.trig-compact-choices .fn-preset-row .btn[aria-pressed="true"]::before { top: 50%; }
+@container fn-board (max-width: 480px) {
+  .trig-compact-choices .fn-preset-row .btn { padding-inline: 12px 5px; }
+}

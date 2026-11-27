@@ -3,26 +3,28 @@
    图象规范：各预设 B.isoFit 等单位取景（真实比例，抛物线/双曲线不变形）；③ 的渐近线按角色配色（灰基准/蓝输入/金输出），
    由「渐近线」开关统一隐藏；网格 / 轴标注 可隐藏。 */
 import { V, fmt } from '../../../lib/board.js';
+import { presetRow } from '../properties/preset-row.js';
 import { FunctionBoard } from '../function-board.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
   const B = new FunctionBoard(root, W, H);
+  root.classList.add('fn-study-board', 'fn-wrap-legend');
 
   const PRESETS = [
-    { name: '① $f(x)=x^2$', d: () => true, f: x => x * x, box: [-3.2, 3.2, -1, 8.6], edge: 0, base: '基准 $f(x)=x^2$',
+    { name: '平方', formula: '$f(x)=x^2$', d: () => true, f: x => x * x, box: [-3.2, 3.2, -1, 8.6], edge: 0, base: '基准 $f(x)=x^2$',
       out: h => `$f(x)+h = x^2 ${sgn(h)} ${abs(h)}$`, inn: h => `$f(x+h) = (x${sgn(h)} ${abs(h)})^2$`,
-      dom: () => '定义域都是 R —— 全轴函数平移，定义域纹丝不动', marks: 1 },
-    { name: '② $f(x)=\\sqrt{x}$', d: x => x >= 0, f: x => Math.sqrt(x), box: [-2.4, 4, -1, 3.4], edge: 0, base: '基准 $f(x)=\\sqrt{x}$',
+      dom: () => '两者都是 $\\mathbb R$', marks: 1 },
+    { name: '平方根', formula: '$f(x)=\\sqrt{x}$', d: x => x >= 0, f: x => Math.sqrt(x), box: [-2.4, 4, -1, 3.4], edge: 0, base: '基准 $f(x)=\\sqrt{x}$',
       out: h => `$f(x)+h = \\sqrt{x} ${sgn(h)} ${abs(h)}$`, inn: h => `$f(x+h) = \\sqrt{x${sgn(h)} ${abs(h)}}$`,
-      dom: h => `f(x)+h：x ≥ 0（端点竖着走）；f(x+h)：x ≥ ${fmt(-h, 2)}（端点横着走）`, marks: 1 },
-    { name: '③ $f(x)=\\dfrac{1}{x}$', d: x => Math.abs(x) > 1e-9, f: x => 1 / x, box: [-3.4, 3.4, -3.6, 3.6], edge: null, base: '基准 $f(x)=\\dfrac{1}{x}$',
+      dom: h => `竖移 $x\\ge0$，横移 $x\\ge${fmt(-h, 2)}$`, marks: 1 },
+    { name: '倒数', formula: '$f(x)=\\tfrac{1}{x}$', d: x => Math.abs(x) > 1e-9, f: x => 1 / x, box: [-3.4, 3.4, -3.6, 3.6], edge: null, base: '基准 $f(x)=\\dfrac{1}{x}$',
       out: h => `$f(x)+h = \\dfrac{1}{x} ${sgn(h)} ${abs(h)}$`, inn: h => `$f(x+h) = \\dfrac{1}{x${sgn(h)} ${abs(h)}}$`,
-      dom: h => `f(x)+h：x ≠ 0；f(x+h)：x ≠ ${fmt(-h, 2)} —— 竖直渐近线跟着输入走`, marks: 0 },
+      dom: h => `竖移 $x\\ne0$，横移 $x\\ne${fmt(-h, 2)}$`, marks: 0 },
   ];
   const MAPS = PRESETS.map(P => B.isoFit(...P.box));
   const st = { p: 0, h: 0.5, grid: true, labs: true, asym: true };
-  const cOut = B.chipM('输出端'), cIn = B.chipM('输入端'), cDom = B.chip('定义域');
+  const cOut = B.readout('输出端', 'gold'), cIn = B.readout('输入端'), cDom = B.readout('定义域', 'mint');
   const sgn = v => v < 0 ? '-' : '+';
   const abs = v => Math.abs(v).toFixed(2);
 
@@ -39,42 +41,30 @@ export function createBoard(root) {
     B.plot(x => P.f(x + h), M, { dom: x => P.d(x + h), anchors: ancIn, pad: .4, step: .05, stroke: '#5cadff', 'stroke-width': 2.2 });
     // 关键点标记（顶点/端点）：基准、输出端、输入端各一枚
     if (P.marks) {
-      B.dot(V(px(0), py(P.f(0))), 4.5, { fill: '#5c6a80' });
-      B.dot(V(px(0), py(P.f(0) + h)), 4.5, { fill: '#ffd166' });
-      B.dot(V(px(-h), py(P.f(0))), 4.5, { fill: '#5cadff' });
-      B.note(`(${fmt(-h, 2)}, 0)`, '#5cadff');
+      B.glowPoints([[V(px(0), py(h)), B.diagramColors.gold], [V(px(-h), py(0)), B.diagramColors.blue],
+        [V(px(0), py(0)), B.diagramColors.guide]]);
     } else if (st.asym) {
       // ③：渐近线 —— 输入端平移挪竖直渐近线，输出端平移挪水平渐近线（颜色与曲线角色一一对应）
       B.inf(V(px(0), py(Y0)), V(px(0), py(Y1)), { stroke: '#5c6a80', 'stroke-dasharray': '4 5', 'stroke-opacity': .6 });
       B.inf(V(px(-h), py(Y0)), V(px(-h), py(Y1)), { stroke: '#5cadff', 'stroke-dasharray': '4 5', 'stroke-opacity': .7 });
       B.inf(V(px(X0), py(h)), V(px(X1), py(h)), { stroke: '#ffd166', 'stroke-dasharray': '4 5', 'stroke-opacity': .7 });
-      B.note(`x=${fmt(-h, 2)}`, '#5cadff');
+      B.note(`$x=${fmt(-h, 2)}$`, '#5cadff');
     }
     // 图例 + 位移矢量箭头（金竖、蓝横，方向随 h 正负翻转）
     B.note(P.base, '#93a1b5');
-    const ax = 116, ay = 70, L = h * 26;
-    B.seg(V(ax, ay), V(ax, ay - L), { stroke: '#ffd166', 'stroke-width': 3 });
-    B.dot(V(ax, ay - L), 3, { fill: '#ffd166' });
-    B.note(`$f(x)${sgn(h)}${abs(h)}$：${h >= 0 ? '上' : '下'}移`, '#ffd166');
-    const bx = 330;
-    B.seg(V(bx, ay), V(bx - L, ay), { stroke: '#5cadff', 'stroke-width': 3 });
-    B.dot(V(bx - L, ay), 3, { fill: '#5cadff' });
-    B.note(`$f(x${sgn(h)}${abs(h)})$：${h >= 0 ? '左' : '右'}移`, '#5cadff');
+    B.note('$f(x)+h$', '#ffd166'); B.note('$f(x+h)$', '#5cadff');
     // 徽章
     cOut(P.out(h), '');
     cIn(P.inn(h), '');
     cDom(P.dom(h), Math.abs(h) < 1e-9 ? 'ok' : '');
-    if (Math.abs(h) < 1e-9) cDom('h=0：三条线完全重合 —— 变形量归零', 'ok');
   };
 
-  const btns = PRESETS.map((p, i) => B.btnM(p.name, () => {
-    st.p = i;
-    btns.forEach((b, j) => b.classList.toggle('on', j === i));
-    B.render();
-  }, { on: i === 0 }));
-  B.slider('位移 h', -2, 2, 0.05, 0.5, v => { st.h = v; B.render(); });
+  B.slider('位移 h', -2, 2, 0.05, 0.5, v => { st.h = v; B.render(); }, undefined, v => `$h=${v}$`);
   B.graphToggles(st);
-  B.hint("拖动 h 比较竖直移动与水平移动。");
+  presetRow(B.ctrl, '选择例题', PRESETS, i => {
+    st.p = i;
+    B.render();
+  });
   B.render();
   return B;
 }

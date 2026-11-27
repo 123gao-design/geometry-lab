@@ -1,0 +1,7 @@
+.fn-board:is(.zero-language, .zero-theorem, .zero-bisection) .chip > span { overflow: visible; }
+:is(.zero-language, .zero-theorem) .chip:last-child { grid-column: 1 / -1; }
+.board.fn-board:is(.zero-language, .zero-theorem, .zero-bisection).bd-float { overflow-y: auto; }
+.board.fn-board:is(.zero-language, .zero-theorem, .zero-bisection).bd-float > .ctrl.chips { max-height: none; overflow: visible; }
+.zero-bisection .fn-preset-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.zero-bisection .fn-board-note { overflow: visible; }
+.board.zero-bisection.bd-float > .fn-board-notes { max-height: none; overflow: visible; }

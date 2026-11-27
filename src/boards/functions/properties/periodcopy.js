@@ -5,19 +5,23 @@
    ④ 周期延拓：只给基本段 [0,2)，f(x)=f(x−2k) 把全轴延拓出来 —— 探针直接演示化归链。
    图象规范：B.isoFit 等单位取景；公式一律 B.tex（KaTeX）；网格 / 轴标注 两开关；marks 与单元边沿为必采锚点。 */
 import { V, fmt } from '../../../lib/board.js';
+import { glowDot } from '../../../lib/conic-diagram.js';
 import { FunctionBoard } from '../function-board.js';
+
+import { presetRow } from './preset-row.js';
 
 export function createBoard(root) {
   const W = 860, H = 480;
   const B = new FunctionBoard(root, W, H);
+  root.classList.add('period-board');
 
   // f 检验函数（mod 折叠到基本段）；T 基本周期；marks 必采锚点；seps 单元边沿；axes/centers 金色对称轴/中心（②③）
   const PRESETS = [
-    { name: '① 平移重合验收', T: 4,
+    { name: '平移重合验收', short: '平移重合', T: 4,
       eq: '候选周期验收：拖 s，问 $f(x+s)=f(x)$ 对一切 x 成立吗',
       f: x => { const r = ((x % 4) + 4) % 4; return r < 2 ? 1 - (r - 1) * (r - 1) : (r - 3) * (r - 3) - 1; },
       box: [-1.5, 10.5, -1.6, 1.6], marks: [[1, 1], [3, -1]], seps: [0, 4, 8], axes: [], centers: [] },
-    { name: '② 双轴推周期', T: 4,
+    { name: '双轴推周期', short: '双对称轴', T: 4,
       eq: '定理：两条对称轴相距 $d$ → 周期 $T=2d$（本例 $d=2$）',
       f: x => {   // 基本段 h 故意不对称（h(1.5)≠h(2.5)），堵死「其实周期是 2」的巧合
         const h = t => 0.5 * (t - 1) * (t - 3) + 0.3 * (t - 2);
@@ -25,11 +29,11 @@ export function createBoard(root) {
         return r <= 1 ? h(2 - r) : h(r);
       },
       box: [-1, 7, -0.9, 0.7], marks: [[1, -0.3], [3, 0.3]], seps: [], axes: [1, 3, 5, 7], centers: [] },
-    { name: '③ 轴+中心推周期', T: 4,
+    { name: '轴+中心推周期', short: '轴与中心', T: 4,
       eq: '定理：对称轴与对称中心相距 $d$ → 周期 $T=4d$（本例 $d=1$）',
       f: x => 1 - Math.abs(((x + 2) % 4 + 4) % 4 - 2),   // 三角波：偶数处轴、奇数处中心，轴心交替
       box: [-1, 7, -1.4, 1.4], marks: [[0, 1], [1, 0], [2, -1]], seps: [], axes: [0, 2, 4, 6], centers: [1, 3, 5] },
-    { name: '④ 周期延拓：由一段延拓全轴', T: 2,
+    { name: '周期延拓：由一段延拓全轴', short: '周期延拓', T: 2,
       eq: '延拓规则：$f(x)=f(x-2k)$，$k$ 取到 $x-2k\\in[0,2)$ 为止',
       f: x => { const r = ((x % 2) + 2) % 2; return r < 1 ? r : (2 - r) * (2 - r); },
       box: [-1, 9, -0.9, 1.6], marks: [[0, 0], [1, 1], [2, 0]], seps: [0, 2, 4, 6, 8], axes: [], centers: [] },
@@ -37,7 +41,7 @@ export function createBoard(root) {
   const MAPS = PRESETS.map(P => B.isoFit(...P.box));
   const st = { p: 0, s: 2, u: 1.5, grid: true, labs: true };
   const px = x => MAPS[st.p].px(x), py = y => MAPS[st.p].py(y);
-  const cP = B.chipM('读数'), cV = B.chipM('周期对照');
+  const cP = B.readout('读数'), cV = B.chipM('周期对照');
 
   /** 必采锚点：marks 与单元边沿（T 的整数倍）（④ 的基本段描边要踩准边沿）；域外由 B.plot 自行丢弃 */
   const anc = () => { const M = MAPS[st.p], P = PRESETS[st.p], a = P.marks.map(([mx]) => mx);
@@ -52,7 +56,10 @@ export function createBoard(root) {
     for (const a of P.seps) B.seg(V(px(a), py(Y0)), V(px(a), py(Y1)), { stroke: '#ffd166', 'stroke-width': 1.2, 'stroke-dasharray': '5 6', 'stroke-opacity': .45 });
     for (const a of P.axes) B.seg(V(px(a), py(Y0)), V(px(a), py(Y1)), { stroke: '#ffd166', 'stroke-width': 1.4, 'stroke-dasharray': '6 6', 'stroke-opacity': .75 });
     if (P.axes.length) B.note(`x=${fmt(P.axes[0], 0)}`, '#ffd166');
-    for (const c of P.centers) B.dot(V(px(c), py(0)), 5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1.4 });
+    const { blue, orange, gold } = B.diagramColors;
+    // 后登记的探针覆盖同一位置的中心或原像，两者共用一圈光晕。
+    const highlights = new Map();
+    for (const x of P.centers) highlights.set(x, { y: 0, color: gold, radius: 7 });
     if (P.centers.length) B.note(`(${fmt(P.centers[0], 0)}, 0)`, '#ffd166');
     // 曲线（蓝）；④ 基本段金描边压上（基本段与延拓像）
     B.plot(P.f, M, { anchors: anc(), step: .04, stroke: '#5cadff', 'stroke-width': 2.2 });
@@ -62,10 +69,12 @@ export function createBoard(root) {
       // ① 平移验收：平移像 f(x−s) 橙虚线叠上，逐点算最大偏差
       const g = x => P.f(x - st.s);
       B.plot(g, M, { anchors: anc(), step: .04, stroke: '#ff9e4a', 'stroke-width': 2.2, 'stroke-dasharray': '7 5' });
+      highlights.set(1, { y: P.f(1), color: blue, radius: 8 });
+      highlights.set(1 + st.s, { y: P.f(1), color: orange, radius: 9 });
       let err = 0;
       for (let x = X0; x <= X1; x += 0.05) err = Math.max(err, Math.abs(g(x) - P.f(x)));
       const fit = err < 0.02;
-      cP(`平移 s=${fmt(st.s, 2)}：最大偏差 ${fmt(err, 2)}`, fit ? 'ok' : 'warn');
+      cP(`平移 $s=${fmt(st.s, 2)}$，最大偏差 $${fmt(err, 2)}$`, fit ? 'ok' : 'warn');
       cV(st.s < 0.05 ? '拖「平移 s」：从 2 拖到 4 —— 看平移像什么时候完全重合'
         : fit ? `s=${fmt(st.s, 2)}：完全重合 —— $f(x+${fmt(st.s, 2)})=f(x)$ 对一切 x，$T=4$ 是周期（$4$ 的整数倍都是）`
         : Math.abs(st.s - 2) < 0.25 ? 's=2：谷对峰、完全错位 —— $2$ 不是周期；周期说的是「重合」，不是「对半折」'
@@ -74,14 +83,15 @@ export function createBoard(root) {
     } else {
       // ②③④ 探针：周期把两点拴在等高线上；④ 的探针走化归链 x₀ → x₀−2k → 基本段
       const u = st.u, v = u + P.T, y1 = P.f(u), y2 = P.f(v);
-      for (const [xx, yy, cc] of [[u, y1, '#ff9e4a'], [st.p === 3 ? u - Math.floor(u / P.T) * P.T : v, y2, '#ffd166']]) {
+      const matchingX = st.p === 3 ? u - Math.floor(u / P.T) * P.T : v;
+      for (const [xx, yy, color] of [[u, y1, orange], [matchingX, y2, gold]]) {
         if (yy > Y0 && yy < Y1) {
           B.seg(V(px(xx), py(yy)), V(px(xx), py(0)), { stroke: '#3f5f8f', 'stroke-dasharray': '3 5', 'stroke-opacity': .6 });
-          B.dot(V(px(xx), py(yy)), 5.5, { fill: cc, stroke: '#0a0d14', 'stroke-width': 1.4 });
+          highlights.set(xx, { y: yy, color, radius: 9 });
         }
       }
       if (y1 > Y0 && y1 < Y1 && y2 > Y0 && y2 < Y1)
-        B.seg(V(px(u), py(y1)), V(px(st.p === 3 ? u - Math.floor(u / P.T) * P.T : v), py(y2)), { stroke: '#ff9e4a', 'stroke-width': 1.4, 'stroke-dasharray': '4 4', 'stroke-opacity': .85 });
+        B.seg(V(px(u), py(y1)), V(px(matchingX), py(y2)), { stroke: '#ff9e4a', 'stroke-width': 1.4, 'stroke-dasharray': '4 4', 'stroke-opacity': .85 });
       if (st.p === 3) {
         const k = Math.floor(u / P.T), r = u - k * P.T;
         cP(`$x_0=${fmt(u, 2)}$ → $x_0-${k}\\times 2=${fmt(r, 2)}$ → $f(${fmt(r, 2)})=${fmt(y1, 2)}$`, 'ok');
@@ -94,22 +104,24 @@ export function createBoard(root) {
           'ok');
       }
     }
+    for (const [x, { y, color, radius }] of highlights) {
+      glowDot(B, V(px(x), py(y)), color, radius, radius === 7 ? 3 : 4);
+    }
   };
 
   const slS = B.slider('平移 s', 0, 4, 0.02, 2, v => { st.s = v; B.render(); });
   const slU = B.slider('探针 u', -1, 3, 0.05, 1.5, v => { st.u = v; B.render(); });
   const wrapOf = s => s.parentElement || s.parent;   // 真浏览器 parentElement / 无头测试 parent
   const UR = [[-1, 3, 1.5], [-1, 2, 1], [2.5, 7.5, 5.3]];   // ②③④ 各自的探针档位
-  const btns = PRESETS.map((p, i) => B.btnM(p.name, () => {
+  B.graphToggles(st, ['grid', 'labs']);
+  presetRow(B.ctrl, '选择周期性例题', PRESETS, i => {
     st.p = i;
     wrapOf(slS).style.display = i === 0 ? '' : 'none';   // ① 用平移验收，②③④ 用探针
     wrapOf(slU).style.display = i === 0 ? 'none' : '';
     if (i > 0) { slU.setAttribute('min', UR[i - 1][0]); slU.setAttribute('max', UR[i - 1][1]); slU.sync(UR[i - 1][2]); st.u = UR[i - 1][2]; }
-    btns.forEach((b, j) => b.classList.toggle('on', j === i));
     B.render();
-  }, { on: i === 0 }));
+  });
   wrapOf(slU).style.display = 'none';
-  B.graphToggles(st, ['grid', 'labs']);
   B.hint("改变平移量，检查平移图象是否与原图重合。");
   B.render();
   return B;

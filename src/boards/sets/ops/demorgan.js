@@ -3,11 +3,13 @@
    mask 合成语法：白=纳入（OR）、黑=挖除、g[clip-path]=裁剪；补集用 evenodd 路径 clip（U 矩形 − 椭圆）。
    四组恒等式：德摩根两式 + 分配律两式（交对并、并对交）。点左面板元素随手拖，右面板镜像同步。
    局部坐标约定：u∈[0,860] 向右、v∈[0,550] 向下（SVG 原生方向）；右面板 = 左面板 + 410px 平移。 */
-import { Board, mk, V } from '../../../lib/board.js';
+import { mk, V } from '../../../lib/board.js';
+import { createDiagram, plotInk, glowDot } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 860, H = 550;
-  const B = new Board(root, W, H);
+  root.classList.add('atlas-board', 'demorgan-board');
+  const B = createDiagram(root, W, H, '德摩根验证机：左右两式各搭区域，逐个元素核验恒等');
   const OX = [35, 445];                                     // 左右面板原点
   const geos = k => {
     const ox = OX[k];
@@ -41,7 +43,7 @@ export function createBoard(root) {
     { L: (u, a, b, c) => a || (b && c), R: (u, a, b, c) => (a || b) && (a || c) },
   ];
 
-  // ---- mask / clipPath：换预设时整套重建 ----
+  // ---- mask / clipPath：换预设时整套重建（defs 清空，柔光渐变也一并补回）----
   const defs = mk('defs', {}, B.svg);
   const ID = B.uid;
   const dRect = r => `M${r.x} ${r.y}H${r.x + r.w}V${r.y + r.h}H${r.x}Z`;
@@ -91,25 +93,26 @@ export function createBoard(root) {
     }
   }
 
-  const cL = B.chipM('左式'), cR2 = B.chipM('右式'), cEq = B.chipM('恒等判读');
+  B.setAppearanceBackground(['光晕', '细网格'], grid => { root.dataset.texture = grid ? 'grid' : 'halo'; });
+
+  const cL = B.readout('左式'), cR2 = B.readout('右式', 'gold'), cEq = B.chipM('恒等判读');
 
   B.renderFn = () => {
     const P = PRESETS[st.p], PR = PREDS[st.p];
     for (let k = 0; k < 2; k++) {
       const g = geos(k), r = g.r;
       // 面板标题 + 全集框
-      B.tex(V(r.x + r.w / 2, 38), (k ? '右式：' : '左式：') + (k ? P.R : P.L), { size: 15, anchor: 'mid' });
-      mk('rect', { x: r.x, y: r.y, width: r.w, height: r.h, fill: 'rgba(139,163,189,.05)', stroke: '#3f5f8f', 'stroke-width': 1.4, 'stroke-dasharray': '5 5' }, B.dyn);
-      B.text(V(r.x + r.w - 12, r.y + 18), 'U', { 'font-size': 14, fill: '#93a1b5' });
+      mk('rect', { x: r.x, y: r.y, width: r.w, height: r.h, fill: plotInk.soft, stroke: plotInk.rule, 'stroke-width': 1.4, 'stroke-dasharray': '5 5' }, B.dyn);
+      B.tex(V(r.x + r.w - 12, r.y + 18), '$U$', { size: 14, anchor: 'end', color: plotInk.guide });
       // 三圈轮廓 + 名牌
-      const sets = [[g.A, '#5cadff', '$A$'], [g.B, '#ff9e4a', '$B$'], [g.C, '#67e8f9', '$C$']];
+      const sets = [[g.A, plotInk.blue, '$A$'], [g.B, plotInk.copper, '$B$'], [g.C, plotInk.teal, '$C$']];
       for (const [e, col, lab] of sets) {
         if (!e) continue;
         mk('ellipse', { cx: e.cx, cy: e.cy, rx: e.rx, ry: e.ry, fill: col, 'fill-opacity': .05, stroke: col, 'stroke-width': 2 }, B.dyn);
         B.tex(V(e.cx, e.cy - e.ry - 13), lab, { size: 13, anchor: 'mid', color: col });
       }
       // 该式的区域着色
-      mk('rect', { x: r.x, y: r.y, width: r.w, height: r.h, fill: '#4ade80', 'fill-opacity': .16, mask: `url(#${ID + (k ? 'mR' : 'mL')})` }, B.dyn);
+      mk('rect', { x: r.x, y: r.y, width: r.w, height: r.h, fill: plotInk.green, 'fill-opacity': .16, mask: `url(#${ID + (k ? 'mR' : 'mL')})` }, B.dyn);
     }
     // 元素点：左面板按左式谓词染色，右面板（+410 镜像）按右式谓词染色
     const mLs = [], mRs = [];
@@ -120,11 +123,13 @@ export function createBoard(root) {
       const lv = PR.L(u, a, b, c), rv = PR.R(u, a, b, c);
       if (lv) mLs.push(i + 1);
       if (rv) mRs.push(i + 1);
-      B.dot(p, 8, lv ? { fill: '#4ade80' } : { fill: '#93a1b5', 'fill-opacity': .4 });
-      B.text(V(p.x, p.y - 13), String(i + 1), { 'font-size': 11, fill: lv ? '#4ade80' : '#5c6a80' });
+      if (lv) glowDot(B, p, plotInk.green, 18, 6);
+      else B.dot(p, 8, { fill: plotInk.guide, 'fill-opacity': .4 });
+      B.text(V(p.x, p.y - 13), String(i + 1), { 'font-size': 11, fill: lv ? plotInk.green : plotInk.guide, style: 'fill:' + (lv ? plotInk.green : plotInk.guide) });
       const q = V(p.x + 410, p.y);
-      B.dot(q, 8, rv ? { fill: '#4ade80' } : { fill: '#93a1b5', 'fill-opacity': .4 });
-      B.text(V(q.x, q.y - 13), String(i + 1), { 'font-size': 11, fill: rv ? '#4ade80' : '#5c6a80' });
+      if (rv) glowDot(B, q, plotInk.green, 18, 6);
+      else B.dot(q, 8, { fill: plotInk.guide, 'fill-opacity': .4 });
+      B.text(V(q.x, q.y - 13), String(i + 1), { 'font-size': 11, fill: rv ? plotInk.green : plotInk.guide, style: 'fill:' + (rv ? plotInk.green : plotInk.guide) });
     }
     // 徽章
     const li = mLs.length ? '\\{' + mLs.join(',') + '\\}' : '\\varnothing';
@@ -153,11 +158,10 @@ export function createBoard(root) {
       const r = geos(0).r;
       return [Math.max(r.x + 10, Math.min(r.x + r.w - 10, p.x)), Math.max(r.y + 10, Math.min(r.y + r.h - 10, p.y))];
     };
-    B.handle({ get: () => V(st.pts[i][0], st.pts[i][1]), thin: true, set: p => { st.pts[i] = lo(p); }, clamp: p => V(lo(p)[0], lo(p)[1]) });
+    B.handle({ get: () => V(st.pts[i][0], st.pts[i][1]), thin: true, color: 'transparent', set: p => { st.pts[i] = lo(p); }, clamp: p => V(lo(p)[0], lo(p)[1]) });
   }
 
   buildMasks();
-  B.hint('左式按定义直译搭区域、右式按恒等式右端搭：怎么搭不重要 —— 8 个元素永远同真同假，恒等式才算数');
   B.render();
   return B;
 }

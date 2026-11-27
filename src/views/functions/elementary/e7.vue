@@ -5,7 +5,7 @@
     <div class="note good" id="e7-shape"><strong>对勾函数</strong>：<Katex tex="f(x)=ax+\dfrac{b}{x}" />（a,b&gt;0），定义域 <Katex tex="x\ne 0" />，渐近线 x=0 与斜渐近线 y=ax。<strong>奇函数</strong>（S3）：左支 = 右支绕原点转半圈。右支在 <Katex tex="\left(0,\sqrt{\tfrac{b}{a}}\right]" /> 递减、<Katex tex="\left[\sqrt{\tfrac{b}{a}},+\infty\right)" /> 递增，最小值 <Katex tex="f\left(\sqrt{\tfrac{b}{a}}\right)=2\sqrt{ab}" /> —— 两段一支勾，形状像对勾。</div>
     <div class="board-wrap">
       <BoardMount :factory="createHook" />
-      <div class="cap">图 E7 · <b>对勾函数的最值</b>。移动水平线 y=c，观察正半轴上从无交点到相切、再到两个交点的变化。</div>
+      <div class="cap">图 E7 · <b>对勾函数与水平线</b>。在第一例中，把 <Katex tex="c" /> 从 <Katex tex="-3" /> 调到 <Katex tex="3" />。先看左支的两个交点如何合为一个，再观察水平线穿过两支之间的空隙，最后与右支相切、相交。</div>
     </div>
 
     <h3 class="sec" id="e7-proof">一形两证：导数 × 均值</h3>
@@ -31,3 +31,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createHook } from '../../../boards/functions/elementary/hookproof.js';
 import { E_CHAPTERS } from './enav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

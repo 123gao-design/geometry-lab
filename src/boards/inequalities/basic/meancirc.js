@@ -9,15 +9,16 @@
    两条水平虚线左端标 A、G 的高度，差距花括号放在弧的右侧（x≈790）不再压线。
    局部坐标约定：u∈[0,880] 向右、v∈[0,490] 向下；圆心 (440,400)、像素半径 R0=260，
    单位→像素比例 s=R0/A；直径两端固定于 (180,400) 与 (700,400)。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { InequalityBoard } from '../inequality-board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
 
 export function createBoard(root) {
   const W = 880, H = 490;
-  const B = new Board(root, W, H);
+  const B = new InequalityBoard(root, W, H);
   const f1 = v => fmt(v, 2).replace(/\.?0+$/, '');
   const st = { a: 1, b: 9, labs: true, guide: true };
-  const cAr = B.chipM('算术'), cGe = B.chipM('几何'), cGap = B.chipM('差距'), cJ = B.chipM('判读');
-  const CX = 440, CY = 400, R0 = 260;         // 圆心、直径高度、像素半径
+  const cAr = B.readout('算术均值 · 半径 $OD$', 'gold'), cGe = B.readout('几何均值 · 竖弦 $CD$', 'green'), cGap = B.readout('高度差', 'mint'), cJ = B.chipM('判读');
+  const CX = 440, CY = 362, R0 = 260;         // 圆心、直径高度、像素半径
   const XL = CX - R0, XR = CX + R0;            // 直径两端
   const TOP = CY - R0;                         // 半圆顶点（= 半径水平线）
 
@@ -29,10 +30,6 @@ export function createBoard(root) {
     const Cx = px(a), ex = Cx - CX;
     const Dy = CY - Math.sqrt(Math.max(0, R0 * R0 - ex * ex));
     const gapPx = Dy - TOP;
-
-    // 图内不再单写一遍公式（与下方算式重复、还会压字）：只留一句安置说明，单行放在弧顶之上
-    B.textM(V(CX, 32), '直径 $AB=a+b$，C 把直径分成 $a$ 与 $b$ 两段；过 C 的垂线交半圆于 D，泰勒斯定理给 $\\angle ADB=90^\\circ$，射影定理给 $DC^2=ab$',
-      { 'font-size': 12.5, fill: '#93a1b5', 'text-anchor': 'middle' });
 
     // 半圆：SVG 弧命令（半径两向相同，必是正圆），淡填充帮忙看出圆面
     mk('path', { d: `M${XL},${CY} A${R0},${R0} 0 0 1 ${XR},${CY}`, fill: '#5cadff', 'fill-opacity': .045, stroke: 'none' }, B.dyn);
@@ -46,13 +43,14 @@ export function createBoard(root) {
 
     // 端点、分点与字母
     if (st.labs) {
-      B.dot(V(XL, CY), 5.5, { fill: '#5cadff' }); B.dot(V(XR, CY), 5.5, { fill: '#ff9e4a' });
-      B.dot(V(Cx, CY), 5.5, { fill: '#fff', stroke: '#5cadff', 'stroke-width': 2 });
-      B.dot(V(Cx, Dy), 5.5, { fill: '#4ade80' }); B.dot(V(CX, CY), 4.5, { fill: '#67e8f9' });
+      B.mark(V(XL, CY), '#5cadff'); B.mark(V(XR, CY), '#ff9e4a');
+      B.mark(V(Cx, CY), '#5cadff');
+      B.mark(V(Cx, Dy), '#4ade80'); B.mark(V(CX, CY), '#67e8f9');
       B.tex(V(XL - 8, CY + 20), '$A$', { size: 13, anchor: 'end', color: '#5cadff' });
       B.tex(V(XR + 8, CY + 20), '$B$', { size: 13, anchor: 'start', color: '#ff9e4a' });
-      B.tex(V(Cx, CY + 20), '$C$', { size: 13, anchor: 'mid', color: '#5cadff' });
-      B.tex(V(CX + 12, CY - 8), '$O$', { size: 13, anchor: 'start', color: '#67e8f9' });
+      B.tex(V(Cx, CY + 20), a === b ? '$C=O$' : '$C$', { size: 13, anchor: 'mid', color: '#5cadff' });
+      if (a !== b) B.tex(V(CX + 12, CY - 8), '$O$', { size: 13, anchor: 'start', color: '#67e8f9' });
+      B.tex(V(Cx + 7, Dy - 16), '$D$', { size: 13, anchor: 'start', color: '#4ade80' });
       B.tex(V((XL + Cx) / 2, CY + 38), '$a$', { size: 12.5, anchor: 'mid', color: '#5cadff' });
       B.tex(V((Cx + XR) / 2, CY + 38), '$b$', { size: 12.5, anchor: 'mid', color: '#ff9e4a' });
       B.tex(V(Cx + 9, (CY + Dy) / 2 + 4), '$G=\\sqrt{ab}$', { size: 12.5, anchor: 'start', color: '#4ade80' });
@@ -69,7 +67,7 @@ export function createBoard(root) {
       const da2 = V(Cx + da.x / la * 17, Dy + da.y / la * 17);
       const db2 = V(Cx + db.x / lb * 17, Dy + db.y / lb * 17);
       // a、b 相等时 D 升到弧顶、绿竖弦与金半径重合（夹角为 0），这一处的直角记号一并省去
-      if (gapPx > 3) mk('polyline', { points: `${da2.x},${da2.y} ${da2.x + db2.x - Cx},${da2.y + db2.y - Dy} ${db2.x},${db2.y}`,
+      mk('polyline', { points: `${da2.x},${da2.y} ${da2.x + db2.x - Cx},${da2.y + db2.y - Dy} ${db2.x},${db2.y}`,
         fill: 'none', stroke: '#93a1b5', 'stroke-width': 1.5 }, B.dyn);
     }
 
@@ -79,7 +77,7 @@ export function createBoard(root) {
       B.seg(V(XL, TOP), V(790, TOP), { stroke: '#ffd166', 'stroke-width': 1.1, 'stroke-dasharray': '5 4' });
       if (gapPx < 26) {
         // 两线贴在一起：合并成一句，免得两条标签叠字
-        B.tex(V(XL + 8, TOP - 26), `$A=G=\\dfrac{a+b}{2}=${f1(A)}$`, { size: 12.5, anchor: 'start', color: '#ffd166' });
+        B.tex(V(XL + 8, TOP - 26), a === b ? '$A=G$' : '$A>G$', { size: 12.5, anchor: 'start', color: '#ffd166' });
       } else {
         B.tex(V(XL + 8, TOP - 26), '$A=\\dfrac{a+b}{2}$（半径）', { size: 12.5, anchor: 'start', color: '#ffd166' });
         B.tex(V(XL + 8, Dy - 26), '$G=\\sqrt{ab}$（竖弦）', { size: 12.5, anchor: 'start', color: '#4ade80' });
@@ -95,10 +93,10 @@ export function createBoard(root) {
     }
 
     // 徽章
-    cAr(`$A=\\dfrac{a+b}{2}=${f1(A)}$（半径 OD）`);
-    cGe(`$G=\\sqrt{ab}=${f1(G)}$（竖弦 CD）`);
-    cGap(Math.abs(gap) < 1e-9 ? '$A-G=0$：两条高度线重合' : `$A-G=${f1(gap)}$：D 低于弧顶，间距 ${f1(gap)}`);
-    if (Math.abs(a - b) < 1e-9) cJ(`$a=b=${f1(a)}$：G 升到半圆顶点，$G=A$ —— 取等`, 'ok');
+    cAr(`$A=\\dfrac{a+b}{2}=${f1(A)}$`);
+    cGe(`$G=\\sqrt{ab}=${f1(G)}$`);
+    cGap(`$A-G=${f1(gap)}$`);
+    if (Math.abs(a - b) < 1e-9) cJ(`$a=b=${f1(a)}$：竖弦长等于半径，$G=A$ —— 取等`, 'ok');
     else cJ(`$a\\ne b$：竖弦 $CD<OD$，$\\sqrt{ab}<\\dfrac{a+b}{2}$ —— 差 $A-G=\\tfrac{(\\sqrt a-\\sqrt b)^2}{2}\\ge0$`);
   };
 
@@ -115,18 +113,19 @@ export function createBoard(root) {
     B.raf(step);
   }, { pri: true });
   const PRE = [
-    { a: 1, b: 9, n: '① a=1, b=9（悬殊）' },
-    { a: 2, b: 8, n: '② a=2, b=8' },
-    { a: 3, b: 3, n: '③ a=b=3（取等）' },
+    { name: '悬殊', formula: '$a=1,\\ b=9$', values: { a: 1, b: 9 } },
+    { name: '二与八', formula: '$a=2,\\ b=8$', values: { a: 2, b: 8 } },
+    { name: '取等', formula: '$a=3,\\ b=3$', values: { a: 3, b: 3 } },
   ];
-  PRE.forEach(P => B.btn(P.n, () => { st.a = P.a; st.b = P.b; sA.sync(P.a); sB.sync(P.b); B.render(); }));
+  B.examples('选择例题', PRE, st, P => {
+    st.a = P.a; st.b = P.b; sA.sync(P.a); sB.sync(P.b); B.render();
+  });
   B.graphToggles(st, ['labs']);
   B.toggleBtn('辅助线', true, on => { st.guide = on; B.render(); });
 
-  const sA = B.slider('a =', 0.5, 9, .1, 1, v => { st.a = v; B.render(); });
-  const sB = B.slider('b =', 0.5, 9, .1, 9, v => { st.b = v; B.render(); });
+  const sA = B.slider('a =', 0.5, 9, .1, 1, v => { st.a = v; B.render(); }, undefined, n => `$a=${n}$`);
+  const sB = B.slider('b =', 0.5, 9, .1, 9, v => { st.b = v; B.render(); }, undefined, n => `$b=${n}$`);
 
-  B.hintM('拖 a、b：绿竖线长 $\\sqrt{ab}$，金半径长 $(a+b)/2$ —— 两线差距即 $A-G$');
   B.render();
   return B;
 }

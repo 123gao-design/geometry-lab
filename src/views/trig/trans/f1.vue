@@ -1,13 +1,13 @@
 <template>
   <ChPage :cur="1" no="F1" base="/trig/f" :chapters="F_CHAPTERS"
-    title="$y=A\sin(\omega x+\varphi)$" sub="振幅 $A$ 管值域、角频率 $\omega$ 管周期、相位 $\varphi$ 管起点 —— 三个参数各管一件事，互不干扰；母波 $\sin x$ 现场被加工。"
-    :toc="[{ id: 'f1-knobs', t: '三个参数各管一件事' }, { id: 'f1-read', t: '值域、周期、起点的现场核验' }, { id: 'f1-g', t: '与函数图象变换的对照' }, { id: 'f1-pit', t: '平移量要除以 ω' }]">
-    <div class="note good" id="f1-law"><strong>三个参数一览</strong>：在 <Katex tex="y=A\sin(\omega x+\varphi)" /> 中 —— <Katex tex="A" /> 定<strong>振幅</strong>，值域 <Katex tex="[-A,\ A]" />；<Katex tex="\omega" /> 定<strong>周期</strong> <Katex tex="T=\tfrac{2\pi}{\omega}" />；<Katex tex="\varphi" /> 定<strong>起点</strong>（升段过零点）<Katex tex="x_0=-\tfrac{\varphi}{\omega}" />。三个参数各管一件事、互不替代。</div>
-    <ConicFigure number="F1" title="A、ω、φ 对波形的影响" head="bottom" :factory="createLab">拖 <Katex tex="A" />、<Katex tex="\omega" />、<Katex tex="\varphi" /> 三个滑块 —— <strong>值域带</strong>（<Katex tex="y" /> 轴金带）随 <Katex tex="A" /> 变宽、<strong>周期段</strong>（<Katex tex="x" /> 轴上金虚线）随 <Katex tex="\omega" /> 伸缩、<strong>五点整体</strong>随 <Katex tex="\varphi" /> 平移；母波 <Katex tex="\sin x" /> 的灰虚线是「加工前」的对照，三个读数与三件实物一一对应。</ConicFigure>
+    title="$y=A\sin(\omega x+\varphi)$" sub="从母波 $\sin x$ 出发，比较振幅、角频率和初相怎样改变峰高、周期与上升零点的位置。"
+    :toc="[{ id: 'f1-knobs', t: '三个参数怎样改变波形' }, { id: 'f1-read', t: '值域、周期、起点的现场核验' }, { id: 'f1-g', t: '与函数图象变换的对照' }, { id: 'f1-pit', t: '平移量要除以 ω' }]">
+    <div class="note good" id="f1-law"><strong>三个参数一览</strong>：在 <Katex tex="y=A\sin(\omega x+\varphi)" /> 中 —— <Katex tex="A" /> 定<strong>振幅</strong>，值域 <Katex tex="[-A,\ A]" />；<Katex tex="\omega" /> 定<strong>周期</strong> <Katex tex="T=\tfrac{2\pi}{\omega}" />；<Katex tex="\omega" /> 与 <Katex tex="\varphi" /> 共同确定<strong>起点</strong>（升段过零点）<Katex tex="x_0=-\tfrac{\varphi}{\omega}" />。</div>
+    <ConicFigure number="F1" title="A、ω、φ 对波形的影响" head="bottom" :factory="createLab">先调 <Katex tex="A"/> 看波峰的高度，再调 <Katex tex="\omega"/> 看图下方周期标尺的长度。固定这两项，改变 <Katex tex="\varphi"/>，观察从上升零点开始的五个点怎样一起平移。</ConicFigure>
 
-    <h3 class="sec" id="f1-knobs">三个参数各管一件事</h3>
+    <h3 class="sec" id="f1-knobs">三个参数怎样改变波形</h3>
     <p><strong>拖 <Katex tex="A" />：波形整体拉高压扁</strong>，周期与起点纹丝不动 —— 值域从 <Katex tex="[-1,1]" /> 变成 <Katex tex="[-A,A]" />，峰谷的虚线导轨跟着 <Katex tex="A" /> 走。负振幅呢？那是<strong>翻折</strong>（<RouterLink class="xref" to="/functions/g2">伸缩与翻折：横除纵乘</RouterLink>的「负号自带镜像」）：<Katex tex="y=-\sin x" /> 是 <Katex tex="\sin x" /> 关于 <Katex tex="x" /> 轴的镜像，等价于把相位加上 <Katex tex="\pi" />（与<RouterLink class="xref" to="/trig/i1">诱导公式</RouterLink>镜像组的结论一致）—— 本台把 <Katex tex="A" /> 限在正数，翻折留给下一章的反演去验。</p>
-    <p><strong>拖 <Katex tex="\omega" />：波变密变疏。</strong><Katex tex="\omega>1"/> 周期变短（横坐标压缩为 <Katex tex="1/\omega"/>，正是横向伸缩的系数）；<Katex tex="\omega=2"/> 时一屏挤下两倍频率。「角频率」的名字来自<RouterLink class="xref" to="/trig/b2">弧度制</RouterLink>：<Katex tex="\omega"/> 是单位时间转过的<strong>弧度数</strong>，<Katex tex="T=2\pi/\omega"/> 就是「转一整圈要多久」—— 分母越大，一圈越快。</p>
+    <p><strong>拖 <Katex tex="\omega" />：波变密变疏。</strong><Katex tex="\omega>1"/> 周期变短（横坐标压缩为 <Katex tex="1/\omega"/>，正是横向伸缩的系数）；<Katex tex="\omega=2"/> 时，原来一个周期的区间内可以画出两个完整周期。若 <Katex tex="\varphi\ne0"/> 保持固定，上升零点 <Katex tex="x_0=-\varphi/\omega"/> 也会随之移动。「角频率」的名字来自<RouterLink class="xref" to="/trig/b2">弧度制</RouterLink>：<Katex tex="\omega"/> 是单位时间转过的<strong>弧度数</strong>，<Katex tex="T=2\pi/\omega"/> 就是「转一整圈要多久」—— 分母越大，一圈越快。</p>
     <p><strong>拖 <Katex tex="\varphi" />：波形整体平移</strong>，形状不变。<Katex tex="\varphi>0"/> 曲线<strong>左移</strong>（<RouterLink class="xref" to="/functions/g1">平移：左加右减的代数原理</RouterLink>的输入端补偿：把 <Katex tex="x=-\varphi/\omega"/> 处的输入读成原来 <Katex tex="x=0"/> 的输出），起点移到 <Katex tex="x_0=-\varphi/\omega"/>。按预设 <Katex tex="y=\sin\bigl(x+\tfrac{\pi}{2}\bigr)" /> 一键复现<RouterLink class="xref" to="/trig/w2">余弦：平移等价与五点</RouterLink>：余弦 = 起点移到 <Katex tex="-\pi/2"/> 的正弦 —— 板上解析式此时显示的就是它。</p>
 
     <h3 class="sec" id="f1-read">值域、周期、起点的现场核验</h3>

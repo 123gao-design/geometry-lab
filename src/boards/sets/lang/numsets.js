@@ -1,16 +1,11 @@
 /* 图 J1 · 数系嵌套和逐层检验 */
 import { mk, V } from '../../../lib/board.js';
-import { createDiagram, plotInk } from '../../../lib/conic-diagram.js';
+import { createDiagram, plotInk, glowDot } from '../../../lib/conic-diagram.js';
 
 export function createBoard(root) {
   const W = 576, H = 420, CX = W / 2, CY = 208, probeY = 228;
   const B = createDiagram(root, W, H, '自然数、整数、有理数和实数的嵌套关系');
   root.classList.add('numsets-board');
-  const glowId = B.uid + '-numsets-probe-glow';
-  const glow = mk('radialGradient', { id: glowId }, B.svg.querySelector('defs'));
-  for (const [offset, opacity] of [[0, .58], [.3, .38], [.64, .11], [1, 0]]) {
-    mk('stop', { offset, 'stop-color': plotInk.amber, 'stop-opacity': opacity }, glow);
-  }
   const stars = Array.from({ length: 42 }, (_, i) => {
     const x = 2 + 96 * (((i + 1) * .618034) % 1);
     const y = 2 + 96 * (((i + 1) * .754878) % 1);
@@ -46,14 +41,15 @@ export function createBoard(root) {
 
   B.chipRow.setAttribute('role', 'group');
   B.chipRow.setAttribute('aria-label', '数集判读');
-  const answer = B.chipM('所属最小数集');
-  answer.el.dataset.readout = 'answer';
+  const current = B.readout('当前数', 'gold');
+  const answer = B.readout('所属最小数集');
   const checks = RINGS.map(({ sym, lab }) => B.chipM(sym + ' ' + lab));
   const reason = B.chipM('依据');
   reason.el.dataset.readout = 'reason';
 
   function updateReadout() {
     const c = CANDS[st.p];
+    current(c.tex);
     answer(RINGS[homeOf(c)].sym);
     checks.forEach((chip, i) => {
       if (i >= st.reveal) chip('待检验');
@@ -63,7 +59,7 @@ export function createBoard(root) {
   }
 
   B.renderFn = () => {
-    const c = CANDS[st.p], selected = homeOf(c);
+    const selected = homeOf(CANDS[st.p]);
     mk('rect', { x: 12, y: 14, width: W - 24, height: H - 28, rx: 12, fill: 'none', stroke: plotInk.axis }, B.dyn);
     B.seg(V(22, probeY), V(554, probeY), { stroke: plotInk.axis, 'stroke-width': 1, 'stroke-dasharray': '4 6' });
     for (let i = RINGS.length - 1; i >= 0; i--) {
@@ -76,14 +72,12 @@ export function createBoard(root) {
         'stroke-opacity': active ? 1 : .8,
       }, B.dyn);
     }
-    // 圈名固定在各自顶部留白，候选数固定放在图形下方。
+    // 圈名固定在各自顶部，当前数与所属数集在读数栏配对。
     RINGS.forEach(({ sym, ry }, i) => B.tex(V(CX, CY - ry + 17), sym, {
       size: 20, anchor: 'mid', color: i === selected ? plotInk.amber : plotInk.ink, w: 52,
     }));
     const probe = V(st.px, probeY);
-    B.dot(probe, 18, { fill: 'url(#' + glowId + ')', 'pointer-events': 'none' });
-    B.dot(probe, 5.5, { fill: plotInk.amber });
-    B.tex(V(CX, 382), c.tex, { size: 20, anchor: 'mid', color: plotInk.amber, w: 120 });
+    glowDot(B, probe, plotInk.amber, 8, 3.5);
   };
 
   const btns = CANDS.map((c, i) => B.btn(c.btn, () => {

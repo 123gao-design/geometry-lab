@@ -19,7 +19,7 @@
     <div class="note warn tip">
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">
-        <li><strong>提示一：漏掉临界情形。</strong>t&lt;0 与 t&gt;0 之间必须单列 t=0 —— 图 V5 红空圈那一帧就是漏掉它的后果；「t≠0」的笼统写法会漏掉三重零点态。</li>
+        <li><strong>提示一：单独检查临界值。</strong>把滑块移到 <Katex tex="t=0" />，三个零点合并到原点。此时 <Katex tex="f(x)=x^3" /> 在原点有水平切线，并穿过横轴。</li>
         <li><strong>提示二：极值结论直接当最值用。</strong>极值是局部的（V3），闭区间题还须把端点纳入比较。</li>
         <li><strong>提示三：奇函数结论越界使用。</strong>「极大极小互为相反数」依赖奇函数结构；换成 <Katex tex="f=x^3-3tx+1" />（加常数 1，S3 讲过平移破坏奇偶），零点与极值的联动全盘重算 —— 图 G1 的平移记录在这里复发。</li>
       </ul>
@@ -34,3 +34,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createCase } from '../../../boards/functions/calculus/paramcase.js';
 import { V_CHAPTERS } from './vnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

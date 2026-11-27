@@ -37,3 +37,143 @@ import { createBoard as createRep } from '../../../boards/sets/lang/replab.js';
 import { createBoard as createPs } from '../../../boards/sets/lang/psets.js';
 import { J_CHAPTERS } from './jnav.js';
 </script>
+
+<style>
+/* 图 J2：整板柔光 / 细网格（「外观」里切换），配色由 conic-diagram 的 --pj-* 提供；
+   这里只限定在 .board.replab-board 上，正文与页面主题一概不动。 */
+.board.replab-board {
+  --replab-accent: var(--pj-accent, var(--blue));
+  --replab-glow: color-mix(in srgb, var(--replab-accent) 12%, transparent);
+  --replab-band: color-mix(in srgb, var(--replab-accent) 6%, transparent);
+  --replab-faint: color-mix(in srgb, var(--replab-accent) 2.4%, transparent);
+  background-color: var(--pj-paper, var(--bg2));
+  background-image:
+    radial-gradient(ellipse 46% 72% at 34% 40%, var(--replab-glow), var(--replab-faint) 46%, transparent 100%),
+    radial-gradient(ellipse 66% 96% at 42% 46%, transparent 26%, var(--replab-band) 62%, transparent 100%),
+    radial-gradient(ellipse 88% 124% at 50% 58%, transparent 34%, var(--replab-faint) 56%, var(--replab-band) 78%, transparent 100%),
+    var(--bd-skin, none);
+}
+html.light .board.replab-board {
+  --replab-glow: color-mix(in srgb, var(--replab-accent) 9%, transparent);
+  --replab-band: color-mix(in srgb, var(--replab-accent) 4.5%, transparent);
+}
+.board.replab-board[data-texture="grid"] {
+  --replab-grid-line: color-mix(in srgb, var(--pj-blue) 12%, transparent);
+  background-image:
+    linear-gradient(to right, var(--replab-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--replab-grid-line) 1px, transparent 1px),
+    var(--bd-skin, none);
+  background-size: 22px 22px, 22px 22px, auto;
+}
+/* 上下结构：下载条与预设按钮在板顶，主图居中，判读框排在主图下方（不再与图左右分栏）。 */
+.board.replab-board:not(.bd-float) { display: flex; flex-direction: column; }
+.board.replab-board > .dlbar {
+  position: static; order: -2; flex: none; justify-content: flex-end; flex-wrap: wrap; padding: 6px 10px;
+}
+.board.replab-board > .ctrl:not(.chips) {
+  order: -1; flex: none; gap: 5px; padding: 8px 12px;
+  border-top: 0; border-bottom: 1px solid var(--pj-axis);
+}
+/* 预设 / 扫轴按钮：选中时常亮一圈外发光，点击瞬间再散开一道辉光（.btn-pulse）。
+   颜色取画板当前方案的强调色 --pj-accent，换主题与纸面时一起换。 */
+.board.replab-board > .ctrl:not(.chips) .btn { position: relative; }
+.board.replab-board > .ctrl:not(.chips) .btn.on {
+  border-color: color-mix(in srgb, var(--pj-accent) 72%, var(--pj-paper));
+  background: color-mix(in srgb, var(--pj-accent) 14%, var(--pj-paper));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--pj-accent) 52%, transparent),
+    0 0 12px color-mix(in srgb, var(--pj-accent) 34%, transparent),
+    0 0 22px color-mix(in srgb, var(--pj-accent) 14%, transparent);
+}
+.board.replab-board > .ctrl:not(.chips) .btn:hover {
+  box-shadow: 0 0 10px color-mix(in srgb, var(--pj-accent) 22%, transparent);
+}
+.board.replab-board > .ctrl:not(.chips) .btn.btn-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 9px;
+  pointer-events: none;
+  animation: rep-btn-glow .75s ease-out forwards;
+}
+@keyframes rep-btn-glow {
+  0% {
+    opacity: 1;
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--pj-accent) 55%, transparent),
+      0 0 10px color-mix(in srgb, var(--pj-accent) 45%, transparent);
+  }
+  70% { opacity: .55; }
+  100% {
+    opacity: 0;
+    box-shadow:
+      0 0 0 9px transparent,
+      0 0 22px transparent;
+  }
+}
+.board.replab-board > .chips {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px; padding: 10px 14px 12px !important;
+  border-top: 1px solid var(--pj-axis) !important;
+}
+/* 两条工具行都透明，整板光晕从图一直铺到判读区（判读格子自己带淡底） */
+.board.replab-board > .ctrl:not(.chips),
+.board.replab-board > .ctrl.chips { background: transparent; }
+.board.replab-board > .chips .chip {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 5px 9px;
+  border-color: var(--pj-axis);
+  background: color-mix(in srgb, var(--pj-paper) 80%, transparent);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.board.replab-board > .chips .chip b { font-family: inherit; white-space: nowrap; }
+.board.replab-board > .chips .chip > span { min-width: 0; overflow-wrap: anywhere; }
+.board.replab-board > .chips .chip.ok { color: var(--pj-mint); border-inline-start-color: var(--pj-mint); }
+.board.replab-board > .chips .chip.warn { color: var(--pj-red); border-inline-start-color: var(--pj-red); }
+.board.replab-board > .chips .chip:last-child {
+  font-size: 13px;
+  background: var(--pj-goldWash);
+}
+/* 数轴刻度与集合点：文字默认被 .conic-board 的规则压成墨色，这两类单独放行 */
+.board.replab-board svg text.rep-tick { fill: var(--pj-guide); }
+.board.replab-board svg text.rep-set { fill: var(--pj-blue); }
+
+/* 图 J2 附：静态示意板，同一套纸面与光晕；没有控件，空的工具行收起来 */
+.board.psets-board {
+  --psets-accent: var(--pj-accent, var(--blue));
+  --psets-glow: color-mix(in srgb, var(--psets-accent) 11%, transparent);
+  --psets-band: color-mix(in srgb, var(--psets-accent) 5.5%, transparent);
+  --psets-faint: color-mix(in srgb, var(--psets-accent) 2.2%, transparent);
+  background-color: var(--pj-paper, var(--bg2));
+  background-image:
+    radial-gradient(ellipse 46% 72% at 34% 40%, var(--psets-glow), var(--psets-faint) 46%, transparent 100%),
+    radial-gradient(ellipse 66% 96% at 42% 46%, transparent 26%, var(--psets-band) 62%, transparent 100%),
+    radial-gradient(ellipse 88% 124% at 50% 58%, transparent 34%, var(--psets-faint) 56%, var(--psets-band) 78%, transparent 100%),
+    var(--bd-skin, none);
+}
+html.light .board.psets-board {
+  --psets-glow: color-mix(in srgb, var(--psets-accent) 8%, transparent);
+  --psets-band: color-mix(in srgb, var(--psets-accent) 4%, transparent);
+}
+.board.psets-board[data-texture="grid"] {
+  --psets-grid-line: color-mix(in srgb, var(--pj-blue) 11%, transparent);
+  background-image:
+    linear-gradient(to right, var(--psets-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--psets-grid-line) 1px, transparent 1px),
+    var(--bd-skin, none);
+  background-size: 22px 22px, 22px 22px, auto;
+}
+.board.psets-board > .ctrl { display: none; }
+.board.psets-board svg text.ps-tick { fill: var(--pj-guide); }
+@media (prefers-reduced-motion: reduce) {
+  .board.replab-board > .ctrl:not(.chips) .btn.btn-pulse::after { animation: none; opacity: 0; }
+}
+@media print {
+  .board.replab-board > .ctrl:not(.chips) { display: none; }
+}
+</style>

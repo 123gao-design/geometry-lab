@@ -31,3 +31,10 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createPeriodCopy } from '../../../boards/functions/properties/periodcopy.js';
 import { S_CHAPTERS } from './snav.js';
 </script>
+
+<style src="./preset-row.css"></style>
+<style>
+.fn-board.period-board .chip > span { overflow: visible; }
+.board.fn-board.period-board.bd-float { overflow-y: auto; }
+.board.fn-board.period-board.bd-float > .ctrl.chips { max-height: none; overflow: visible; }
+</style>

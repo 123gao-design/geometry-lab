@@ -1,0 +1,15 @@
+/* 每列始终对应同一个角及其终边点。 */
+.induction-board > .unit-readings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 12px;
+}
+.induction-board .unit-readings > .chip:first-child { --reading-color: var(--pj-blue); }
+.induction-board .unit-function-values { grid-column: 1 / -1; }
+.induction-board .unit-readings > .chip > span {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.induction-board .unit-readings > .chip > span > .katex:first-child {
+  font-size: clamp(19px, 2.7cqw, 27px);
+}

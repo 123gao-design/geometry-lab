@@ -1,10 +1,12 @@
 /* 图 H1 主值区间机：左栏母函数全波 —— 水平线 y=t 相交得到「同高多角」（多值，不配反函数）；
    裁出单调主值窗（窗内恰一点）后，右栏画出它关于 y=x 翻折的像 = 反函数曲线。
    三模式 btnM 切 arcsin/arccos/arctan；探针 t 现场读 f⁻¹(t) 并正向核验，|t|>1 现场排除。 */
-import { Board, mk, V, fmt, TAU } from '../../../lib/board.js';
+import { TrigLegendBoard } from '../trig-board.js';
+import { mk, V, fmt, TAU } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 520);
+  const B = new TrigLegendBoard(root, 860, 520);
+  B.groupReadings('公式与数值');
   const st = { fn: 0, t: 0.6, ghost: true, grid: true, labs: true };
   const MD = [
     { lab: '$\\arcsin$', inv: '\\arcsin', f: Math.sin, g: Math.asin, fTex: '\\sin', w0: -Math.PI / 2, w1: Math.PI / 2, dom: 1,
@@ -24,11 +26,11 @@ export function createBoard(root) {
       win: '$(-\\pi/2,\\ \\pi/2)$', domTex: '$\\mathbb{R}$', mono: '单调升' },
   ];
   const PL = [16, 14, 392, 470], PR = [452, 14, 392, 470];
-  const mBtns = MD.map((md, i) => B.btnM(md.lab, () => { st.fn = i; mBtns.forEach((b, j) => b.classList.toggle('on', j === i)); B.render(); }, { on: i === 0 }));
-  const sT = B.slider('探针 t', -2.5, 2.5, 0.01, st.t, v => { st.t = v; B.render(); });
+  B.choiceRow('选择反函数', MD.map(md => ({ name: md.lab })), () => st.fn, i => { st.fn = i; B.render(); });
+  B.slider('探针 t', -2.5, 2.5, 0.01, st.t, v => { st.t = v; B.render(); }, undefined, n => `探针 $t=${n}$`);
   B.toggleBtn('母波', true, v => { st.ghost = v; B.render(); });
   B.graphToggles(st, ['grid', 'labs']);
-  const cWin = B.chipM('主值区间'), cDom = B.chipM('定义域'), cVal = B.chipM('f⁻¹(t)'), cBack = B.chipM('正向核验'), cJ = B.chipM('交点判读');
+  const cWin = B.readout('主值区间', 'gold'), cDom = B.readout('定义域', 'mint'), cVal = B.readout('$f^{-1}(t)$', 'blue'), cBack = B.readout('正向核验', 'orange'), cJ = B.chipM('交点判读');
 
   const poly = (ptsPx, at) => mk('polyline', { points: ptsPx.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' '), fill: 'none', ...at }, B.dyn);
   const xTick = (m, arr) => { if (st.labs) for (const [v, s] of arr) B.text(V(m.px(v), m.py(0) + 15), s, { 'font-size': 11, fill: '#5c6a80', 'text-anchor': 'middle' }); };
@@ -112,7 +114,7 @@ export function createBoard(root) {
     const hits = hitsOf(m1, md, t);
     for (const h of hits) {
       const inW = h >= md.w0 - 1e-6 && h <= md.w1 + 1e-6;
-      if (inW) B.dot(V(m1.px(h), m1.py(t)), 4.5, { fill: '#ffd166' });
+      if (inW) B.mark(V(m1.px(h), m1.py(t)), '#ffd166');
       else B.dot(V(m1.px(h), m1.py(t)), 4, { fill: 'none', stroke: '#93a1b5', 'stroke-width': 1.5 });
     }
     // 右栏：y=x 折缝 + 反函数曲线 + 定义域/值域色带 + 探针读点
@@ -129,24 +131,26 @@ export function createBoard(root) {
       const v = md.g(t);
       B.seg(V(m2.px(t), m2.py(m2.Y0)), V(m2.px(t), m2.py(m2.Y1)), { stroke: '#67e8f9', 'stroke-width': 1.3, 'stroke-dasharray': '6 5' });
       B.seg(V(m2.px(0), m2.py(v)), V(m2.px(t), m2.py(v)), { stroke: '#ffd166', 'stroke-width': 1.2, 'stroke-dasharray': '4 4' });
-      B.dot(V(m2.px(t), m2.py(v)), 4.5, { fill: '#5cadff' });
+      B.mark(V(m2.px(t), m2.py(v)), '#5cadff');
     }
+    B.note(`反函数 $y=${md.inv} x$`, '#5cadff');
+    B.note('对称轴 $y=x$', '#ffd166', 'dashed');
     // chips
     cWin(`${md.win} ${md.mono}段`, 'ok');
-    cDom(inDom || md.dom === Infinity ? `${md.domTex}${md.dom === Infinity ? '（全体实数）' : ' —— 探针 t 在域内'}` : `${md.domTex} —— 探针 |t|>1 已在域外`, inDom || md.dom === Infinity ? '' : 'warn');
+    cDom(inDom || md.dom === Infinity ? `${md.domTex}${md.dom === Infinity ? '（全体实数）' : '，$t$ 在域内'}` : `${md.domTex}，探针 $|t|>1$ 在域外`, inDom || md.dom === Infinity ? '' : 'warn');
     if (inDom) {
       const v = md.g(t);
       cVal(`$${md.inv}(${fmt(t, 2)})=${fmt(v, 3)}$`, 'ok');
       const back = md.f(v);
       cBack(`$${md.fTex}(${fmt(v, 3)})=${fmt(back, 3)}=t$`, Math.abs(back - t) < 1e-9 ? 'ok' : 'warn');
     } else {
-      cVal('探针 |t|>1 —— 超出范围', 'warn');
+      cVal('探针 $|t|>1$，超出定义域', 'warn');
       cBack('域外无法核验', 'warn');
     }
     const n = hits.length;
-    if (!inDom) cJ(`y=t 与全波无交点 —— t 在定义域外，f⁻¹(t) 排除`, 'warn');
-    else if (n <= 1) cJ(`全波 y=t 只交 ${n} 点，主值即窗内金点 $x^*=${fmt(md.g(t), 3)}$`, 'ok');
-    else cJ(`全波 y=t 交 ${n} 点（同高多角）→ 裁窗后恰 1 点：主值 $f^{-1}(t)=${fmt(md.g(t), 3)}$`, 'ok');
+    if (!inDom) cJ(`$y=t$ 与曲线无交点，$f^{-1}(t)$ 无定义。`, 'warn');
+    else if (n <= 1) cJ(`图中 $y=t$ 有 $${n}$ 个交点，主值为 $x^*=${fmt(md.g(t), 3)}$`, 'ok');
+    else cJ(`图中 $y=t$ 有 $${n}$ 个交点，主值区间内恰有一个，对应 $f^{-1}(t)=${fmt(md.g(t), 3)}$`, 'ok');
   };
   B.render();
   B.hint('左：水平线 y=t 相交得到「同高多角」—— 多值，不配反函数；右：裁出的单调段关于 y=x 翻折 —— 单值才有反函数');

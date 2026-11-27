@@ -1,22 +1,23 @@
 /* 图 放1 · 三角不等式机：|a+b| ≤ |a| + |b| 的两幅面貌
-   数轴模式：a、b 是从 0 出发的两段位移。从 0 到 a、从 0 到 b 的「折返」路长 |a|+|b|，
-             不免绕回原点再出发；直达 a+b 只需 |a+b|。折返不短于直达，等号当 a、b 同号
-             （两段首尾相连不折返）。异号时多走的部分恰是两倍短段：|a|+|b| = |a+b| + 2·min(|a|,|b|)。
+   数轴模式：从 0 到 a，再从 a 到 a+b，两段路长分别为 |a| 与 |b|。
    向量模式：u 固定沿 x 轴长 3（金色），v 可转可伸缩（蓝色）。u、v 首尾相接成折线 O→U→W，
              和向量 u+v（绿色）闭合三角形：|u|+|v| 不短于第三边 |u+v| —— 等号当 θ=0° 同向（取上界）；
              反向 θ=180° 时折线拉直贴线，|u+v| 跌到 | |u|−|v| |（取下界）。
    局部坐标约定：数轴主轴 v=250，px=70+30·(u+12)（u∈[−12,12]）；向量模式原点 O=(240,240)，
    每单位 46px（py=240−y·46，y 向上），u=(3,0)。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { InequalityBoard } from '../inequality-board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
 
 export function createBoard(root) {
   const W = 860, H = 420;
-  const B = new Board(root, W, H);
+  const B = new InequalityBoard(root, W, H);
   const f1 = v => fmt(v, 2).replace(/\.?0+$/, '');
   const st = { mode: 0, a: 5, b: 3, len: 3, ang: 50, labs: true };
-  const cA = B.chipM('|a|'), cB = B.chipM('|b|'), cAB = B.chipM('|a+b|'), cJ = B.chipM('判读');
+  const cA = B.readout('第一段'), cB = B.readout('第二段', 'gold'), cAB = B.readout('直达', 'mint'), cJ = B.chipM('判读');
 
   B.renderFn = () => {
+    for (const slider of [sA, sB]) slider.closest('.slider').style.display = st.mode === 0 ? '' : 'none';
+    for (const slider of [sL, sT]) slider.closest('.slider').style.display = st.mode === 1 ? '' : 'none';
     if (st.mode === 0) {
       /* ---------- 数轴模式 ---------- */
       const a = st.a, b = st.b, sA = a + b;
@@ -35,12 +36,13 @@ export function createBoard(root) {
         };
         band(0, a, 214, '#5cadff', '$|a|$');
         band(0, sA, 250, '#ffd166', '$|a+b|$');
-        band(0, b, 288, '#ff7b8a', '$|b|$');
+        band(a, sA, 288, '#ff7b8a', '$|b|$');
         B.text(V(px(0), 210), '0', { 'font-size': 11.5, fill: '#5c6a80', 'text-anchor': 'middle' });
-        B.dot(V(px(0), 250), 5, { fill: '#5c6a80' });
+        B.mark(V(px(0), 250), '#5c6a80');
+        B.mark(V(px(a), 214), '#5cadff');
+        B.mark(V(px(sA), 250), '#ffd166');
       }
       B.tex(V(430, 38), `$a=${f1(a)}$，$b=${f1(b)}$　「折返」 $|a|+|b|$ 与「直达」 $|a+b|$`, { size: 15, anchor: 'mid' });
-      B.text(V(430, 66), '从 0 先到 a、再回 0、再到 b 是折返路；同号时两段同向连成一条直线段，折返与直达重合', { 'font-size': 12.5, fill: '#93a1b5', 'text-anchor': 'middle' });
       cA(`$|a|=${f1(Math.abs(a))}$`);
       cB(`$|b|=${f1(Math.abs(b))}$`);
       cAB(`$|a+b|=${f1(Math.abs(sA))}$`);
@@ -54,31 +56,35 @@ export function createBoard(root) {
     } else {
       /* ---------- 向量模式 ---------- */
       const L = st.len, th = st.ang * Math.PI / 180;
-      const O = V(240, 240), S = 46;
-      const U = V(240 + 3 * S, 240);
-      const W = V(240 + (3 + L * Math.cos(th)) * S, 240 - L * Math.sin(th) * S);
+      const S = 43;
+      const endX = 3 + L * Math.cos(th);
+      const centerX = (Math.min(0, endX) + Math.max(3, endX)) / 2;
+      const O = V(430 - centerX * S, 220 + L * Math.sin(th) * S / 2);
+      const U = V(O.x + 3 * S, O.y);
+      const W = V(O.x + (3 + L * Math.cos(th)) * S, O.y - L * Math.sin(th) * S);
       const dd = Math.sqrt((3 + L * Math.cos(th)) ** 2 + (L * Math.sin(th)) ** 2);
       // 三边先画、箭头后补（B.arrow line:false）：θ→0° 时绿线和向量压在金/蓝线段上，箭头须浮在其上
       B.seg(O, U, { stroke: '#ffd166', 'stroke-width': 3.2 });
       B.seg(U, W, { stroke: '#5cadff', 'stroke-width': 3.2 });
       B.seg(O, W, { stroke: '#4ade80', 'stroke-width': 3 });
       B.arrow(O, U, { fill: '#ffd166', head: 13, wide: 6, line: false });
+      B.mark(O, '#93a1b5'); B.mark(U, '#ffd166'); B.mark(W, '#4ade80');
       B.arrow(U, W, { fill: '#5cadff', head: 13, wide: 6, line: false });
       if (st.labs) {
+        B.seg(U, V(U.x + 40, U.y), { stroke: '#93a1b5', 'stroke-dasharray': '3 4' });
         B.tex(V((O.x + U.x) / 2, (O.y + U.y) / 2 - 18), '$|\\vec u|=3$', { size: 13, anchor: 'mid', color: '#ffd166' });
         B.tex(V((U.x + W.x) / 2, (U.y + W.y) / 2 - 16), `$|\\vec v|=${f1(L)}$`, { size: 13, anchor: 'mid', color: '#5cadff' });
-        B.tex(V((O.x + W.x) / 2, (O.y + W.y) / 2 - 16), `$|\\vec u+\\vec v|=${f1(dd)}$`, { size: 13, anchor: 'mid', color: '#4ade80' });
+        if (st.ang > 0 && st.ang < 180) B.tex(V((O.x + W.x) / 2, (O.y + W.y) / 2 - 16), `$|\\vec u+\\vec v|=${f1(dd)}$`, { size: 13, anchor: 'mid', color: '#4ade80' });
         // 夹角弧 θ（从 x 轴正向转到 v 方向）
         const AP = [];
-        for (let i = 0; i < 14; i++) { const t = th * i / 13; AP.push(`${O.x + 34 * Math.cos(t)},${O.y - 34 * Math.sin(t)}`); }
+        for (let i = 0; i < 14; i++) { const t = th * i / 13; AP.push(`${U.x + 34 * Math.cos(t)},${U.y - 34 * Math.sin(t)}`); }
         mk('polyline', { points: AP.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 1.2 }, B.dyn);
-        B.textM(V(O.x + 46, O.y - 26), `$\\theta=${f1(st.ang)}^\\circ$`, { 'font-size': 12.5, fill: '#67e8f9', 'text-anchor': 'middle' });
+        B.textM(V(U.x + 46, U.y - 26), `$\\theta=${f1(st.ang)}^\\circ$`, { 'font-size': 12.5, fill: '#67e8f9', 'text-anchor': 'middle' });
         B.text(V(O.x - 8, O.y + 12), 'O', { 'font-size': 14, fill: '#93a1b5', 'text-anchor': 'middle' });
         B.text(V(U.x + 6, U.y - 8), 'U', { 'font-size': 14, fill: '#93a1b5', 'text-anchor': 'start' });
         B.text(V(W.x + 6, W.y - 6), 'W', { 'font-size': 14, fill: '#93a1b5', 'text-anchor': 'start' });
       }
       B.tex(V(430, 36), `$|\\vec u|=3$，$|\\vec v|=${f1(L)}$，夹角 $θ=${f1(st.ang)}^{\\circ}$`, { size: 15, anchor: 'mid' });
-      B.text(V(430, 64), '折线 O→U→W 的长度不短于直线段 O→W：三角形两边之和不小于第三边', { 'font-size': 12.5, fill: '#93a1b5', 'text-anchor': 'middle' });
       cA('$|\\vec u|=3$');
       cB(`$|\\vec v|=${f1(L)}$`);
       cAB(`$|\\vec u+\\vec v|=${f1(dd)}$`);
@@ -92,30 +98,28 @@ export function createBoard(root) {
     }
   };
 
-  const modeBtns = ['数轴', '向量'].map((n, i) => B.btnM(n, () => {
-    st.mode = i; modeBtns.forEach((b, j) => b.classList.toggle('on', j === i)); B.render();
-  }, { on: i === 0 }));
+  B.choiceRow('选择模式', ['数轴', '向量'].map(name => ({ name })), () => st.mode, i => {
+    st.mode = i; B.render();
+  });
   const PRE = [
-    { mode: 0, a: 5, b: 3, n: '① 同号取等' },
-    { mode: 0, a: -5, b: 3, n: '② 异号折返' },
-    { mode: 1, len: 3, ang: 0, n: '③ 同向取上界' },
-    { mode: 1, len: 3, ang: 180, n: '④ 反向取下界' },
+    { name: '同号', formula: '$a=5,\\ b=3$', values: { mode: 0, a: 5, b: 3 } },
+    { name: '异号', formula: '$a=-5,\\ b=3$', values: { mode: 0, a: -5, b: 3 } },
+    { name: '同向', values: { mode: 1, len: 3, ang: 0 } },
+    { name: '反向', values: { mode: 1, len: 3, ang: 180 } },
   ];
-  PRE.forEach(P => B.btnM(P.n, () => {
+  B.examples('选择例题', PRE, st, P => {
     st.mode = P.mode;
     if (P.mode === 0) { st.a = P.a; st.b = P.b; sA.sync(P.a); sB.sync(P.b); }
     else { st.len = P.len; st.ang = P.ang; sL.sync(P.len); sT.sync(P.ang); }
-    modeBtns.forEach((b, j) => b.classList.toggle('on', j === st.mode));
     B.render();
-  }, { on: false }));
+  });
   B.graphToggles(st, ['labs']);
 
-  const sA = B.slider('a =', -6, 6, .1, 5, v => { st.a = v; B.render(); });
-  const sB = B.slider('b =', -6, 6, .1, 3, v => { st.b = v; B.render(); });
-  const sL = B.slider('v 长 =', .5, 5, .1, 3, v => { st.len = v; B.render(); });
-  const sT = B.slider('θ° =', 0, 180, 5, 50, v => { st.ang = v; B.render(); });
+  const sA = B.slider('a =', -6, 6, .1, 5, v => { st.a = v; B.render(); }, undefined, n => `$a=${n}$`);
+  const sB = B.slider('b =', -6, 6, .1, 3, v => { st.b = v; B.render(); }, undefined, n => `$b=${n}$`);
+  const sL = B.slider('v 长 =', .5, 5, .1, 3, v => { st.len = v; B.render(); }, undefined, n => `$|\\vec v|=${n}$`);
+  const sT = B.slider('θ° =', 0, 180, 5, 50, v => { st.ang = v; B.render(); }, undefined, n => `$\\theta=${n}^{\\circ}$`);
 
-  B.hintM('数轴看折返与直达；向量看三角形 —— $\\theta=0^\\circ$ 取上界、$\\theta=180^\\circ$ 取下界');
   B.render();
   return B;
 }

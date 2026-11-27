@@ -4,7 +4,7 @@
     :toc="[{ id: 'o3-four', t: '四种命题' }, { id: 'o3-proof', t: '逆否等价的证明' }, { id: 'o3-use', t: '应用：改证逆否' }, { id: 'o3-pit', t: '真假的错位' }]">
     <div class="note good" id="o3-law">原命题 <Katex tex="p\Rightarrow q" />、逆命题 <Katex tex="q\Rightarrow p" />、否命题 <Katex tex="\neg p\Rightarrow\neg q" />、逆否命题 <Katex tex="\neg q\Rightarrow\neg p" />。等价关系：<Katex tex="p\Rightarrow q\iff\neg q\Rightarrow\neg p" />、<Katex tex="q\Rightarrow p\iff\neg p\Rightarrow\neg q" /> —— 互为逆否，同真同假。</div>
     <ConicFigure number="O3" title="原命题与逆否命题" head="bottom" :factory="createCT">
-      左侧四种命题随预设即时判定真假、标出反例；右侧 2×2 组合格把「<Katex tex="p" />、<Katex tex="q" /> 真假」的四种世界摆开，<Katex tex="p\to q" /> 与逆否命题共享「<Katex tex="p" /> 真而 <Katex tex="q" /> 假」这一格。看点：拖探针换世界 —— 高亮格落进红格时，原命题与逆否命题同时为假；落不进，两式同时为真，无一例外。
+      组合格的行表示 <Katex tex="p" /> 的真假，列表示 <Katex tex="q" /> 的真假。拖动探针或开启扫轴，金框会移到当前取值对应的一格。切到预设②，把探针拖到 <Katex tex="x=-3" />，可同时推翻原命题与逆否命题。图下四个判定针对整个实数域。
     </ConicFigure>
 
     <h3 class="sec" id="o3-four">四种命题</h3>

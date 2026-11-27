@@ -15,6 +15,7 @@ export const CHOICES = {
   chatHist: ['on', 'off'],         // 整屏时左侧常驻对话列表
   navOpen: ['cur', 'all', 'none'], // 左栏进页时的折叠方式
   pageAnim: ['particles', 'fade', 'up', 'zoom', 'slide', 'blur', 'none'], // 切页动画
+  themeAnim: ['circle', 'fade', 'sweep', 'none'], // 换主题时的过渡：圆形扩散 / 淡入 / 左向展开 / 不做
   noteFormat: ['md', 'tex'],       // 新建笔记的默认格式
   visitCap: ['5', '8', '12', '20'], // 面包屑缓存多少个页面（硬上限 20）
   bgMotionOn: ['on', 'off'],       // 背景动画总开关
@@ -72,6 +73,7 @@ const DEFAULTS = {
   chatHist: 'on',                     // 整屏时默认显示左侧对话列表
   navOpen: 'cur',
   pageAnim: 'particles',
+  themeAnim: 'circle',             // 换主题默认从点击处圆形扩散过去
   noteFormat: 'md',
   visitCap: '8',
   bgMotionOn: 'on',

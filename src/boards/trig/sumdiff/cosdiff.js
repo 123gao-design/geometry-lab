@@ -1,64 +1,152 @@
-/* 图 M1 弦长两式机：单位圆上 P(α)、Q(β)，橙弦 PQ 的长有两种表达式 ——
-   ①两点距离公式（坐标展开）②余弦定理（夹角 α−β）；两种表达式记同一根弦 ⇒
-   cos(α−β)=cosαcosβ+sinαsinβ —— 和差公式全体（sin/tan 展开）都从这根弦出发。 */
-import { Board, mk, V, fmt, TAU } from '../../../lib/board.js';
+import { Board, mk, TAU, V } from '../../../lib/board.js';
+import { angleTex, unitCoordinates } from '../trig-board.js';
+import { ChordProof } from './chord-proof.js';
+
+import { ProofBoard } from '../proof-board.js';
+
+const GOLD = '#ffd166';
+const BLUE = '#5cadff';
+const ORANGE = '#ff9e4a';
+const MINT = '#67e8f9';
+const DEGREE = TAU / 360;
+const snap = value => Math.round(value / DEGREE) * Math.PI / 180;
 
 export function createBoard(root) {
-  const B = new Board(root, 860, 520);
-  const st = { a: Math.PI / 3, b: Math.PI / 6 };
-  const O = V(235, 272), R = 170;
-  const sA = B.slider('角 α', 0, TAU, Math.PI / 12, st.a, v => { st.a = v; B.render(); });
-  const sB = B.slider('角 β', 0, TAU, Math.PI / 12, st.b, v => { st.b = v; B.render(); });
-  B.btnM('α ↔ β', () => { const t = st.a; st.a = st.b; st.b = t; sA.sync(st.a); sB.sync(st.b); B.render(); });
-  const cD1 = B.chipM('d 坐标式'), cD2 = B.chipM('d 余弦定理式'), cC = B.chipM('cos(α−β)'), cV = B.chipM('展开核验');
-  const pt = t => V(O.x + R * Math.cos(t), O.y - R * Math.sin(t));
+  const B = new ProofBoard(root, 500, 430);
+  root.classList.add('chord-board');
+  B.svg.setAttribute('aria-label', '单位圆及弦 PQ');
+  const O = V(250, 215), R = 160;
+  const state = { a: 60 * DEGREE, b: 30 * DEGREE };
+  const point = (angle, radius = R) => {
+    const { x, y } = unitCoordinates(angle);
+    return V(O.x + radius * x, O.y - radius * y);
+  };
+
+  const sliders = {};
+  for (const [key, letter] of [['a', 'alpha'], ['b', 'beta']]) {
+    sliders[key] = B.slider(key === 'a' ? '角 α' : '角 β', 0, TAU, 'any', state[key],
+      value => {
+        state[key] = snap(value);
+        sliders[key].sync(state[key]);
+        B.render();
+      }, undefined,
+      (_, angle) => '$\\' + letter + '=' + angleTex(angle) + '$');
+  }
+  function applyAngles(a, b) {
+    state.a = a;
+    state.b = b;
+    sliders.a.sync(a);
+    sliders.b.sync(b);
+    B.render();
+  }
+  B.btnM('$\\alpha\\leftrightarrow\\beta$', () => applyAngles(state.b, state.a));
+  B.btnM('$\\alpha=\\beta=45^\\circ$', () => applyAngles(Math.PI / 4, Math.PI / 4));
+
+  const getHandle = (key, label, color) => {
+    const handle = B.handle({
+      color,
+      get: () => point(state[key]),
+      set: p => {
+        const angle = (Math.atan2(O.y - p.y, p.x - O.x) + TAU) % TAU;
+        state[key] = snap(angle);
+        sliders[key].sync(state[key]);
+      },
+    });
+    handle.setAttribute('aria-label', '可移动点 ' + label);
+    return handle;
+  };
+  const pHandle = getHandle('a', 'P', GOLD);
+  const qHandle = getHandle('b', 'Q', BLUE);
+  const proof = new ChordProof(B);
+
+  function label(p, name, color) {
+    const node = Board.prototype.text.call(B, p, name, { fill: color });
+    node.style.fill = node.getAttribute('fill');
+  }
+
+  function drawAxes() {
+    const { axis, guide } = B.diagramColors;
+    B.seg(V(44, O.y), V(456, O.y), { stroke: guide, 'stroke-width': 1, 'stroke-opacity': .7 });
+    B.seg(V(O.x, 411), V(O.x, 18), { stroke: guide, 'stroke-width': 1, 'stroke-opacity': .7 });
+    mk('path', { d: 'M448 212 L456 215 L448 218 M247 26 L250 18 L253 26', fill: 'none',
+      stroke: guide, 'stroke-width': 1 }, B.dyn);
+    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none',
+      stroke: guide, 'stroke-opacity': .17, 'stroke-width': 5 }, B.dyn);
+    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none',
+      stroke: guide, 'stroke-width': 1.4 }, B.dyn);
+    for (const a of [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2]) {
+      B.seg(point(a, R - 4), point(a, R + 4), { stroke: axis, 'stroke-width': 1.5 });
+    }
+    label(V(454, O.y + 19), 'x', guide);
+    label(V(O.x + 17, 25), 'y', guide);
+    label(V(O.x - 13, O.y + 18), 'O', guide);
+  }
+
+  function drawProjection(P, Q) {
+    const corner = V(Q.x, P.y);
+    const dx = P.x - Q.x, dy = Q.y - P.y;
+    if (Math.abs(dx) < 1 || Math.abs(dy) < 1) return;
+    const guide = { stroke: MINT, 'stroke-width': 1.3, 'stroke-dasharray': '5 5' };
+    B.seg(P, corner, guide);
+    B.seg(corner, Q, guide);
+    const side = Math.min(9, Math.abs(dx) / 3, Math.abs(dy) / 3);
+    const x = side * Math.sign(dx), y = side * Math.sign(dy);
+    mk('path', { d: 'M' + (corner.x + x) + ' ' + corner.y + ' v' + y + ' h' + (-x),
+      stroke: MINT, fill: 'none' }, B.dyn);
+  }
+
+  function drawAngle(a, b, turn) {
+    const n = Math.max(2, Math.ceil(Math.abs(turn) / .06));
+    const radius = 48;
+    const vertices = [];
+    for (let i = 0; i <= n; i++) {
+      const p = point(b + turn * i / n, radius);
+      vertices.push(p.x + ',' + p.y);
+    }
+    mk('polyline', { points: vertices.join(' '), fill: 'none', stroke: MINT, 'stroke-width': 2 }, B.dyn);
+    const p = point(a - turn / 2, radius + 19);
+    if (Math.abs(turn) >= .2) label(V(p.x, p.y + 4), 'θ', MINT);
+  }
+
+  function pointLabel(angle, offset, name, color) {
+    const p = point(angle + offset, R + 22);
+    // 贴近坐标轴时将文字移到轴旁，两个点相邻时沿圆周错开。
+    if (Math.abs(p.y - O.y) < 11) p.y += p.y <= O.y ? -13 : 13;
+    if (Math.abs(p.x - O.x) < 11) p.x += p.x <= O.x ? -17 : 17;
+    label(V(p.x, p.y + 4), name, color);
+  }
 
   B.renderFn = () => {
-    const { a, b } = st;
-    const P = pt(a), Q = pt(b);
-    // 坐标轴 + 单位圆
-    B.seg(V(O.x - R - 26, O.y), V(O.x + R + 26, O.y), { stroke: '#2b3b53', 'stroke-width': 1.1 });
-    B.seg(V(O.x, O.y + R + 26), V(O.x, O.y - R - 26), { stroke: '#2b3b53', 'stroke-width': 1.1 });
-    mk('circle', { cx: O.x, cy: O.y, r: R, fill: 'none', stroke: '#93a1b5', 'stroke-width': 1.6 }, B.dyn);
-    B.dot(O, 3, { fill: '#93a1b5' });
-    // 半径 OP、OQ 与端点（标签侧别避让）
-    B.seg(O, P, { stroke: '#ffd166', 'stroke-width': 2.2 });
-    B.seg(O, Q, { stroke: '#5cadff', 'stroke-width': 2.2 });
-    B.dot(P, 4.5, { fill: '#ffd166' });
-    B.dot(Q, 4.5, { fill: '#5cadff' });
-    B.textM(V(P.x + (P.x > O.x ? 10 : -10), P.y - 12), '$P(\\cos\\alpha,\\ \\sin\\alpha)$', { 'font-size': 11, fill: '#ffd166', 'text-anchor': P.x > O.x ? 'start' : 'end' });
-    B.textM(V(Q.x + (Q.x > O.x ? 10 : -10), Q.y + 18), '$Q(\\cos\\beta,\\ \\sin\\beta)$', { 'font-size': 11, fill: '#5cadff', 'text-anchor': Q.x > O.x ? 'start' : 'end' });
-    // 夹角小弧：从 Q 方向走有向小角到 P（wrap 到 (−π, π]）
-    const d2 = ((a - b + Math.PI) % TAU + TAU) % TAU - Math.PI;
-    if (Math.abs(d2) > 0.02) {
-      const steps = 36, arc = [];
-      for (let i = 0; i <= steps; i++) { const t = b + d2 * i / steps; arc.push(`${(O.x + 46 * Math.cos(t)).toFixed(1)},${(O.y - 46 * Math.sin(t)).toFixed(1)}`); }
-      mk('polyline', { points: arc.join(' '), fill: 'none', stroke: '#67e8f9', 'stroke-width': 1.8 }, B.dyn);
-      const mid = b + d2 / 2;
-      B.textM(V(O.x + 68 * Math.cos(mid), O.y - 68 * Math.sin(mid)), `$\\alpha-\\beta=${fmt(d2, 2)}`, { 'font-size': 12, fill: '#67e8f9' });
+    const { a, b } = state;
+    const P = point(a), Q = point(b);
+    const turn = Math.atan2(Math.sin(a - b), Math.cos(a - b));
+    const close = Math.hypot(P.x - Q.x, P.y - Q.y) < 1;
+    const keepQ = qHandle.classList.contains('drag') ||
+      (!pHandle.classList.contains('drag') && document.activeElement === qHandle);
+    pHandle.style.display = close && keepQ ? 'none' : '';
+    qHandle.style.display = close && !keepQ ? 'none' : '';
+
+    drawAxes();
+    if (!close && proof.step === 0) drawProjection(P, Q);
+    if (!close && proof.step === 1) drawAngle(a, b, turn);
+    if (!close || !keepQ) B.seg(O, P, { stroke: GOLD, 'stroke-width': 2 });
+    if (!close || keepQ) B.seg(O, Q, { stroke: BLUE, 'stroke-width': 2 });
+    if (!close) {
+      B.seg(P, Q, { stroke: ORANGE, 'stroke-width': 2.5, 'stroke-linecap': 'round' });
+      if (Math.abs(turn) > .18) {
+        const chordRadius = R * Math.cos(turn / 2);
+        const inner = Math.max(22, chordRadius - 22);
+        const labelRadius = proof.step === 1 && Math.abs(inner - 67) < 17 ? chordRadius + 20 : inner;
+        const p = point(b + turn / 2, labelRadius);
+        label(V(p.x, p.y + 4), 'd', ORANGE);
+      }
     }
-    // 橙弦 PQ
-    B.seg(P, Q, { stroke: '#ff9e4a', 'stroke-width': 2.6 });
-    B.text(V((P.x + Q.x) / 2, (P.y + Q.y) / 2 - 12), 'd', { 'font-size': 13, fill: '#ff9e4a' });
-    // 右栏：两种表达式 + 结论。竖栏起在 500：Q 的坐标标签贴着圆外往右伸，
-    // 按 468 起栏时它会探进「② 余弦定理」那一行的字里去
-    const X = 500;
-    B.tex(V(X, 92), '① 两点距离公式（U1 坐标展开）', { size: 14, color: '#5cadff', anchor: 'start', w: 380 });
-    B.tex(V(X, 124), '$d^2=(\\cos\\alpha-\\cos\\beta)^2+(\\sin\\alpha-\\sin\\beta)^2$', { size: 14, anchor: 'start', w: 380 });
-    B.tex(V(X, 150), '$\\;\\;=2-2(\\cos\\alpha\\cos\\beta+\\sin\\alpha\\sin\\beta)$', { size: 14, anchor: 'start', w: 380 });
-    B.tex(V(X, 192), '② 余弦定理（夹角 α−β）', { size: 14, color: '#ff9e4a', anchor: 'start', w: 380 });
-    B.tex(V(X, 224), '$d^2=1^2+1^2-2\\cos(\\alpha-\\beta)=2-2\\cos(\\alpha-\\beta)$', { size: 14, anchor: 'start', w: 380 });
-    B.tex(V(X, 258), '同一根弦，两种表达式必须相等 ⇒', { size: 14, color: '#93a1b5', anchor: 'start', w: 380 });
-    B.tex(V(X, 296), '$\\cos(\\alpha-\\beta)=\\cos\\alpha\\cos\\beta+\\sin\\alpha\\sin\\beta$', { size: 17, color: '#ffd166', anchor: 'start', w: 400 });
-    // chips：两种表达式的弦长现场核验
-    const sv = Math.cos(a) * Math.cos(b) + Math.sin(a) * Math.sin(b);
-    const cv = Math.cos(a - b);
-    cD1(`$d=\\sqrt{2-2(\\cos\\alpha\\cos\\beta+\\sin\\alpha\\sin\\beta)}=${fmt(Math.sqrt(Math.max(0, 2 - 2 * sv)), 3)}$`);
-    cD2(`$d=\\sqrt{2-2\\cos(\\alpha-\\beta)}=${fmt(Math.sqrt(Math.max(0, 2 - 2 * cv)), 3)}$`);
-    cC(`$\\cos(\\alpha-\\beta)=${fmt(cv, 3)}$`);
-    cV(`$\\cos\\alpha\\cos\\beta+\\sin\\alpha\\sin\\beta=${fmt(sv, 3)}$`, Math.abs(sv - cv) < 1e-9 ? 'ok' : 'warn');
+
+    const spread = !close && Math.abs(turn) < .16 ? .1 * Math.sign(turn) : 0;
+    pointLabel(a, spread, close ? 'P=Q' : 'P', close && keepQ ? BLUE : GOLD);
+    if (!close) pointLabel(b, -spread, 'Q', BLUE);
+    proof.update(a, b, Math.abs(turn));
   };
   B.render();
-  B.hint('拖 α、β：橙弦 PQ 只认两半径的夹角 —— 坐标展开与余弦定理殊途同归，cos(α−β) 的展开式随即得到');
   return B;
 }

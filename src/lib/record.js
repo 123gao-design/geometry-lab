@@ -31,7 +31,7 @@ function saveBlob(blob, name) {
   setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
 
-/** 一帧的 SVG 串 → 解码好的 Image（blob URL 快；个别环境认不了 foreignObject 的 blob，退回 data URL） */
+/** 一帧的 SVG 串 → 解码好的 Image。含 HTML 的 SVG 用与 PNG 相同的 data URL，以便画布取流。 */
 function raster(xml) {
   const load = src => new Promise((res, rej) => {
     const im = new Image();
@@ -39,9 +39,11 @@ function raster(xml) {
     im.onerror = () => rej(new Error('画面解码失败'));
     im.src = src;
   });
+  const dataURL = () => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+  if (xml.includes('<foreignObject')) return load(dataURL());
   const url = URL.createObjectURL(new Blob([xml], { type: 'image/svg+xml;charset=utf-8' }));
   return load(url)
-    .catch(() => load('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml)))
+    .catch(() => load(dataURL()))
     .finally(() => URL.revokeObjectURL(url));
 }
 
@@ -63,8 +65,9 @@ export function recordBoard(board, o = {}) {
   }
 
   const cv = document.createElement('canvas');
-  cv.width = Math.round(board.w * scale);
-  cv.height = Math.round(board.h * scale);
+  const { width = board.w, height = board.h } = board.exportSize ?? {};
+  cv.width = Math.round(width * scale);
+  cv.height = Math.round(height * scale);
   const ctx = cv.getContext('2d');
   if (typeof cv.captureStream !== 'function') { onState({ error: '这个浏览器不支持画布取流' }); return null; }
   const stream = cv.captureStream(0);            // 0 = 手动打帧，由下面的 requestFrame 控制

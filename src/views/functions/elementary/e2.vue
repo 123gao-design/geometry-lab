@@ -5,18 +5,18 @@
     <div class="note good" id="e2-thm"><strong>区间最值（a&gt;0）</strong>：设对称轴 <Katex tex="x^*=-\dfrac{b}{2a}" />、区间 <Katex tex="[p,q]" />。①轴在区间内（<Katex tex="p\le x^*\le q" />）：min 在顶点 <Katex tex="f(x^*)=\dfrac{4ac-b^2}{4a}" />，max 在距轴较远的端点；②轴在左外（<Katex tex="x^*&lt;p" />）：min=f(p)、max=f(q)；③轴在右外（<Katex tex="x^*&gt;q" />）：min=f(q)、max=f(p)。开口向下（a&lt;0）时全部对调：顶点管 max，端点压 min。</div>
     <div class="board-wrap">
       <BoardMount :factory="createQuadmin" />
-      <div class="cap">图 E2 · <b>闭区间上的最值</b>。移动顶点或端点，比较顶点与两端的函数值，观察最值点何时切换。</div>
+      <div class="cap">图 E2 · <b>闭区间上的最值</b>。拖动横轴上的区间端点，观察加粗的曲线段。切到「动轴定区间」，把轴移到 <Katex tex="x=2.5" />，两个端点会同时亮起，取得相同的最大值。</div>
     </div>
 
     <h3 class="sec" id="e2-dyn">双动态：两类大题型</h3>
-    <p><strong>定轴动区间</strong>（轴 x*=0 定死，区间动）：区间扫过轴，min 从端点移到顶点再移回 —— 图 E2 ① 把手提供手动操作。<strong>动轴定区间</strong>（区间定死，轴动）：图 E2 ② 滑块 t 从左外拖到区间内再拖到右外，min 的取值点经历「右端点 → 顶点 → 左端点」三次更换。两类题的通用结论是同一句：<strong>顶点在不在区间内？在，顶点定一端最值；不在，近端点取最值 —— 另一端永远由「距轴较远者」决定</strong>。</p>
+    <p><strong>定轴动区间</strong>（轴 x*=0 定死，区间动）：区间扫过轴，min 从端点移到顶点再移回 —— 图 E2 ① 把手提供手动操作。<strong>动轴定区间</strong>（区间定死，轴动）：图 E2 ② 滑块 t 从左外拖到区间内再拖到右外，min 的取值点经历「左端点 → 顶点 → 右端点」两次切换。两类题的通用结论是同一句：<strong>顶点在不在区间内？在，顶点定一端最值；不在，近端点取最值 —— 另一端永远由「距轴较远者」决定</strong>。</p>
     <p>为什么「距轴较远者」总取到最值？配方后 <Katex tex="f(x)=a(x-x^*)^2+f(x^*)" />：a&gt;0 时值随 <Katex tex="|x-x^*|" />（到轴的距离）单调上升 —— 哪个端点离轴远，哪个端点的值就大。距离语言把三种位置关系统一成一次比较，这正是它优于死记三类算式之处。</p>
 
     <h3 class="sec" id="e2-pos">根的分布：同一套工具的第二个问题</h3>
     <div class="note good"><strong>根分布</strong>：已知 <Katex tex="ax^2+bx+c=0" />（<Katex tex="a\ne 0" />），问实根相对某个参照位置（点 k 或参照区间 <Katex tex="(1,3)" />）落在哪侧/之内。全部工具与最值共用，只有三项：① <strong>Δ</strong> —— 根存在吗（<Katex tex="\Delta=b^2-4ac\ge 0" /> 是一切讨论的前提，无根则不必讨论分布）；② <strong>对称轴</strong> <Katex tex="x=-\dfrac{b}{2a}" /> —— 根的「平均位置」（两根之和的一半），轴在哪，两根整体就在哪；③ <strong>端点符号 a·f(k)</strong> —— k 在两根之内还是之外，一个乘积即可判定。</div>
     <div class="board-wrap">
       <BoardMount :factory="createRootDist" />
-      <div class="cap">图 E2b · <b>一元二次方程根的分布</b>。移动顶点与纵向位置，对照无实根、重根及根落在区间内外的情形。端点函数值为零时，该端点本身是根。</div>
+      <div class="cap">图 E2b · <b>一元二次方程根的分布</b>。拖动参数，对照根与阴影区间的位置。切到第二例，把 <Katex tex="c" /> 从大于 <Katex tex="1" /> 调到小于 <Katex tex="1" />，观察抛物线怎样从悬在横轴上方、恰好相切，到出现两个交点。</div>
     </div>
     <p>最常用的一条判据：<strong>一根小于 <Katex tex="k" />、一根大于 <Katex tex="k" /> <Katex tex="\iff" /> <Katex tex="a\cdot f(k)<0" /></strong>。推导只有一行 —— 设两根 <Katex tex="r_1\le r_2" />，把 <Katex tex="f" /> 写成因式分解形，代入 <Katex tex="k" />：</p>
     <Katex tex="f(k)=a(k-r_1)(k-r_2)\quad\Longrightarrow\quad a\cdot f(k)=a^2(k-r_1)(k-r_2)" display />
@@ -27,7 +27,7 @@
     <div class="note warn tip">
       <div class="tip-t"><span class="tip-ic">💡</span>提示 · 区间最值</div>
       <ul class="tip-list">
-        <li><strong>提示一：不讨论轴与区间的位置关系就下笔。</strong>「顶点值最小」只在轴于区间内成立；轴在外时最小值在端点（图 E2 ② 把 t 拖到 0 或 3.5 看交接）。</li>
+        <li><strong>提示一：不讨论轴与区间的位置关系就下笔。</strong>「顶点值最小」只在轴于区间内成立；轴在外时最小值在端点（图 E2 ② 把 t 拖到 0 或 5 看交接）。</li>
         <li><strong>提示二：开口向下忘记对调。</strong>a&lt;0 时顶点是 max，端点压 min —— 图 E2 ③。</li>
         <li><strong>提示三：动轴题只盯顶点。</strong>区间窄而轴在远处时，两端其实都由端点决定；max 与 min 可能落在同一侧的不同端点上，不要用错「远者大」的方向（a&lt;0 时远者小）。</li>
       </ul>
@@ -52,3 +52,4 @@ import { createBoard as createQuadmin } from '../../../boards/functions/elementa
 import { createBoard as createRootDist } from '../../../boards/functions/elementary/rootdist.js';
 import { E_CHAPTERS } from './enav.js';
 </script>
+<style src="../properties/preset-row.css"></style>

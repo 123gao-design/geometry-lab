@@ -4,17 +4,17 @@
      斜率的最值出现在过 P 的两条「切线」位置，接触点必是可行域的顶点；有竖直方向穿过区域时斜率无界。
    模式二 距离平方型 z=(x−a)²+(y−b)²：几何意义是 P 到点 (x,y) 的距离平方。最大值在离 P 最远的顶点；
      最小值可能落在某条边的内部（垂足），这是与线性目标最关键的区别。
-   局部坐标约定：isoFit 视野 x∈[-0.9,4.9]、y∈[-0.9,4.3]，等单位；右侧 520..850 为读数栏。
    约束统一写成 A x + B y + C ≥ 0 的形式。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { InequalityBoard, visibleLine } from '../inequality-board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const W = 860, H = 460;
-  const B = new Board(root, W, H);
+  const W = 540, H = 460;
+  const B = new InequalityBoard(root, W, H);
   const f1 = v => fmt(v, 2).replace(/\.?0+$/, '');
   const st = { mode: 0, px: 4.6, py: 1, qx: 2, qy: 2, grid: true, labs: true };
-  const m = B.isoFit(-0.9, 4.9, -0.9, 4.3, [40, 55, 423.85, 380], 0);
-  const cP = B.chipM('定点'), cQ = B.chipM('当前点'), cM = B.chipM('最小值'), cN = B.chipM('最大值'), cJ = B.chipM('判读');
+  const m = B.isoFit(-0.9, 4.9, -0.9, 4.3, [58, 55, 423.85, 380], 0);
+  const cP = B.readout('定点'), cQ = B.readout('当前点', 'violet'), cM = B.readout('最小值', 'mint'), cN = B.readout('最大值', 'gold'), cJ = B.chipM('判读');
 
   const CONS = [
     { A: 1, B: 0, C: 0, col: '#8fa3bd' },
@@ -42,20 +42,13 @@ export function createBoard(root) {
   const VERTS = sortPts(uniq(raw));
   const VN = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-  const lineEnds = (A, Bc, C) => {
-    if (Math.abs(Bc) > 1e-9) {
-      return [V(m.px(m.X0), m.py((-C - A * m.X0) / Bc)), V(m.px(m.X1), m.py((-C - A * m.X1) / Bc))];
-    }
-    if (Math.abs(A) < 1e-9) return null;
-    return [V(m.px(-C / A), m.py(m.Y0)), V(m.px(-C / A), m.py(m.Y1))];
-  };
   // 过 P 且斜率为 k 的直线；k=null 表示竖直线
   const lineThrough = (P, k, at) => {
     if (k === null || !isFinite(k)) {
       B.seg(V(m.px(P.x), m.py(m.Y0)), V(m.px(P.x), m.py(m.Y1)), at);
       return;
     }
-    const e = lineEnds(k, -1, P.y - k * P.x);
+    const e = visibleLine(m, k, -1, P.y - k * P.x);
     if (e) B.seg(e[0], e[1], at);
   };
 
@@ -73,20 +66,28 @@ export function createBoard(root) {
     color: '#67e8f9', r: 6.5, label: 'Q',
   });
 
-  const wrap = d => ((d + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
-  // 斜率型：可行域在 P 处的视角范围决定斜率的上下界；视角含竖直方向时斜率无界
-  const slopeInfo = () => {
-    const P = V(st.px, st.py);
-    if (ok(P)) return { inside: true, unb: false, zMax: null, zMin: null, iMax: -1, iMin: -1 };
-    const ang = q => Math.atan2(q.y - st.py, q.x - st.px);
-    const base = ang(VERTS[0]);
-    const rel = VERTS.map(q => wrap(ang(q) - base));
-    let iMax = 0, iMin = 0;
-    rel.forEach((d, i) => { if (d > rel[iMax]) iMax = i; if (d < rel[iMin]) iMin = i; });
-    const c1 = Math.cos(base + rel[iMax]), c2 = Math.cos(base + rel[iMin]);
-    const slope = q => Math.abs(q.x - st.px) < 1e-9 ? null : (q.y - st.py) / (q.x - st.px);
-    return { inside: false, unb: c1 * c2 <= 1e-12,
-      zMax: slope(VERTS[iMax]), zMin: slope(VERTS[iMin]), iMax, iMin };
+  // 在线段上，分母同号时斜率单调。有限极值只需比较顶点；
+  // 竖直截线上的非零分子则由可接近的左右方向决定无穷大的符号。
+  const slopeRange = P => {
+    let min = Infinity, max = -Infinity, lowPoint, highPoint;
+    let left = false, right = false, above = false, below = false;
+    const recordY = y => {
+      if (y > P.y + 1e-9) above = true;
+      if (y < P.y - 1e-9) below = true;
+    };
+    VERTS.forEach((v, i) => {
+      const dx = v.x - P.x;
+      if (Math.abs(dx) < 1e-9) { recordY(v.y); return; }
+      if (dx < 0) left = true; else right = true;
+      const slope = (v.y - P.y) / dx;
+      if (slope < min) { min = slope; lowPoint = v; }
+      if (slope > max) { max = slope; highPoint = v; }
+      const next = VERTS[(i + 1) % VERTS.length];
+      if (dx * (next.x - P.x) < 0) recordY(v.y + (next.y - v.y) * (-dx) / (next.x - v.x));
+    });
+    if ((left && above) || (right && below)) min = -Infinity;
+    if ((right && above) || (left && below)) max = Infinity;
+    return { min, max, lowPoint, highPoint };
   };
   // 距离平方型：最近点可能在边的内部（垂足），最远点必在顶点
   const distInfo = () => {
@@ -115,12 +116,12 @@ export function createBoard(root) {
   };
 
   B.renderFn = () => {
-    B.grid(m);
+    B.grid({ ...m, grid: st.grid, labs: st.labs });
     mk('polygon', { points: VERTS.map(p => `${m.px(p.x).toFixed(1)},${m.py(p.y).toFixed(1)}`).join(' '),
       fill: '#5cadff', 'fill-opacity': .13, stroke: 'none' }, B.dyn);
-    CONS.forEach(c => { const e = lineEnds(c.A, c.B, c.C); if (e) B.seg(e[0], e[1], { stroke: c.col, 'stroke-width': 1.6 }); });
+    CONS.forEach(c => { const e = visibleLine(m, c.A, c.B, c.C); if (e) B.seg(e[0], e[1], { stroke: c.col, 'stroke-width': 1.6 }); });
     VERTS.forEach((p, i) => {
-      B.dot(V(m.px(p.x), m.py(p.y)), 4.5, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1 });
+      B.dot(V(m.px(p.x), m.py(p.y)), 2.5, { fill: '#ffd166', stroke: 'none' });
       if (st.labs) B.tex(V(m.px(p.x) + 8, m.py(p.y) - 10), `$${VN[i]}(${f1(p.x)},${f1(p.y)})$`,
         { size: 11.5, anchor: 'start', color: '#ffd166' });
     });
@@ -129,29 +130,22 @@ export function createBoard(root) {
 
     if (st.mode === 0) {
       /* ---------- 模式一 斜率型 ---------- */
-      const s = slopeInfo();
-      B.tex(V(250, 24), '$z=\\dfrac{y-b}{x-a}$　过定点 $P$ 的直线斜率', { size: 14.5, anchor: 'mid' });
-      if (!s.inside) {
-        lineThrough(P, s.zMax, { stroke: '#4ade80', 'stroke-width': 2 });
-        lineThrough(P, s.zMin, { stroke: '#67e8f9', 'stroke-width': 1.9, 'stroke-dasharray': '6 4' });
-        const cur = Math.abs(st.qx - st.px) < 1e-9 ? null : (st.qy - st.py) / (st.qx - st.px);
-        lineThrough(P, cur, { stroke: '#ffd166', 'stroke-width': 1.5, 'stroke-dasharray': '7 5' });
-        [[s.iMax, '#4ade80'], [s.iMin, '#67e8f9']].forEach(([i, col]) => {
-          if (i >= 0) B.dot(V(m.px(VERTS[i].x), m.py(VERTS[i].y)), 6, { fill: 'none', stroke: col, 'stroke-width': 2 });
-        });
-      } else {
-        B.tex(V(250, 46), '$P$ 在可行域内：任意斜率的直线都与区域相交', { size: 12, anchor: 'mid', color: '#ff7b8a' });
+      const { min, max, lowPoint, highPoint } = slopeRange(P);
+      B.tex(V(W / 2, 24), '$z=\\dfrac{y-b}{x-a}$', { size: 15, anchor: 'mid' });
+      for (const [slope, point, color] of [[min, lowPoint, '#67e8f9'], [max, highPoint, '#4ade80']]) {
+        if (!Number.isFinite(slope)) continue;
+        lineThrough(P, slope, { stroke: color, 'stroke-width': 2 });
+        B.mark(V(m.px(point.x), m.py(point.y)), color);
       }
-      // ---- 右侧读数栏 ----
-      B.tex(V(520, 34), '$z=\\dfrac{y-b}{x-a}$', { size: 16, anchor: 'start', w: 300 });
-      B.tex(V(520, 64), `定点 $P(${f1(st.px)},${f1(st.py)})$　可行域顶点见左图`, { size: 12.5, anchor: 'start', color: '#93a1b5', w: 300 });
-      if (!s.inside) {
-        B.tex(V(520, 100), s.unb || s.zMax === null ? '$z_{\\max}$ 无上界' : `$z_{\\max}=${f1(s.zMax)}$`,
-          { size: 14, anchor: 'start', color: '#4ade80', w: 300 });
-        B.tex(V(520, 124), s.unb || s.zMin === null ? '$z_{\\min}$ 无下界' : `$z_{\\min}=${f1(s.zMin)}$`,
-          { size: 14, anchor: 'start', color: '#67e8f9', w: 300 });
-        B.tex(V(520, 158), `当前 $z=\\dfrac{${f1(st.qy)}-${f1(st.py)}}{${f1(st.qx)}-${f1(st.px)}}$`, { size: 12.5, anchor: 'start', color: '#ffd166', w: 300 });
+      if (!Number.isFinite(min) || !Number.isFinite(max)) lineThrough(P, null, { stroke: '#93a1b5', 'stroke-dasharray': '3 4' });
+      const dx = st.qx - P.x, dy = st.qy - P.y;
+      if (Math.abs(dx) + Math.abs(dy) > 1e-9) {
+        lineThrough(P, Math.abs(dx) < 1e-9 ? null : dy / dx, { stroke: '#ffd166', 'stroke-width': 1.5, 'stroke-dasharray': '7 5' });
       }
+      cM(Number.isFinite(min) ? `$z_{\\min}=${f1(min)}$` : '无下界');
+      cN(Number.isFinite(max) ? `$z_{\\max}=${f1(max)}$` : '无上界');
+      if (Number.isFinite(min) && Number.isFinite(max)) cJ('两条切线经过可行域顶点，给出斜率的两个端值。', 'ok');
+      else cJ('看竖直虚线两侧：可行点逼近这条线时，斜率的绝对值可以任意大。', 'warn');
     } else {
       /* ---------- 模式二 距离平方型 ---------- */
       const d = distInfo();
@@ -163,45 +157,29 @@ export function createBoard(root) {
       circ(Math.sqrt(d.zMax), { stroke: '#67e8f9', 'stroke-width': 1.8, 'stroke-dasharray': '6 4' });
       B.seg(V(m.px(st.px), m.py(st.py)), V(m.px(d.near.x), m.py(d.near.y)), { stroke: '#4ade80', 'stroke-width': 2 });
       B.seg(V(m.px(st.px), m.py(st.py)), V(m.px(d.far.x), m.py(d.far.y)), { stroke: '#67e8f9', 'stroke-width': 2 });
-      B.dot(V(m.px(d.near.x), m.py(d.near.y)), 5.5, { fill: '#4ade80', stroke: '#0a0d14', 'stroke-width': 1.2 });
-      B.dot(V(m.px(d.far.x), m.py(d.far.y)), 5.5, { fill: '#67e8f9', stroke: '#0a0d14', 'stroke-width': 1.2 });
-      B.tex(V(520, 34), '$z=(x-a)^2+(y-b)^2$', { size: 15, anchor: 'start', w: 300 });
-      B.tex(V(520, 64), `定点 $P(${f1(st.px)},${f1(st.py)})$　可见圆扫过区域`, { size: 12.5, anchor: 'start', color: '#93a1b5', w: 300 });
-      B.tex(V(520, 100), `$z_{\\min}=${f1(d.zMin)}$`, { size: 14, anchor: 'start', color: '#4ade80', w: 300 });
-      B.tex(V(520, 124), `最近点 $(${f1(d.near.x)},${f1(d.near.y)})$`, { size: 12.5, anchor: 'start', color: '#93a1b5', w: 300 });
-      B.tex(V(520, 160), `$z_{\\max}=${f1(d.zMax)}$`, { size: 14, anchor: 'start', color: '#67e8f9', w: 300 });
-      B.tex(V(520, 184), `最远点 $${VN[VERTS.indexOf(d.far)]}(${f1(d.far.x)},${f1(d.far.y)})$`, { size: 12.5, anchor: 'start', color: '#93a1b5', w: 300 });
+      B.mark(V(m.px(d.near.x), m.py(d.near.y)), '#4ade80');
+      B.mark(V(m.px(d.far.x), m.py(d.far.y)), '#67e8f9');
     }
     // ---- 徽章 ----
     cP(`$P(${f1(st.px)},${f1(st.py)})$`);
-    cQ(`$Q(${f1(st.qx)},${f1(st.qy)})$${qIn ? '' : '（域外）'}`);
-    if (st.mode === 0) {
-      const s = slopeInfo();
-      if (s.inside) { cM('无下界'); cN('无上界'); }
-      else if (s.unb) { cM('$\\to-\\infty$'); cN('$\\to+\\infty$'); }
-      else {
-        cM(s.zMin === null ? '无下界' : `$z_{\\min}=${f1(s.zMin)}$`);
-        cN(s.zMax === null ? '无上界' : `$z_{\\max}=${f1(s.zMax)}$`);
-      }
-      if (s.inside) cJ('$P$ 在可行域内：任意斜率都能取到，目标没有最值', 'warn');
-      else if (s.unb) cJ('过 $P$ 的直线可取到竖直方向：斜率趋于 $\\pm\\infty$', 'warn');
-      else cJ('斜率的最值出现在过 $P$ 的切线位置，接触点必是可行域的顶点', 'ok');
-    } else {
+    const dx = st.qx - st.px, dy = st.qy - st.py;
+    const reading = st.mode === 1 ? dx * dx + dy * dy : Math.abs(dx) < 1e-9 ? null : dy / dx;
+    cQ(`$Q(${f1(st.qx)},${f1(st.qy)})$${qIn ? '' : '（域外）'}，${reading === null ? '斜率无定义' : `$z=${f1(reading)}$`}`);
+    if (st.mode === 1) {
       const d = distInfo();
-      cM(`$z_{\\min}=${f1(d.zMin)}$`);
-      cN(`$z_{\\max}=${f1(d.zMax)}$`);
+      cM(`$z_{\\min}=${f1(d.zMin)}$，$(${f1(d.near.x)},${f1(d.near.y)})$`);
+      cN(`$z_{\\max}=${f1(d.zMax)}$，$(${f1(d.far.x)},${f1(d.far.y)})$`);
       if (d.inside) cJ('$P$ 在可行域内：最小距离为 $0$', 'ok');
       else if (d.onVertex) cJ('最近点与最远点都落在顶点上', 'ok');
       else cJ('最近点落在某条边的内部（垂足），不在顶点上 —— 与线性目标的关键区别', 'ok');
     }
   };
 
-  const modeBtns = ['斜率型', '距离平方型'].map((n, i) => B.btnM(n, () => {
-    st.mode = i; modeBtns.forEach((b, j) => b.classList.toggle('on', j === i)); B.render();
-  }, { on: i === 0 }));
+  B.choiceRow('选择模式', ['斜率型', '距离平方型'].map(name => ({ name })), () => st.mode, i => {
+    st.mode = i; B.render();
+  });
   B.graphToggles(st, ['grid', 'labs']);
 
-  B.hint('拖 P、Q：斜率型看过 P 的切线斜率范围；距离型看圆扫过区域的最近与最远点');
   B.render();
   return B;
 }

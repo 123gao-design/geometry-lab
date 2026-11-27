@@ -40,3 +40,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createSum } from '../../../boards/functions/calculus/sumsq.js';
 import { V_CHAPTERS } from './vnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

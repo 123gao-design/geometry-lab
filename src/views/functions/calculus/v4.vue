@@ -40,3 +40,5 @@ import Katex from '../../../components/Katex.vue';
 import { createBoard as createGate } from '../../../boards/functions/calculus/tangentineq.js';
 import { V_CHAPTERS } from './vnav.js';
 </script>
+
+<style src="../properties/preset-row.css"></style>

@@ -4,7 +4,7 @@
     :toc="[{ id: 'o2-law', t: '否定式：两行推导' }, { id: 'o2-iso', t: '与补集的同一结构' }, { id: 'o2-wrong', t: '误写剖析：量词不换' }, { id: 'o2-pit', t: '否定与取反面' }]">
     <div class="note good" id="o2-law"><strong>量词的否定对偶</strong>：<Katex tex="\neg(\forall x\in M,\ p(x))=\exists x\in M,\ \neg p(x)" />、<Katex tex="\neg(\exists x\in M,\ p(x))=\forall x\in M,\ \neg p(x)" /> —— 量词互换，结论取反。</div>
     <ConicFigure number="O2" title="量词的否定" head="bottom" :factory="createND">
-      上带是 <Katex tex="p(x)" /> 的满足情况、下带是 <Katex tex="\neg p(x)" /> 的 —— 两带逐点颜色互补；四个预设各给出原命题、否定式与误写三支的实时判定。看点：否定式永远与原命题一真一假，而量词没换的误写在红绿相间的带子上与原命题同真同假 —— 当场失去否定的资格。
+      绿色表示真，红色表示假。离散点用实心和空心区分真假，连续区间用实线和虚线区分，分界点按点的颜色读。沿金色探针上下读，同一个取值在两行的真假恰好相反。把探针移到整数之间，再切换整数域与实数域，观察哪些位置参与判断。图下可以对照原命题、否定式和只否定结论的误写。
     </ConicFigure>
 
     <h3 class="sec" id="o2-law">否定式：两行推导</h3>
@@ -21,7 +21,7 @@
       <div class="tip-t"><span class="tip-ic">💡</span>提示</div>
       <ul class="tip-list">
         <li><strong>提示一：命题的否定 ≠ 否命题。</strong>「否命题」是<RouterLink class="xref" to="/sets/o3">四种命题：互为逆否</RouterLink>里的概念（条件、结论<strong>都</strong>否定后的 <Katex tex="\neg p\Rightarrow\neg q" />），作用于「若 <Katex tex="p" /> 则 <Katex tex="q" />」型命题；「命题的否定」只把真假反过来。两者名字相近，对象不同，考试按定义各算各的。</li>
-        <li><strong>提示二：结论取反要彻底。</strong>「<Katex tex="x^2\le 4" />」的否定是「<Katex tex="x^2>4" />」—— <Katex tex="\le" /> 的反面是 <Katex tex="\gt" />，不是 <Katex tex="\ge" />；端点处的取等归到反面，与<RouterLink class="xref" to="/sets/y4">数轴上的运算：解集实战</RouterLink>区间端点开闭的取等检验同一条原理。</li>
+        <li><strong>提示二：结论取反要彻底。</strong>「<Katex tex="x^2\le 4" />」的否定是「<Katex tex="x^2>4" />」—— <Katex tex="\le" /> 的反面是 <Katex tex="\gt" />，不是 <Katex tex="\ge" />；端点处的取等归到反面，与<RouterLink class="xref" to="/sets/y4">数轴上的运算</RouterLink>区间端点开闭的取等检验同一条原理。</li>
         <li><strong>提示三：全称真命题的否定是真存在命题。</strong>「都对」的否定是「存在一个不对」，不是「都不对」—— 方向想反，答案就成反向的极端。</li>
       </ul>
     </div>

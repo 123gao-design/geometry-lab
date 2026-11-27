@@ -5,7 +5,7 @@
     <div class="note good" id="g2-law"><Katex tex="a,b>0" /> 且 <Katex tex="a+b=s" />（和定）时 <Katex tex="ab\le\frac{s^2}{4}" />，取等 <Katex tex="a=b=\frac s2" />；<Katex tex="ab=p" />（积定）时 <Katex tex="a+b\ge2\sqrt{p}" />，取等 <Katex tex="a=b=\sqrt p" />。和定看积的上界、积定看和的下界，最值都指向 <Katex tex="a=b" />。</div>
     <div class="board-wrap">
       <BoardMount :factory="createPO" />
-      <div class="cap">图 基2 · <b>和定与积定的最值</b>：切「和定积最大 / 积定和最小」两模式，拖 a、s、p 或点四个预设。看点：和定时蓝抛物线下方可行域高亮，顶点在 <Katex tex="a=s/2" />；积定时紫对勾曲线只在 <Katex tex="a&gt;0" /> 有定义、谷底在 <Katex tex="a=\sqrt p" /> 附近拉升；金色/绿色横虚线切在取等高度，探点越靠近取等处，积或和越贴近极值横线。</div>
+      <div class="cap">图 基2 · <b>和定与积定的最值</b> · 在「和定」模式沿抛物线移动探点，比较积与顶点的高度；在「积定」模式沿曲线寻找谷底。两种极值都在 <Katex tex="a=b"/> 时取得。</div>
     </div>
 
     <h3 class="sec" id="g2-three">一正二定三相等</h3>

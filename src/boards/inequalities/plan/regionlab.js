@@ -6,17 +6,19 @@
      看区域如何被切小、顶点数与面积如何变化；探针 P 走进区域读满足条数。
    局部坐标约定：isoFit 视野 x∈[-0.8,4.8]、y∈[-0.8,4.4]（rect=[0,50,860,380]，pad 20），
    等单位（45° 即斜率 1）。约束统一写成 A x + B y + C ≥ 0 的形式。 */
-import { Board, mk, V, fmt } from '../../../lib/board.js';
+import { InequalityBoard, visibleLine } from '../inequality-board.js';
+import { mk, V, fmt } from '../../../lib/board.js';
 
 export function createBoard(root) {
-  const W = 860, H = 460;
-  const B = new Board(root, W, H);
+  const W = 540, H = 460;
+  const B = new InequalityBoard(root, W, H);
+  B.chipRow.classList.add('paired-notes');
   const f1 = v => fmt(v, 2).replace(/\.?0+$/, '');
   const st = { mode: 0, A: 1, B: 2, C: -6, side: 1, qx: 3, qy: 3, k: 7,
     t1: true, t2: true, t3: true, t4: true, grid: true, labs: true };
   const m = B.isoFit(-0.8, 4.8, -0.8, 4.4, [60, 50, 409.23, 380], 0);
   const RECT = [V(m.X0, m.Y0), V(m.X1, m.Y0), V(m.X1, m.Y1), V(m.X0, m.Y1)];
-  const cF = B.chipM('读数'), cG = B.chipM('符号'), cR = B.chipM('区域'), cJ = B.chipM('判读');
+  const cF = B.readout('读数'), cG = B.readout('符号', 'gold'), cR = B.chipM('区域'), cJ = B.chipM('判读');
 
   // 半平面裁剪（Sutherland–Hodgman，单条直线）：保留 side·(Ax+By+C) ≥ 0 的一侧
   const clip = (poly, A, Bc, C, side) => {
@@ -36,13 +38,6 @@ export function createBoard(root) {
     mk('polygon', { points: pts.map(p => `${m.px(p.x).toFixed(1)},${m.py(p.y).toFixed(1)}`).join(' '), fill: col, 'fill-opacity': op, stroke: 'none' }, B.dyn);
   };
   // 直线 A x + B y + C = 0 与视野的两交点（像素坐标）
-  const lineEnds = (A, Bc, C) => {
-    if (Math.abs(Bc) > 1e-9) {
-      return [V(m.px(m.X0), m.py((-C - A * m.X0) / Bc)), V(m.px(m.X1), m.py((-C - A * m.X1) / Bc))];
-    }
-    if (Math.abs(A) < 1e-9) return null;
-    return [V(m.px(-C / A), m.py(m.Y0)), V(m.px(-C / A), m.py(m.Y1))];
-  };
   const uniq = pts => pts.filter((p, i) => pts.findIndex(q => Math.hypot(p.x - q.x, p.y - q.y) < 1e-7) === i);
   const sortPts = pts => {
     const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
@@ -79,7 +74,7 @@ export function createBoard(root) {
     return parts.length ? parts.join(' ') : '0';
   };
 
-  const hnd = B.handle({
+  B.handle({
     get: () => V(m.px(st.qx), m.py(st.qy)),
     set: p => {
       st.qx = Math.max(m.X0 + .1, Math.min(m.X1 - .1, (p.x - m.px(0)) / m.s));
@@ -89,13 +84,18 @@ export function createBoard(root) {
   });
 
   B.renderFn = () => {
-    B.grid(m);
+    const single = st.mode === 0;
+    for (const el of [sA, sB, sC]) el.closest('.slider').style.display = single ? '' : 'none';
+    sK.closest('.slider').style.display = single ? 'none' : '';
+    flip.style.display = single ? '' : 'none';
+    for (const { button } of constraints) button.style.display = single ? 'none' : '';
+    B.grid({ ...m, grid: st.grid, labs: st.labs });
     if (st.mode === 0) {
       /* ---------- 模式一 单个半平面 ---------- */
       const { A, B: Bc, C, side } = st;
       const degenerate = Math.abs(A) + Math.abs(Bc) < 1e-9;
-      const ends = degenerate ? null : lineEnds(A, Bc, C);
-      if (ends) fillPoly(clip(RECT, A, Bc, C, side), '#5cadff', .14);
+      const ends = degenerate ? null : visibleLine(m, A, Bc, C);
+      fillPoly(clip(RECT, A, Bc, C, side), '#5cadff', .14);
       if (ends) {
         B.seg(ends[0], ends[1], { stroke: '#ffd166', 'stroke-width': 2.2 });
         if (st.labs) {
@@ -103,84 +103,70 @@ export function createBoard(root) {
           B.tex(V(t.x + 8, t.y - 12), `$${expr(A, Bc, C)}=0$`, { size: 12.5, anchor: 'start', color: '#ffd166' });
         }
       }
-      const fv = side * (A * st.qx + Bc * st.qy + C);
-      const dot = V(m.px(st.qx), m.py(st.qy));
-      B.dot(dot, 6, { fill: fv >= -1e-9 ? '#4ade80' : '#ff7b8a', stroke: '#0a0d14', 'stroke-width': 1.5 });
-      B.tex(V(430, 26), degenerate ? '$A=B=0$：$f$ 为常数，不表示半平面（拖滑块使 $A,B$ 不同时为 $0$）'
-        : `$f(x,y)=${expr(A, Bc, C)}$　　区域取 $f${side > 0 ? '\\ge' : '\\le'}0$ 的一侧`, { size: 14.5, anchor: 'mid' });
-      B.text(V(430, 48), '拖 P 点：同侧的点代入同号，跨过直线时符号翻转 —— 这就是「代点定号」', { 'font-size': 12, fill: '#93a1b5', 'text-anchor': 'middle' });
+      const fv = A * st.qx + Bc * st.qy + C;
+      const inside = side * fv >= -1e-9;
+      B.handles[0].st.color = inside ? '#4ade80' : '#ff7b8a';
+      B.tex(V(W / 2, 25), `$${expr(A, Bc, C)}${side > 0 ? '\\ge' : '\\le'}0$`, { size: 15, anchor: 'mid' });
       cF(`$f(${f1(st.qx)},${f1(st.qy)})=${f1(fv)}$`);
-      cG(Math.abs(fv) < .005 ? '$f=0$' : (fv > 0 ? `$f>0$（${side > 0 ? '区域内' : '区域外'}）` : `$f<0$（${side > 0 ? '区域外' : '区域内'}）`));
+      cG(Math.abs(fv) < 1e-9 ? '$f=0$' : (fv > 0 ? `$f>0$（${side > 0 ? '区域内' : '区域外'}）` : `$f<0$（${side > 0 ? '区域外' : '区域内'}）`));
       const orig = side * C;
       cR(`原点处 $f=${f1(C)}$：${Math.abs(C) < 1e-9 ? '过原点' : (orig > 0 ? '原点在区域内' : '原点在区域外')}`);
-      if (degenerate) cJ('退化：$A=B=0$ 时不画边界', 'warn');
-      else if (Math.abs(fv) < .005) cJ('P 在边界上：等号成立，属于区域（严格不等号时属于边界但不属于区域）', 'ok');
-      else if (fv > 0) cJ('P 与判定式同号，落在区域内', 'ok');
-      else cJ('P 与判定式异号，落在区域外');
+      if (degenerate) cJ(inside ? '常量不等式成立，解集为整个平面' : '常量不等式不成立，解集为空集', 'warn');
+      else if (Math.abs(fv) < 1e-9) cJ('P 在边界上：等号成立，属于区域（严格不等号时属于边界但不属于区域）', 'ok');
+      else if (inside) cJ('$P$ 满足不等式，落在区域内', 'ok');
+      else cJ('$P$ 落在区域外');
     } else {
       /* ---------- 模式二 不等式组 ---------- */
       let region = RECT.slice();
-      let alive = 0;
-      CONS.forEach(c => {
-        if (!st[c.key]) return;
-        alive++;
+      const active = CONS.filter(c => st[c.key]);
+      const alive = active.length;
+      active.forEach(c => {
         region = clip(region, c.A, c.B, Cof(c), 1);
-        const ends = lineEnds(c.A, c.B, Cof(c));
+        const ends = visibleLine(m, c.A, c.B, Cof(c));
         if (ends) B.seg(ends[0], ends[1], { stroke: c.col, 'stroke-width': 1.9, 'stroke-dasharray': c.key === 't4' ? '7 4' : '' });
       });
-      const verts = sortPts(uniq(region));
+      const outline = sortPts(uniq(region));
+      const verts = outline.filter(p => active.filter(c => Math.abs(c.A * p.x + c.B * p.y + Cof(c)) < 1e-7).length >= 2);
       fillPoly(region, '#4ade80', .15);
       if (st.labs) verts.forEach(p => {
-        B.dot(V(m.px(p.x), m.py(p.y)), 4, { fill: '#ffd166', stroke: '#0a0d14', 'stroke-width': 1 });
+        B.mark(V(m.px(p.x), m.py(p.y)), '#ffd166');
         B.tex(V(m.px(p.x) + 9, m.py(p.y) - 9), `$(${f1(p.x)},${f1(p.y)})$`, { size: 11.5, anchor: 'start', color: '#ffd166' });
       });
-      const sat = CONS.filter(c => st[c.key]).length;
-      const okAll = CONS.every(c => !st[c.key] || c.A * st.qx + c.B * st.qy + Cof(c) >= -1e-9);
-      const bad = CONS.filter(c => st[c.key] && c.A * st.qx + c.B * st.qy + Cof(c) < -1e-9);
-      B.dot(V(m.px(st.qx), m.py(st.qy)), 6, { fill: okAll ? '#4ade80' : '#ff7b8a', stroke: '#0a0d14', 'stroke-width': 1.5 });
-      B.tex(V(430, 26), `可行域 = ${alive} 个半平面的交集　　探针 $P(${f1(st.qx)},${f1(st.qy)})$`, { size: 14.5, anchor: 'mid' });
-      B.text(V(430, 48), '逐条开关约束：每加一条，区域被该直线切去一半；交集一定是凸多边形', { 'font-size': 12, fill: '#93a1b5', 'text-anchor': 'middle' });
-      if (st.labs) {
-        B.tex(V(500, 72), '四条约束对应四个半平面', { size: 12.5, anchor: 'start', color: '#93a1b5' });
-        CONS.forEach((c, i) => {
-          if (!st[c.key]) return;
-          B.tex(V(500, 96 + i * 26), `${c.lab}${st[c.key] ? '' : '（关）'}`, { size: 13, anchor: 'start', color: c.col });
-        });
-        B.tex(V(500, 96 + CONS.length * 26 + 18), '灰线为坐标轴约束', { size: 11.5, anchor: 'start', color: '#93a1b5' });
-      }
+      const bad = active.filter(c => c.A * st.qx + c.B * st.qy + Cof(c) < -1e-9);
+      const okAll = bad.length === 0;
+      B.handles[0].st.color = okAll ? '#4ade80' : '#ff7b8a';
+      for (const c of active) B.note(c.lab.replace('k', f1(st.k)), c.col);
       cF(`$P(${f1(st.qx)},${f1(st.qy)})$`);
-      cG(`满足 ${sat - bad.length}/${alive} 条约束`);
-      cR(alive ? `顶点 ${verts.length} 个　面积 ${f1(shoelace(verts))}` : '无约束：整个视野');
-      if (!alive) cJ('约束全部关闭，区域退化为整个视野', 'warn');
+      cG(`满足 ${alive - bad.length}/${alive} 条约束`);
+      cR(alive ? `图内顶点 ${verts.length} 个，${outline.length === verts.length ? '面积' : '图内面积'} $${f1(shoelace(outline))}$` : '无约束：整个平面');
+      if (!alive) cJ('约束全部关闭，区域退化为整个平面', 'warn');
       else if (okAll) cJ('P 满足全部约束，落在可行域内', 'ok');
-      else cJ(`P 违反 ${bad.length} 条：${bad.map(c => c.lab.replace(/\$/g, '')).join('、')}`);
+      else cJ(`P 违反 ${bad.length} 条：${bad.map(c => c.lab.replace('k', f1(st.k))).join('、')}`);
     }
   };
 
-  const modeBtns = ['单个半平面', '不等式组'].map((n, i) => B.btnM(n, () => {
-    st.mode = i; modeBtns.forEach((b, j) => b.classList.toggle('on', j === i)); B.render();
-  }, { on: i === 0 }));
+  B.choiceRow('选择模式', ['单个半平面', '不等式组'].map(name => ({ name })), () => st.mode, i => {
+    st.mode = i; B.render();
+  });
   const PRE = [
-    { A: 1, B: 1, C: -4, side: 1, qx: 1, qy: 1, n: '① $x+y\\ge4$' },
-    { A: 2, B: -1, C: 1, side: 1, qx: 3, qy: 1, n: '② $2x-y+1\\ge0$' },
-    { A: -1, B: 3, C: -6, side: 1, qx: 3, qy: 1, n: '③ $-x+3y-6\\ge0$' },
+    { name: '截距', formula: '$x+y\\ge4$', values: { mode: 0, A: 1, B: 1, C: -4, side: 1, qx: 1, qy: 1 } },
+    { name: '过点', formula: '$2x-y+1\\ge0$', values: { mode: 0, A: 2, B: -1, C: 1, side: 1, qx: 3, qy: 1 } },
+    { name: '斜边界', formula: '$-x+3y-6\\ge0$', values: { mode: 0, A: -1, B: 3, C: -6, side: 1, qx: 3, qy: 1 } },
   ];
-  PRE.forEach(P => B.btnM(P.n, () => {
+  B.examples('选择例题', PRE, st, P => {
     st.mode = 0; st.A = P.A; st.B = P.B; st.C = P.C; st.side = P.side; st.qx = P.qx; st.qy = P.qy;
     sA.sync(P.A); sB.sync(P.B); sC.sync(P.C);
-    modeBtns.forEach((b, j) => b.classList.toggle('on', j === 0));
     B.render();
-  }, { on: false }));
-  B.btnM('换边', () => { st.side = -st.side; B.render(); }, { on: false });
-  CONS.forEach(c => B.toggleBtnM(c.lab, st[c.key], on => { st[c.key] = on; B.render(); }));
+  });
+  const flip = B.btnM('换边', () => { st.side = -st.side; B.render(); }, { on: false });
+  const constraints = CONS.map(c => B.toggleBtnM(c.lab, st[c.key], on => { st[c.key] = on; B.render(); }));
   B.graphToggles(st, ['grid', 'labs']);
 
-  const sA = B.slider('A =', -2, 2, .5, 1, v => { st.A = v; B.render(); });
-  const sB = B.slider('B =', -2, 2, .5, 2, v => { st.B = v; B.render(); });
-  const sC = B.slider('C =', -6, 6, .5, -6, v => { st.C = v; B.render(); });
-  const sK = B.slider('k =', 3, 8, .5, 7, v => { st.k = v; B.render(); });
+  const sA = B.slider('A =', -2, 2, .5, 1, v => { st.A = v; B.render(); }, undefined, n => `$A=${n}$`);
+  const sB = B.slider('B =', -3, 3, .5, 2, v => { st.B = v; B.render(); }, undefined, n => `$B=${n}$`);
+  const sC = B.slider('C =', -6, 6, .5, -6, v => { st.C = v; B.render(); }, undefined, n => `$C=${n}$`);
+  const sK = B.slider('k =', 3, 8, .5, 7, v => { st.k = v; B.render(); }, undefined, n => `$k=${n}$`);
 
-  B.hint('拖 P 跨过直线看符号翻转；不等式组的区域是各半平面的交集 —— 逐条开关看它被切小');
   B.render();
   return B;
 }
